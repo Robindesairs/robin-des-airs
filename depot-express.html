@@ -1419,9 +1419,13 @@
     // Adresse : affichée ET corrigeable (sert à la mise en demeure et au contrat). Si absente de la pièce, champ à remplir.
     var adrInp = labeledField(sc, '🏠 Votre adresse' + (p.adresse ? '' : ' (non lue sur la pièce, complétez-la)'), p.adresse || '', false, '10px');
     adrInp.placeholder = 'ex. 12 rue de la Paix, 75002 Paris';
+    // Pays : PRÉ-REMPLI (le client n'y pense pas). Pays lu dans l'adresse si présent, sinon « France » par défaut.
+    var paysInp = labeledField(sc, '🌍 Pays', p.pays || 'France', false, '10px');
+    paysInp.placeholder = 'ex. France, Belgique, Sénégal…';
+    function saveAdr(){ p.adresse = adrInp.value.trim(); p.pays = paysInp.value.trim(); }
     var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '10px';
-    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, tout est correct</span>', function(){ p.adresse = adrInp.value.trim(); S.piece = p; S.names[0] = p.name; next(); }));
-    o.appendChild(optButton('<span class="ic">✏️</span><span>Corriger mon nom</span>', function(){ p.adresse = adrInp.value.trim(); manualName(sc); }, true));
+    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, tout est correct</span>', function(){ saveAdr(); S.piece = p; S.names[0] = p.name; next(); }));
+    o.appendChild(optButton('<span class="ic">✏️</span><span>Corriger mon nom</span>', function(){ saveAdr(); manualName(sc); }, true));
     sc.appendChild(o);
     navRow(sc);
   }
@@ -1470,7 +1474,7 @@
           firstName: firstName, lastName: lastName,
           whatsapp: S.phone, contactPhone: S.phone,
           contactEmail: S.email, email: S.email,
-          address: (S.piece && S.piece.adresse) || '',
+          address: (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })(),
           startNow: S.startNow, // FACULTATIF (art. L.221-25), non coché = MED après les 14 j de rétractation
           eligibilityAcknowledged: true,
           coPassAgreement: S.pax > 1,
