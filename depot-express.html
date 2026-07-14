@@ -1260,7 +1260,15 @@
     return new Promise(function(res){
       if (/pdf$/i.test(file.type)) {
         var r = new FileReader();
-        r.onload = function(){ res({ ticketFile: { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'e-billet.pdf' }, eticket: null }); };
+        r.onload = function(){
+          var b64pdf = String(r.result).split(',')[1];
+          var tf = { dataBase64: b64pdf, mime: 'application/pdf', filename: file.name || 'e-billet.pdf' };
+          // PDF lu nativement par Claude (bloc document) → on l'envoie à l'OCR comme une photo.
+          fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64pdf, mime: 'application/pdf' }) })
+            .then(function(rp){ return rp.json(); })
+            .then(function(j){ res({ ticketFile: tf, eticket: (j && j.ok && j.eticket) ? j.eticket : null }); })
+            .catch(function(){ res({ ticketFile: tf, eticket: null }); });
+        };
         r.onerror = function(){ res(null); };
         r.readAsDataURL(file);
         return;

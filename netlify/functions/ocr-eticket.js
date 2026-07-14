@@ -177,11 +177,15 @@ async function visionClaude(b64, mime) {
   const key = (process.env.ANTHROPIC_API_KEY || '').trim(); if (!key) return null;
   try {
     const model = process.env.ETICKET_CLAUDE_MODEL || process.env.PASSPORT_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
+    // Claude lit les PDF NATIVEMENT (bloc « document ») : un e-billet PDF est désormais extrait comme une photo.
+    const media = /pdf/.test(mime)
+      ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
+      : { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } };
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST', signal: AbortSignal.timeout(24000),
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({ model, max_tokens: 1500, temperature: 0, messages: [{ role: 'user', content: [
-        { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } }, { type: 'text', text: PROMPT },
+        media, { type: 'text', text: PROMPT },
       ] }] }),
     });
     if (!res.ok) return null;
@@ -212,9 +216,10 @@ exports.handler = async (event) => {
   const mime = String(b.mime || '').toLowerCase();
   const data = String(b.dataBase64 || '');
   if (!data) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'image requise' }) };
-  if (!/^image\/(jpe?g|png|webp)$/.test(mime)) return { statusCode: 415, headers: H, body: JSON.stringify({ error: 'Envoyez une photo (JPEG/PNG).' }) };
-  if (data.length > 5_600_000) return { statusCode: 413, headers: H, body: JSON.stringify({ error: 'Photo trop volumineuse (max ~4 Mo).' }) };
-  const raw = (await visionClaude(data, mime)) || (await visionGpt(data, mime));
+  if (!/^(image\/(jpe?g|png|webp)|application\/pdf)$/.test(mime)) return { statusCode: 415, headers: H, body: JSON.stringify({ error: 'Envoyez une photo (JPEG/PNG) ou un PDF.' }) };
+  if (data.length > 5_600_000) return { statusCode: 413, headers: H, body: JSON.stringify({ error: 'Fichier trop volumineux (max ~4 Mo).' }) };
+  // GPT-4o (repli) ne lit pas le PDF de la même façon → réservé aux images ; le PDF passe par Claude (bloc document).
+  const raw = (await visionClaude(data, mime)) || (/^image\//.test(mime) ? await visionGpt(data, mime) : null);
   const n = raw ? normalize(raw) : null;
   if (!n || !n.lisible || n.confidence < 0.4 || (!n.vol && !n.route)) return { statusCode: 200, headers: H, body: JSON.stringify({ ok: false }) };
   const segs = n.segments || [];
