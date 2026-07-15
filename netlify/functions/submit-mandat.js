@@ -407,7 +407,7 @@ function buildClientMandatEmailContent(record) {
       ? '2. On envoie la mise en demeure à la compagnie, sans attendre (vous avez demandé le démarrage immédiat).'
       : '2. On envoie la mise en demeure à la compagnie, dès que votre dossier est prêt, sans que vous ayez la moindre démarche à faire.',
     '3. On recouvre votre argent : on négocie, on relance, et si la compagnie refuse on va jusqu\'au tribunal (avocat et huissier à notre charge).',
-    '4. Vous êtes payé : dès l\'argent récupéré, on vous verse votre part. 0 € si rien n\'est récupéré, vous n\'avancez jamais un centime.',
+    '4. Vous êtes payé : dès l\'argent récupéré, on vous verse votre part. 0 € à payer si rien n\'est récupéré, vous n\'avancez jamais un centime.',
     '',
     'Combien de temps ? La plupart des dossiers se règlent à l\'amiable, en quelques semaines à quelques mois. Si la compagnie résiste et qu\'il faut aller devant le juge, c\'est plus long, mais on va au bout. Dans tous les cas, vous n\'avez rien à faire ni à avancer, et on vous tient informé à chaque étape.',
     '',
@@ -467,7 +467,7 @@ function buildClientMandatEmailContent(record) {
       </tr>
       <tr>
         <td width="34" valign="top"><div style="width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#00C87A;color:#06351f;font-size:13px;font-weight:800">4</div></td>
-        <td valign="top" style="padding:2px 0 0 4px"><div style="font-size:13.5px;font-weight:700;color:#0B1F3A">Vous êtes payé</div><div style="font-size:12.5px;color:#5b6b82;line-height:1.5">Dès l'argent récupéré, <strong>on vous verse votre part</strong>. <strong>0&nbsp;€ si rien n'est récupéré</strong>, vous n'avancez jamais un centime.</div></td>
+        <td valign="top" style="padding:2px 0 0 4px"><div style="font-size:13.5px;font-weight:700;color:#0B1F3A">Vous êtes payé</div><div style="font-size:12.5px;color:#5b6b82;line-height:1.5">Dès l'argent récupéré, <strong>on vous verse votre part</strong>. <strong>0&nbsp;€ à payer si rien n'est récupéré</strong>, vous n'avancez jamais un centime.</div></td>
       </tr>
     </table>
   </td></tr>
