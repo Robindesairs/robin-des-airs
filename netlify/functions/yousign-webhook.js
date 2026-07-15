@@ -26,6 +26,9 @@
 
 const crypto = require("crypto");
 const { airtableCfg, airtableFindByRef, airtablePatch } = require("./lib/airtable-robin");
+// Alerte WhatsApp propriétaire à CHAQUE contrat signé (best-effort, inerte si CALLMEBOT_* absent en env).
+let sendCallMeBot = null;
+try { ({ sendCallMeBot } = require("./lib/callmebot")); } catch (_) {}
 
 let netlifyBlobsModule = null;
 try { netlifyBlobsModule = require("@netlify/blobs"); } catch (_) {}
@@ -219,6 +222,14 @@ exports.handler = async (event) => {
       let alreadyNotified = false;
       try { const prev = await store.get(`signed/${dossierRef}`, { type: "json" }); alreadyNotified = !!(prev && prev.signedAt); } catch (_) {}
       try { await store.setJSON(`signed/${dossierRef}`, { srId, signedAt: new Date().toISOString() }); } catch (_) {}
+      // 🔔 Alerte WhatsApp propriétaire à CHAQUE nouveau contrat signé — fire-once (les retries Yousign ne re-notifient pas).
+      // Inerte si CALLMEBOT_PHONE/CALLMEBOT_APIKEY absents en env. Ne bloque JAMAIS le webhook (best-effort).
+      if (!alreadyNotified && sendCallMeBot) {
+        try {
+          const who = sr.name || ("dossier " + dossierRef);
+          await sendCallMeBot("🏹 ✅ Nouveau contrat SIGNÉ\n" + who + "\nRéf : " + dossierRef);
+        } catch (e) { console.warn(`[yousign-webhook] alerte CallMeBot KO:`, e.message); }
+      }
       try {
         let idx = (await store.get("__index", { type: "json" })) || [];
         if (Array.isArray(idx) && !idx.some((e) => e && e.ref === dossierRef)) {

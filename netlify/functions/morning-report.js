@@ -265,21 +265,9 @@ function buildMessage({ today, yesterday, plausible, mandates, whatsapp, radar }
   lines.push(`📅 ${today}`);
   lines.push('');
 
-  // ── Visiteurs ──
-  lines.push(`🌐 SITE WEB (hier)`);
-  if (plausible) {
-    lines.push(`• Visiteurs  : ${fmt(plausible.visitors)}`);
-    lines.push(`• Pages vues : ${fmt(plausible.pageviews)}`);
-    lines.push(`• Taux rebond: ${plausible.bounceRate}%`);
-    if (plausible.avgDuration) {
-      lines.push(`• Durée moy. : ${plausible.avgDuration} min`);
-    }
-    if (plausible.topCountries.length) {
-      lines.push(`• Top pays   : ${plausible.topCountries.map(c => `${flag(c.code)} ${fmt(c.visitors)}`).join(' · ')}`);
-    }
-  } else {
-    lines.push(`• Configurer PLAUSIBLE_API_KEY pour activer`);
-  }
+  // ── Visiteurs (Umami — plan gratuit : pas d'API, on renvoie vers le tableau de bord) ──
+  lines.push(`🌐 SITE WEB`);
+  lines.push(`• Voir mes visites : ${process.env.UMAMI_DASHBOARD_URL || 'https://cloud.umami.is/websites/19ef6dce-8f1d-4b9b-9a0e-12dbece0cdf7'}`);
   lines.push('');
 
   // ── WhatsApp ──
