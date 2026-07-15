@@ -235,6 +235,8 @@
       yy = document.createElement('select'); yy.className = 'input';
       var y0 = document.createElement('option'); y0.value = ''; y0.textContent = 'Année'; yy.appendChild(y0);
       var nowY = new Date().getFullYear(), back = cfg.yearsBack || 6; // 6 ans = couvre France 5 ans + UK 6 ans + marge
+      // +1 an en tête : couvre un vol imminent (capture aéroport) qui tomberait l'an prochain (fin décembre).
+      var oyN = document.createElement('option'); oyN.value = String(nowY + 1); oyN.textContent = String(nowY + 1); yy.appendChild(oyN);
       for (var yv2 = nowY; yv2 >= nowY - back; yv2--) { var oy = document.createElement('option'); oy.value = String(yv2); oy.textContent = String(yv2); yy.appendChild(oy); }
     } else {
       yy = document.createElement('input'); yy.className = 'input'; yy.inputMode = 'numeric'; yy.maxLength = 4; yy.placeholder = 'Année'; yy.autocomplete = 'off';
@@ -821,7 +823,12 @@
         value: S.date ? S.date.split('-').reverse().join('/') : '',
         onComplete: function(v){
           var p = v.split('/');
-          if (new Date(+p[2], +p[1] - 1, +p[0]).getTime() > Date.now()) { hint.className = 'hint bad'; hint.textContent = 'Ce vol est dans le futur, on réclame pour un vol déjà passé.'; return; }
+          // Capture aéroport / vol retardé : on accepte le vol du JOUR + jusqu'à 2 jours à venir (départ imminent,
+          // ou retard qui décale l'arrivée au lendemain/surlendemain). Au-delà = trop loin (créance pas encore mobilisable).
+          var fd = new Date(+p[2], +p[1] - 1, +p[0]); fd.setHours(0, 0, 0, 0);
+          var td = new Date(); td.setHours(0, 0, 0, 0);
+          var diffDays = Math.round((fd.getTime() - td.getTime()) / 86400000);
+          if (diffDays > 2) { hint.className = 'hint bad'; hint.textContent = 'Cette date est trop loin dans le futur (on couvre le vol du jour et jusqu\'à 2 jours à l\'avance).'; return; }
           hint.className = 'hint idle'; hint.textContent = '';
           S.date = p[2] + '-' + p[1] + '-' + p[0]; // ISO pour le backend
           next();
