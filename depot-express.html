@@ -937,11 +937,10 @@
           S.paxData[i] = S.paxData[i] || {}; S.paxData[i].pieceFile = r.pieceFile;
           if (r.pdf) { ocrHint.className = 'hint idle'; ocrHint.textContent = 'Complétez le nom et la date ci-dessous.'; return; }
           if (r.piece) {
-            if (r.piece.prenom) pInp.value = r.piece.prenom;
-            if (r.piece.nom) nInp.value = r.piece.nom;
-            if (r.piece.dob) dobObj.set(r.piece.dob);
-            if (r.piece.adresse) { S.paxData[i] = S.paxData[i] || {}; S.paxData[i].adresse = r.piece.adresse; } // adresse lue sur la pièce (CNI/titre) → récap
-            ocrHint.className = 'hint idle'; ocrHint.textContent = ''; // pas de bulle verte : les cases pré-remplies suffisent
+            // MÊME page détaillée que le passager 1 : on route vers confirmPiece (identité complète, éditable).
+            // pieceFile déjà stocké ci-dessus (S.paxData[i].pieceFile) → préservé par confirmPiece.
+            confirmPiece(sc, r.piece, i);
+            return;
           } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible, saisissez à la main.'; }
         });
       }
@@ -1460,24 +1459,63 @@
       if (S.paxData[0]) { S.manualPrenom = S.paxData[0].prenom; S.manualNom = S.paxData[0].nom; }
     }
   }
-  function confirmPiece(sc, p){
-    // TEMPS D'ARRÊT passeport : on montre TOUT ce qu'on a lu (nom, date de naissance, adresse) pour validation.
-    sc.innerHTML = '<h2>📋 Vérifiez vos informations</h2><p class="sub">Lu automatiquement sur votre pièce. <b>Corrigez si besoin, puis validez.</b></p>';
-    var card = document.createElement('div'); card.className = 'idcard';
-    card.innerHTML = '<div>👤 <b>' + esc(p.name || '') + '</b></div>'
-      + (p.dob ? '<div>🎂 Né(e) le ' + esc(p.dob) + (p.lieuNaissance ? ' à ' + esc(p.lieuNaissance) : '') + '</div>' : '')
-      + (p.docType ? '<div>🪪 ' + esc(p.docType === 'cni' ? "Carte d'identité" : p.docType === 'titre_sejour' ? 'Titre de séjour' : 'Passeport') + '</div>' : '');
-    sc.appendChild(card);
-    // Adresse : affichée ET corrigeable (sert à la mise en demeure et au contrat). Si absente de la pièce, champ à remplir.
-    var adrInp = labeledField(sc, '🏠 Votre adresse' + (p.adresse ? '' : ' (non lue sur la pièce, complétez-la)'), p.adresse || '', false, '10px');
+  // Page de vérification DÉTAILLÉE, valable pour N'IMPORTE QUEL passager (i = index, 0 = cédant principal).
+  // Passager 1 ET co-passagers passent par la MÊME page après scan de leur pièce.
+  function confirmPiece(sc, p, i){
+    i = i || 0;
+    var isMain = (i === 0);
+    // TEMPS D'ARRÊT pièce : on montre TOUT ce qu'on a lu (nom, date, lieu, adresse) pour validation, éditable.
+    sc.innerHTML = isMain
+      ? '<h2>📋 Vérifiez vos informations</h2><p class="sub">Lu automatiquement sur votre pièce. <b>Corrigez si besoin, puis validez.</b></p>'
+      : '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Lu automatiquement sur sa pièce. <b>Corrigez si besoin, puis validez.</b></p>';
+    // Identité ÉDITABLE directement. Prénom / Nom SÉPARÉS = décision fondateur (évite les mauvais découpages).
+    var nm = (p.name || '').trim().split(/\s+/).filter(Boolean);
+    var prenomInp = labeledField(sc, '👤 Prénom', p.prenom || nm[0] || '', false, '4px');
+    prenomInp.placeholder = 'ex. Climbié';
+    var nomInp = labeledField(sc, '👤 Nom', p.nom || nm.slice(1).join(' ') || '', false, '10px');
+    nomInp.placeholder = 'ex. Kodjo';
+    var dobInp = labeledField(sc, '🎂 Date de naissance', p.dob || '', false, '10px');
+    dobInp.placeholder = 'JJ/MM/AAAA';
+    var lieuInp = labeledField(sc, '📍 Lieu de naissance', p.lieuNaissance || '', false, '10px');
+    lieuInp.placeholder = 'ex. Strasbourg';
+    if (p.docType) {
+      var dt = document.createElement('div'); dt.className = 'hint idle'; dt.style.margin = '10px 0 0';
+      dt.innerHTML = '🪪 ' + esc(p.docType === 'cni' ? "Carte d'identité" : p.docType === 'titre_sejour' ? 'Titre de séjour' : 'Passeport');
+      sc.appendChild(dt);
+    }
+    // Adresse : co-passager sans adresse sur sa pièce → défaut = adresse du cédant principal (famille).
+    var adrDefault = p.adresse || (!isMain && S.piece ? (S.piece.adresse || '') : '');
+    var adrInp = labeledField(sc, '🏠 ' + (isMain ? 'Votre adresse' : 'Son adresse') + (adrDefault ? '' : ' (non lue, complétez-la)'), adrDefault, false, '10px');
     adrInp.placeholder = 'ex. 12 rue de la Paix, 75002 Paris';
-    // Pays : PRÉ-REMPLI (le client n'y pense pas). Pays lu dans l'adresse si présent, sinon « France » par défaut.
-    var paysInp = labeledField(sc, '🌍 Pays', p.pays || 'France', false, '10px');
+    var paysInp = labeledField(sc, '🌍 Pays', p.pays || (S.piece && S.piece.pays) || 'France', false, '10px');
     paysInp.placeholder = 'ex. France, Belgique, Sénégal…';
-    function saveAdr(){ p.adresse = adrInp.value.trim(); p.pays = paysInp.value.trim(); }
-    var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '10px';
-    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, tout est correct</span>', function(){ saveAdr(); S.piece = p; S.names[0] = p.name; next(); }));
-    o.appendChild(optButton('<span class="ic">✏️</span><span>Corriger mon nom</span>', function(){ saveAdr(); manualName(sc); }, true));
+    // Enregistre TOUTES les corrections faites sur place (identité + adresse) pour CE passager.
+    function saveAll(){
+      p.prenom = prenomInp.value.trim();
+      p.nom = nomInp.value.trim();
+      p.name = (p.prenom + ' ' + p.nom).trim();
+      p.dob = dobInp.value.trim();
+      p.lieuNaissance = lieuInp.value.trim();
+      p.adresse = adrInp.value.trim();
+      p.pays = paysInp.value.trim();
+      var minor = p.dob ? isMinor(p.dob, S.date) : false;
+      S.names[i] = p.name;
+      S.paxData[i] = Object.assign(S.paxData[i] || {}, {
+        prenom: p.prenom, nom: p.nom, dob: p.dob, lieuNaissance: p.lieuNaissance,
+        adresse: p.adresse, pays: p.pays, minor: minor, confirmed: true
+      });
+      if (isMain) S.piece = p;
+    }
+    var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '14px';
+    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, tout est correct</span>', function(){
+      saveAll();
+      if (isMain) { next(); return; }                        // cédant principal : on entre dans le flux co-passagers
+      if (editing) { editing = false; idx = far; render(); return; }
+      if (i + 1 < S.pax) {                                    // encore un co-passager à scanner
+        stage.innerHTML = ''; var n2 = document.createElement('div'); n2.className = 'screen'; stage.appendChild(n2);
+        SCREENS.copax(n2, i + 1); renderCrumbs();
+      } else { next(); }                                      // dernier passager : on continue le tunnel
+    }));
     sc.appendChild(o);
     navRow(sc);
   }
