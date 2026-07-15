@@ -151,6 +151,11 @@
     .recap-edit{flex:0 0 auto; border:1px solid var(--green-line); background:var(--green-tint); border-radius:var(--radius-pill); font:inherit; font-size:12px; font-weight:800; color:var(--neon-ink); padding:5px 11px; cursor:pointer; white-space:nowrap; align-self:center}
     .recap-edit:hover{border-color:var(--neon-dark); background:#dff4ea}
     .recap-foot{padding:9px 14px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); background:var(--surface-2)}
+    /* Encadré par passager : nom + adresse liés dans un même bloc (anti-confusion multi-passagers) */
+    .recap-pax{margin:10px; border:1.5px solid var(--line); border-radius:var(--radius-sm); overflow:hidden}
+    .recap-pax-h{padding:8px 14px; background:var(--surface-2); border-bottom:1px solid var(--line); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; color:var(--navy)}
+    .recap-pax .recap-row{border-top:0}
+    .recap-pax .recap-row + .recap-row{border-top:1px dashed var(--line)}
     /* Accordéon contrat complet (texte physiquement sur la page de signature) */
     .contract-acc{border:1px solid var(--line); border-radius:var(--radius-sm); margin:0 0 8px; overflow:hidden; background:#fff}
     .contract-acc summary{cursor:pointer; padding:12px 14px; font-weight:800; font-size:13.5px; color:var(--neon-ink); list-style:none}
@@ -246,6 +251,9 @@
     }
     wrap.appendChild(jj); wrap.appendChild(mm); wrap.appendChild(yy);
     if (cfg.value) { var pm = String(cfg.value).match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (pm) { jj.value = pm[1]; mm.value = pm[2]; yy.value = pm[3]; } }
+    // Pré-remplissage JOUR + MOIS seuls (année laissée vide) : cas « carte d'embarquement lue, il ne manque
+    // que l'année » (le code-barres IATA ne porte pas l'année). Le client n'a plus qu'à choisir l'année.
+    else if (cfg.dayMonth) { var pdm = String(cfg.dayMonth).match(/^(\d{1,2})\/(\d{1,2})$/); if (pdm) { jj.value = pdm[1].padStart(2, '0'); mm.value = pdm[2].padStart(2, '0'); } }
     function yval(){ return yySelect ? yy.value : yy.value.replace(/\D/g, ''); }
     function val(){ var d = jj.value.replace(/\D/g, ''), mo = mm.value, y = yval(); if (d && mo && y.length === 4) return d.padStart(2, '0') + '/' + mo + '/' + y; return ''; }
     function done(){ var v = val(); if (!v) return; var m = v.match(/(\d{2})\/(\d{2})\/(\d{4})/); if (isRealDate(m[1], m[2], m[3]) && cfg.onComplete) cfg.onComplete(v); }
@@ -254,7 +262,7 @@
     if (yySelect) { yy.addEventListener('change', done); }
     else { yy.addEventListener('input', function(){ yy.value = yy.value.replace(/\D/g, '').slice(0, 4); if (yy.value.length === 4) done(); }); }
     function set(v){ var m = String(v || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) { jj.value = m[1].padStart(2, '0'); mm.value = m[2].padStart(2, '0'); yy.value = m[3]; } }
-    return { el: wrap, value: val, set: set, focus: function(){ jj.focus(); } };
+    return { el: wrap, value: val, set: set, focus: function(){ jj.focus(); }, focusYear: function(){ yy.focus(); } };
   }
   // ── Indicatifs téléphone : liste MONDIALE [nom, indicatif, ISO2]. Recherche libre + drapeau calculé
   //    depuis l'ISO. Diaspora + Europe en tête pour l'autocomplétion, France par défaut.
@@ -351,6 +359,24 @@
   }
   // Branche l'autocomplétion aéroport sur un champ ville (suggestions dès 2-3 lettres, ville ou code IATA).
   function airportAuto(input){ ensureAirportList(); input.setAttribute('list', 'airportList'); input.autocapitalize = 'words'; }
+  // Décode un code IATA en libellé « Ville (IATA) » via la liste AIRPORTS : « CDG » → « Paris CDG (CDG) ».
+  // Sert à « déchiffrer » les codes lus sur la carte d'embarquement / le code-barres. Texte déjà en clair = inchangé.
+  var _IATA_LABEL = null;
+  function iataToLabel(x){
+    var s = String(x || '').trim(), code = s.toUpperCase();
+    if (!/^[A-Z]{3}$/.test(code)) return s; // déjà une ville / texte libre → inchangé
+    if (!_IATA_LABEL) { _IATA_LABEL = {}; AIRPORTS.forEach(function(a){ var m = String(a).match(/\(([A-Z]{3})\)\s*$/); if (m) _IATA_LABEL[m[1]] = String(a).trim(); }); }
+    return _IATA_LABEL[code] || code; // connu → « Ville (IATA) » ; inconnu → code brut (repli)
+  }
+  // Autocomplétion PAYS (liste DIALS, diaspora + Europe en tête) sur un champ pays. Le datalist SUGGÈRE
+  // dès les 1ères lettres mais laisse la SAISIE LIBRE si le pays n'y figure pas (niche diaspora, pas de « France » forcée).
+  function ensureCountryList(){
+    if ($('countryList')) return;
+    var dl = document.createElement('datalist'); dl.id = 'countryList';
+    DIALS.forEach(function(d){ var o = document.createElement('option'); o.value = d[0]; dl.appendChild(o); }); // d[0] = nom du pays
+    document.body.appendChild(dl);
+  }
+  function countryAuto(input){ ensureCountryList(); input.setAttribute('list', 'countryList'); input.autocapitalize = 'words'; }
   // Mineur à la date du vol (même logique que le bot) : un parent signe pour lui.
   function isMinor(dobFr, flightIso){
     var b = (dobFr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!b) return false;
@@ -385,8 +411,12 @@
     // Quand l'e-billet a rempli une info, on SAUTE la question correspondante (mais la chip reste corrigeable).
     // Pendant un reflow (« Modifier le trajet »), on force conn/flight à s'afficher pour re-saisir.
     if (k === 'conn') return reflowActive || !(S.fromTicket && S.typeVol);
-    if (k === 'flight') return reflowActive || !(S.fromTicket && (S.flightNum || (S.dep && S.arr)));
-    if (k === 'date') return !(S.fromTicket && S.date);
+    // VOL : on ne saute cet écran QUE si le NUMÉRO DE VOL a bien été capté. Trajet lu mais numéro manquant
+    // (fréquent en OCR) → on montre l'écran (départ/arrivée pré-remplis) pour que le client saisisse le n° de vol.
+    if (k === 'flight') return reflowActive || !(S.fromTicket && S.flightNum);
+    // DATE : si l'année n'est pas fiable (carte d'embarquement / code-barres, sans année), on montre l'écran
+    // pour que le client saisisse JUSTE l'année (jour + mois déjà lus). Année fiable lue → on saute.
+    if (k === 'date') return !(S.fromTicket && S.date && !S.dateYearUnsure);
     if (k === 'pax') return !(S.fromTicket && S.pax);
     return true;
   }
@@ -494,13 +524,20 @@
       var extra = '';
       if (pd.dob) extra += ' <span class="muted">· né(e) le ' + esc(pd.dob) + '</span>';
       if (pd.minor) extra += ' <span class="muted">· mineur·e</span>';
-      rows += row('🧑', 'Passager ' + (i + 1), '<b>' + esc(nm) + '</b>' + extra, i === 0 ? 'passport' : 'copax');
       // Adresse par passager : pré-remplie depuis la pièce (OCR) quand elle y figure (CNI/titre de séjour),
       // sinon à compléter. Sert au contrat de cession et à la mise en demeure. Éditable en ligne.
       var _adr = pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '');
-      rows += '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-        + '<div class="recap-k">Adresse du passager ' + (i + 1) + ' <span class="muted" style="font-weight:400">· ' + (_adr ? 'lue sur la pièce, corrigez si besoin' : 'à compléter') + '</span></div>'
-        + '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>';
+      // NOM + ADRESSE du MÊME passager REGROUPÉS dans un seul encadré (« recap-pax ») pour éviter la confusion
+      // nom↔adresse quand il y a plusieurs passagers (avant : deux lignes indépendantes qui se mélangeaient).
+      rows += '<div class="recap-pax">'
+        + '<div class="recap-pax-h">🧑 Passager ' + (i + 1) + '</div>'
+        + '<div class="recap-row"><div class="recap-ic">👤</div><div class="recap-main">'
+        +   '<div class="recap-k">Nom</div><div class="recap-v"><b>' + esc(nm) + '</b>' + extra + '</div></div>'
+        +   '<button type="button" class="recap-edit" data-k="' + (i === 0 ? 'passport' : 'copax') + '">Modifier</button></div>'
+        + '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
+        +   '<div class="recap-k">Adresse <span class="muted" style="font-weight:400">· ' + (_adr ? 'corrigez si besoin' : 'à compléter') + '</span></div>'
+        +   '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>'
+        + '</div>';
     });
     if (S.phone) rows += row('📞', 'Téléphone', esc(S.phone), 'phone');
     if (S.email) rows += row('📧', 'Email', esc(S.email), 'email');
@@ -703,7 +740,7 @@
     consent: function(sc){
       sc.innerHTML = '<h2>🔒 Avant de continuer, votre accord</h2><p class="sub">Pour monter votre dossier, on va vous demander votre <b>carte d\'embarquement / e-billet</b> puis une <b>pièce d\'identité</b> (passeport ou carte d\'identité). Ce sont des <b>données personnelles sensibles</b> : on vous demande votre accord avant de les collecter.</p>';
       var why = document.createElement('div'); why.className = 'why';
-      why.innerHTML = 'ℹ️ Vos documents sont <b>lus par une IA</b> pour remplir votre dossier (nom, vol, date), <b>transmis chiffrés</b> (HTTPS), <b>jamais revendus</b>, et <b>supprimés</b> une fois votre dossier réglé. Vous pouvez demander leur effacement à tout moment (RGPD).';
+      why.innerHTML = 'ℹ️ Vos documents sont <b>lus par une IA</b> pour remplir votre dossier (nom, vol, date), <b>transmis chiffrés</b> (HTTPS), <b>utilisés uniquement pour votre réclamation</b>, puis <b>effacés à la clôture</b> du dossier. Effacement possible à tout moment (RGPD).';
       sc.appendChild(why);
       var l = document.createElement('label'); l.className = 'ck'; l.style.marginTop = '12px';
       l.innerHTML = '<input type="checkbox"><span>J\'accepte que Robin des Airs <b>collecte et traite</b> ma carte d\'embarquement et ma pièce d\'identité pour mon dossier, conformément à la <a href="/politique-confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span>';
@@ -733,7 +770,7 @@
       var drop = null;
       if (!isTouch) {
         drop = document.createElement('div'); drop.className = 'drop';
-        drop.innerHTML = '<div class="big">📄</div><p>Glissez votre e-billet ici</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
+        drop.innerHTML = '<div class="big">📄</div><p>Glissez votre e-billet ici</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 chiffré et confidentiel</small>';
         sc.appendChild(drop);
       }
       var o = document.createElement('div'); o.className = 'opts' + (isTouch ? ' grid2' : ''); o.style.marginTop = '10px';
@@ -741,7 +778,7 @@
       o.appendChild(optButton('<span class="ic">🖼️</span><span>' + (isTouch ? 'Choisir un fichier' : 'Choisir mon e-billet') + '<small>photo ou PDF · plusieurs possibles</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
       var why = document.createElement('div'); why.className = 'why';
-      why.innerHTML = 'ℹ️ <b>Pourquoi ?</b> Votre billet ou carte d\'embarquement <b>prouve que vous étiez sur ce vol</b>, c\'est la pièce qui fait payer la compagnie. On la lit pour remplir votre dossier (n° de vol, trajet, date) <b>sans erreur</b>. 🔒 Jamais revendue.';
+      why.innerHTML = 'ℹ️ <b>Pourquoi ?</b> Votre billet ou carte d\'embarquement <b>prouve que vous étiez sur ce vol</b>, c\'est la pièce qui fait payer la compagnie. On la lit pour remplir votre dossier (n° de vol, trajet, date) <b>sans erreur</b>. 🔒 Confidentiel, chiffré.';
       sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       if (drop) {
@@ -754,52 +791,23 @@
       $('camInp').onchange = function(){ handleEticketFiles($('camInp').files, hint); };
       navRow(sc, { skip: '✏️ Je n\'ai pas le billet, je saisis à la main', onSkip: function(){ next(); } });
     },
-    // Validation APRÈS lecture d'une/des carte(s) d'embarquement : le client VÉRIFIE les infos extraites
-    // (vol, trajet, date, chaque passager) avant de continuer, rien ne passe en silence. Il peut corriger
-    // chaque ligne (« Modifier ») et ajouter une 2e carte d'embarquement (un passager de plus).
+    // Validation APRÈS lecture d'une/des carte(s) d'embarquement : le client VÉRIFIE le VOL extrait
+    // (vol, trajet, date) avant de continuer, rien ne passe en silence. On ne saisit PAS les noms ici
+    // (décision fondateur) : l'identité de chaque passager est lue juste après, sur sa pièce d'identité.
+    // « Ajouter une autre carte » sert à compléter une CORRESPONDANCE (un autre vol du même trajet).
     confirm: function(sc){
-      $('fileInp').multiple = true; // « ajouter une autre carte » = encore un e-billet
+      $('fileInp').multiple = true; // « ajouter une autre carte » = un autre vol de la correspondance
       var nb = (S.ticketFiles && S.ticketFiles.length) || (S.ticketFile ? 1 : 0);
-      sc.innerHTML = '<h2>✅ Vérifiez vos informations</h2><p class="sub">Lues automatiquement sur '
+      sc.innerHTML = '<h2>✅ Vérifiez votre vol</h2><p class="sub">Lu automatiquement sur '
         + (nb > 1 ? 'vos ' + nb + ' cartes d\'embarquement' : 'votre billet') + '. <b>Corrigez ce qui est faux avant de continuer.</b></p>';
-      recapCard(sc, { skipPax: true }); // vol / trajet / date (les passagers sont gérés juste en dessous, éditables)
-      // ── Passagers : nom corrigeable EN LIGNE + retrait d'un passager créé à tort (ex. un seul nom coupé en deux) ──
-      var paxBox = document.createElement('div'); paxBox.className = 'recap'; paxBox.style.marginTop = '10px';
-      function renderPax(){
-        var count = S.names.filter(Boolean).length;
-        paxBox.innerHTML = '<div class="recap-h">🧑 Passagers (' + count + ')</div>';
-        S.names.forEach(function(nm, i){
-          var pd = S.paxData[i] || {};
-          var rowEl = document.createElement('div'); rowEl.className = 'recap-row';
-          var meta = (pd.dob ? ' · né(e) le ' + esc(pd.dob) : '') + (pd.minor ? ' · mineur·e' : '');
-          rowEl.innerHTML = '<div class="recap-ic">🧑</div><div class="recap-main"><div class="recap-k">Passager ' + (i + 1) + '<span class="muted">' + meta + '</span></div></div>';
-          var main = rowEl.querySelector('.recap-main');
-          var inp = document.createElement('input'); inp.className = 'input'; inp.value = nm || ''; inp.style.marginTop = '4px'; inp.placeholder = 'Prénom NOM';
-          inp.addEventListener('input', function(){ S.names[i] = inp.value.toUpperCase(); var sp = splitName(inp.value); S.paxData[i] = Object.assign(S.paxData[i] || {}, { prenom: sp.prenom, nom: sp.nom }); });
-          main.appendChild(inp);
-          if (S.names.length > 1) {
-            var rm = document.createElement('button'); rm.type = 'button'; rm.className = 'recap-edit'; rm.textContent = '✕ Retirer';
-            rm.addEventListener('click', function(){ S.names.splice(i, 1); S.paxData.splice(i, 1); S.pax = S.names.length; renderPax(); });
-            rowEl.appendChild(rm);
-          }
-          paxBox.appendChild(rowEl);
-        });
-        var foot = document.createElement('div'); foot.className = 'recap-foot';
-        foot.textContent = 'Un nom mal lu ? Corrigez-le ici. Un passager en trop (un seul nom coupé en deux) ? Touchez « Retirer ».';
-        paxBox.appendChild(foot);
-        // Complétude : on annonce ce qu'on a détecté et on invite à ajouter les billets manquants.
-        var chk = document.createElement('div'); chk.className = 'recap-foot';
-        chk.style.color = 'var(--navy)'; chk.style.fontWeight = '600'; chk.style.marginTop = '2px';
-        chk.innerHTML = '🧳 <b>' + count + ' passager' + (count > 1 ? 's' : '') + '</b> détecté' + (count > 1 ? 's' : '')
-          + (nb > 1 ? ' sur <b>' + nb + ' billets</b>' : '') + '. <b>Avez-vous bien envoyé tous vos billets ?</b> '
-          + 'S\'il manque quelqu\'un, ajoutez sa carte d\'embarquement ci-dessous.';
-        paxBox.appendChild(chk);
-      }
-      renderPax();
-      sc.appendChild(paxBox);
+      recapCard(sc, { skipPax: true }); // vol / trajet / date (l'identité est lue juste après, sur la pièce)
+      // Rassurance : pas de saisie de noms ici, l'identité vient de la pièce d'identité (lecture fiable).
+      var note = document.createElement('div'); note.className = 'why'; note.style.marginTop = '10px';
+      note.innerHTML = '👤 <b>Les passagers seront identifiés juste après</b>, avec leur pièce d\'identité (lecture fiable, zéro faute sur les noms). Rien à saisir ici.';
+      sc.appendChild(note);
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px'; sc.appendChild(hint);
-      // Ajouter une carte d'embarquement supplémentaire (2e passager sur un autre billet)
-      var add = optButton('<span class="ic">➕</span><span>Ajouter une autre carte d\'embarquement<small>un passager sur un billet séparé</small></span>', function(){
+      // Correspondance : ajouter la carte d'un AUTRE vol du même trajet (complète les segments, pas un passager).
+      var add = optButton('<span class="ic">➕</span><span>Ajouter une autre carte d\'embarquement<small>un autre vol de votre correspondance</small></span>', function(){
         $('fileInp').value = ''; $('fileInp').click();
       }, true);
       add.style.marginTop = '10px'; sc.appendChild(add);
@@ -819,11 +827,21 @@
       sc.appendChild(o); navRow(sc);
     },
     date: function(sc){
-      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Jour, mois, année, ça passe tout seul.</p>';
+      // Année seule : jour + mois déjà lus sur la carte d'embarquement (le code-barres ne porte pas l'année).
+      var yearOnly = S.fromTicket && S.date && S.dateYearUnsure;
+      var dm = '';
+      if (yearOnly) { var pp = S.date.split('-'); dm = pp[2] + '/' + pp[1]; } // "JJ/MM" depuis l'ISO lu
+      sc.innerHTML = yearOnly
+        ? '<h2>📅 L\'année du vol ?</h2><p class="sub">On a lu le <b>jour et le mois</b> sur votre carte d\'embarquement. Le code-barres ne contient pas l\'année, indiquez-la simplement.</p>'
+        : '<h2>📅 La date du vol ?</h2><p class="sub">Jour, mois, année, ça passe tout seul.</p>';
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px';
+      var confirmed = ''; // dernière date VALIDE saisie (JJ/MM/AAAA) ; on n'avance qu'au clic « Continuer »
+      var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px';
+      go.textContent = 'Continuer →'; go.disabled = true; go.style.opacity = '0.5';
       var i = segmentedDate({
         yearSelect: true, yearsBack: 6, // année en menu déroulant, limitée à la fenêtre de prescription
-        value: S.date ? S.date.split('-').reverse().join('/') : '',
+        value: (!yearOnly && S.date) ? S.date.split('-').reverse().join('/') : '',
+        dayMonth: yearOnly ? dm : '', // pré-remplit jour + mois, laisse l'année au client
         onComplete: function(v){
           var p = v.split('/');
           // Capture aéroport / vol retardé : on accepte le vol du JOUR + jusqu'à 2 jours à venir (départ imminent,
@@ -831,15 +849,24 @@
           var fd = new Date(+p[2], +p[1] - 1, +p[0]); fd.setHours(0, 0, 0, 0);
           var td = new Date(); td.setHours(0, 0, 0, 0);
           var diffDays = Math.round((fd.getTime() - td.getTime()) / 86400000);
-          if (diffDays > 2) { hint.className = 'hint bad'; hint.textContent = 'Cette date est trop loin dans le futur (on couvre le vol du jour et jusqu\'à 2 jours à l\'avance).'; return; }
-          hint.className = 'hint idle'; hint.textContent = '';
-          S.date = p[2] + '-' + p[1] + '-' + p[0]; // ISO pour le backend
-          next();
+          if (diffDays > 2) { confirmed = ''; go.disabled = true; go.style.opacity = '0.5'; hint.className = 'hint bad'; hint.textContent = 'Cette date est trop loin dans le futur (on couvre le vol du jour et jusqu\'à 2 jours à l\'avance).'; return; }
+          // Date valide : on la retient et on LAISSE LE CLIENT LA VÉRIFIER (il avance au bouton, pas d'auto-saut).
+          confirmed = v;
+          hint.className = 'hint idle'; hint.innerHTML = '📅 Vol du <b>' + esc(v) + '</b>, vérifiez puis touchez Continuer.';
+          go.disabled = false; go.style.opacity = '1';
         },
       });
       sc.appendChild(i.el); sc.appendChild(hint);
+      go.addEventListener('click', function(){
+        if (!confirmed) { hint.className = 'hint bad'; hint.textContent = yearOnly ? 'Choisissez l\'année du vol.' : 'Indiquez la date du vol.'; return; }
+        var p = confirmed.split('/');
+        S.date = p[2] + '-' + p[1] + '-' + p[0]; // ISO pour le backend
+        S.dateYearUnsure = false; // l'année vient d'être confirmée par le client
+        next();
+      });
+      sc.appendChild(go);
       navRow(sc);
-      setTimeout(function(){ i.focus(); }, 120);
+      setTimeout(function(){ yearOnly ? i.focusYear() : i.focus(); }, 120);
     },
     pax: function(sc){
       sc.innerHTML = '<h2>👪 Combien de passagers ?</h2><p class="sub">Chaque billet compte, jusqu\'à 600 € par personne.</p>';
@@ -865,7 +892,7 @@
       var drop = null;
       if (!isTouch) {
         drop = document.createElement('div'); drop.className = 'drop';
-        drop.innerHTML = '<div class="big">🛂</div><p>Glissez votre passeport ici</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
+        drop.innerHTML = '<div class="big">🛂</div><p>Glissez votre passeport ici</p><small>🔒 chiffré et confidentiel</small>';
         sc.appendChild(drop);
       }
       var tip = document.createElement('div'); tip.style.cssText = 'margin:8px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45';
@@ -877,7 +904,7 @@
       o.appendChild(optButton('<span class="ic">🖼️</span><span>' + (isTouch ? 'Choisir un fichier' : 'Choisir ma pièce') + '<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
       var why = document.createElement('div'); why.className = 'why';
-      why.innerHTML = 'ℹ️ <b>Pourquoi le passeport ?</b> Il sert à deux choses : <b>écrire votre contrat de cession</b> avec votre identité exacte, et <b>prouver à la compagnie que c\'est bien vous</b> qui devez être payé(e). 🔒 Lu pour pré-remplir, jamais revendu, <b>supprimé</b> une fois le dossier réglé.';
+      why.innerHTML = 'ℹ️ <b>Pourquoi le passeport ?</b> Il sert à deux choses : <b>écrire votre contrat de cession</b> avec votre identité exacte, et <b>prouver à la compagnie que c\'est bien vous</b> qui devez être payé(e). 🔒 <b>Chiffré, confidentiel, utilisé seulement pour votre dossier.</b>';
       sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       if (drop) {
@@ -905,7 +932,7 @@
       var drop = null;
       if (!isTouch) {
         drop = document.createElement('div'); drop.className = 'drop';
-        drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 lu par une IA, jamais revendu</small>';
+        drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 chiffré et confidentiel</small>';
         sc.appendChild(drop);
       }
       var tipc = document.createElement('div'); tipc.style.cssText = 'margin:8px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45';
@@ -1000,7 +1027,7 @@
       navRow(sc);
     },
     phone: function(sc){
-      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">On sécurise votre dossier, un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b>.</p>';
+      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">On sécurise votre dossier, un expert vous rappelle depuis le <b style="white-space:nowrap">+33 7 56 86 36 30</b>.</p>';
       // Pays du numéro : champ LIBRE (tapez « france », « sénégal »…) alimenté par une liste mondiale.
       var cw = document.createElement('div');
       cw.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Pays de votre numéro</div>';
@@ -1047,13 +1074,15 @@
       navRow(sc);
     },
     email: function(sc){
-      sc.innerHTML = '<h2>📧 Votre email ?</h2><p class="sub">On vous y envoie votre contrat signé (obligatoire pour la signature électronique).</p>';
+      // Email FACULTATIF (signature SES embarquée) : le backend yousign-init met un email technique + livraison
+      // WhatsApp quand le signataire n'en a pas. On ne bloque donc jamais un client sans email (niche WhatsApp-first).
+      sc.innerHTML = '<h2>📧 Votre email ? <span style="font-weight:500;font-size:14px;color:var(--muted)">(facultatif)</span></h2><p class="sub">On vous y envoie votre <b>contrat signé</b>. Pas d\'email ? <b>On vous l\'envoie sur WhatsApp</b>, ça marche aussi.</p>';
       inputRow(sc, {
         placeholder: 'vous@email.com', type: 'email', inputmode: 'email', autocomplete: 'email', value: S.email,
         validate: function(v){ return (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 254) ? '' : 'Vérifiez votre adresse email.'; },
         done: function(v){ S.email = v; next(); },
       });
-      navRow(sc);
+      navRow(sc, { skip: '📱 Je n\'ai pas d\'email, envoyez-le sur WhatsApp', onSkip: function(){ S.email = ''; next(); } });
     },
     // Signature MANUSCRITE (dessin), signataire principal + chaque co-adulte. Encadré « l'essentiel »
     // en tête + lien vers le contrat complet (pas besoin de le relire en entier dans le tunnel).
@@ -1271,15 +1300,16 @@
     if (!sc) { onDone(); return; }
     var flight = e.flightNum || (e.legs && e.legs.map(function(l){ return l.num; }).filter(Boolean).join(' / ')) || '';
     var route = '';
-    if (e.escale && e.legs && e.legs.length > 1) route = e.legs.map(function(l){ return (l.dep || '?') + ' → ' + (l.arr || '?'); }).join(' · ');
-    else if (e.dep || e.arr) route = (e.dep || '?') + ' → ' + (e.arr || '?');
+    // Codes aéroport « déchiffrés » en ville pour la révélation (« CDG » → « Paris CDG (CDG) »).
+    if (e.escale && e.legs && e.legs.length > 1) route = e.legs.map(function(l){ return (iataToLabel(l.dep) || '?') + ' → ' + (iataToLabel(l.arr) || '?'); }).join(' · ');
+    else if (e.dep || e.arr) route = (iataToLabel(e.dep) || '?') + ' → ' + (iataToLabel(e.arr) || '?');
     var date = e.dateIso ? e.dateIso.split('-').reverse().join('/') : '';
-    var names = (e.passengers && e.passengers.length) ? e.passengers.map(function(p){ return p.name; }).filter(Boolean).join(', ') : '';
+    // On ne révèle QUE le vol (n° / trajet / date). Les noms ne sont pas lus sur la carte d'embarquement
+    // (trop d'erreurs) : l'identité est captée juste après, sur la pièce d'identité.
     var rows = [];
     if (flight) rows.push(['✈️', 'Vol', flight]);
     if (route) rows.push(['🛤️', 'Trajet', route]);
     if (date) rows.push(['📅', 'Date du vol', date]);
-    if (names) rows.push(['👪', (e.pax > 1 || (e.passengers && e.passengers.length > 1)) ? 'Passagers' : 'Passager', names]);
     if (!rows.length) { onDone(); return; }
     sc.innerHTML = '<h2>✨ Billet lu !</h2><p class="sub">On a extrait vos informations automatiquement. Vous les vérifierez juste après.</p>';
     var card = document.createElement('div'); card.className = 'reveal-card';
@@ -1436,11 +1466,11 @@
   // UNIONNÉS (dédoublonnés par nom) ; SEGMENTS collectés, dédoublonnés (même vol = même segment, cas famille)
   // et REMIS DANS L'ORDRE par la correspondance (cartes envoyées en désordre → trajet reconstitué).
   function mergeEtickets(list){
-    var c = { passengers: [], legs: [], escale: false, flightNum: '', dep: '', arr: '', dateIso: '', pnr: '', pax: 0 };
+    var c = { passengers: [], legs: [], escale: false, flightNum: '', dep: '', arr: '', dateIso: '', pnr: '', pax: 0, dateYearUnsure: false };
     var seen = {}, segs = [], segSeen = {};
     list.forEach(function(e){
       if (!e) return;
-      if (!c.dateIso && e.dateIso) c.dateIso = e.dateIso;
+      if (!c.dateIso && e.dateIso) { c.dateIso = e.dateIso; c.dateYearUnsure = (e._source === 'barcode'); } // code-barres = pas d'année fiable
       if (!c.pnr && e.pnr) c.pnr = e.pnr;
       (e.passengers || []).forEach(function(p){
         var key = String(p && p.name || '').trim().toUpperCase().replace(/\s+/g, ' ');
@@ -1511,7 +1541,7 @@
       results.forEach(function(r){ if (r && r.ticketFile) S.ticketFiles.push(r.ticketFile); });
       S.ticketFile = S.ticketFiles[0] || S.ticketFile;
       var etickets = results.map(function(r){ return r.eticket; }).filter(Boolean);
-      if (!etickets.length) { hint.className = 'hint bad'; hint.textContent = 'Carte peu lisible, réessayez avec une photo nette, ou continuez et ajoutez le passager plus tard.'; return; }
+      if (!etickets.length) { hint.className = 'hint bad'; hint.textContent = 'Carte peu lisible, réessayez avec une photo nette, ou continuez (le vol est déjà enregistré).'; return; }
       // Instantané de l'état courant + nouvelles cartes → fusion (union des passagers).
       var cur = {
         flightNum: S.flightNum, dep: S.dep, arr: S.arr, dateIso: S.date, pnr: S.pnr,
@@ -1527,26 +1557,22 @@
     S.pnr = e.pnr || '';
     if (e.escale && e.legs && e.legs.length > 1) {
       S.typeVol = 'escale';
-      S.legs = e.legs.map(function(l){ return { num: l.num || '', dep: l.dep || '', arr: l.arr || '' }; });
+      // Décodage des codes aéroport lus (« CDG » → « Paris CDG (CDG) ») pour un affichage en clair.
+      S.legs = e.legs.map(function(l){ return { num: l.num || '', dep: iataToLabel(l.dep || ''), arr: iataToLabel(l.arr || '') }; });
       S.dep = S.legs[0].dep; S.arr = S.legs[S.legs.length - 1].arr;
       S.flightNum = S.legs.map(function(l){ return l.num; }).filter(Boolean).join(' / ');
     } else {
       S.typeVol = 'direct'; S.legs = [];
-      S.flightNum = e.flightNum || ''; S.dep = e.dep || ''; S.arr = e.arr || '';
+      S.flightNum = e.flightNum || ''; S.dep = iataToLabel(e.dep || ''); S.arr = iataToLabel(e.arr || '');
     }
     if (e.dateIso) S.date = e.dateIso;
-    if (e.passengers && e.passengers.length) {
-      S.pax = e.pax || e.passengers.length;
-      S.names = e.passengers.map(function(p){ return p.name; });
-      S.paxData = e.passengers.map(function(p){
-        var parts = String(p.name || '').trim().split(/\s+/);
-        var nom = parts.length > 1 ? parts.pop() : (parts[0] || '');
-        var prenom = parts.join(' ');
-        return { prenom: prenom.toUpperCase(), nom: nom.toUpperCase(), dob: p.dob || '', minor: !!p.minor };
-      });
-      // Passager 1 : pré-remplit la saisie manuelle (le passeport OCR reste demandé pour la pièce d'identité)
-      if (S.paxData[0]) { S.manualPrenom = S.paxData[0].prenom; S.manualNom = S.paxData[0].nom; }
-    }
+    S.dateYearUnsure = !!e.dateYearUnsure; // code-barres : jour/mois lus, année à confirmer par le client
+    // DÉCISION FONDATEUR : à la capture de la carte d'embarquement, on QUALIFIE seulement le VOL
+    // (n° / trajet / date / PNR). On NE reprend PAS le nom du passager ici : lire un nom (souvent
+    // diaspora) sur une carte d'embarquement génère trop d'erreurs, et l'identité est de toute façon
+    // lue de façon fiable juste après, sur la PIÈCE D'IDENTITÉ (passeport / MRZ), à l'étape « passport »
+    // / « copax ». Le NOMBRE de passagers vient de la question « Combien de passagers ? » posée en amont
+    // (écran 'pax', avant le scan), pas de la carte. Donc on ne touche ni à S.names, ni à S.paxData, ni à S.pax.
   }
   // Page de vérification DÉTAILLÉE, valable pour N'IMPORTE QUEL passager (i = index, 0 = cédant principal).
   // Passager 1 ET co-passagers passent par la MÊME page après scan de leur pièce.
@@ -1576,8 +1602,12 @@
     var adrDefault = p.adresse || (!isMain && S.piece ? (S.piece.adresse || '') : '');
     var adrInp = labeledField(sc, '🏠 ' + (isMain ? 'Votre adresse' : 'Son adresse') + (adrDefault ? '' : ' (non lue, complétez-la)'), adrDefault, false, '10px');
     adrInp.placeholder = 'ex. 12 rue de la Paix, 75002 Paris';
-    var paysInp = labeledField(sc, '🌍 Pays', p.pays || (S.piece && S.piece.pays) || 'France', false, '10px');
-    paysInp.placeholder = 'ex. France, Belgique, Sénégal…';
+    // Pays : PAS de « France » d'office. Lu sur la pièce si présent ; sinon vide → le client choisit (autocomplétion
+    // dès les 1ères lettres, saisie libre si absent). Co-passager sans pays lu : hérite du pays du cédant principal (famille).
+    var paysDefault = p.pays || (!isMain && S.piece ? (S.piece.pays || '') : '');
+    var paysInp = labeledField(sc, '🌍 Pays' + (paysDefault ? '' : ' (sélectionnez ou tapez le vôtre)'), paysDefault, false, '10px');
+    paysInp.placeholder = 'ex. Sénégal, France, Côte d\'Ivoire…';
+    countryAuto(paysInp); // suggestions dès les 1ères lettres + saisie libre si le pays n'est pas dans la liste
     // Enregistre TOUTES les corrections faites sur place (identité + adresse) pour CE passager.
     function saveAll(){
       p.prenom = prenomInp.value.trim();
@@ -1762,7 +1792,7 @@
       + '<div style="text-align:left;margin:16px 0 0;font-size:14px;line-height:1.55;color:var(--ink-soft)">'
         + '<p style="margin:0 0 11px">📄 <b>Votre contrat signé</b>, gardez-en une copie : <a href="' + pdf + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:700">télécharger le PDF →</a></p>'
         + '<p style="margin:0 0 11px">💶 <b>Des frais à cause du vol ?</b> Repas, hôtel, taxi… on les fait rembourser <b>en plus</b> de votre indemnité (art. 9). <a href="' + pieces + '" style="color:var(--neon-ink);font-weight:700">ajouter mes reçus →</a></p>'
-        + '<p style="margin:0">📞 <b>Un expert va vous appeler</b> depuis le <b>+33 7 56 86 36 30</b>. Enregistrez ce numéro sous « Robin des Airs » pour reconnaître notre appel.</p>'
+        + '<p style="margin:0">📞 <b>Un expert va vous appeler</b> depuis le <b style="white-space:nowrap">+33 7 56 86 36 30</b>. Enregistrez ce numéro sous « Robin des Airs » pour reconnaître notre appel.</p>'
       + '</div>'
       + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>'
       + '<p style="font-size:11.5px;color:var(--muted);margin-top:12px">Vous avez 14 jours pour vous rétracter, sans frais · <a href="/retractation.html?r=' + encodeURIComponent(REF) + '" style="color:var(--muted);text-decoration:underline">me rétracter</a></p>';
@@ -1779,7 +1809,7 @@
     _done.innerHTML = '<div class="seal" aria-hidden="true">✓</div>'
       + '<h2>🎉 C\'est signé, merci de votre confiance !</h2>'
       + '<p>On s\'occupe de tout pour récupérer votre argent, <b>vous n\'avancez rien</b>.</p>'
-      + '<p>📞 Un expert vous appelle depuis le <b>+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »).</p>'
+      + '<p>📞 Un expert vous appelle depuis le <b style="white-space:nowrap">+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »).</p>'
       + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>';
     stage.appendChild(_done);
   } else {

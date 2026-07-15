@@ -30,9 +30,13 @@ const OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nat
 Règles (libellé FR / EN équivalent) :
 - nom : nom de famille en MAJUSCULES, LU EN PRIORITÉ DANS LA MRZ (partie AVANT « << »). ⚠️ TRANSCRIS EXACTEMENT chaque lettre telle qu'elle est écrite. Ne "corrige" JAMAIS un nom vers une orthographe plus courante, plus connue ou qui te semble "plus juste", même s'il te paraît inhabituel, rare, mal orthographié ou étranger. Les noms de la diaspora africaine (ex. DIALLO, N'GUÉMA, KODJO, TRAORÉ, SOW, NDIAYE, OUÉDRAOGO, TCHOUAMENI…) se transcrivent TELS QUELS, lettre par lettre — jamais normalisés. Un nom rare EXACT vaut infiniment mieux qu'un nom courant FAUX. Champ "Nom" / "Surname" / "Name" / "Last name".
 - prenom : prénom(s), LUS EN PRIORITÉ DANS LA MRZ (partie APRÈS « << »). MÊME RÈGLE ABSOLUE : transcription EXACTE, lettre par lettre, AUCUNE "correction" ni normalisation vers un prénom plus familier. Champ "Prénom(s)" / "Given name(s)" / "First name(s)" / "Forename(s)".
-- date_naissance : format JJ/MM/AAAA. Champ "Né(e) le" / "Date de naissance" / "Date of birth" / "DOB". Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
+- date_naissance : la DATE DE NAISSANCE du titulaire, format JJ/MM/AAAA. Champ "Né(e) le" / "Date de naissance" / "Date of birth" / "DOB".
+   ⚠️ UN DOCUMENT PORTE TROIS DATES — NE LES CONFONDS JAMAIS : (1) date de NAISSANCE, (2) date de DÉLIVRANCE / D'ÉMISSION ("Date de délivrance" / "Date d'émission" / "Date of issue"), (3) date d'EXPIRATION ("Date d'expiration" / "Valable jusqu'au" / "Date of expiry" / "Valid until"). Les dates de DÉLIVRANCE et d'EXPIRATION ne sont JAMAIS la date de naissance.
+   • SOURCE LA PLUS FIABLE = la MRZ (ligne 2 du passeport, format ICAO) : la date de NAISSANCE est le groupe de 6 chiffres (AAMMJJ) situé JUSTE AVANT la lettre de sexe (M / F / <) ; la date d'EXPIRATION est le groupe de 6 chiffres situé JUSTE APRÈS cette lettre de sexe. Sers-toi de ces POSITIONS pour ne pas les inverser.
+   • Déduis le siècle logiquement : une naissance est TOUJOURS dans le passé et l'âge doit être plausible (0 à ~120 ans). Une "date de naissance" qui tombe dans le FUTUR, ou qui est identique à la date d'expiration ou de délivrance, est FAUSSE → relis la MRZ.
+   • En cas de doute entre plusieurs dates imprimées, la MRZ tranche.
 - lieu_naissance : UNIQUEMENT le champ explicitement étiqueté "Lieu de naissance" / "Né(e) à" / "Place of birth" / "Birth place" (ville, et pays si indiqué). Recopie tel quel. Si aucun champ n'est étiqueté ainsi, mets "" — ne prends JAMAIS une ville de l'adresse ou du domicile.
-- date_expiration : date de fin de validité, format JJ/MM/AAAA. Champ "Date d'expiration" / "Valable jusqu'au" / "Date of expiry" / "Expiration date" / "Valid until" (depuis la MRZ ou le champ imprimé). Si absente, "".
+- date_expiration : date de fin de validité, format JJ/MM/AAAA. Champ "Date d'expiration" / "Valable jusqu'au" / "Date of expiry" / "Expiration date" / "Valid until". Dans la MRZ, c'est le groupe de 6 chiffres (AAMMJJ) situé JUSTE APRÈS la lettre de sexe (M / F / <) — à ne pas confondre avec la date de naissance qui la PRÉCÈDE. Si absente, "".
 - adresse : UNIQUEMENT le champ explicitement étiqueté "Adresse" / "Domicile" / "Address" / "Residential address" (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
 - ATTENTION : lieu_naissance et adresse sont deux champs DIFFÉRENTS — ne mets jamais la même ville dans les deux sauf si les deux champs étiquetés l'indiquent vraiment. Une ville sans étiquette claire = "".
 - pays_adresse : le PAYS DE RÉSIDENCE, UNIQUEMENT s'il est écrit DANS le champ Adresse/Domicile (ex. "France", "Belgique", "Sénégal"). N'utilise JAMAIS la nationalité, le pays émetteur du document ni la MRZ (une personne peut être ressortissante d'un pays et résider dans un autre). Si le pays n'est pas écrit dans l'adresse, "".
@@ -47,8 +51,17 @@ function normalizePassportOcr(p) {
   const prenom = (p.prenom || '').toUpperCase().trim();
   const nom = (p.nom || '').toUpperCase().trim();
   const name = [prenom, nom].filter(Boolean).join(' ').trim();
-  const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
+  let dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
   const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
+  // Garde-fou anti-confusion naissance / délivrance / expiration : une date de naissance est dans le PASSÉ,
+  // avec un âge plausible, et JAMAIS égale à l'expiration. Sinon l'OCR a pris une autre date → on préfère
+  // VIDE (le client la saisit) plutôt qu'une date fausse pré-remplie.
+  const _fr = (d) => { const m = String(d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; };
+  if (dob) {
+    const _d = _fr(dob);
+    const ageYears = _d ? (Date.now() - _d.getTime()) / (365.25 * 864e5) : NaN;
+    if (!_d || ageYears < 0 || ageYears > 120 || (expiry && dob === expiry)) dob = '';
+  }
   const adresse = (p.adresse || '').trim();
   const sx = (p.sexe || '').trim().toUpperCase().charAt(0);
   const sexe = (sx === 'M' || sx === 'F') ? sx : '';
