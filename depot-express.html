@@ -1056,10 +1056,34 @@
       // Contrat COMPLET en accordéon, physiquement sur la page (le plus sûr juridiquement).
       // iframe de la page contrat propre (/documents/mandat-fr), une seule source de vérité, chargée au dépliage.
       var acc = document.createElement('details'); acc.className = 'contract-acc';
-      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance complet</summary><div class="acc-body"><iframe title="Contrat de cession de créance, Robin des Airs" loading="lazy"></iframe></div>';
+      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance, rempli avec vos informations</summary><div class="acc-body"><iframe title="Contrat de cession de créance, Robin des Airs" loading="lazy"></iframe></div>';
       sc.appendChild(acc);
       var _frm = acc.querySelector('iframe');
-      acc.addEventListener('toggle', function(){ if (acc.open && !_frm.getAttribute('src')) _frm.setAttribute('src', '/documents/mandat-fr.html?print=1'); });
+      // Le client doit voir EXACTEMENT ce qu'il signe : on affiche le PDF RÉELLEMENT rempli
+      // (render-mandat-pdf, le même document que Yousign présentera), pas le modèle vierge.
+      var _accDone = false, _accBusy = false;
+      acc.addEventListener('toggle', function(){
+        if (!acc.open || _accDone || _accBusy) return;
+        _accBusy = true;
+        _frm.setAttribute('srcdoc', '<div style="font:14px system-ui;color:#51607A;padding:26px;text-align:center">⏳ On prépare votre contrat rempli…</div>');
+        var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
+        fetch('/api/render-mandat-pdf', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ n: lastName, fn: firstName, vol: S.flightNum, date: S.date, dep: S.dep, arr: S.arr,
+            compagnie: (S.dep && S.arr && !S.flightNum) ? (S.dep + ' → ' + S.arr) : '', pnr: S.pnr || '',
+            email: S.email, phone: S.phone, address: address, indemnite: '600', pax: S.pax, noms: S.names.filter(Boolean).join(',') }),
+        }).then(function(r){ return r.json(); }).then(function(res){
+          if (!res || !res.ok || !res.pdf_base64) throw new Error((res && res.error) || 'indisponible');
+          var bin = atob(res.pdf_base64), len = bin.length, u8 = new Uint8Array(len);
+          for (var b = 0; b < len; b++) u8[b] = bin.charCodeAt(b);
+          var url = URL.createObjectURL(new Blob([u8], { type: 'application/pdf' }));
+          _frm.removeAttribute('srcdoc'); _frm.setAttribute('src', url);
+          _accDone = true; _accBusy = false;
+        }).catch(function(){
+          _accBusy = false;
+          _frm.setAttribute('srcdoc', '<div style="font:13px system-ui;color:#9A3412;padding:22px;line-height:1.6">Aperçu momentanément indisponible. Le <b>contrat complet et rempli</b> vous sera présenté juste après, sur l\'écran de signature. Une question ? <a href="https://wa.me/33756863630">WhatsApp</a>.</div>');
+        });
+      });
       // ── Signature ÉLECTRONIQUE CERTIFIÉE (Yousign embarqué) — plus de dessin ──────────────
       //    Chaque ADULTE signe sa propre signature dans un cadre Yousign, sur cette page (voir submit()).
       //    Les mineurs sont couverts par le parent/tuteur signataire (pas de signature directe).
