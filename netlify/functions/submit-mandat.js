@@ -408,18 +408,7 @@ function buildClientMandatEmailContent(record) {
       : '• Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous si vous souhaitez démarrer avant)',
     '• Suivi : https://robindesairs.eu/suivi-dossier.html',
     '',
-    '🚀 Boostez votre dossier (2 min, recommandé) :',
-    'Certaines compagnies (Air France, Ryanair…) exigent que le passager réclame lui-même une première fois avant tout tiers. Pour verrouiller votre dossier, envoyez le message ci-dessous à la compagnie DEPUIS VOTRE adresse email (via son formulaire « réclamations » ou l\'email de son service client), sans rien y changer :',
-    '──────────────────────────',
-    `Objet : Réclamation — Règlement (CE) n° 261/2004 — vol ${vol} du ${date}`,
-    '',
-    'Madame, Monsieur,',
-    `Passager du vol ${vol} du ${date}${pnr !== '—' ? ` (réservation ${pnr})` : ''}, je vous demande, pour moi-même et les passagers de ma réservation, le versement de l'indemnité forfaitaire prévue à l'article 7 du Règlement (CE) n° 261/2004 à la suite de la perturbation subie sur ce vol, ainsi que, le cas échéant, le remboursement des frais engagés (art. 9, sur justificatifs).`,
-    'Je demande un paiement en numéraire (virement bancaire), à l\'exclusion de tout avoir, bon d\'achat ou miles (art. 7§3 du Règlement).',
-    'Sans réponse favorable sous 14 jours, je poursuivrai le recouvrement par tout moyen utile.',
-    `Cordialement, ${hello}`,
-    '──────────────────────────',
-    'Rien d\'autre à faire ensuite : nous prenons le relais quoi qu\'il arrive.',
+    'Vous, vous ne faites rien : votre créance nous appartient désormais. On écrit à la compagnie, on relance et, s\'il le faut, on va au tribunal en notre nom. Aucun courrier à envoyer, aucune démarche de votre côté — juste votre argent à recevoir.',
     '',
     'Droit de rétractation : 14 jours — contact@robindesairs.eu (objet : Je me rétracte — Réf. ' + ref + ')',
     '',
@@ -468,17 +457,8 @@ function buildClientMandatEmailContent(record) {
   </td></tr>
   <tr><td style="padding:16px 28px 4px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EFF9F4;border:1px solid #cfe6db;border-radius:12px"><tr><td style="padding:14px 16px">
-      <div style="font-size:14px;font-weight:800;color:#0B1F3A;margin:0 0 6px">🚀 Boostez votre dossier (2 min, recommandé)</div>
-      <div style="font-size:12.5px;color:#3a4658;line-height:1.55;margin:0 0 10px">Certaines compagnies (Air France, Ryanair…) exigent que le passager réclame lui-même une première fois. Pour <strong>verrouiller votre dossier</strong>, envoyez le message ci-dessous à la compagnie <strong>depuis votre adresse email</strong> (formulaire «&nbsp;réclamations&nbsp;» ou email du service client), sans rien y changer&nbsp;:</div>
-      <div style="padding:11px 13px;background:#ffffff;border:1px dashed #b8ddc9;border-radius:8px;font-size:12.5px;color:#222;line-height:1.6">
-        <em>Objet : Réclamation — Règlement (CE) n° 261/2004 — vol ${escapeHtml(vol)} du ${escapeHtml(date)}</em><br><br>
-        Madame, Monsieur,<br>
-        Passager du vol ${escapeHtml(vol)} du ${escapeHtml(date)}${pnr !== '—' ? ` (réservation ${escapeHtml(pnr)})` : ''}, je vous demande, pour moi-même et les passagers de ma réservation, le versement de l'indemnité forfaitaire prévue à l'article 7 du Règlement (CE) n° 261/2004 à la suite de la perturbation subie sur ce vol, ainsi que, le cas échéant, le remboursement des frais engagés (art. 9, sur justificatifs).<br>
-        Je demande un paiement en numéraire (virement bancaire), à l'exclusion de tout avoir, bon d'achat ou miles (art. 7§3 du Règlement).<br>
-        Sans réponse favorable sous 14 jours, je poursuivrai le recouvrement par tout moyen utile.<br>
-        Cordialement, ${escapeHtml(hello)}
-      </div>
-      <div style="font-size:12px;color:#51607A;margin:10px 0 0">Rien d'autre à faire ensuite&nbsp;: nous prenons le relais quoi qu'il arrive.</div>
+      <div style="font-size:14px;font-weight:800;color:#0B1F3A;margin:0 0 4px">☕ Vous, vous ne faites rien</div>
+      <div style="font-size:12.5px;color:#3a4658;line-height:1.55">Votre créance nous appartient désormais&nbsp;: on écrit à la compagnie, on relance, et s'il le faut on va au tribunal <strong>en notre nom</strong>. Aucun courrier à envoyer, aucune démarche de votre côté&nbsp;— juste votre argent à recevoir.</div>
     </td></tr></table>
   </td></tr>
   <tr><td style="padding:18px 28px 6px">
