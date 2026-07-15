@@ -1187,9 +1187,11 @@
   }
   // Compression photo ROBUSTE MOBILE : on réduit l'image DÈS le décodage (mémoire minimale, évite le
   // crash « mémoire insuffisante » sur iOS avec les photos 48 Mpx), on libère tout, et on échoue proprement.
-  var MAXPX = 1600, JPEGQ = 0.9; // qualité relevée : petits caractères MRZ (passeport) mieux préservés
-  function encodeDrawable(src, w, h, res, rej){
-    if (Math.max(w, h) > MAXPX) { var k = MAXPX / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
+  var MAXPX = 1600, JPEGQ = 0.9;       // rendu STOCKAGE (léger → upload rapide sur réseau lent diaspora)
+  var OCR_MAXPX = 2200, OCR_Q = 0.92;  // rendu LECTURE : plus net (MRZ passeport / texte) → l'IA lit BEAUCOUP mieux
+  function encodeDrawable(src, w, h, res, rej, mp, qual){
+    mp = mp || MAXPX; qual = qual || JPEGQ;
+    if (Math.max(w, h) > mp) { var k = mp / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
     var c = document.createElement('canvas'); c.width = w; c.height = h;
     try { c.getContext('2d').drawImage(src, 0, 0, w, h); } catch (e) { if (src && src.close) try { src.close(); } catch (_) {} rej(e); return; }
     if (src && src.close) { try { src.close(); } catch (_) {} } // libère l'ImageBitmap tout de suite
@@ -1201,20 +1203,23 @@
         fr.onload = function(){ freeCanvas(); res(String(fr.result).split(',')[1]); };
         fr.onerror = function(){ freeCanvas(); rej(fr.error || new Error('read')); };
         fr.readAsDataURL(blob);
-      }, 'image/jpeg', JPEGQ);
+      }, 'image/jpeg', qual);
     } else {
-      try { var d = c.toDataURL('image/jpeg', JPEGQ).split(',')[1]; freeCanvas(); res(d); } catch (e) { freeCanvas(); rej(e); }
+      try { var d = c.toDataURL('image/jpeg', qual).split(',')[1]; freeCanvas(); res(d); } catch (e) { freeCanvas(); rej(e); }
     }
   }
-  function toJpeg(file){
+  // toJpeg(file, mp, qual) : mp = largeur max (défaut MAXPX=stockage ; OCR_MAXPX pour la lecture). Réduction
+  // DÈS le décodage = correctif mémoire mobile conservé (même à 2200 px on reste loin des 48 Mpx qui crashent iOS).
+  function toJpeg(file, mp, qual){
+    mp = mp || MAXPX;
     return new Promise(function(res, rej){
       // 1) createImageBitmap AVEC réduction dès le décodage = le vrai correctif mémoire mobile.
       if (window.createImageBitmap) {
-        var opt = { resizeWidth: MAXPX, resizeQuality: 'high', imageOrientation: 'from-image' };
-        createImageBitmap(file, opt).then(function(bmp){ encodeDrawable(bmp, bmp.width, bmp.height, res, rej); })
+        var opt = { resizeWidth: mp, resizeQuality: 'high', imageOrientation: 'from-image' };
+        createImageBitmap(file, opt).then(function(bmp){ encodeDrawable(bmp, bmp.width, bmp.height, res, rej, mp, qual); })
           .catch(function(){
             // options resize non supportées → décodage simple puis réduction sur canvas
-            createImageBitmap(file).then(function(bmp){ encodeDrawable(bmp, bmp.width, bmp.height, res, rej); })
+            createImageBitmap(file).then(function(bmp){ encodeDrawable(bmp, bmp.width, bmp.height, res, rej, mp, qual); })
               .catch(function(){ imgFallback(); });
           });
         return;
@@ -1223,7 +1228,7 @@
       // 2) Repli <img> : on LIBÈRE l'URL objet (sinon fuite mémoire cumulée à chaque essai → crash).
       function imgFallback(){
         var img = new Image(), url = URL.createObjectURL(file);
-        img.onload = function(){ try { encodeDrawable(img, img.naturalWidth || img.width, img.naturalHeight || img.height, res, rej); } finally { URL.revokeObjectURL(url); img.src = ''; } };
+        img.onload = function(){ try { encodeDrawable(img, img.naturalWidth || img.width, img.naturalHeight || img.height, res, rej, mp, qual); } finally { URL.revokeObjectURL(url); img.src = ''; } };
         img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error('decode')); };
         img.src = url;
       }
@@ -1240,9 +1245,11 @@
         r.readAsDataURL(file);
         return;
       }
-      toJpeg(file).then(function(b64){
-        var pieceFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'piece') + '.jpg' };
-        fetch('/api/ocr-piece', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) })
+      // LECTURE en HAUTE qualité (OCR_MAXPX) + ARCHIVE compressée séparément (MAXPX) : l'IA lit du net, le dossier reste léger.
+      Promise.all([ toJpeg(file, OCR_MAXPX, OCR_Q), toJpeg(file) ]).then(function(pair){
+        var hi = pair[0], low = pair[1];
+        var pieceFile = { dataBase64: low, mime: 'image/jpeg', filename: (file.name || 'piece') + '.jpg' };
+        fetch('/api/ocr-piece', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: hi, mime: 'image/jpeg' }) })
           .then(function(r){ return r.json(); })
           .then(function(j){ res({ pieceFile: pieceFile, piece: (j && j.ok && j.piece && j.piece.name) ? j.piece : null, pdf: false }); })
           .catch(function(){ res({ pieceFile: pieceFile, piece: null, pdf: false }); });
@@ -1297,6 +1304,80 @@
       setTimeout(function(){ manualName(sc); }, 600);
     });
   }
+  // ════════ VOIE A : lecture DÉTERMINISTE du code-barres de la carte d'embarquement (IATA BCBP) ════════
+  // Le code-barres 2D (PDF417/Aztec/QR) encode EN CLAIR : nom, PNR, vol, date, départ, arrivée.
+  // Décodage = EXACT, zéro IA. Repli AUTOMATIQUE sur l'OCR IA si aucun code-barres lisible → ne casse jamais.
+  // Lib @zxing chargée à la demande depuis jsDelivr (déjà autorisé en CSP). Aucune donnée n'est envoyée à un tiers.
+  var _zxingP = null;
+  function loadZxing(){
+    if (window.ZXing) return Promise.resolve(window.ZXing);
+    if (_zxingP) return _zxingP;
+    _zxingP = new Promise(function(resolve, reject){
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+      s.async = true;
+      s.onload = function(){ window.ZXing ? resolve(window.ZXing) : reject(new Error('zxing absent')); };
+      s.onerror = function(){ reject(new Error('zxing injoignable')); };
+      document.head.appendChild(s);
+    });
+    return _zxingP;
+  }
+  // Julian day-of-year (le code-barres n'a PAS l'année) → ISO. Année déduite = la plus récente rendant la date PASSÉE.
+  function julianToIso(jul){
+    if (!jul || jul < 1 || jul > 366) return '';
+    var now = new Date(), y = now.getFullYear(), d = new Date(y, 0, jul);
+    if (d > now) { y -= 1; d = new Date(y, 0, jul); }
+    return y + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  // Parse une chaîne BCBP (IATA Res.792, leg 1) → objet eticket (même forme qu'applyEticket) ou null.
+  function bcbpToEticket(str){
+    if (!str || str.charAt(0) !== 'M') return null;
+    var name = str.substring(2, 22).trim();               // "NOM/PRENOM"
+    var slash = name.indexOf('/');
+    var nom = slash >= 0 ? name.substring(0, slash).trim() : name;
+    var prenom = slash >= 0 ? name.substring(slash + 1).trim() : '';
+    var b = 23;                                            // début leg 1 (format+nbLegs+nom(20)+indicateur e-ticket)
+    var pnr = str.substring(b, b + 7).trim();
+    var from = str.substring(b + 7, b + 10).trim().toUpperCase();
+    var to = str.substring(b + 10, b + 13).trim().toUpperCase();
+    var carrier = str.substring(b + 13, b + 16).trim().toUpperCase();
+    var fnum = str.substring(b + 16, b + 21).trim().replace(/^0+/, '');
+    var jul = parseInt(str.substring(b + 21, b + 24), 10);
+    if (!/^[A-Z]{3}$/.test(from) || !/^[A-Z]{3}$/.test(to) || carrier.length < 2) return null;
+    var full = ((prenom ? prenom + ' ' : '') + nom).trim();
+    return {
+      pnr: /[A-Z]/.test(pnr) ? pnr.replace(/[^A-Z0-9]/g, '') : '',   // un vrai PNR contient des lettres
+      passengers: full ? [{ name: full }] : [],
+      flightNum: (carrier + fnum).toUpperCase(),
+      dep: from, arr: to,
+      dateIso: julianToIso(jul),
+      _source: 'barcode',
+    };
+  }
+  // Décode le code-barres d'une image de carte d'embarquement → eticket EXACT, ou null (→ repli IA).
+  function decodeBoardingPass(file){
+    if (!file || !/^image\//.test(file.type || '')) return Promise.resolve(null);
+    return loadZxing().then(function(ZX){
+      return new Promise(function(resolve){
+        var url = URL.createObjectURL(file), img = new Image(), done = false;
+        function fin(v){ if (done) return; done = true; try { URL.revokeObjectURL(url); } catch (_) {} resolve(v); }
+        img.onload = function(){
+          try {
+            var hints = new Map();
+            hints.set(ZX.DecodeHintType.POSSIBLE_FORMATS, [ZX.BarcodeFormat.PDF_417, ZX.BarcodeFormat.AZTEC, ZX.BarcodeFormat.QR_CODE]);
+            hints.set(ZX.DecodeHintType.TRY_HARDER, true);
+            var reader = new ZX.BrowserMultiFormatReader(hints);
+            reader.decodeFromImageElement(img)
+              .then(function(r){ fin(bcbpToEticket(r && r.getText ? r.getText() : '')); })
+              .catch(function(){ fin(null); });
+          } catch (e) { fin(null); }
+        };
+        img.onerror = function(){ fin(null); };
+        img.src = url;
+      });
+    }).catch(function(){ return null; });
+  }
+
   // Un fichier → { ticketFile (à joindre), eticket (OCR ou null) }. PDF : joint sans OCR (lecture = photos).
   function ocrOneEticket(file){
     return new Promise(function(res){
@@ -1315,12 +1396,20 @@
         r.readAsDataURL(file);
         return;
       }
-      toJpeg(file).then(function(b64){
-        var tf = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'e-billet') + '.jpg' };
-        fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) })
-          .then(function(r){ return r.json(); })
-          .then(function(j){ res({ ticketFile: tf, eticket: (j && j.ok && j.eticket) ? j.eticket : null }); })
-          .catch(function(){ res({ ticketFile: tf, eticket: null }); });
+      // LECTURE en HAUTE qualité (OCR_MAXPX) + ARCHIVE compressée (MAXPX). Code-barres = sur l'ORIGINALE (voir plus bas).
+      Promise.all([ toJpeg(file, OCR_MAXPX, OCR_Q), toJpeg(file) ]).then(function(pair){
+        var hi = pair[0], low = pair[1];
+        var tf = { dataBase64: low, mime: 'image/jpeg', filename: (file.name || 'e-billet') + '.jpg' };
+        function viaLLM(){
+          fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: hi, mime: 'image/jpeg' }) })
+            .then(function(r){ return r.json(); })
+            .then(function(j){ res({ ticketFile: tf, eticket: (j && j.ok && j.eticket) ? j.eticket : null }); })
+            .catch(function(){ res({ ticketFile: tf, eticket: null }); });
+        }
+        // VOIE A : on tente d'ABORD le code-barres (EXACT) sur la photo d'ORIGINE (qualité max). Repli auto sur l'IA.
+        decodeBoardingPass(file).then(function(e){
+          if (e) { res({ ticketFile: tf, eticket: e }); } else { viaLLM(); }
+        });
       }).catch(function(){ res(null); });
     });
   }

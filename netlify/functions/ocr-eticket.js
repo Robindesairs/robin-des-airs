@@ -174,9 +174,9 @@ function normalize(raw) {
 }
 
 async function visionClaude(b64, mime) {
+  const model = process.env.ETICKET_CLAUDE_MODEL || process.env.PASSPORT_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
   const key = (process.env.ANTHROPIC_API_KEY || '').trim(); if (!key) return null;
   try {
-    const model = process.env.ETICKET_CLAUDE_MODEL || process.env.PASSPORT_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
     // Claude lit les PDF NATIVEMENT (bloc « document ») : un e-billet PDF est désormais extrait comme une photo.
     const media = /pdf/.test(mime)
       ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
@@ -188,7 +188,7 @@ async function visionClaude(b64, mime) {
         media, { type: 'text', text: PROMPT },
       ] }] }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) { console.error('[ocr-eticket] Claude HTTP', res.status); return null; } // visibilité dans les logs Netlify
     const data = await res.json();
     const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
     const m = txt.match(/\{[\s\S]*\}/); return m ? JSON.parse(m[0]) : null;
