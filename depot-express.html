@@ -389,6 +389,9 @@
   var REF = '';
   var INCIDENT_LABEL = { delay: 'Retard +3 h', cancel: 'Annulation', denied: "Refus d'embarquement" };
   function esc(s){ return String(s == null ? '' : s).replace(/[<>&]/g, function(c){ return c==='<'?'&lt;':c==='>'?'&gt;':'&amp;'; }); }
+  // Signal d'abandon avec délai : le PDF est généré par un Chromium headless (~10-16 s). Sans borne, un appel
+  // lent bloquerait l'UI à l'infini (« il se passe plus rien »). Au-delà du délai, le fetch échoue → erreur + repli WhatsApp.
+  function _sig(ms){ var c = new AbortController(); setTimeout(function(){ try { c.abort(); } catch (_) {} }, ms); return c.signal; }
 
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
@@ -498,6 +501,14 @@
     }
     var rows = '';
     var isEsc = S.typeVol === 'escale' && S.legs && S.legs.length;
+    // Champ DATE DU VOL (input natif) : DANS le bloc « Votre vol » pour un vol direct, en ligne à part pour une escale.
+    var _now2 = new Date(); var _todayIso = _now2.getFullYear() + '-' + String(_now2.getMonth() + 1).padStart(2, '0') + '-' + String(_now2.getDate()).padStart(2, '0');
+    var _dateFieldInner = '';
+    if (S.date) {
+      var _t = new Date(); _t.setDate(_t.getDate() + 2);
+      var _maxDate = _t.getFullYear() + '-' + String(_t.getMonth() + 1).padStart(2, '0') + '-' + String(_t.getDate()).padStart(2, '0');
+      _dateFieldInner = '<div class="recap-k">Date du vol</div><input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px">';
+    }
     if (isEsc) {
       var legHtml = S.legs.map(function(l, n){
         var num = l.num ? '<b>' + esc(l.num) + '</b> · ' : '';
@@ -505,19 +516,16 @@
       }).join('');
       rows += row('🔄', 'Votre trajet · ' + S.legs.length + ' vols (correspondance)', legHtml, '__trajet');
     } else {
-      // Vol direct : édition EN PLACE (n° de vol + départ + arrivée), aucun retour en arrière.
+      // Vol direct : UN SEUL bloc « Votre vol » : n° de vol, puis DÉPART / ARRIVÉE SUR UNE MÊME LIGNE, puis la date. Aucun retour en arrière.
       rows += '<div class="recap-row"><div class="recap-ic">✈️</div><div class="recap-main"><div class="recap-k">Votre vol</div>'
         + '<input class="input recap-flightnum" value="' + esc(S.flightNum || '') + '" placeholder="N° de vol (ex. AF718)" style="margin-top:4px;text-transform:uppercase">'
-        + '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="Ville / aéroport de départ" style="margin-top:6px">'
-        + '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="Ville / aéroport d\'arrivée" style="margin-top:6px"></div></div>';
+        + '<div style="display:flex;gap:8px;margin-top:6px">'
+        +   '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="Départ" style="flex:1;min-width:0">'
+        +   '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="Arrivée" style="flex:1;min-width:0">'
+        + '</div>' + (_dateFieldInner ? '<div style="margin-top:10px">' + _dateFieldInner + '</div>' : '') + '</div></div>';
     }
-    if (S.date) {
-      // Date éditable EN PLACE (input date natif). max = aujourd'hui + 2 j (capture aéroport / retard), pas de renvoi à l'écran date.
-      var _t = new Date(); _t.setDate(_t.getDate() + 2);
-      var _maxDate = _t.getFullYear() + '-' + String(_t.getMonth() + 1).padStart(2, '0') + '-' + String(_t.getDate()).padStart(2, '0');
-      rows += '<div class="recap-row"><div class="recap-ic">📅</div><div class="recap-main"><div class="recap-k">Date du vol</div>'
-        + '<input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px"></div></div>';
-    }
+    // Correspondance : la date reste une ligne à part (le trajet a son propre éditeur de tronçons).
+    if (isEsc && _dateFieldInner) rows += '<div class="recap-row"><div class="recap-ic">📅</div><div class="recap-main">' + _dateFieldInner + '</div></div>';
     // Numéro de réservation (PNR), éditable en ligne (souvent mal lu ou absent → le client peut le compléter).
     // Longueur variable selon la compagnie (6 le plus souvent, parfois plus) → pas de bridage strict + « i » explicatif.
     rows += '<div class="recap-row"><div class="recap-ic">🔖</div><div class="recap-main">'
@@ -528,16 +536,19 @@
     if (!opts.skipPax) S.names.forEach(function(nm, i){
       if (!nm) return;
       var pd = S.paxData[i] || {};
-      var meta = (pd.dob ? 'né(e) le ' + esc(pd.dob) : '') + (pd.minor ? (pd.dob ? ', mineur·e' : 'mineur·e') : '');
+      // Date de naissance : stockée en JJ/MM/AAAA → convertie en ISO pour l'input date natif (éditable EN PLACE).
+      var _dobIso = (function(d){ var m = String(d || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + '-' + m[2] + '-' + m[1] : ''; })(pd.dob);
       // Adresse par passager : pré-remplie depuis la pièce (OCR) quand elle y figure (CNI/titre de séjour),
       // sinon à compléter. Sert au contrat de cession et à la mise en demeure. Éditable en ligne.
       var _adr = pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '');
-      // NOM + ADRESSE du MÊME passager, tous deux ÉDITABLES EN PLACE (champ), regroupés dans un encadré. Aucun retour en arrière.
+      // NOM + DATE DE NAISSANCE + ADRESSE du MÊME passager, tous ÉDITABLES EN PLACE, regroupés dans un encadré. Aucun retour en arrière.
       rows += '<div class="recap-pax">'
-        + '<div class="recap-pax-h">🧑 Passager ' + (i + 1) + '</div>'
+        + '<div class="recap-pax-h">🧑 Passager ' + (i + 1) + (pd.minor ? ' <span class="muted" style="font-weight:600;text-transform:none;letter-spacing:0">· mineur·e</span>' : '') + '</div>'
         + '<div class="recap-row"><div class="recap-ic">👤</div><div class="recap-main">'
-        +   '<div class="recap-k">Nom' + (meta ? ' <span class="muted" style="font-weight:400">· ' + meta + '</span>' : '') + '</div>'
-        +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="Prénom NOM" style="margin-top:4px;text-transform:uppercase"></div></div>'
+        +   '<div class="recap-k">Nom</div>'
+        +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="Prénom NOM" style="margin-top:4px;text-transform:uppercase">'
+        +   '<div class="recap-k" style="margin-top:10px">Date de naissance</div>'
+        +   '<input type="date" class="input recap-dobin" data-idx="' + i + '" value="' + esc(_dobIso) + '" max="' + _todayIso + '" style="margin-top:4px"></div></div>'
         + '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
         +   '<div class="recap-k">Adresse <span class="muted" style="font-weight:400">· ' + (_adr ? 'corrigez si besoin' : 'à compléter') + '</span></div>'
         +   '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>'
@@ -568,6 +579,10 @@
     Array.prototype.forEach.call(card.querySelectorAll('.recap-namein'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
       inp.addEventListener('input', function(){ S.names[_i] = inp.value.toUpperCase(); var sp = splitName(inp.value); S.paxData[_i] = Object.assign(S.paxData[_i] || {}, { prenom: sp.prenom, nom: sp.nom }); });
+    });
+    Array.prototype.forEach.call(card.querySelectorAll('.recap-dobin'), function(inp){
+      var _i = parseInt(inp.getAttribute('data-idx'), 10);
+      inp.addEventListener('change', function(){ var m = String(inp.value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); var fr = m ? (m[3] + '/' + m[2] + '/' + m[1]) : ''; S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].dob = fr; S.paxData[_i].minor = fr ? isMinor(fr, S.date) : false; });
     });
     var _ph = card.querySelector('.recap-phonein'); if (_ph) _ph.addEventListener('input', function(){ S.phone = _ph.value.replace(/[^\d+]/g, ''); });
     var _em = card.querySelector('.recap-emailin'); if (_em) _em.addEventListener('input', function(){ S.email = _em.value.trim(); });
@@ -1028,7 +1043,6 @@
     // Le « moteur » : éligibilité (au conditionnel, conforme) + MONTANT, tôt dans le tunnel → dopamine.
     verdict: function(sc){
       var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
-      var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
       var paxTxt = (S.pax > 1) ? (S.pax + ' passagers') : '1 passager';
       var volTxt = S.flightNum || ((S.dep && S.arr) ? (S.dep + ' → ' + S.arr) : '');
       sc.innerHTML = '<h2>🎉 Bonne nouvelle !</h2><p class="sub">Selon nos critères, votre vol' + (volTxt ? ' <b>' + esc(volTxt) + '</b>' : '') + ' semble <b>éligible</b>, un expert le confirme, gratuitement.</p>';
@@ -1036,8 +1050,7 @@
       b.innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Vous pouvez réclamer jusqu\'à</div>'
         + '<div style="font-size:40px;font-weight:800;color:var(--neon-ink);letter-spacing:-1px;margin:2px 0">' + total + ' €</div>'
         + '<div style="font-size:14px;color:var(--navy);font-weight:700">' + (S.pax > 1 ? 'jusqu\'à <b>600 € par personne</b> · ' + paxTxt : paxTxt) + '</div>'
-        + '<div style="font-size:14.5px;color:var(--navy);font-weight:700;margin-top:9px;padding-top:9px;border-top:1px solid var(--green-line)">💶 dont <b>~' + net + ' € pour vous</b> <span style="color:var(--muted);font-weight:600">(75 %, une fois récupéré)</span></div>'
-        + '<div style="font-size:12.5px;color:var(--muted);margin-top:8px">✅ 0 € d\'avance · 0 € sans résultat · on s\'occupe de tout</div>';
+        + '<div style="font-size:12.5px;color:var(--muted);margin-top:9px;padding-top:9px;border-top:1px solid var(--green-line)">✅ 0 € d\'avance · 0 € sans résultat · on s\'occupe de tout</div>';
       sc.appendChild(b);
       var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '4px';
       o.appendChild(optButton('<span class="ic">🚀</span><span>On y va, je récupère mon argent</span>', function(){ next(); }));
@@ -1117,7 +1130,7 @@
       var box = document.createElement('div'); box.className = 'ss-box';
       box.innerHTML = '<div class="ss-h">📝 Ce que vous signez, l\'essentiel</div><ul>'
         + '<li>🤝 Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b>, vous ne gérez rien.</li>'
-        + '<li>💶 Vous recevez <b>75 %</b> du montant récupéré (<b>60 %</b> si tribunal). <b>0 € si rien n\'est récupéré</b>, vous n\'avancez jamais un centime.</li>'
+        + '<li>💶 <b>0 € à payer si rien n\'est récupéré</b> : vous n\'avancez jamais un centime. En cas de succès, vous <b>gardez 75 %</b> de la somme (<b>60 %</b> si le dossier va au tribunal), on se rémunère uniquement sur ce qu\'on récupère pour vous.</li>'
         + '<li>🛡️ Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.</li>'
         + '<li>✍️ <b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez confié votre créance.</li>'
         + '<li>📅 <b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.</li>'
@@ -1135,10 +1148,10 @@
       acc.addEventListener('toggle', function(){
         if (!acc.open || _accDone || _accBusy) return;
         _accBusy = true;
-        _frm.setAttribute('srcdoc', '<div style="font:14px system-ui;color:#51607A;padding:26px;text-align:center">⏳ On prépare votre contrat rempli…</div>');
+        _frm.setAttribute('srcdoc', '<div style="font:14px system-ui;color:#51607A;padding:26px;text-align:center">⏳ On prépare votre contrat rempli…<br><span style="font-size:12px;color:#8592A6">une dizaine de secondes</span></div>');
         var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
         fetch('/api/render-mandat-pdf', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: _sig(30000),
           body: JSON.stringify({ n: lastName, fn: firstName, vol: S.flightNum, date: S.date, dep: S.dep, arr: S.arr,
             compagnie: (S.dep && S.arr && !S.flightNum) ? (S.dep + ' → ' + S.arr) : '', pnr: S.pnr || '',
             email: S.email, phone: S.phone, address: address, indemnite: '600', pax: S.pax, noms: S.names.filter(Boolean).join(',') }),
@@ -1176,6 +1189,11 @@
       go.textContent = '✍️ Signer électroniquement mon dossier';
       sc.appendChild(go);
       var se = document.createElement('div'); se.className = 'suberr'; sc.appendChild(se);
+      // Message d'attente : la génération du contrat + signature prend ~15 s (Chromium headless) → on prévient
+      // pour ne pas que le client croie à un bug (« il se passe plus rien ») et ferme la page.
+      var wait = document.createElement('div'); wait.style.cssText = 'display:none;margin-top:10px;font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.5;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px';
+      wait.innerHTML = '⏳ On génère votre <b>contrat sécurisé</b> et votre <b>signature électronique</b>. Cela prend <b>une quinzaine de secondes</b>, ne fermez pas la page.';
+      sc.appendChild(wait);
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
       rg.innerHTML = '<span>🔒</span><span>Signature électronique certifiée (Yousign) : horodatée, adresse IP enregistrée, document scellé et piste d\'audit. Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
       sc.appendChild(rg);
@@ -1184,9 +1202,9 @@
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
-        go.disabled = true; go.textContent = '⏳ Préparation de la signature…'; se.classList.remove('on');
+        go.disabled = true; go.textContent = '⏳ Préparation en cours…'; se.classList.remove('on'); wait.style.display = 'block';
         submit().catch(function(e){
-          go.disabled = false; go.textContent = '✍️ Signer électroniquement mon dossier';
+          go.disabled = false; go.textContent = '✍️ Signer électroniquement mon dossier'; wait.style.display = 'none';
           se.innerHTML = '⚠️ ' + esc(e.message || 'Signature impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
           se.classList.add('on');
         });
@@ -1696,7 +1714,7 @@
     function doSign(uploadResults){
       var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
       return fetch('/api/render-mandat-pdf', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: _sig(40000),
         body: JSON.stringify({ r: REF, n: lastName, fn: firstName, vol: S.flightNum, date: S.date, dep: S.dep, arr: S.arr,
           compagnie: (S.dep && S.arr && !S.flightNum) ? (S.dep + ' → ' + S.arr) : '', pnr: S.pnr || '', email: S.email, phone: S.phone, address: address, indemnite: '600' }),
       }).then(function(r){ return r.json(); }).then(function(pdfRes){
@@ -1709,7 +1727,7 @@
           else { var p = String(n).trim().split(/\s+/).filter(Boolean); adults.push({ first_name: pd.prenom || p[0] || '', last_name: pd.nom || p.slice(1).join(' ') || '', email: '', phone: S.phone }); }
         });
         return fetch('/api/yousign-init', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: _sig(40000),
           body: JSON.stringify({ first_name: firstName, last_name: lastName, email: S.email, phone: S.phone,
             signers: adults, ref: REF,
             label: 'Contrat de cession Robin des Airs — ' + lastName + ' ' + firstName + ' — vol ' + (S.flightNum || '—'),
