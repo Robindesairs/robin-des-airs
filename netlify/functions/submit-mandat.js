@@ -399,16 +399,19 @@ function buildClientMandatEmailContent(record) {
     pnr !== '—' ? `PNR : ${pnr}` : '',
     `Signé le : ${signed}`,
     '',
-    'Prochaines étapes :',
-    '• Confirmation de votre dossier sous 24 h (WhatsApp ou email)',
+    'Et maintenant, comment ça se passe :',
+    '1. Sous 24 h, un expert vérifie votre dossier et vous rappelle depuis le +33 7 56 86 36 30 (enregistrez ce numéro sous « Robin des Airs »).',
     // L.221-25 C. conso : sans demande EXPRESSE de démarrage immédiat (case startNow), aucune
-    // démarche active pendant le délai de rétractation de 14 jours — la promesse doit suivre.
+    // démarche active pendant le délai de rétractation de 14 jours ; la promesse doit suivre.
     record.startNow
-      ? '• Mise en demeure à la compagnie sous 48 h (démarrage immédiat demandé)'
-      : '• Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous si vous souhaitez démarrer avant)',
-    '• Suivi : https://robindesairs.eu/suivi-dossier.html',
+      ? '2. On écrit à la compagnie en votre nom : mise en demeure sous 48 h (démarrage immédiat demandé).'
+      : '2. On écrit à la compagnie en votre nom : mise en demeure après votre délai de rétractation de 14 jours (répondez-nous pour démarrer avant).',
+    '3. On recouvre votre argent : on négocie, on relance, et si la compagnie refuse on va jusqu\'au tribunal (avocat et huissier à notre charge).',
+    '4. Vous êtes payé : dès l\'argent récupéré, on vous verse votre part (75 %, ou 60 % si tribunal). 0 € si rien n\'est récupéré, vous n\'avancez jamais un centime.',
     '',
-    'De votre côté : rien à faire. On prend votre dossier en main de bout en bout : courrier à la compagnie, relances, et jusqu\'au tribunal s\'il le faut. Aucune démarche de votre côté — juste votre argent à recevoir.',
+    'Combien de temps ? La plupart des dossiers se règlent à l\'amiable, en quelques semaines à quelques mois. Si la compagnie refuse et qu\'il faut passer par le tribunal, comptez 12 à 24 mois. Dans tous les cas, vous n\'avez rien à faire ni à avancer, et on vous tient informé à chaque étape.',
+    '',
+    'Suivi de votre dossier : https://robindesairs.eu/suivi-dossier.html',
     '',
     'Droit de rétractation : 14 jours — contact@robindesairs.eu (objet : Je me rétracte — Réf. ' + ref + ')',
     '',
@@ -447,18 +450,31 @@ function buildClientMandatEmailContent(record) {
     <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:10px;background:#00C87A"><a href="${pdfUrl}" style="display:inline-block;padding:12px 22px;font-size:14.5px;font-weight:800;color:#06351f;text-decoration:none">📄 Mon contrat signé (PDF)</a></td></tr></table>
     <div style="margin:10px 0 0"><a href="https://robindesairs.eu/suivi-dossier.html" style="font-size:13px;font-weight:700;color:#047857;text-decoration:none">📲 Suivre mon dossier →</a></div>
   </td></tr>
-  <tr><td style="padding:18px 28px 4px">
-    <div style="font-size:14.5px;font-weight:800;color:#0B1F3A;margin:0 0 8px">Prochaines étapes</div>
-    <div style="font-size:13.5px;color:#3a4658;line-height:1.6">
-      <div style="margin:0 0 6px">✅ Confirmation de votre dossier sous <strong>24 h</strong> (WhatsApp ou email).</div>
-      <div style="margin:0 0 6px">⚖️ ${escapeHtml(etape2)}</div>
-      <div>📞 Un expert vous rappelle depuis le <strong>+33 7 56 86 36 30</strong> — enregistrez-le sous «&nbsp;Robin des Airs&nbsp;».</div>
-    </div>
+  <tr><td style="padding:20px 28px 4px">
+    <div style="font-size:15px;font-weight:800;color:#0B1F3A;margin:0 0 14px">Et maintenant, comment ça se passe&nbsp;?</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="34" valign="top" style="padding:0 0 14px"><div style="width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#0B1F3A;color:#ffffff;font-size:13px;font-weight:800">1</div></td>
+        <td valign="top" style="padding:2px 0 14px 4px"><div style="font-size:13.5px;font-weight:700;color:#0B1F3A">Sous 24 h, un expert vérifie votre dossier</div><div style="font-size:12.5px;color:#5b6b82;line-height:1.5">Il vous rappelle depuis le <strong>+33&nbsp;7&nbsp;56&nbsp;86&nbsp;36&nbsp;30</strong> (enregistrez ce numéro sous «&nbsp;Robin des Airs&nbsp;»).</div></td>
+      </tr>
+      <tr>
+        <td width="34" valign="top" style="padding:0 0 14px"><div style="width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#0B1F3A;color:#ffffff;font-size:13px;font-weight:800">2</div></td>
+        <td valign="top" style="padding:2px 0 14px 4px"><div style="font-size:13.5px;font-weight:700;color:#0B1F3A">On écrit à la compagnie, en votre nom</div><div style="font-size:12.5px;color:#5b6b82;line-height:1.5">${escapeHtml(etape2)}</div></td>
+      </tr>
+      <tr>
+        <td width="34" valign="top" style="padding:0 0 14px"><div style="width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#0B1F3A;color:#ffffff;font-size:13px;font-weight:800">3</div></td>
+        <td valign="top" style="padding:2px 0 14px 4px"><div style="font-size:13.5px;font-weight:700;color:#0B1F3A">On recouvre votre argent</div><div style="font-size:12.5px;color:#5b6b82;line-height:1.5">On négocie et on relance. Si la compagnie refuse, on va jusqu'au tribunal (avocat et huissier <strong>à notre charge</strong>).</div></td>
+      </tr>
+      <tr>
+        <td width="34" valign="top"><div style="width:26px;height:26px;line-height:26px;text-align:center;border-radius:50%;background:#00C87A;color:#06351f;font-size:13px;font-weight:800">4</div></td>
+        <td valign="top" style="padding:2px 0 0 4px"><div style="font-size:13.5px;font-weight:700;color:#0B1F3A">Vous êtes payé</div><div style="font-size:12.5px;color:#5b6b82;line-height:1.5">Dès l'argent récupéré, on vous verse <strong>votre part (75&nbsp;%, ou 60&nbsp;% si tribunal)</strong>. <strong>0&nbsp;€ si rien n'est récupéré</strong>, vous n'avancez jamais un centime.</div></td>
+      </tr>
+    </table>
   </td></tr>
-  <tr><td style="padding:16px 28px 4px">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EFF9F4;border:1px solid #cfe6db;border-radius:12px"><tr><td style="padding:14px 16px">
-      <div style="font-size:14px;font-weight:800;color:#0B1F3A;margin:0 0 4px">☕ De votre côté : rien à faire</div>
-      <div style="font-size:12.5px;color:#3a4658;line-height:1.55">On prend votre dossier en main de bout en bout&nbsp;: courrier à la compagnie, relances, et jusqu'au tribunal s'il le faut. Aucune démarche de votre côté&nbsp;— juste votre argent à recevoir.</div>
+  <tr><td style="padding:10px 28px 4px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f8fa;border:1px solid #e2e6ee;border-radius:12px"><tr><td style="padding:13px 16px">
+      <div style="font-size:13.5px;font-weight:800;color:#0B1F3A;margin:0 0 4px">⏱️ Combien de temps&nbsp;?</div>
+      <div style="font-size:12.5px;color:#3a4658;line-height:1.55">La plupart des dossiers se règlent <strong>à l'amiable, en quelques semaines à quelques mois</strong>. Si la compagnie refuse et qu'il faut passer par le tribunal, comptez <strong>12 à 24 mois</strong>. Dans tous les cas, <strong>vous n'avez rien à faire ni à avancer</strong>, et on vous tient informé à chaque étape.</div>
     </td></tr></table>
   </td></tr>
   <tr><td style="padding:18px 28px 6px">
