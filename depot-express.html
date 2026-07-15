@@ -490,6 +490,12 @@
       if (pd.dob) extra += ' <span class="muted">· né(e) le ' + esc(pd.dob) + '</span>';
       if (pd.minor) extra += ' <span class="muted">· mineur·e</span>';
       rows += row('🧑', 'Passager ' + (i + 1), '<b>' + esc(nm) + '</b>' + extra, i === 0 ? 'passport' : 'copax');
+      // Adresse par passager : pré-remplie depuis la pièce (OCR) quand elle y figure (CNI/titre de séjour),
+      // sinon à compléter. Sert au contrat de cession et à la mise en demeure. Éditable en ligne.
+      var _adr = pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '');
+      rows += '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
+        + '<div class="recap-k">Adresse du passager ' + (i + 1) + ' <span class="muted" style="font-weight:400">· ' + (_adr ? 'lue sur la pièce, corrigez si besoin' : 'à compléter') + '</span></div>'
+        + '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>';
     });
     if (S.phone) rows += row('📞', 'Téléphone', esc(S.phone), 'phone');
     if (S.email) rows += row('📧', 'Email', esc(S.email), 'email');
@@ -502,6 +508,10 @@
     if (pnrInp) pnrInp.addEventListener('input', function(){ S.pnr = pnrInp.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
     var pnrInfo = card.querySelector('.recap-pnrinfo'), pnrHelp = card.querySelector('.recap-pnrhelp');
     if (pnrInfo && pnrHelp) pnrInfo.addEventListener('click', function(){ pnrHelp.style.display = pnrHelp.style.display === 'none' ? 'block' : 'none'; });
+    Array.prototype.forEach.call(card.querySelectorAll('.recap-addrinp'), function(inp){
+      var _i = parseInt(inp.getAttribute('data-idx'), 10);
+      inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].adresse = inp.value; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = inp.value; } });
+    });
     sc.appendChild(card);
   }
   // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
@@ -920,6 +930,7 @@
             if (r.piece.prenom) pInp.value = r.piece.prenom;
             if (r.piece.nom) nInp.value = r.piece.nom;
             if (r.piece.dob) dobObj.set(r.piece.dob);
+            if (r.piece.adresse) { S.paxData[i] = S.paxData[i] || {}; S.paxData[i].adresse = r.piece.adresse; } // adresse lue sur la pièce (CNI/titre) → récap
             ocrHint.className = 'hint idle'; ocrHint.textContent = ''; // pas de bulle verte : les cases pré-remplies suffisent
           } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible, saisissez à la main.'; }
         });
@@ -1473,7 +1484,7 @@
     var names = S.names.filter(Boolean);
     var passengersData = names.map(function(n, i){
       var pd = S.paxData[i] || {};
-      var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor };
+      var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor, adresse: pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '') };
       if (i === 0) { base.prenom = firstName; base.nom = lastName; base.dob = (S.piece && S.piece.dob) || pd.dob || ''; if (S.piece) base.birth = S.piece.lieuNaissance || ''; base.minor = base.dob ? isMinor(base.dob, S.date) : false; }
       if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
       return base;
