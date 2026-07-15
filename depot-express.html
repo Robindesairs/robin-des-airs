@@ -505,12 +505,19 @@
       }).join('');
       rows += row('🔄', 'Votre trajet · ' + S.legs.length + ' vols (correspondance)', legHtml, '__trajet');
     } else {
-      var vol = S.flightNum ? '<b>' + esc(S.flightNum) + '</b> · ' : '';
-      var trajet = (S.dep || S.arr) ? (vol + esc(S.dep || '?') + ' → ' + esc(S.arr || '?'))
-        : (S.flightNum ? esc(S.flightNum) : '<span class="muted">à compléter</span>');
-      rows += row('✈️', 'Votre vol', trajet, '__trajet');
+      // Vol direct : édition EN PLACE (n° de vol + départ + arrivée), aucun retour en arrière.
+      rows += '<div class="recap-row"><div class="recap-ic">✈️</div><div class="recap-main"><div class="recap-k">Votre vol</div>'
+        + '<input class="input recap-flightnum" value="' + esc(S.flightNum || '') + '" placeholder="N° de vol (ex. AF718)" style="margin-top:4px;text-transform:uppercase">'
+        + '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="Ville / aéroport de départ" style="margin-top:6px">'
+        + '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="Ville / aéroport d\'arrivée" style="margin-top:6px"></div></div>';
     }
-    if (S.date) rows += row('📅', 'Date du vol', esc(S.date.split('-').reverse().join('/')), 'date');
+    if (S.date) {
+      // Date éditable EN PLACE (input date natif). max = aujourd'hui + 2 j (capture aéroport / retard), pas de renvoi à l'écran date.
+      var _t = new Date(); _t.setDate(_t.getDate() + 2);
+      var _maxDate = _t.getFullYear() + '-' + String(_t.getMonth() + 1).padStart(2, '0') + '-' + String(_t.getDate()).padStart(2, '0');
+      rows += '<div class="recap-row"><div class="recap-ic">📅</div><div class="recap-main"><div class="recap-k">Date du vol</div>'
+        + '<input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px"></div></div>';
+    }
     // Numéro de réservation (PNR), éditable en ligne (souvent mal lu ou absent → le client peut le compléter).
     // Longueur variable selon la compagnie (6 le plus souvent, parfois plus) → pas de bridage strict + « i » explicatif.
     rows += '<div class="recap-row"><div class="recap-ic">🔖</div><div class="recap-main">'
@@ -521,28 +528,27 @@
     if (!opts.skipPax) S.names.forEach(function(nm, i){
       if (!nm) return;
       var pd = S.paxData[i] || {};
-      var extra = '';
-      if (pd.dob) extra += ' <span class="muted">· né(e) le ' + esc(pd.dob) + '</span>';
-      if (pd.minor) extra += ' <span class="muted">· mineur·e</span>';
+      var meta = (pd.dob ? 'né(e) le ' + esc(pd.dob) : '') + (pd.minor ? (pd.dob ? ', mineur·e' : 'mineur·e') : '');
       // Adresse par passager : pré-remplie depuis la pièce (OCR) quand elle y figure (CNI/titre de séjour),
       // sinon à compléter. Sert au contrat de cession et à la mise en demeure. Éditable en ligne.
       var _adr = pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '');
-      // NOM + ADRESSE du MÊME passager REGROUPÉS dans un seul encadré (« recap-pax ») pour éviter la confusion
-      // nom↔adresse quand il y a plusieurs passagers (avant : deux lignes indépendantes qui se mélangeaient).
+      // NOM + ADRESSE du MÊME passager, tous deux ÉDITABLES EN PLACE (champ), regroupés dans un encadré. Aucun retour en arrière.
       rows += '<div class="recap-pax">'
         + '<div class="recap-pax-h">🧑 Passager ' + (i + 1) + '</div>'
         + '<div class="recap-row"><div class="recap-ic">👤</div><div class="recap-main">'
-        +   '<div class="recap-k">Nom</div><div class="recap-v"><b>' + esc(nm) + '</b>' + extra + '</div></div>'
-        +   '<button type="button" class="recap-edit" data-k="' + (i === 0 ? 'passport' : 'copax') + '">Modifier</button></div>'
+        +   '<div class="recap-k">Nom' + (meta ? ' <span class="muted" style="font-weight:400">· ' + meta + '</span>' : '') + '</div>'
+        +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="Prénom NOM" style="margin-top:4px;text-transform:uppercase"></div></div>'
         + '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
         +   '<div class="recap-k">Adresse <span class="muted" style="font-weight:400">· ' + (_adr ? 'corrigez si besoin' : 'à compléter') + '</span></div>'
         +   '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>'
         + '</div>';
     });
-    if (S.phone) rows += row('📞', 'Téléphone', esc(S.phone), 'phone');
-    if (S.email) rows += row('📧', 'Email', esc(S.email), 'email');
+    if (S.phone) rows += '<div class="recap-row"><div class="recap-ic">📞</div><div class="recap-main"><div class="recap-k">Téléphone</div>'
+      + '<input class="input recap-phonein" type="tel" value="' + esc(S.phone) + '" placeholder="+33 6 12 34 56 78" style="margin-top:4px"></div></div>';
+    if (S.email) rows += '<div class="recap-row"><div class="recap-ic">📧</div><div class="recap-main"><div class="recap-k">Email</div>'
+      + '<input class="input recap-emailin" type="email" value="' + esc(S.email) + '" placeholder="vous@email.com" style="margin-top:4px"></div></div>';
     card.innerHTML = '<div class="recap-h">🧾 Votre dossier, en clair, vérifiez avant de signer</div>' + rows
-      + '<div class="recap-foot">Une info fausse ? Touchez « Modifier ». Même remplie par la carte d\'embarquement, tout reste corrigeable.</div>';
+      + '<div class="recap-foot">Une info à corriger ? Modifiez-la directement ci-dessus, tout reste éditable.</div>';
     Array.prototype.forEach.call(card.querySelectorAll('.recap-edit'), function(b){
       b.addEventListener('click', function(){ var k = b.getAttribute('data-k'); if (k === '__trajet') editTrajet(); else jump(k); });
     });
@@ -554,6 +560,17 @@
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
       inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].adresse = inp.value; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = inp.value; } });
     });
+    // ── Édition EN PLACE des autres champs (vol direct, date, noms, téléphone, email) : plus de retour en arrière ──
+    var _fn = card.querySelector('.recap-flightnum'); if (_fn) _fn.addEventListener('input', function(){ S.flightNum = _fn.value.toUpperCase().replace(/\s+/g, ''); });
+    var _dep = card.querySelector('.recap-dep'); if (_dep) { airportAuto(_dep); _dep.addEventListener('input', function(){ S.dep = _dep.value.trim(); }); }
+    var _arr = card.querySelector('.recap-arr'); if (_arr) { airportAuto(_arr); _arr.addEventListener('input', function(){ S.arr = _arr.value.trim(); }); }
+    var _dt = card.querySelector('.recap-datein'); if (_dt) _dt.addEventListener('change', function(){ if (/^\d{4}-\d{2}-\d{2}$/.test(_dt.value)) S.date = _dt.value; });
+    Array.prototype.forEach.call(card.querySelectorAll('.recap-namein'), function(inp){
+      var _i = parseInt(inp.getAttribute('data-idx'), 10);
+      inp.addEventListener('input', function(){ S.names[_i] = inp.value.toUpperCase(); var sp = splitName(inp.value); S.paxData[_i] = Object.assign(S.paxData[_i] || {}, { prenom: sp.prenom, nom: sp.nom }); });
+    });
+    var _ph = card.querySelector('.recap-phonein'); if (_ph) _ph.addEventListener('input', function(){ S.phone = _ph.value.replace(/[^\d+]/g, ''); });
+    var _em = card.querySelector('.recap-emailin'); if (_em) _em.addEventListener('input', function(){ S.email = _em.value.trim(); });
     sc.appendChild(card);
   }
   // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
