@@ -658,7 +658,7 @@
       // VOL DIRECT : numéro + ville de départ + ville d'arrivée sur un écran
       sc.innerHTML = '<h2>✈️ Votre vol</h2><p class="sub">Le numéro de vol et le trajet (départ → arrivée).</p>';
       var num = labeledField(sc, 'Numéro de vol', S.flightNum, true); num.placeholder = 'ex. AF718';
-      var numHelp = document.createElement('div'); numHelp.className = 'hint idle'; numHelp.style.margin = '2px 0 0'; numHelp.innerHTML = '2 lettres (la compagnie) + des chiffres, ex. <b>AF718</b>. C\'est écrit sur votre billet.'; sc.appendChild(numHelp);
+      var numHelp = document.createElement('div'); numHelp.className = 'hint idle'; numHelp.style.margin = '2px 0 0'; numHelp.style.display = 'block'; numHelp.innerHTML = '2 lettres et des chiffres, par exemple <b>AF718</b>, comme sur votre billet.'; sc.appendChild(numHelp); // display:block : .hint est en flex, sans ça le &lt;b&gt; devient un flex-item et casse la ligne
       var dep = labeledField(sc, 'Ville / aéroport de départ', S.dep, false, '10px'); dep.placeholder = 'ex. Dakar…'; airportAuto(dep);
       var arr = labeledField(sc, 'Ville / aéroport d\'arrivée', S.arr, false, '10px'); arr.placeholder = 'ex. Paris…'; airportAuto(arr);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
@@ -1087,9 +1087,9 @@
     // Signature MANUSCRITE (dessin), signataire principal + chaque co-adulte. Encadré « l'essentiel »
     // en tête + lien vers le contrat complet (pas besoin de le relire en entier dans le tunnel).
     sign: function(sc){
-      var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
-      var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
-      sc.innerHTML = '<h2>✍️ Dernière étape : signez</h2><p class="sub">On récupère jusqu\'à <b>' + total + ' €</b>, soit <b>' + net + ' € pour vous</b> (75 %). Vérifiez votre dossier ci-dessous, puis signez.</p>';
+      // Pas de rappel du prix ici (les concurrents n'affichent pas de prix à la signature) : le montant est déjà
+      // montré à l'écran d'éligibilité, et la commission figure dans « ce que vous signez, l'essentiel » + le contrat.
+      sc.innerHTML = '<h2>✍️ Dernière étape : signez</h2><p class="sub">Vérifiez votre dossier ci-dessous, puis signez.</p>';
       // Récap CONCRET du dossier (vol, trajet, passagers, contact), chaque ligne modifiable.
       recapCard(sc);
       // Encadré « l'essentiel » (repris du mandat) + lien contrat complet
@@ -1267,7 +1267,7 @@
   // le passager 1 ET chaque co-passager (chacun peut déposer son passeport, pas seulement le 1er).
   function fileToPiece(file){
     return new Promise(function(res){
-      if (/pdf$/i.test(file.type)) {
+      if (/pdf$/i.test(file.type || '') || /\.pdf$/i.test(file.name || '')) { // PDF détecté par type OU extension (certains navigateurs ne renseignent pas file.type)
         var r = new FileReader();
         r.onload = function(){ res({ pieceFile: { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'piece.pdf' }, piece: null, pdf: true }); };
         r.onerror = function(){ res(null); };
@@ -1411,7 +1411,7 @@
   // Un fichier → { ticketFile (à joindre), eticket (OCR ou null) }. PDF : joint sans OCR (lecture = photos).
   function ocrOneEticket(file){
     return new Promise(function(res){
-      if (/pdf$/i.test(file.type)) {
+      if (/pdf$/i.test(file.type || '') || /\.pdf$/i.test(file.name || '')) { // PDF détecté par type OU extension (certains navigateurs ne renseignent pas file.type)
         var r = new FileReader();
         r.onload = function(){
           var b64pdf = String(r.result).split(',')[1];
@@ -1763,6 +1763,37 @@
       })).then(function(results){ return doSign(results); }); // pièces envoyées → PDF + signature Yousign embarquée
     });
   }
+  // Envoi du JUSTIFICATIF DE FILIATION (post-signature, dossier avec mineur) : livret de famille / acte de
+  // naissance avec filiation. Images compressées (toJpeg) pour tenir sous ~4 Mo, PDF envoyé tel quel ;
+  // plusieurs pages acceptées. Stocké au dossier avec kind='filiation' (remonte au CRM). Repli WhatsApp si échec.
+  function sendFiliation(fileList, hint, btn){
+    var files = Array.prototype.slice.call(fileList || []).filter(Boolean);
+    if (!files.length) return;
+    hint.className = 'hint idle'; hint.textContent = 'Envoi du justificatif…';
+    function prep(file){
+      return new Promise(function(res){
+        if (/pdf$/i.test(file.type || '') || /\.pdf$/i.test(file.name || '')) {
+          var r = new FileReader();
+          r.onload = function(){ res({ dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'filiation.pdf' }); };
+          r.onerror = function(){ res(null); }; r.readAsDataURL(file); return;
+        }
+        toJpeg(file).then(function(b64){ res({ dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'filiation') + '.jpg' }); }).catch(function(){ res(null); });
+      });
+    }
+    Promise.all(files.map(prep)).then(function(parts){
+      parts = parts.filter(Boolean);
+      return Promise.all(parts.map(function(p){
+        return fetch('/api/depot-upload', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ref: REF, filename: 'livret-filiation-' + p.filename, mime: p.mime, dataBase64: p.dataBase64, kind: 'filiation', passenger: '' }),
+        }).then(function(r){ return !!r.ok; }).catch(function(){ return false; });
+      }));
+    }).then(function(oks){
+      var ok = oks.filter(Boolean).length, tot = oks.length;
+      if (tot && ok === tot) { hint.className = 'hint ok'; hint.textContent = '✅ Justificatif bien reçu (' + ok + ' page' + (ok > 1 ? 's' : '') + '), merci.'; if (btn) btn.textContent = '📎 Ajouter d\'autres pages'; }
+      else { hint.className = 'hint bad'; hint.innerHTML = 'Envoi incomplet. Réessayez, ou envoyez-le sur <a href="https://wa.me/33756863630" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:700">WhatsApp</a>.'; }
+    });
+  }
   // Écran de confirmation UNIQUE après signature, calqué sur le message « C'est signé » du bot WhatsApp
   // (sendSignedConfirmation). Le client RESTE ici : aucune redirection automatique vers la page de dépôt
   // (les pièces ont déjà été collectées dans le tunnel ; le lien reçus reste facultatif).
@@ -1780,6 +1811,17 @@
       + '<div style="font-weight:800;color:#0B1F3A;margin-bottom:6px">📋 Ce qui est enregistré dans votre dossier</div>'
       + results.map(function(x){ return '<div style="padding:5px 0;font-weight:700;color:' + (x.ok ? '#0b7a5b' : '#b45309') + '">' + (x.ok ? '✅' : '⚠️') + ' ' + esc(x.label) + ' : ' + (x.ok ? 'bien reçu' : 'non transmis') + '</div>'; }).join('')
       + '</div>') : '';
+    // Filiation (APRÈS signature) : si le dossier contient un mineur, on demande le livret de famille / acte de
+    // naissance avec filiation (preuve que le parent signe bien pour l'enfant). Affiché UNIQUEMENT s'il y a un mineur.
+    var hasMinor = (S.paxData || []).some(function(pd){ return pd && pd.minor; });
+    var filiationBlock = hasMinor
+      ? '<div style="text-align:left;margin:16px 0 0;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px">'
+        + '<div style="font-weight:800;color:#0B1F3A;margin-bottom:5px">👶 Votre réservation contient un enfant mineur</div>'
+        + '<p style="margin:0 0 9px;font-size:13.5px;line-height:1.5;color:var(--ink-soft)">Pour finaliser votre dossier, ajoutez le <b>livret de famille</b> (pages parents + enfants) ou, à défaut, l\'<b>acte de naissance avec filiation</b> du mineur. Cela prouve que vous signez bien en son nom.</p>'
+        + '<button type="button" id="filiationBtn" class="btn" style="margin:0">📎 Ajouter le justificatif</button>'
+        + '<div id="filiationHint" class="hint idle" style="margin-top:8px"></div>'
+        + '</div>'
+      : '';
     var sc = document.createElement('div'); sc.className = 'screen done'; sc.style.display = 'block';
     sc.innerHTML = '<div class="seal" aria-hidden="true">' + (failed.length ? '!' : '✓') + '</div>'
       + '<h2>' + (failed.length ? 'C\'est signé, une pièce à finir' : '🎉 C\'est signé, merci de votre confiance !') + '</h2>'
@@ -1789,6 +1831,7 @@
       + (failed.length
           ? '<p>⚠️ Une pièce n\'est pas passée (souvent un fichier trop lourd). Envoyez-la en 10 secondes sur WhatsApp, on la range dans votre dossier.</p><a class="cta-link" href="' + waHref + '" target="_blank" rel="noopener">📲 Envoyer la pièce manquante sur WhatsApp →</a>'
           : '')
+      + filiationBlock
       + '<div style="text-align:left;margin:16px 0 0;font-size:14px;line-height:1.55;color:var(--ink-soft)">'
         + '<p style="margin:0 0 11px">📄 <b>Votre contrat signé</b>, gardez-en une copie : <a href="' + pdf + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:700">télécharger le PDF →</a></p>'
         + '<p style="margin:0 0 11px">💶 <b>Des frais à cause du vol ?</b> Repas, hôtel, taxi… on les fait rembourser <b>en plus</b> de votre indemnité (art. 9). <a href="' + pieces + '" style="color:var(--neon-ink);font-weight:700">ajouter mes reçus →</a></p>'
@@ -1797,6 +1840,11 @@
       + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>'
       + '<p style="font-size:11.5px;color:var(--muted);margin-top:12px">Vous avez 14 jours pour vous rétracter, sans frais · <a href="/retractation.html?r=' + encodeURIComponent(REF) + '" style="color:var(--muted);text-decoration:underline">me rétracter</a></p>';
     stage.appendChild(sc);
+    // Câblage de l'upload du justificatif de filiation (si mineur) : réutilise l'input fichier caché.
+    if (hasMinor) {
+      var fBtn = document.getElementById('filiationBtn'), fHint = document.getElementById('filiationHint');
+      if (fBtn) fBtn.addEventListener('click', function(){ var fi = $('fileInp'); fi.multiple = true; fi.value = ''; fi.onchange = function(){ sendFiliation(fi.files, fHint, fBtn); }; fi.click(); });
+    }
     window.scrollTo({ top: 0 });
   }
 
