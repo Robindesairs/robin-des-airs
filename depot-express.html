@@ -1099,7 +1099,7 @@
       sc.appendChild(adultsInfo);
 
       function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
-      var ck0 = ckRow("Je <b>déclare avoir été passager(e)</b> du vol indiqué et je <b>cède ma créance</b> à Robin des Airs afin qu'elle récupère les sommes qui me sont dues.");
+      var ck0 = ckRow("Je <b>déclare être le passager titulaire du billet</b> du vol indiqué et je <b>cède ma créance, née ou à naître</b>, à Robin des Airs afin qu'elle récupère les sommes qui me seraient dues au titre de ce vol.");
       var ck1 = ckRow("J'ai <b>lu et j'accepte</b> le <b>contrat de cession</b> ci-dessus, les <a href='/cgv.html' target='_blank' rel='noopener'>CGV</a> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a> ; je <b>comprends que l'indemnité n'est pas garantie</b>.");
       var ck3 = ckRow("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25), je reste libre de me rétracter, sans frais." + (S.pax > 1 ? " <span style='color:var(--muted)'>Cette demande vaut pour tous les passagers du dossier.</span>" : ""));
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
