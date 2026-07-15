@@ -404,8 +404,8 @@ function buildClientMandatEmailContent(record) {
     // L.221-25 C. conso : sans demande EXPRESSE de démarrage immédiat (case startNow), aucune
     // démarche active pendant le délai de rétractation de 14 jours ; la promesse doit suivre.
     record.startNow
-      ? '2. On envoie la mise en demeure à la compagnie : sous 48 h (démarrage immédiat demandé).'
-      : '2. On envoie la mise en demeure à la compagnie : après votre délai de rétractation de 14 jours (répondez-nous pour démarrer avant).',
+      ? '2. On envoie la mise en demeure à la compagnie, sans attendre (vous avez demandé le démarrage immédiat).'
+      : '2. On envoie la mise en demeure à la compagnie, dès que votre dossier est prêt, sans que vous ayez la moindre démarche à faire.',
     '3. On recouvre votre argent : on négocie, on relance, et si la compagnie refuse on va jusqu\'au tribunal (avocat et huissier à notre charge).',
     '4. Vous êtes payé : dès l\'argent récupéré, on vous verse votre part (75 %, ou 60 % si tribunal). 0 € si rien n\'est récupéré, vous n\'avancez jamais un centime.',
     '',
@@ -423,8 +423,8 @@ function buildClientMandatEmailContent(record) {
 
   const pdfUrl = `https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}`;
   const etape2 = record.startNow
-    ? 'Mise en demeure à la compagnie sous 48 h (démarrage immédiat demandé).'
-    : 'Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous pour démarrer avant).';
+    ? 'Sans attendre, puisque vous avez demandé le démarrage immédiat.'
+    : 'Dès que votre dossier est prêt, sans que vous ayez la moindre démarche à faire.';
   // ── Email de confirmation PREMIUM (tables + styles inline = compatible tous clients mail) ──
   const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"></head>
 <body style="margin:0;padding:0;background:#eef1f4;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0B1F3A">
