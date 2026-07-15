@@ -429,42 +429,68 @@ function buildClientMandatEmailContent(record) {
     'Robin des Airs — Votre droit, notre mission.',
   ].filter(Boolean).join('\n');
 
-  const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;color:#111;max-width:560px;line-height:1.55">
-<p>Bonjour <strong>${escapeHtml(hello)}</strong>,</p>
-<p>Nous avons bien enregistré la <strong>signature de votre contrat de cession de créance</strong> Robin des Airs.</p>
-<table style="border-collapse:collapse;margin:16px 0;background:#f8f6f0;border:1px solid #e0dcc8">
-<tr><td style="padding:8px 12px;color:#666;font-size:13px">Référence</td><td style="padding:8px 12px;font-size:13px"><strong>${escapeHtml(ref)}</strong></td></tr>
-<tr><td style="padding:8px 12px;color:#666;font-size:13px">Vol</td><td style="padding:8px 12px;font-size:13px"><strong>${escapeHtml(vol)}</strong> — ${escapeHtml(date)}</td></tr>
-<tr><td style="padding:8px 12px;color:#666;font-size:13px">Compagnie</td><td style="padding:8px 12px;font-size:13px">${escapeHtml(cie)}</td></tr>
-${pnr !== '—' ? `<tr><td style="padding:8px 12px;color:#666;font-size:13px">PNR</td><td style="padding:8px 12px;font-size:13px">${escapeHtml(pnr)}</td></tr>` : ''}
-<tr><td style="padding:8px 12px;color:#666;font-size:13px">Signé le</td><td style="padding:8px 12px;font-size:13px">${escapeHtml(signed)}</td></tr>
+  const pdfUrl = `https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}`;
+  const etape2 = record.startNow
+    ? 'Mise en demeure à la compagnie sous 48 h (démarrage immédiat demandé).'
+    : 'Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous pour démarrer avant).';
+  // ── Email de confirmation PREMIUM (tables + styles inline = compatible tous clients mail) ──
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light only"></head>
+<body style="margin:0;padding:0;background:#eef1f4;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0B1F3A">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">C'est signé — on s'occupe de tout pour récupérer votre indemnité, vous n'avancez rien.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f4"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(11,31,58,.12)">
+  <tr><td style="background:#0B1F3A;padding:20px 28px" align="left"><span style="font-size:17px;font-weight:800;letter-spacing:.3px;color:#ffffff">Robin <span style="color:#00C87A">des Airs</span> 🏹</span></td></tr>
+  <tr><td align="center" style="padding:32px 28px 8px">
+    <div style="width:64px;height:64px;line-height:64px;border-radius:50%;background:#EFF9F4;border:2px solid #00C87A;color:#047857;font-size:34px;font-weight:800;margin:0 auto 14px">&#10003;</div>
+    <div style="font-size:22px;font-weight:800;color:#0B1F3A;margin:0 0 6px">C'est signé, merci de votre confiance&nbsp;!</div>
+    <div style="font-size:14.5px;color:#51607A;line-height:1.55;max-width:430px;margin:0 auto">Bonjour <strong>${escapeHtml(hello)}</strong>, votre <strong>contrat de cession de créance</strong> est bien enregistré. On s'occupe de tout pour récupérer votre argent&nbsp;— <strong>vous n'avancez rien</strong>.</div>
+  </td></tr>
+  <tr><td style="padding:18px 28px 6px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f8fa;border:1px solid #e2e6ee;border-radius:12px">
+      <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;width:42%">Référence</td><td style="padding:11px 16px;font-size:13.5px;font-weight:700;color:#0B1F3A">${escapeHtml(ref)}</td></tr>
+      <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Vol</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2"><strong>${escapeHtml(vol)}</strong> — ${escapeHtml(date)}</td></tr>
+      <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Compagnie</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(cie)}</td></tr>
+      ${pnr !== '—' ? `<tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Réservation</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(pnr)}</td></tr>` : ''}
+      <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Signé le</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(signed)}</td></tr>
+    </table>
+  </td></tr>
+  <tr><td align="center" style="padding:16px 28px 4px">
+    <table role="presentation" cellpadding="0" cellspacing="0"><tr><td style="border-radius:10px;background:#00C87A"><a href="${pdfUrl}" style="display:inline-block;padding:12px 22px;font-size:14.5px;font-weight:800;color:#06351f;text-decoration:none">📄 Mon contrat signé (PDF)</a></td></tr></table>
+    <div style="margin:10px 0 0"><a href="https://robindesairs.eu/suivi-dossier.html" style="font-size:13px;font-weight:700;color:#047857;text-decoration:none">📲 Suivre mon dossier →</a></div>
+  </td></tr>
+  <tr><td style="padding:18px 28px 4px">
+    <div style="font-size:14.5px;font-weight:800;color:#0B1F3A;margin:0 0 8px">Prochaines étapes</div>
+    <div style="font-size:13.5px;color:#3a4658;line-height:1.6">
+      <div style="margin:0 0 6px">✅ Confirmation de votre dossier sous <strong>24 h</strong> (WhatsApp ou email).</div>
+      <div style="margin:0 0 6px">⚖️ ${escapeHtml(etape2)}</div>
+      <div>📞 Un expert vous rappelle depuis le <strong>+33 7 56 86 36 30</strong> — enregistrez-le sous «&nbsp;Robin des Airs&nbsp;».</div>
+    </div>
+  </td></tr>
+  <tr><td style="padding:16px 28px 4px">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EFF9F4;border:1px solid #cfe6db;border-radius:12px"><tr><td style="padding:14px 16px">
+      <div style="font-size:14px;font-weight:800;color:#0B1F3A;margin:0 0 6px">🚀 Boostez votre dossier (2 min, recommandé)</div>
+      <div style="font-size:12.5px;color:#3a4658;line-height:1.55;margin:0 0 10px">Certaines compagnies (Air France, Ryanair…) exigent que le passager réclame lui-même une première fois. Pour <strong>verrouiller votre dossier</strong>, envoyez le message ci-dessous à la compagnie <strong>depuis votre adresse email</strong> (formulaire «&nbsp;réclamations&nbsp;» ou email du service client), sans rien y changer&nbsp;:</div>
+      <div style="padding:11px 13px;background:#ffffff;border:1px dashed #b8ddc9;border-radius:8px;font-size:12.5px;color:#222;line-height:1.6">
+        <em>Objet : Réclamation — Règlement (CE) n° 261/2004 — vol ${escapeHtml(vol)} du ${escapeHtml(date)}</em><br><br>
+        Madame, Monsieur,<br>
+        Passager du vol ${escapeHtml(vol)} du ${escapeHtml(date)}${pnr !== '—' ? ` (réservation ${escapeHtml(pnr)})` : ''}, je vous demande, pour moi-même et les passagers de ma réservation, le versement de l'indemnité forfaitaire prévue à l'article 7 du Règlement (CE) n° 261/2004 à la suite de la perturbation subie sur ce vol, ainsi que, le cas échéant, le remboursement des frais engagés (art. 9, sur justificatifs).<br>
+        Je demande un paiement en numéraire (virement bancaire), à l'exclusion de tout avoir, bon d'achat ou miles (art. 7§3 du Règlement).<br>
+        Sans réponse favorable sous 14 jours, je poursuivrai le recouvrement par tout moyen utile.<br>
+        Cordialement, ${escapeHtml(hello)}
+      </div>
+      <div style="font-size:12px;color:#51607A;margin:10px 0 0">Rien d'autre à faire ensuite&nbsp;: nous prenons le relais quoi qu'il arrive.</div>
+    </td></tr></table>
+  </td></tr>
+  <tr><td style="padding:18px 28px 6px">
+    <div style="font-size:12px;color:#8a94a6;line-height:1.6">Rétractation possible sous 14 jours&nbsp;: <a href="mailto:contact@robindesairs.eu?subject=${encodeURIComponent('Rétractation — Réf. ' + ref)}" style="color:#047857">contact@robindesairs.eu</a><br>Une question&nbsp;? <a href="mailto:expert@robindesairs.eu" style="color:#047857">expert@robindesairs.eu</a> · <a href="https://wa.me/33756863630" style="color:#047857">WhatsApp</a></div>
+  </td></tr>
+  <tr><td style="background:#0B1F3A;padding:16px 28px" align="center"><div style="font-size:12px;color:#9fb0c4">Robin <span style="color:#00C87A">des Airs</span> 🏹 — On prend aux compagnies, on rend aux familles.</div></td></tr>
 </table>
-<p><strong>Prochaines étapes</strong></p>
-<ul style="margin:0 0 16px;padding-left:20px;font-size:14px">
-<li>Confirmation de votre dossier sous 24 h</li>
-<li>${record.startNow ? 'Mise en demeure à la compagnie sous 48 h (démarrage immédiat demandé)' : 'Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous si vous souhaitez démarrer avant)'}</li>
-<li><a href="https://robindesairs.eu/suivi-dossier.html">Suivre mon dossier</a></li>
-</ul>
-<div style="margin:18px 0;padding:14px 16px;background:#EFF9F4;border-left:4px solid #00C87A;border-radius:0 8px 8px 0">
-<p style="margin:0 0 8px;font-size:14px"><strong>🚀 Boostez votre dossier (2 min, recommandé)</strong></p>
-<p style="margin:0 0 10px;font-size:13px;color:#333">Certaines compagnies (Air France, Ryanair…) exigent que le passager réclame lui-même une première fois avant tout tiers. Pour verrouiller votre dossier, envoyez le message ci-dessous à la compagnie <strong>depuis votre adresse email</strong> (via son formulaire « réclamations » ou l'email de son service client), sans rien y changer :</p>
-<div style="padding:10px 12px;background:#fff;border:1px dashed #B8DDC9;border-radius:6px;font-size:12.5px;color:#222;line-height:1.6">
-<em>Objet : Réclamation — Règlement (CE) n° 261/2004 — vol ${escapeHtml(vol)} du ${escapeHtml(date)}</em><br><br>
-Madame, Monsieur,<br>
-Passager du vol ${escapeHtml(vol)} du ${escapeHtml(date)}${pnr !== '—' ? ` (réservation ${escapeHtml(pnr)})` : ''}, je vous demande, pour moi-même et les passagers de ma réservation, le versement de l'indemnité forfaitaire prévue à l'article 7 du Règlement (CE) n° 261/2004 à la suite de la perturbation subie sur ce vol, ainsi que, le cas échéant, le remboursement des frais engagés (art. 9, sur justificatifs).<br>
-Je demande un paiement en numéraire (virement bancaire), à l'exclusion de tout avoir, bon d'achat ou miles (art. 7§3 du Règlement).<br>
-Sans réponse favorable sous 14 jours, je poursuivrai le recouvrement par tout moyen utile.<br>
-Cordialement, ${escapeHtml(hello)}
-</div>
-<p style="margin:10px 0 0;font-size:12px;color:#555">Rien d'autre à faire ensuite : nous prenons le relais quoi qu'il arrive.</p>
-</div>
-<p style="font-size:13px;color:#555">Rétractation possible sous 14 jours : <a href="mailto:contact@robindesairs.eu?subject=${encodeURIComponent('Rétractation — Réf. ' + ref)}">contact@robindesairs.eu</a></p>
-<p style="font-size:13px">Questions : <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a> — <a href="https://wa.me/33756863630">WhatsApp</a></p>
-<p style="margin-top:24px;font-size:12px;color:#888">Robin des Airs — Votre droit, notre mission.</p>
+</td></tr></table>
 </body></html>`;
 
   return {
-    subject: `Confirmation — contrat de cession signé — ${ref}`,
+    subject: `✅ C'est signé, merci ${hello} — votre dossier ${ref}`,
     text,
     html,
   };
