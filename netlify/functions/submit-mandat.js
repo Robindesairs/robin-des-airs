@@ -408,7 +408,7 @@ function buildClientMandatEmailContent(record) {
       : '• Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous si vous souhaitez démarrer avant)',
     '• Suivi : https://robindesairs.eu/suivi-dossier.html',
     '',
-    'Vous, vous ne faites rien : votre créance nous appartient désormais. On écrit à la compagnie, on relance et, s\'il le faut, on va au tribunal en notre nom. Aucun courrier à envoyer, aucune démarche de votre côté — juste votre argent à recevoir.',
+    'De votre côté : rien à faire. On prend votre dossier en main de bout en bout : courrier à la compagnie, relances, et jusqu\'au tribunal s\'il le faut. Aucune démarche de votre côté — juste votre argent à recevoir.',
     '',
     'Droit de rétractation : 14 jours — contact@robindesairs.eu (objet : Je me rétracte — Réf. ' + ref + ')',
     '',
@@ -438,7 +438,7 @@ function buildClientMandatEmailContent(record) {
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f8fa;border:1px solid #e2e6ee;border-radius:12px">
       <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;width:42%">Référence</td><td style="padding:11px 16px;font-size:13.5px;font-weight:700;color:#0B1F3A">${escapeHtml(ref)}</td></tr>
       <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Vol</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2"><strong>${escapeHtml(vol)}</strong> — ${escapeHtml(date)}</td></tr>
-      <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Compagnie</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(cie)}</td></tr>
+      ${cie !== '—' ? `<tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Compagnie</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(cie)}</td></tr>` : ''}
       ${pnr !== '—' ? `<tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Réservation</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(pnr)}</td></tr>` : ''}
       <tr><td style="padding:11px 16px;color:#8a94a6;font-size:12px;border-top:1px solid #e9edf2">Signé le</td><td style="padding:11px 16px;font-size:13.5px;color:#0B1F3A;border-top:1px solid #e9edf2">${escapeHtml(signed)}</td></tr>
     </table>
@@ -457,8 +457,8 @@ function buildClientMandatEmailContent(record) {
   </td></tr>
   <tr><td style="padding:16px 28px 4px">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EFF9F4;border:1px solid #cfe6db;border-radius:12px"><tr><td style="padding:14px 16px">
-      <div style="font-size:14px;font-weight:800;color:#0B1F3A;margin:0 0 4px">☕ Vous, vous ne faites rien</div>
-      <div style="font-size:12.5px;color:#3a4658;line-height:1.55">Votre créance nous appartient désormais&nbsp;: on écrit à la compagnie, on relance, et s'il le faut on va au tribunal <strong>en notre nom</strong>. Aucun courrier à envoyer, aucune démarche de votre côté&nbsp;— juste votre argent à recevoir.</div>
+      <div style="font-size:14px;font-weight:800;color:#0B1F3A;margin:0 0 4px">☕ De votre côté : rien à faire</div>
+      <div style="font-size:12.5px;color:#3a4658;line-height:1.55">On prend votre dossier en main de bout en bout&nbsp;: courrier à la compagnie, relances, et jusqu'au tribunal s'il le faut. Aucune démarche de votre côté&nbsp;— juste votre argent à recevoir.</div>
     </td></tr></table>
   </td></tr>
   <tr><td style="padding:18px 28px 6px">
