@@ -626,6 +626,10 @@
   var SCREENS = {
     incident: function(sc){
       sc.innerHTML = '<h2>✈️ Que s\'est-il passé avec votre vol ?</h2><p class="sub">Un clic, on enchaîne.</p>';
+      // Périmètre EU261 posé d'entrée : le client se qualifie lui-même (un vol hors périmètre = son choix, pas notre erreur).
+      var why = document.createElement('div'); why.className = 'why';
+      why.innerHTML = 'ℹ️ L\'indemnisation européenne (EU261) couvre les vols <b>au départ de l\'Europe</b> (quelle que soit la compagnie), ou <b>à destination de l\'Europe</b> uniquement si la compagnie est <b>européenne</b>.';
+      sc.appendChild(why);
       var o = document.createElement('div'); o.className = 'opts';
       o.appendChild(optButton('<span class="ic">⏱️</span><span>Retard de 3 h ou +<small>Arrivée avec au moins 3 h de retard</small></span>', function(){ S.incident = 'delay'; next(); }));
       o.appendChild(optButton('<span class="ic">🚫</span><span>Vol annulé<small>Votre vol n\'a pas eu lieu</small></span>', function(){ S.incident = 'cancel'; next(); }));
