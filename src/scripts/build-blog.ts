@@ -100,7 +100,8 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
     image: ogImage,
     datePublished: TODAY,
     dateModified: TODAY,
-    author: { '@type': 'Organization', name: 'Robin des Airs', url: SITE_URL + '/' },
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
+    author: { '@type': 'Person', '@id': SITE_URL + '/a-propos.html#climbie', name: 'Saint-Yves', url: SITE_URL + '/a-propos.html' },
     publisher: {
       '@type': 'Organization',
       name: 'Robin des Airs',

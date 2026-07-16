@@ -520,8 +520,8 @@
       rows += '<div class="recap-row"><div class="recap-ic">✈️</div><div class="recap-main"><div class="recap-k">Votre vol</div>'
         + '<input class="input recap-flightnum" value="' + esc(S.flightNum || '') + '" placeholder="N° de vol (ex. AF718)" style="margin-top:4px;text-transform:uppercase">'
         + '<div style="display:flex;gap:8px;margin-top:6px">'
-        +   '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="Départ" style="flex:1;min-width:0">'
-        +   '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="Arrivée" style="flex:1;min-width:0">'
+        +   '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="Départ" style="flex:1.15;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
+        +   '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="Arrivée" style="flex:1;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
         + '</div>' + (_dateFieldInner ? '<div style="margin-top:10px">' + _dateFieldInner + '</div>' : '') + '</div></div>';
     }
     // Correspondance : la date reste une ligne à part (le trajet a son propre éditeur de tronçons).
@@ -660,7 +660,9 @@
       sc.innerHTML = '<h2>✈️ Que s\'est-il passé avec votre vol ?</h2><p class="sub">Un clic, on enchaîne.</p>';
       // Périmètre EU261 posé d'entrée : le client se qualifie lui-même (un vol hors périmètre = son choix, pas notre erreur).
       var why = document.createElement('div'); why.className = 'why';
-      why.innerHTML = 'ℹ️ L\'indemnisation européenne (EU261) couvre les vols <b>au départ de l\'Europe</b> (quelle que soit la compagnie), ou <b>à destination de l\'Europe</b> uniquement si la compagnie est <b>européenne</b>.';
+      why.innerHTML = 'ℹ️ L\'indemnisation européenne (EU261) couvre :'
+        + '<br>• les vols <b>au départ de l\'Europe</b> (quelle que soit la compagnie),'
+        + '<br>• les vols <b>à destination de l\'Europe</b>, uniquement si la compagnie est <b>européenne</b>.';
       sc.appendChild(why);
       var o = document.createElement('div'); o.className = 'opts';
       o.appendChild(optButton('<span class="ic">⏱️</span><span>Retard de 3 h ou +<small>Arrivée avec au moins 3 h de retard</small></span>', function(){ S.incident = 'delay'; next(); }));
@@ -994,8 +996,9 @@
       function onCopaxFile(file){
         if (!file) return;
         if (tooBig(file, ocrHint)) return;
-        ocrHint.className = 'hint idle'; ocrHint.textContent = 'Lecture de la pièce…';
+        var stopHint = readingHint(ocrHint, ['Lecture de la pièce…', 'Nom', 'Prénom(s)', 'Date de naissance', 'Adresse']);
         fileToPiece(file).then(function(r){
+          stopHint();
           if (!r) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Lecture impossible, saisissez à la main.'; return; }
           S.paxData[i] = S.paxData[i] || {}; S.paxData[i].pieceFile = r.pieceFile;
           if (r.pdf) { ocrHint.className = 'hint idle'; ocrHint.textContent = 'Complétez le nom et la date ci-dessous.'; return; }
@@ -1139,16 +1142,17 @@
       // Contrat COMPLET en accordéon, physiquement sur la page (le plus sûr juridiquement).
       // iframe de la page contrat propre (/documents/mandat-fr), une seule source de vérité, chargée au dépliage.
       var acc = document.createElement('details'); acc.className = 'contract-acc';
-      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance, rempli avec vos informations</summary><div class="acc-body"><iframe title="Contrat de cession de créance, Robin des Airs" loading="lazy"></iframe></div>';
+      // Aperçu = LIEN vers le PDF rempli (ouvre dans un nouvel onglet = lecteur PDF natif). On n'embarque PLUS
+      // le PDF dans une <iframe> : blanc sur mobile (pas de rendu PDF) ET sur desktop Chrome (object-src 'none'
+      // bloque le plugin PDF interne). Le lien ouvre un onglet top-level, hors CSP → fiable partout.
+      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance, rempli avec vos informations</summary><div class="acc-body"><div class="acc-link" style="padding:18px 14px;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6"></div></div>';
       sc.appendChild(acc);
-      var _frm = acc.querySelector('iframe');
-      // Le client doit voir EXACTEMENT ce qu'il signe : on affiche le PDF RÉELLEMENT rempli
-      // (render-mandat-pdf, le même document que Yousign présentera), pas le modèle vierge.
+      var _accBox = acc.querySelector('.acc-link');
       var _accDone = false, _accBusy = false;
       acc.addEventListener('toggle', function(){
         if (!acc.open || _accDone || _accBusy) return;
         _accBusy = true;
-        _frm.setAttribute('srcdoc', '<div style="font:14px system-ui;color:#51607A;padding:26px;text-align:center">⏳ On prépare votre contrat rempli…<br><span style="font-size:12px;color:#8592A6">une dizaine de secondes</span></div>');
+        _accBox.innerHTML = '⏳ On prépare votre contrat rempli…<br><span style="font-size:12px;color:var(--muted)">une dizaine de secondes</span>';
         var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
         fetch('/api/render-mandat-pdf', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: _sig(30000),
@@ -1160,11 +1164,12 @@
           var bin = atob(res.pdf_base64), len = bin.length, u8 = new Uint8Array(len);
           for (var b = 0; b < len; b++) u8[b] = bin.charCodeAt(b);
           var url = URL.createObjectURL(new Blob([u8], { type: 'application/pdf' }));
-          _frm.removeAttribute('srcdoc'); _frm.setAttribute('src', url);
+          _accBox.innerHTML = '📄 <a href="' + url + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800;font-size:15px">Ouvrir votre contrat rempli (PDF)</a>'
+            + '<div style="font-size:12.5px;color:var(--muted);margin-top:7px">Le contrat complet, rempli avec vos informations, s\'ouvre dans un nouvel onglet.</div>';
           _accDone = true; _accBusy = false;
         }).catch(function(){
           _accBusy = false;
-          _frm.setAttribute('srcdoc', '<div style="font:13px system-ui;color:#9A3412;padding:22px;line-height:1.6">Aperçu momentanément indisponible. Le <b>contrat complet et rempli</b> vous sera présenté juste après, sur l\'écran de signature. Une question ? <a href="https://wa.me/33756863630">WhatsApp</a>.</div>');
+          _accBox.innerHTML = 'Aperçu momentanément indisponible. Le <b>contrat complet et rempli</b> vous sera présenté juste après, sur l\'écran de signature. Une question ? <a href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp</a>.';
         });
       });
       // ── Signature ÉLECTRONIQUE CERTIFIÉE (Yousign embarqué) — plus de dessin ──────────────
@@ -1359,18 +1364,44 @@
         + '<span class="chk">✓</span></div>';
     }).join('');
     sc.appendChild(card);
-    setTimeout(onDone, Math.max(1400, rows.length * 340 + 950));
+    // On laisse la révélation à l'écran assez longtemps pour être lue (elle disparaissait trop vite).
+    setTimeout(onDone, Math.max(3000, rows.length * 480 + 1700));
+  }
+  // Animation de LECTURE pendant l'attente OCR : on met en évidence, une à une, les infos qu'on cherche
+  // (n° de vol, trajet, date, PNR, passagers) → l'attente paraît « vivante » sans mentir (aucun ✓ tant que
+  // rien n'est confirmé ; les vraies valeurs + ✓ arrivent à la révélation juste après). Renvoie une fonction d'arrêt.
+  function readingAnim(sc, title, steps){
+    if (!sc) return function(){};
+    sc.innerHTML = '<h2>🔎 ' + esc(title) + '</h2><p class="sub">On décortique votre document, quelques secondes.</p>';
+    steps = steps || [];
+    var card = document.createElement('div'); card.className = 'reveal-card';
+    card.innerHTML = steps.map(function(s){ return '<div class="reveal-row" style="opacity:.4;transition:opacity .25s"><span class="ic">🔎</span><span class="txt"><span class="v">' + s + '</span></span></div>'; }).join('');
+    sc.appendChild(card);
+    var els = card.querySelectorAll('.reveal-row'), i = 0;
+    var iv = setInterval(function(){ els.forEach(function(el){ el.style.opacity = '.4'; }); els[i % els.length].style.opacity = '1'; i++; }, 650);
+    els[0].style.opacity = '1';
+    return function(){ clearInterval(iv); };
+  }
+  // Variante LÉGÈRE (ne remplace pas l'écran) : fait défiler le texte d'aide sur les champs cherchés.
+  // Pour un écran mixte scan + formulaire (co-passager) où l'on ne peut pas tout effacer. Renvoie une fonction d'arrêt.
+  function readingHint(el, steps){
+    if (!el) return function(){};
+    steps = steps || []; var i = 0;
+    function tick(){ el.className = 'hint idle'; el.textContent = '🔎 ' + (steps[i % steps.length] || 'Lecture…'); i++; }
+    tick(); var iv = setInterval(tick, 650);
+    return function(){ clearInterval(iv); };
   }
   function handleFile(file, sc, hint){
     if (tooBig(file, hint)) return;
-    hint.className = 'hint idle'; hint.textContent = 'Lecture de votre pièce…'; dropBusy(sc);
+    // Même animation « lecture en cours » que pour le billet, avec les champs de la pièce d'identité.
+    var stopAnim = readingAnim(sc, 'Lecture de votre pièce d\'identité…', ['👤 Nom', '👤 Prénom(s)', '🎂 Date de naissance', '🏠 Adresse']);
     fileToPiece(file).then(function(r){
-      if (!r) { hint.className = 'hint bad'; hint.textContent = 'Lecture impossible, tapez votre nom :'; setTimeout(function(){ manualName(sc); }, 600); return; }
+      stopAnim();
+      if (!r) { manualName(sc); return; } // lecture impossible → saisie manuelle
       S.pieceFile = r.pieceFile;
       if (r.pdf) { manualName(sc); return; } // PDF : rangé au dossier, le nom se tape
       if (r.piece) return confirmPiece(sc, r.piece);
-      hint.className = 'hint bad'; hint.textContent = 'Lecture difficile (photo sombre ou floue ?), tapez votre nom :';
-      setTimeout(function(){ manualName(sc); }, 600);
+      manualName(sc); // lecture difficile (photo sombre/floue) → saisie manuelle
     });
   }
   // ════════ VOIE A : lecture DÉTERMINISTE du code-barres de la carte d'embarquement (IATA BCBP) ════════
@@ -1509,7 +1540,7 @@
     var seen = {}, segs = [], segSeen = {};
     list.forEach(function(e){
       if (!e) return;
-      if (!c.dateIso && e.dateIso) { c.dateIso = e.dateIso; c.dateYearUnsure = (e._source === 'barcode'); } // code-barres = pas d'année fiable
+      if (!c.dateIso && e.dateIso) { c.dateIso = e.dateIso; c.dateYearUnsure = (e._source === 'barcode') || !!e.yearUnsure; } // code-barres OU OCR sans année → année à confirmer
       if (!c.pnr && e.pnr) c.pnr = e.pnr;
       (e.passengers || []).forEach(function(p){
         var key = String(p && p.name || '').trim().toUpperCase().replace(/\s+/g, ' ');
@@ -1545,7 +1576,7 @@
     // Garde de taille (PDF trop lourd, etc.) : on écarte les fichiers refusés, on garde les valides.
     files = files.filter(function(f){ return !tooBig(f, hint); });
     if (!files.length) return;
-    dropBusy(sc, files.length > 1 ? ('Lecture de vos ' + files.length + ' billets…') : 'Lecture de votre billet…', '✨ On extrait vol, trajet, date et passagers');
+    var stopAnim = readingAnim(sc, 'Lecture de votre billet' + (files.length > 1 ? 's' : '') + '…', ['✈️ Numéro de vol', '🛤️ Trajet, départ → arrivée', '📅 Date du vol', '🎫 Référence (PNR)', '🧳 Passagers']); // attente vivante (mobile + desktop)
     // Séquentiel : évite de décoder plusieurs grosses images en parallèle (mémoire mobile).
     var results = [];
     files.reduce(function(chain, f){
@@ -1555,9 +1586,10 @@
       var etickets = results.map(function(r){ return r.eticket; }).filter(Boolean);
       S.ticketFiles = ticketFiles;
       S.ticketFile = ticketFiles[0] || null; // rétro-compat
+      stopAnim(); // fin de l'animation de lecture (succès comme échec)
       if (!etickets.length) { // aucun OCR exploitable (PDF seuls ou illisibles) → saisie classique
-        dropText(ticketFiles.length ? 'Billet reçu. On continue la saisie…' : 'Billet peu lisible, on saisit à la main…');
-        setTimeout(function(){ next(); }, 800);
+        sc.innerHTML = '<h2>📝 On continue à la main</h2><p class="sub">' + (ticketFiles.length ? 'Billet bien reçu, on le joint à votre dossier.' : 'Billet peu lisible.') + ' Encore quelques infos et c\'est bon.</p>';
+        setTimeout(function(){ next(); }, 900);
         return;
       }
       var merged = mergeEtickets(etickets);
@@ -1625,7 +1657,7 @@
     // Identité ÉDITABLE directement. Prénom / Nom SÉPARÉS = décision fondateur (évite les mauvais découpages).
     var nm = (p.name || '').trim().split(/\s+/).filter(Boolean);
     var prenomInp = labeledField(sc, '👤 Prénom', p.prenom || nm[0] || '', false, '4px');
-    prenomInp.placeholder = 'ex. Climbié';
+    prenomInp.placeholder = 'ex. Aminata';
     var nomInp = labeledField(sc, '👤 Nom', p.nom || nm.slice(1).join(' ') || '', false, '10px');
     nomInp.placeholder = 'ex. Kodjo';
     var dobInp = labeledField(sc, '🎂 Date de naissance', p.dob || '', false, '10px');

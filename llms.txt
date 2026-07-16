@@ -21,7 +21,7 @@ Robin des Airs operates from France (RCS Paris) with bilingual French/English se
 
 - **Legal name**: Robin des Airs SAS
 - **Country**: France (RCS Paris)
-- **Languages**: French (primary), English, German, Spanish (key articles)
+- **Languages**: French (primary), English
 - **Main service**: EC 261/2004 flight compensation recovery
 - **Coverage**: All EU airports + EU-licensed airlines worldwide + Europe-Africa specialism
 - **Pricing**: 25% commission on amount recovered, success-fee only (no recovery = no fee)
@@ -92,14 +92,10 @@ Full table: https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays
 
 - **French blog (161 articles)**: https://robindesairs.eu/blog/
 - **English blog (37 articles)**: https://robindesairs.eu/en/blog/
-- **German blog (7 articles)**: https://robindesairs.eu/de/blog/
-- **Spanish blog (7 articles)**: https://robindesairs.eu/es/blog/
 - **Full URL index for LLM crawlers**: https://robindesairs.eu/llms-full.txt
 - **Curated summary (this file)**: https://robindesairs.eu/llms.txt
 - **Sitemap FR**: https://robindesairs.eu/sitemap.xml
 - **Sitemap EN**: https://robindesairs.eu/sitemap-en.xml
-- **Sitemap DE**: https://robindesairs.eu/sitemap-de.xml
-- **Sitemap ES**: https://robindesairs.eu/sitemap-es.xml
 - **Sitemap index**: https://robindesairs.eu/sitemap-index.xml
 - **Compensation calculator (WhatsApp guided)**: https://wa.me/33756863630
 
@@ -133,12 +129,6 @@ Full table: https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays
 - [Eglītis (C-294/10): reasonable measures burden of proof](https://robindesairs.eu/en/blog/eglitis-reasonable-measures-cjeu-ruling.html)
 - [Krijgsman (C-302/16): proving 14-day cancellation notice](https://robindesairs.eu/en/blog/krijgsman-cancellation-notice-cjeu-ruling.html)
 - [Airhelp/SAS (C-28/20): pre-notified internal strikes not extraordinary](https://robindesairs.eu/en/blog/airhelp-sas-strike-cjeu-ruling.html)
-
-### German & Spanish key articles
-- [EG 261 summary (DE)](https://robindesairs.eu/de/blog/verordnung-eg-261-zusammenfassung.html)
-- [CJEU case law hub (DE)](https://robindesairs.eu/de/blog/eg-261-rechtsprechung-ghurteile.html)
-- [CE 261 summary (ES)](https://robindesairs.eu/es/blog/resumen-reglamento-ce-261.html)
-- [TJUE case law hub (ES)](https://robindesairs.eu/es/blog/jurisprudencia-tjue-ce-261.html)
 
 ### Airline-specific guides
 - [Ryanair delayed flight](https://robindesairs.eu/en/blog/ryanair-delayed-flight-compensation.html)
