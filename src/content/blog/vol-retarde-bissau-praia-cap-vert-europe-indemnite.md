@@ -10,7 +10,7 @@ faq:
   - q: "Le retard s'est produit sur ma correspondance à Lisbonne, pas au départ. Ça compte ?"
     a: "Cela peut compter. Ce qui est souvent examiné, c'est le retard à l'arrivée à votre **destination finale** sur une réservation unique. Un retard pris à Praia ou Bissau qui vous fait manquer la correspondance vers votre ville européenne finale peut, selon éligibilité, entrer dans le calcul."
   - q: "Combien de temps pour être indemnisé et combien ça me coûte ?"
-    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, la commission est de **25 % en phase amiable** (vous gardez 75 %) et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Aucune garantie de délai ferme."
+    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, vous recevez **75 % en phase amiable** et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Aucune garantie de délai ferme."
 ---
 
 **Jusqu'à 600 € par passager** peuvent vous revenir si votre vol Bissau (OXB) ou Praia (RAI) vers Lisbonne a été fortement retardé ou annulé. Vérification gratuite, 0 € d'avance, et vous ne payez que si l'on obtient un résultat.

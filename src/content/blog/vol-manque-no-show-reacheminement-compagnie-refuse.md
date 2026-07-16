@@ -58,8 +58,8 @@ Nous ne promettons aucun résultat : nous regardons votre route, vos pièces et 
 
 Vous n'avancez **rien**. Nous ne sommes payés que si vous êtes indemnisé.
 
-- **Phase amiable** : notre commission est de **25 %** de la somme récupérée. Vous gardez **75 %**.
-- **Phase contentieuse** (si la compagnie refuse et qu'il faut aller devant le tribunal) : la commission passe à **40 %**, vous gardez **60 %**. Les **frais d'avocat, d'huissier et de procédure sont inclus et avancés** par nos soins.
+- **Phase amiable** : vous recevez **75 %** de la somme récupérée. Vous gardez **75 %**.
+- **Phase contentieuse** (si la compagnie refuse et qu'il faut aller devant le tribunal) : vous recevez **60 %**. Les **frais d'avocat, d'huissier et de procédure sont inclus et avancés** par nos soins.
 
 Aucune carte bancaire, aucun frais de dossier, aucune avance. Après encaissement, votre part vous est versée sous **5 jours ouvrés**.
 

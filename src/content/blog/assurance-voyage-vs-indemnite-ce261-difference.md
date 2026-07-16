@@ -75,7 +75,7 @@ Les cartes Visa Premier, Gold, Mastercard World, Amex souvent incluent une assur
 Robin s'occupe du **CE 261 pur** :
 - 250/400/600€ pour retard, annulation, surbooking
 - Versement direct sur votre compte
-- 25 % de commission sur succès
+- vous recevez 75 % en cas de succès
 
 Pour l'assurance voyage (frais réels, bagages, etc.), c'est à vous d'activer le contrat ou de mandater un avocat spécialisé.
 
@@ -83,7 +83,7 @@ Pour l'assurance voyage (frais réels, bagages, etc.), c'est à vous d'activer l
 
 Famille de 4 Paris-Abidjan, retard 5h, vous avez une assurance voyage Crédit Mutuel.
 
-- **CE 261** : 4 × 600€ = **2 400€** récupérés par Robin (1 800€ nets après commission)
+- **CE 261** : 4 × 600€ = **2 400€** récupérés par Robin (1 800€ pour vous en phase amiable)
 - **Assurance** : forfait 60€ par retard ≥ 4h × 4 personnes = **240€** récupérés
 - **Total** : **2 040€ nets** dans votre poche
 

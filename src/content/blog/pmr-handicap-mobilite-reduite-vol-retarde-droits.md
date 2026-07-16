@@ -60,7 +60,7 @@ Cas typique : un patient dialysé qui rate sa séance suite à un retard → pr�
 
 ## Diaspora et personnes âgées
 
-Beaucoup de nos dossiers concernent des **personnes âgées de la diaspora** qui voyagent retrouver la famille en Afrique. Une grand-mère sénégalaise de 78 ans avec mobilité réduite sur Paris-Dakar retardé de 5h → 600€ pour elle + 600€ pour son accompagnant = **1 200€ brut**, **900€ nets**.
+Beaucoup de nos dossiers concernent des **personnes âgées de la diaspora** qui voyagent retrouver la famille en Afrique. Une grand-mère sénégalaise de 78 ans avec mobilité réduite sur Paris-Dakar retardé de 5h → 600€ pour elle + 600€ pour son accompagnant = **1 200€ récupérés**, dont **900€ pour vous** (75 %, phase amiable).
 
 Notre équipe parle français, wolof, bambara, lingala, peul. Vous pouvez expliquer la situation à l'agent comme à un membre de votre famille.
 

@@ -55,7 +55,7 @@ Toutes les routes africaines de Brussels Airlines dépassent les 3 500 km → pa
 
 ## Famille nombreuse : multipliez
 
-Famille de 4 sur Bruxelles-Kinshasa retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
+Famille de 4 sur Bruxelles-Kinshasa retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 ## Pourquoi ne pas utiliser le formulaire Brussels Airlines directement
 

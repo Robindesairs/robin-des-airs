@@ -6,7 +6,7 @@ slug: compagnie-refuse-payer-indemnite-que-faire
 image_url: /og-blog.png
 faq:
   - q: "La compagnie a refusé ma demande. Je peux quand même obtenir les 600€ ?"
-    a: "Oui, dans la majorité des cas. Beaucoup de refus sont fondés sur des motifs **vagues** (météo, circonstances extraordinaires) que la compagnie ne peut pas prouver précisément. Robin reprend les dossiers refusés à la même commission de 25 %."
+    a: "Oui, dans la majorité des cas. Beaucoup de refus sont fondés sur des motifs **vagues** (météo, circonstances extraordinaires) que la compagnie ne peut pas prouver précisément. Robin reprend les dossiers refusés aux mêmes conditions : vous recevez 75 % en phase amiable."
   - q: "Combien de temps pour récupérer après un refus initial ?"
     a: "Un délai supplémentaire, variable : mise en demeure (1 mois), puis assignation directe au tribunal par notre avocat partenaire si nécessaire — grâce à la cession de créance, pas de détour obligatoire par la médiation. Robin coordonne l'ensemble sans frais à votre charge."
   - q: "J'ai 5 ans pour réclamer, même après un refus ?"

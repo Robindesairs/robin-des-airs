@@ -52,7 +52,7 @@ Le retard doit être d'au moins **3h à l'heure d'arrivée à destination finale
 
 ## Famille
 
-Famille de 4 Paris → Nairobi via IST, retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
+Famille de 4 Paris → Nairobi via IST, retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Ethiopian Airlines vol retardé](/blog/ethiopian-airlines-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [CE261 billet unique non-UE](/blog/arret-wegener-billet-unique-non-ue-cjue.html).
 

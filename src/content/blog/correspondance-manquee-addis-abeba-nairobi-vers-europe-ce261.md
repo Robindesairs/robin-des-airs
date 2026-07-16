@@ -57,8 +57,8 @@ Ici, ce n'est pas le retard "au départ d'Afrique" qui est examiné, mais le **r
 
 Vous n'avancez **rien**. Nous ne sommes payés que si vous êtes indemnisé.
 
-- **Phase amiable** : notre commission est de **25 %** de l'indemnité récupérée. Vous gardez **75 %**.
-- **Phase contentieuse** (si la compagnie refuse et qu'il faut aller devant le tribunal) : la commission passe à **40 %**, vous gardez **60 %**. Les **frais d'avocat, d'huissier et de procédure sont inclus et avancés** par nos soins.
+- **Phase amiable** : vous recevez **75 %** de l'indemnité récupérée. Vous gardez **75 %**.
+- **Phase contentieuse** (si la compagnie refuse et qu'il faut aller devant le tribunal) : vous recevez **60 %**. Les **frais d'avocat, d'huissier et de procédure sont inclus et avancés** par nos soins.
 
 Aucune carte bancaire, aucun frais de dossier, aucune avance. Après encaissement, votre part vous est versée sous **5 jours ouvrés**.
 

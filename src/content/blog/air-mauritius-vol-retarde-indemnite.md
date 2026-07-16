@@ -12,7 +12,7 @@ faq:
   - q: "Air Mauritius est une compagnie non européenne. J'ai quand même des droits ?"
     a: "Oui, mais cela dépend du sens. Au départ de Paris (UE), Air Mauritius est **pleinement soumise** au CE 261 : 600 € si vous arrivez avec 3h+ de retard. Au départ de Maurice, le forfait ne s'applique pas, mais vos frais réels restent couverts par la Convention de Montréal."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
-    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Paris-Maurice retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Paris-Maurice retardé de 3h+ : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable."
   - q: "Air Mauritius parle d'une panne technique. C'est une excuse valable ?"
     a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Seules la météo extrême, la fermeture d'espace aérien ou une grève externe peuvent exonérer la compagnie."
   - q: "Mon vol Air Mauritius date d'il y a deux ans. Est-ce trop tard ?"
@@ -77,11 +77,11 @@ Robin des Airs conteste systématiquement les refus fondés sur de fausses circo
 
 ## Famille : chaque passager compte
 
-L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Paris-Maurice arrivé avec 4h de retard : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Paris-Maurice arrivé avec 4h de retard : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable.
 
 ## Comment réclamer avec Robin des Airs
 
-Spécialiste des corridors Afrique-Europe et de l'océan Indien, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), détermine le bon fondement (forfait CE 261 ou frais réels Montréal), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+Spécialiste des corridors Afrique-Europe et de l'océan Indien, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), détermine le bon fondement (forfait CE 261 ou frais réels Montréal), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en créole mauricien.
 

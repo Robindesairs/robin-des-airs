@@ -49,7 +49,7 @@ Si vous volez Paris CDG → Lisbonne LIS → [destination africaine] sur un seul
 
 ## Famille
 
-Famille de 4 Paris-Abidjan via Lisbonne sur TAP, retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
+Famille de 4 Paris-Abidjan via Lisbonne sur TAP, retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html).
 

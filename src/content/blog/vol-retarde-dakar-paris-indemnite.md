@@ -12,7 +12,7 @@ faq:
   - q: "Mon Dakar-Paris sur Air Sénégal a 5h de retard. Je n'ai droit à rien ?"
     a: "Pas au forfait CE 261 (compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** permet de réclamer vos frais réels justifiés (repas, hôtel, achats de première nécessité). Et le vol aller Paris-Dakar d'Air Sénégal reste, lui, couvert à 600 €."
   - q: "Nous étions 5, dont 2 enfants. L'indemnité est par personne ?"
-    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Famille de 5 sur Paris-Dakar retardé de 3h+ : 5 x 600 € = 3 000 € bruts, soit 2 250 € nets après la commission de 25 % au succès."
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Famille de 5 sur Paris-Dakar retardé de 3h+ : 5 x 600 € = **3 000 € récupérés**, dont vous recevez **2 250 €** (75 %) en phase amiable."
   - q: "La compagnie invoque une panne technique. C'est une excuse valable ?"
     a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Météo extrême ou fermeture d'espace aérien peuvent en revanche exonérer la compagnie."
   - q: "Mon vol date de 2023. C'est trop tard pour réclamer ?"
@@ -82,7 +82,7 @@ L'indemnité est due **par passager**, sans distinction d'âge. Les enfants comp
 
 Exemple concret : famille de 5 sur un Paris-Dakar arrivé avec 4h de retard :
 - 5 x 600 € = **3 000 € bruts**
-- Après commission Robin des Airs de 25 % au succès : **2 250 € nets pour la famille**
+- Ce que la famille reçoit (75 %, phase amiable) : **2 250 €**
 
 ## Documents à réunir
 
@@ -93,7 +93,7 @@ Exemple concret : famille de 5 sur un Paris-Dakar arrivé avec 4h de retard :
 
 ## Comment réclamer avec Robin des Airs
 
-Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause du retard), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause du retard), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**. Service disponible en français, avec rappel possible en wolof, pulaar ou soninké.
 

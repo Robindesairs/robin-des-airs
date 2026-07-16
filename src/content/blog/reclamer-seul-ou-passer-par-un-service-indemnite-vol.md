@@ -10,7 +10,7 @@ Vous savez que vous avez droit à une indemnité. Vous hésitez entre réclamer 
 
 ## Réclamer seul : avantages et inconvénients
 
-**Avantages :** Vous gardez 100% de l'indemnité. Pas de commission.
+**Avantages :** Vous gardez 100% de l'indemnité. Aucune part à reverser.
 
 **Inconvénients :**
 - La compagnie va probablement refuser une première fois (réponse automatique "circonstances extraordinaires")
@@ -29,7 +29,7 @@ Vous savez que vous avez droit à une indemnité. Vous hésitez entre réclamer 
 - Délai moyen : 4-12 semaines
 
 **Inconvénients :**
-- 25% de commission (sur 600€ = 150€)
+- 25 % pour le prestataire (sur 600€ = 150€)
 
 ## Le calcul rationnel
 

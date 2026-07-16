@@ -61,8 +61,8 @@ Sur les longs trajets entre l'Afrique et l'Europe, les voyages se font rarement 
 On étudie votre vol, on identifie **tous les passagers concernés** de votre famille et on constitue un seul dossier de recouvrement couvrant l'ensemble du groupe. Vous n'avancez **rien** :
 
 - **Aucune avance** : 0 € à sortir de votre poche.
-- **Commission de 25 % en phase amiable** — vous conservez **75 %** des sommes recouvrées.
-- Si un passage **au tribunal** est nécessaire, la commission est de **40 %** (vous conservez **60 %**), les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
+- **Phase amiable** : vous recevez **75 %** des sommes recouvrées.
+- Si un passage **au tribunal** est nécessaire, vous recevez **60 %**, les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
 - Une fois les fonds encaissés auprès de la compagnie, votre part vous est reversée sous **5 jours ouvrés**.
 
 Voir aussi : [Vol retardé en famille avec enfants](/blog/indemnite-vol-retarde-famille-enfants.html), [Montants 250/400/600 €](/blog/indemnite-vol-montants-250-400-600.html), [Réglementation CE 261](/blog/reglementation-ce261-resume.html).

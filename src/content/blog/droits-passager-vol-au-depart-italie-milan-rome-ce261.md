@@ -10,7 +10,7 @@ faq:
   - q: "Qui est l'autorité compétente en Italie si la compagnie ne répond pas ?"
     a: "En Italie, l'autorité nationale chargée de faire appliquer le règlement CE 261/2004 est l'**ENAC** (Ente Nazionale per l'Aviazione Civile). Une réclamation peut lui être adressée, mais la démarche est longue et n'aboutit pas toujours à un versement. Nous prenons en charge l'ensemble de la procédure à votre place."
   - q: "Combien de temps pour être indemnisé et combien ça me coûte ?"
-    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, la commission est de **25 % en phase amiable** (vous gardez 75 %) et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Aucune garantie de délai ferme."
+    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, vous recevez **75 % en phase amiable** et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Aucune garantie de délai ferme."
 ---
 
 **Jusqu'à 600 € par passager** peuvent vous revenir si votre vol au départ de Milan (MXP, LIN, BGY) ou de Rome (FCO, CIA) a été fortement retardé ou annulé. Vérification gratuite, 0 € d'avance, et vous ne payez que si l'on obtient un résultat.

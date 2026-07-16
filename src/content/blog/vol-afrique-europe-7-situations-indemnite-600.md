@@ -16,7 +16,7 @@ faq:
   - q: "Mon vol date de 2 ans. C'est trop tard ?"
     a: "Non. Devant les tribunaux français, vous avez **5 ans** pour réclamer (art. 2224 du Code civil). Un vol Afrique-Europe d'il y a 2 ou 3 ans est encore indemnisable."
   - q: "Combien ça coûte de passer par un service comme Robin des Airs ?"
-    a: "**0 € d'avance et 0 € si rien n'est récupéré.** La commission (25 %) n'est prélevée qu'en cas de succès, sur la somme obtenue. La vérification de votre vol est gratuite."
+    a: "**0 € d'avance et 0 € si rien n'est récupéré.** Vous recevez **75 %** de la somme obtenue, et rien n'est dû si rien n'est récupéré. La vérification de votre vol est gratuite."
 ---
 
 **Sur un vol entre l'Afrique et l'Europe, sept situations ouvrent droit à une indemnité, jusqu'à 600 € par passager.** Les vols long-courriers Afrique ↔ Europe dépassent presque tous 3 500 km, ce qui place la plupart des dossiers dans la **tranche la plus haute** du règlement CE 261/2004. Voici les 7 cas, expliqués simplement, avec la règle d'éligibilité propre à la diaspora.

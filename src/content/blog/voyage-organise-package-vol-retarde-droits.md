@@ -42,7 +42,7 @@ Les deux indemnisations se cumulent — l'une compense le retard, l'autre la per
 - **CE 261** : 4 × 600€ = **2 400€** versés par la compagnie aérienne
 - **Code tourisme** : journée perdue = 1/7 × 4 800€ = **685€** versés par FRAM
 - **Total brut** : 3 085€
-- **Net après commission Robin (25% sur CE 261 uniquement)** : 1 800€ + 685€ = **2 485€**
+- **Ce que vous recevez (75 % du CE 261, 100 % des frais)** : 1 800€ + 685€ = **2 485€**
 
 ## Procédure côté Code du tourisme
 

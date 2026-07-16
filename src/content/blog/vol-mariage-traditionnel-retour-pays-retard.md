@@ -6,7 +6,7 @@ slug: vol-mariage-traditionnel-retour-pays-retard
 image_url: /og-blog.png
 faq:
   - q: "Combien on récupère pour une famille de 15 sur un vol retardé ?"
-    a: "15 × 600€ = **9 000€ brut**, **6 750€ nets** après commission Robin de 25 %. Un seul dossier groupé pour toute la famille."
+    a: "15 × 600€ = **9 000€ récupérés**, dont **6 750€ pour vous** (75 %) en phase amiable. Un seul dossier groupé pour toute la famille."
   - q: "Le vol a été annulé 5 jours avant le mariage. Quels droits ?"
     a: "Annulation < 14 jours = indemnité **600€ par passager** automatique + réacheminement gratuit OBLIGATOIRE OU remboursement intégral du billet."
   - q: "Qui réclame pour les enfants et les personnes âgées du groupe ?"
@@ -30,7 +30,7 @@ Le règlement CE 261 attribue l'indemnité **à chaque passager** ayant un bille
 - **Total : 20 personnes** sur le même vol Paris-Dakar retardé de 5h
 
 → 20 × 600€ = **12 000€ brut**
-→ **9 000€ nets** après commission Robin de 25 %
+→ **9 000€ nets** en phase amiable (vous recevez 75 %)
 
 ## Les routes mariage les plus fréquentes
 

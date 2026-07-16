@@ -49,7 +49,7 @@ Les billets achetés sur Air France peuvent être opérés en code-share par KLM
 
 ## Famille / groupe
 
-Famille de 4 retardée 4h sur Amsterdam-Lagos : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
+Famille de 4 retardée 4h sur Amsterdam-Lagos : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html), [Réglementation CE 261](/blog/reglementation-ce261-resume.html).
 

@@ -1,18 +1,18 @@
 ---
 title: "Pourquoi choisir Robin des Airs : ce qui nous différencie"
 meta_title: "Pourquoi Robin des Airs : expert dédié, WhatsApp, 9 langues, spécialiste diaspora"
-meta_description: "Ce qui rend Robin des Airs différent : un expert dédié qui suit votre dossier par téléphone, WhatsApp 7j/7, 9 langues dont wolof/bambara/yoruba/twi, commission 25 % au succès, spécialiste des vols Afrique-Europe."
+meta_description: "Ce qui rend Robin des Airs différent : un expert dédié qui suit votre dossier par téléphone, WhatsApp 7j/7, 9 langues dont wolof/bambara/yoruba/twi, vous recevez 75 % en cas de succès, spécialiste des vols Afrique-Europe."
 slug: pourquoi-choisir-robin-des-airs-difference
 image_url: /og-blog.png
 faq:
-  - q: "Quelle est la commission de Robin des Airs ?"
+  - q: "Combien Robin des Airs prend-il ?"
     a: "**25 % au succès** en phase amiable (40 % si procédure judiciaire, frais de justice inclus). Sur 600 € d'indemnité réglée à l'amiable, vous gardez **450 € nets**. 0 € d'avance, 0 € si rien n'est récupéré."
   - q: "En quelles langues puis-je échanger ?"
     a: "**9 langues** : français, anglais, wolof, bambara, soninké, peul, lingala, yoruba, twi. Un expert vous rappelle dans la langue qui vous met le plus à l'aise."
   - q: "Puis-je appeler directement ?"
     a: "Oui : **+33 7 56 86 36 30** (France, lundi-samedi). Vous parlez à un **expert dédié qui suit votre dossier**, pas à un robot. WhatsApp est ouvert 7j/7 au même numéro."
   - q: "Et si on échoue à récupérer l'indemnité ?"
-    a: "Vous payez **0 €**. La commission de 25 % est prise uniquement sur le montant récupéré. Pas de frais cachés. Si un procès est nécessaire, le taux passe à 40 % (frais d'avocat et de justice intégralement pris en charge, jamais d'avance)."
+    a: "Vous payez **0 €**. vous recevez 75 % du montant récupéré. Pas de frais cachés. Si un procès est nécessaire, le taux passe à 40 % (frais d'avocat et de justice intégralement pris en charge, jamais d'avance)."
 ---
 
 **Robin des Airs est le service d'indemnisation aérienne conçu pour la diaspora africaine vivant en Europe.** Vol Afrique-Europe retardé, annulé ou surbooké ? Voici les 4 choses concrètes qui font notre différence.
@@ -55,7 +55,7 @@ Quand vous expliquez votre situation à quelqu'un qui parle votre langue, vous g
 
 Notre rémunération est simple et transparente :
 
-- **25 %** de commission au succès en phase amiable.
+- Vous recevez **75 %** en phase amiable.
 - **40 %** seulement si le dossier va au tribunal (frais d'avocat et de justice inclus, avancés par nous).
 - **0 €** si rien n'est récupéré, et **0 € d'avance** dans tous les cas.
 

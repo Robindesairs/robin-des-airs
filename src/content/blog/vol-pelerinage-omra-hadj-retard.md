@@ -46,7 +46,7 @@ Pendant le **Hadj (Dhul Hijjah)** et la **fin du Ramadan**, le trafic aérien ve
 
 ## Pèlerins en groupe = indemnité groupée
 
-Si vous voyagez à 20 sur le même vol et qu'il est retardé de 4h depuis Paris : 20 × 600€ = 12 000€ brut, **9 000€ nets** après commission Robin 25%. Le bureau ou l'imam organisateur peut centraliser le dossier pour le groupe.
+Si vous voyagez à 20 sur le même vol et qu'il est retardé de 4h depuis Paris : 20 × 600€ = 12 000€ brut, **9 000€ nets** en phase amiable (vous recevez 75 %). Le bureau ou l'imam organisateur peut centraliser le dossier pour le groupe.
 
 Service en français, arabe, wolof, soninké, bambara.
 

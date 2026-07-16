@@ -46,7 +46,7 @@ Vous nous transmettez votre numéro de vol et votre carte d'embarquement. On vé
 
 - **0€ d'avance.** Aucune carte bancaire, aucun frais au départ.
 - **25% en phase amiable** : si l'on obtient l'indemnité par la négociation, vous gardez **75%**.
-- **40% en phase contentieuse** : si le dossier doit passer devant le tribunal, la commission monte à 40% (vous gardez 60%), et les frais d'avocat, d'huissier et de procédure sont inclus et avancés par Robin des Airs.
+- **40% en phase contentieuse** : si le dossier doit passer devant le tribunal, vous recevez **60 %**, les frais d'avocat, d'huissier et de procédure étant inclus et avancés par Robin des Airs.
 - **Versement au client sous 5 jours ouvrés** après encaissement de l'indemnité.
 
 Vous ne payez rien si l'on n'obtient rien. Et comme l'indemnité se calcule par passager, confier le dossier de toute la famille en une fois est le réflexe le plus rentable — voir [Vol retardé en famille avec enfants](/blog/indemnite-vol-retarde-famille-enfants.html).

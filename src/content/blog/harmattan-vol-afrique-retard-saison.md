@@ -58,7 +58,7 @@ La majorité des dossiers "harmattan" aboutissent favorablement. La compagnie in
 
 ## Famille diaspora pendant l'harmattan
 
-Vous voyagez à 6 pour un mariage à Bamako en février, vol retardé de 5h : 6 × 600€ = **3 600€ brut**, **2 700€ nets** après commission.
+Vous voyagez à 6 pour un mariage à Bamako en février, vol retardé de 5h : 6 × 600€ = **3 600€ récupérés**, dont **2 700€ pour vous** (75 %) en phase amiable.
 
 Service en français, bambara, wolof, peul, soninké.
 

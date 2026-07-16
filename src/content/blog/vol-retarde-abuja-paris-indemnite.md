@@ -40,7 +40,7 @@ Même palier d'indemnité, droits identiques. Vérifiez simplement le code aéro
 
 ## Famille nigériane
 
-Famille de 5 Paris → Abuja retardée de 4h : 5 × 600€ = 3 000€ brut, **2 250€ nets** après commission Robin de 25%.
+Famille de 5 Paris → Abuja retardée de 4h : 5 × 600€ = **3 000€ récupérés**, dont **2 250€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Vol retardé Lagos-Paris](/blog/vol-retarde-lagos-paris-indemnite.html), [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html), [Ethiopian Airlines vol retardé](/blog/ethiopian-airlines-vol-retarde-indemnite.html).
 

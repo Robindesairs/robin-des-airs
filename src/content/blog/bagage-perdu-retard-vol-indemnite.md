@@ -1,12 +1,12 @@
 ---
 title: "Bagage perdu ou retardé : vos droits (différents du CE 261)"
 meta_title: "Bagage perdu ou retardé : Convention Montréal - jusqu'à 1600€"
-meta_description: "Bagage perdu, abîmé, retardé après votre vol ? La Convention de Montréal prévoit jusqu'à 1 600€. Différent du CE 261, on vous explique."
+meta_description: "Bagage perdu, abîmé, retardé après votre vol ? La Convention de Montréal prévoit jusqu'à ~1 800 €. Différent du CE 261, on vous explique."
 slug: bagage-perdu-retard-vol-indemnite
 image_url: /og-blog.png
 faq:
   - q: "Combien je touche pour un bagage perdu ?"
-    a: "Jusqu'à **environ 1 600€ par passager** (1 288 DTS) selon la Convention de Montréal. Cumulable avec les **600€ CE 261** si le vol était aussi retardé."
+    a: "Jusqu'à **environ 1 800 € par passager** (1 519 DTS) selon la Convention de Montréal. Cumulable avec les **600€ CE 261** si le vol était aussi retardé."
   - q: "Mon bagage est arrivé 2 jours plus tard. Quels remboursements ?"
     a: "Tous les achats raisonnables effectués pendant l'attente : vêtements, hygiène. Conservez les **factures**. Remboursement moyen : 100-400€ par passager."
   - q: "Que faire si la compagnie refuse l'indemnisation bagage ?"
@@ -20,9 +20,9 @@ Votre vol a été retardé ou annulé — c'est le CE 261. Mais si en plus votre
 ## CE 261 vs Convention de Montréal
 
 - **CE 261/2004** : protège contre le **retard du vol** (passager) → 250 à 600€ forfaitaires
-- **Convention de Montréal 1999** : protège **les bagages** et le **préjudice réel** → jusqu'à ~1 600€ par passager
+- **Convention de Montréal 1999** : protège **les bagages** et le **préjudice réel** → jusqu'à ~1 800 € par passager
 
-Les deux peuvent s'appliquer en même temps. Un vol Paris-Dakar retardé de 6h avec bagage perdu → potentiellement **600€ + jusqu'à 1 600€** = **2 200€** par passager.
+Les deux peuvent s'appliquer en même temps. Un vol Paris-Dakar retardé de 6h avec bagage perdu → potentiellement **600€ + jusqu'à ~1 800 €** = **2 200€** par passager.
 
 ## Bagage retardé (arrivé en retard)
 
@@ -40,7 +40,7 @@ Montant moyen remboursé : 100 à 400€ par passager selon les achats.
 Après 21 jours sans nouvelles, le bagage est officiellement **perdu**. Vous pouvez réclamer :
 
 - La **valeur des effets perdus** (avec preuves d'achat si possible — sinon estimation forfaitaire)
-- Plafond Convention Montréal : ~**1 600€ par passager** (1 288 DTS)
+- Plafond Convention Montréal : ~**1 800 € par passager** (1 519 DTS)
 
 Astuce : prenez en photo le contenu de votre valise **avant le départ**. C'est la preuve la plus simple.
 

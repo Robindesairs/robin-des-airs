@@ -58,8 +58,8 @@ Même quand un litige sur les documents est en cours, un refus d'embarquement co
 On étudie votre vol, on vérifie **quel fondement** peut s'appliquer et, surtout, on confronte le motif invoqué par la compagnie aux **règles réelles** de validité des documents. Notre travail consiste précisément à démontrer, pièce par pièce, que votre titre de voyage était valable — et donc que le refus était abusif. Vous n'avancez **rien** :
 
 - **Aucune avance** : 0 € à sortir de votre poche.
-- **Commission de 25 % en phase amiable** — vous conservez **75 %** des sommes recouvrées.
-- Si un passage **au tribunal** est nécessaire, la commission est de **40 %** (vous conservez **60 %**), les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
+- **Phase amiable** : vous recevez **75 %** des sommes recouvrées.
+- Si un passage **au tribunal** est nécessaire, vous recevez **60 %**, les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
 - Une fois les fonds encaissés auprès de la compagnie, votre part vous est reversée sous **5 jours ouvrés**.
 
 Voir aussi : [Surbooking et refus d'embarquement](/blog/surbooking-refus-embarquement-indemnite.html), [La compagnie refuse de payer, que faire ?](/blog/compagnie-refuse-payer-indemnite-que-faire.html), [Réglementation CE 261](/blog/reglementation-ce261-resume.html).

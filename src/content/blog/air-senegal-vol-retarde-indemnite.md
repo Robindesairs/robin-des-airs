@@ -12,7 +12,7 @@ faq:
   - q: "Air Sénégal a annulé mon vol Paris-Dakar 3 jours avant. J'ai droit à quoi ?"
     a: "Annulation depuis Paris (UE) < 14 jours : **600€ d'indemnité** + remboursement du billet OU réacheminement au choix. Si moins de 7 jours et réacheminement proposé, montant réduit selon conditions."
   - q: "Air Sénégal a perdu mes bagages. Combien puis-je réclamer ?"
-    a: "Bagages perdus ou endommagés : jusqu'à **1 414€** (1 288 DTS) par passager selon la Convention de Montréal. Il faut remplir un PIR à l'aéroport et réclamer dans les 21 jours (retard bagage) ou 7 jours (dommage)."
+    a: "Bagages perdus ou endommagés : jusqu'à **environ 1 800 €** (1 519 DTS) par passager selon la Convention de Montréal. Il faut remplir un PIR à l'aéroport et réclamer dans les 21 jours (retard bagage) ou 7 jours (dommage)."
   - q: "Combien de temps j'ai pour réclamer à Air Sénégal ?"
     a: "Pour le CE261 : **2 à 5 ans** selon le droit applicable (loi française généralement). Pour la Convention de Montréal (bagages) : 2 ans maximum. Gardez tous vos documents."
   - q: "Air Sénégal a invoqué une circonstance extraordinaire. C'est valable ?"
@@ -94,7 +94,7 @@ La **Convention de Montréal** s'applique sur tous les vols Air Sénégal, quel 
 
 ### Bagage perdu ou endommagé
 
-**Plafond :** 1 414€ par passager (1 288 DTS). Vous devez déclarer dans :
+**Plafond :** environ 1 800 € par passager (1 519 DTS). Vous devez déclarer dans :
 - **7 jours** pour un bagage endommagé
 - **21 jours** pour un bagage retardé (qui vous a été rendu)
 - **21 jours** pour déclencher la procédure bagage perdu
@@ -153,7 +153,7 @@ Ce remboursement est distinct et cumulable avec d'autres indemnités.
 
 Famille de 5 sur Paris-Dakar retardée de 4h :
 - 5 × 600€ = **3 000€ brut**
-- Après commission Robin des Airs 25% : **2 250€ nets**
+- Ce que vous recevez (75 %, phase amiable) : **2 250€**
 
 Les enfants ayant un billet (même à tarif réduit ou bébé ayant payé des taxes) comptent chacun pour 600€.
 

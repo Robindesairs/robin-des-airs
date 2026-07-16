@@ -8,7 +8,7 @@ faq:
   - q: "Ma compagnie a fait faillite. Je peux encore toucher jusqu'à 600€ ?"
     a: "Cela dépend de votre situation. Si votre vol a été perturbé **avant** la liquidation et remplit les conditions du CE 261, une créance d'indemnité a pu naître et rester récupérable. Si la compagnie a simplement cessé toute activité, le recours passe surtout par le remboursement (assurance, banque, mandataire). Robin analyse gratuitement laquelle de ces pistes s'applique à vous."
   - q: "Combien coûte l'intervention de Robin des Airs ?"
-    a: "**0 € d'avance.** La vérification est gratuite. En cas de succès, la commission est de **25 % en phase amiable** (vous gardez 75 %) et de **40 % si le dossier va au contentieux** (vous gardez 60 %), frais d'avocat, d'huissier et de procédure inclus et avancés par Robin."
+    a: "**0 € d'avance.** La vérification est gratuite. En cas de succès, vous recevez **75 % en phase amiable** et de **40 % si le dossier va au contentieux** (vous gardez 60 %), frais d'avocat, d'huissier et de procédure inclus et avancés par Robin."
   - q: "Quel délai pour agir si la compagnie disparaît ?"
     a: "Le plus tôt possible. Les procédures collectives fixent un délai strict pour **déclarer sa créance** au mandataire liquidateur (souvent 2 mois après la publication). Passé ce délai, la créance devient difficile à faire valoir. Ne tardez pas."
 ---
@@ -60,7 +60,7 @@ Trois réflexes coûtent cher :
 
 Ces dossiers cumulent plusieurs procédures parallèles, chacune avec ses propres délais. Robin est né pour les familles de la diaspora qui voyagent entre l'Afrique et l'Europe, et qui n'ont ni le temps ni les moyens d'affronter seules un liquidateur.
 
-Le principe : **0 € d'avance**, vérification gratuite. Si votre dossier aboutit, la commission est de **25 % en phase amiable** (vous conservez 75 %) et passe à **40 % si le dossier doit aller au contentieux** (vous conservez 60 %), les frais d'avocat, d'huissier et de procédure étant inclus et avancés par Robin. Nous ne promettons aucun résultat ni aucun délai garanti : une compagnie en liquidation reste un terrain incertain. Mais nous savons quelles pistes activer, dans quel ordre, et sans que vous ayez à sortir un euro.
+Le principe : **0 € d'avance**, vérification gratuite. Si votre dossier aboutit, vous recevez **75 % en phase amiable** et passe à **40 % si le dossier doit aller au contentieux** (vous conservez 60 %), les frais d'avocat, d'huissier et de procédure étant inclus et avancés par Robin. Nous ne promettons aucun résultat ni aucun délai garanti : une compagnie en liquidation reste un terrain incertain. Mais nous savons quelles pistes activer, dans quel ordre, et sans que vous ayez à sortir un euro.
 
 Voir aussi : [La compagnie refuse de payer : que faire](/blog/compagnie-refuse-payer-indemnite-que-faire.html) et [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html).
 

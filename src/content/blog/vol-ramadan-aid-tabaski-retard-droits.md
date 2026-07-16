@@ -45,7 +45,7 @@ Si retard ≥ 3h : indemnité due, sauf preuve d'événement réellement imprév
 
 Famille de 5 voyageant pour Aïd el-Fitr, vol Paris-Dakar retardé de 5h :
 - 5 × 600€ = **3 000€ brut**
-- **2 250€ nets** après commission Robin de 25 %
+- **2 250€ nets** en phase amiable (vous recevez 75 %)
 
 Pour une famille élargie en pèlerinage Omra (10 personnes) : 10 × 600€ = **6 000€**, **4 500€ nets**.
 

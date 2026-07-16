@@ -72,7 +72,7 @@ Notre analyse :
 
 ## Famille / dossier groupé
 
-Si vous voyagez à plusieurs, on monte un seul dossier pour tout le monde. Famille de 4 vol annulé "météo" : 4 × 600€ = **2 400€ brut**, **1 800€ nets** après commission 25 %.
+Si vous voyagez à plusieurs, on monte un seul dossier pour tout le monde. Famille de 4 vol annulé "météo" : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir : [Circonstances extraordinaires liste](/blog/circonstances-extraordinaires-ce261.html), [Harmattan vol Afrique](/blog/harmattan-vol-afrique-retard-saison.html).
 

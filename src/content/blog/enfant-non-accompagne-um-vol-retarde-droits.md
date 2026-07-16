@@ -7,8 +7,8 @@ image_url: /og-blog.png
 faq:
   - q: "Mon enfant voyageait en UM, qui reçoit l'indemnité ?"
     a: "L'enfant est le bénéficiaire légal. Le **représentant légal** (parent) la réclame en son nom et la reçoit sur son compte ou celui dédié à l'enfant."
-  - q: "Le service UM coûte 100€. Robin prend-il la commission là-dessus aussi ?"
-    a: "Non. La commission de 25 % s'applique uniquement à l'**indemnité CE 261 récupérée** (600€), pas sur le coût du service UM payé à la compagnie."
+  - q: "Le service UM coûte 100€. Robin se sert-il là-dessus aussi ?"
+    a: "Non. notre part de 25 % s'applique uniquement à l'**indemnité CE 261 récupérée** (600€), pas sur le coût du service UM payé à la compagnie."
   - q: "Mon enfant a été laissé seul à l'aéroport pendant le retard. Recours ?"
     a: "Défaut grave de la compagnie. Documentez (témoignages, vidéos, heures) → réclamation **préjudice moral** via Convention de Montréal **en plus** des 600€ CE 261. Robin oriente vers un avocat si nécessaire."
 ---

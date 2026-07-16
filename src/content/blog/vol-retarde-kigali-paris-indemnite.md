@@ -41,7 +41,7 @@ Trajet Paris CDG → Bruxelles BRU → Kigali KGL sur billet unique Brussels Air
 
 ## Famille rwandaise
 
-Famille de 4 Paris → Kigali retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
+Famille de 4 Paris → Kigali retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html), [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Vol retardé Nairobi-Paris](/blog/vol-retarde-nairobi-paris-indemnite.html).
 

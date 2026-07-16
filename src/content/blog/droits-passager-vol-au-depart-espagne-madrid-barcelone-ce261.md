@@ -10,7 +10,7 @@ faq:
   - q: "Le vol était opéré par Iberia ou Air Europa. Ça change quelque chose ?"
     a: "Iberia et Air Europa sont des compagnies de l'Union européenne, ce qui peut renforcer votre dossier. Mais même sur une compagnie non européenne, un départ depuis l'Espagne reste en principe couvert par le règlement. C'est le point de départ dans l'UE qui compte d'abord."
   - q: "Combien ça me coûte et sous combien de temps je suis payé ?"
-    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, la commission est de **25 % en phase amiable** (vous gardez 75 %) et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Après encaissement, votre part vous est versée sous 5 jours ouvrés. Aucune garantie de délai ferme d'indemnisation."
+    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, vous recevez **75 % en phase amiable** et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Après encaissement, votre part vous est versée sous 5 jours ouvrés. Aucune garantie de délai ferme d'indemnisation."
 ---
 
 **Jusqu'à 600 € par passager** peuvent vous revenir si votre vol au départ de Madrid (MAD) ou de Barcelone (BCN) vers l'Afrique a été fortement retardé ou annulé. Vérification gratuite, 0 € d'avance, et vous ne payez que si l'on obtient un résultat.

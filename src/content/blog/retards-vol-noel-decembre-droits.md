@@ -58,7 +58,7 @@ Les compagnies proposent souvent un **bon d'achat "esprit de Noël"** de 100-200
 
 ## Famille en voyage de Noël : le calcul
 
-Famille de 5 sur Paris-Dakar retardé de 5h le 24 décembre : 5 × 600€ = **3 000€ brut**, **2 250€ nets** après commission Robin.
+Famille de 5 sur Paris-Dakar retardé de 5h le 24 décembre : 5 × 600€ = **3 000€ récupérés**, dont **2 250€ pour vous** (75 %) en phase amiable.
 
 Service en français, wolof, bambara, lingala. Robin reste joignable même pendant les fêtes.
 

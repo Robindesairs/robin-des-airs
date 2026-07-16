@@ -14,7 +14,7 @@ faq:
   - q: "Qui réclame pour le bébé ou l'enfant mineur ?"
     a: "Le **parent ou le représentant légal** réclame en son nom. L'indemnité du mineur lui revient. Chez Robin des Airs, un seul dossier couvre toute la famille, le parent signe pour les mineurs."
   - q: "Une famille de 4 avec 2 enfants, combien au total ?"
-    a: "Sur un vol long-courrier (plus de 3 500 km) retardé de 3h+ : 4 x 600 € = **2 400 € bruts**, soit 1 800 € nets après la commission de 25 % au succès. Chaque enfant avec un billet compte pour 600 €."
+    a: "Sur un vol long-courrier (plus de 3 500 km) retardé de 3h+ : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable. Chaque enfant avec un billet compte pour 600 €."
 ---
 
 **Votre vol a été retardé de 3h ou plus, ou annulé, et votre bébé voyageait sur vos genoux ? Bonne nouvelle : il a droit à la même indemnité que vous, jusqu'à 600 €, à une seule condition, qu'un billet ait été émis pour lui et que quelque chose ait été payé (même de simples taxes).** Beaucoup de familles de la diaspora ignorent ce droit et laissent des centaines d'euros sur la table. Voici la règle exacte.
@@ -43,11 +43,11 @@ Un bébé à tarif réduit sur un Paris-Dakar retardé touche donc **600 €**, 
 
 C'est là que ça devient intéressant, car vos vols Afrique-Europe sont presque tous à 600 € :
 
-- **Famille de 3** (2 parents + 1 bébé) : 3 x 600 € = 1 800 € bruts, soit **1 350 € nets**
-- **Famille de 4** (2 parents + 2 enfants) : 4 x 600 € = 2 400 € bruts, soit **1 800 € nets**
-- **Famille de 5** : 5 x 600 € = 3 000 € bruts, soit **2 250 € nets**
+- **Famille de 3** (2 parents + 1 bébé) : 3 x 600 € = 1 800 € récupérés, dont **1 350 € pour vous**
+- **Famille de 4** (2 parents + 2 enfants) : 4 x 600 € = 2 400 € récupérés, dont **1 800 € pour vous**
+- **Famille de 5** : 5 x 600 € = 3 000 € récupérés, dont **2 250 € pour vous**
 
-(nets après la commission de 25 % au succès, 0 € si rien n'est récupéré)
+(montants en phase amiable, où vous recevez 75 % ; 0 € si rien n'est récupéré)
 
 Le bébé compte pour un montant plein. L'oublier, c'est renoncer à 600 €.
 

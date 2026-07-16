@@ -1,7 +1,7 @@
 ---
 title: "Bagage abîmé ou pillé : réclamation Convention de Montréal"
 meta_title: "Bagage abîmé ou pillé : délais (7 jours), PIR et plafond Convention de Montréal"
-meta_description: "Valise cassée, forcée ou pillée à l'arrivée ? La Convention de Montréal impose un délai de 7 jours et un PIR. Plafond ~1 600 € par passager. On vérifie, 0 € d'avance."
+meta_description: "Valise cassée, forcée ou pillée à l'arrivée ? La Convention de Montréal impose un délai de 7 jours et un PIR. Plafond ~1 800 € par passager. On vérifie, 0 € d'avance."
 slug: convention-montreal-bagage-endommage-declaration-delais
 image_url: /og-blog.png
 faq:
@@ -10,7 +10,7 @@ faq:
   - q: "Faut-il un PIR pour un bagage endommagé ?"
     a: "Oui. Le **PIR (Property Irregularity Report)** doit être établi au comptoir « Bagages » avant de quitter l'aéroport. Sans ce constat, prouver l'origine du dommage est presque impossible."
   - q: "Quel est le plafond d'indemnisation ?"
-    a: "Environ **1 600 € par passager** (1 288 DTS) tous préjudices bagage confondus, selon la Convention de Montréal. C'est un plafond de remboursement sur justificatifs, pas une somme automatique."
+    a: "**environ 1 800 € par passager** (1 519 DTS) tous préjudices bagage confondus, selon la Convention de Montréal. C'est un plafond de remboursement sur justificatifs, pas une somme automatique."
 ---
 
 **Jusqu'à 600 € par passager** peuvent, selon votre éligibilité, s'ajouter à l'indemnisation de votre bagage lorsque votre vol a aussi été retardé de 3 h ou plus. On vérifie gratuitement vos droits, 0 € d'avance.
@@ -44,7 +44,7 @@ Le PIR établi à l'aéroport ne remplace pas la réclamation écrite : il la d�
 
 ## Le plafond d'indemnisation
 
-Pour tout ce qui touche au bagage — perte, dommage, retard, pillage — la Convention de Montréal fixe un plafond unique d'environ **1 600 € par passager** (1 288 DTS, l'unité de compte du FMI, convertie au taux du jour). Ce n'est pas une somme forfaitaire que vous « gagnez » automatiquement : c'est un **plafond de remboursement sur justificatifs**. Vous êtes indemnisé à hauteur du préjudice réellement prouvé, dans cette limite.
+Pour tout ce qui touche au bagage — perte, dommage, retard, pillage — la Convention de Montréal fixe un plafond unique d'**environ 1 800 € par passager** (1 519 DTS, l'unité de compte du FMI, convertie au taux du jour). Ce n'est pas une somme forfaitaire que vous « gagnez » automatiquement : c'est un **plafond de remboursement sur justificatifs**. Vous êtes indemnisé à hauteur du préjudice réellement prouvé, dans cette limite.
 
 ## Les pièces à fournir
 
@@ -69,8 +69,8 @@ L'éligibilité au CE 261 dépend de l'itinéraire précis et de la compagnie : 
 On étudie votre vol, on vérifie **quels fondements** peuvent s'appliquer (CE 261 pour le retard, Convention de Montréal pour le bagage, ou autre litige compagnie) et on constitue le dossier de recouvrement à partir de vos justificatifs. Vous n'avancez **rien** :
 
 - **Aucune avance** : 0 € à sortir de votre poche.
-- **Commission de 25 % en phase amiable** — vous conservez **75 %** des sommes recouvrées.
-- Si un passage **au tribunal** est nécessaire, la commission est de **40 %** (vous conservez **60 %**), les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
+- **Phase amiable** : vous recevez **75 %** des sommes recouvrées.
+- Si un passage **au tribunal** est nécessaire, vous recevez **60 %**, les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
 - Une fois les fonds encaissés auprès de la compagnie, votre part vous est reversée sous **5 jours ouvrés**.
 
 Voir aussi : [Bagage perdu ou retardé](/blog/bagage-perdu-retard-vol-indemnite.html), [Convention de Montréal : rembourser un retard prouvé](/blog/convention-montreal-retard-frais-prouver-prejudice.html), [Compagnie qui refuse de payer](/blog/compagnie-refuse-payer-indemnite-que-faire.html).

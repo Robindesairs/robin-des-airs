@@ -46,8 +46,8 @@ Prenons une famille de quatre personnes reliant l'Europe à Malabo pour des vaca
 
 Si l'éligibilité est confirmée, l'indemnité pourrait atteindre **4 × 600 € = 2 400 €**. Sur ce montant :
 
-- En **phase amiable**, la commission Robin des Airs est de **25 %** — vous conservez **75 %**, soit environ **1 800 €**.
-- Si la compagnie refuse et qu'il faut passer en **phase contentieuse** (tribunal), la commission est de **40 %** — vous conservez **60 %** —, les frais d'avocat, d'huissier et de procédure étant **avancés par Robin des Airs**.
+- En **phase amiable**, vous recevez **75 %**, soit environ **1 800 €**.
+- Si la compagnie refuse et qu'il faut passer en **phase contentieuse** (tribunal), vous recevez **60 %** —, les frais d'avocat, d'huissier et de procédure étant **avancés par Robin des Airs**.
 
 Dans tous les cas : **0 € d'avance**, et le versement de votre part intervient sous **5 jours ouvrés** après encaissement. Nous ne pouvons garantir ni le résultat ni un délai d'obtention auprès de la compagnie — chaque dossier dépend de son éligibilité et de la réaction du transporteur.
 

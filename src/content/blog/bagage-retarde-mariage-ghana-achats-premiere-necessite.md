@@ -131,7 +131,7 @@ En revanche, si votre **vol** a été retardé de 3 h ou plus, annulé, ou si vo
 
 - **Aucune avance** : 0 € à sortir de votre poche, et 0 € si rien n'est récupéré.
 - **Commission de 25 % en phase amiable** : vous conservez **75 %** des sommes recouvrées.
-- Si un passage **au tribunal** est nécessaire, la commission est de **40 %** (vous conservez **60 %**), les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
+- Si un passage **au tribunal** est nécessaire, vous recevez **60 %**, les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
 - Une fois les fonds encaissés auprès de la compagnie, votre part vous est reversée sous **5 jours ouvrés**.
 
 Voir aussi : [Convention de Montréal : rembourser un retard prouvé](/blog/convention-montreal-retard-frais-prouver-prejudice.html), [Bagage perdu ou retardé](/blog/bagage-perdu-retard-vol-indemnite.html), [Compagnie qui refuse de payer](/blog/compagnie-refuse-payer-indemnite-que-faire.html).

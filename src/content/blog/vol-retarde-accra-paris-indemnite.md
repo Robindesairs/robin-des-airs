@@ -45,7 +45,7 @@ Trajet : Paris CDG → Bruxelles BRU → Accra ACC. Même logique — billet uni
 
 ## Famille ghanéenne
 
-Famille de 4 Paris → Accra retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
+Famille de 4 Paris → Accra retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html), [Vol retardé Lagos-Paris](/blog/vol-retarde-lagos-paris-indemnite.html).
 

@@ -67,7 +67,7 @@ Sur le sens couvert par le CE 261 (départ d'Europe), la compagnie n'échappe à
 
 ## Comment réclamer avec Robin des Airs
 
-Robin des Airs est spécialiste des corridors Afrique-Europe et de leurs hubs (Casablanca, Addis-Abeba, Nairobi, Istanbul). Nous déterminons d'abord le **bon fondement** (forfait CE 261 ou frais réels Montréal) selon votre sens et votre compagnie, puis nous montons le dossier et réclamons. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+Robin des Airs est spécialiste des corridors Afrique-Europe et de leurs hubs (Casablanca, Addis-Abeba, Nairobi, Istanbul). Nous déterminons d'abord le **bon fondement** (forfait CE 261 ou frais réels Montréal) selon votre sens et votre compagnie, puis nous montons le dossier et réclamons. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**.
 

@@ -12,7 +12,7 @@ faq:
   - q: "Mon retour Abidjan-Le Caire-Paris sur EgyptAir a été très retardé. Je n'ai droit à rien ?"
     a: "Pas au forfait CE 261 sur ce sens (EgyptAir est une compagnie non-UE au départ d'un pays hors UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, transport, achats de première nécessité, sur justificatifs). Et si votre trajet inclut un tronçon vers l'Europe opéré par une compagnie européenne sur la même réservation, ce sens peut ouvrir droit au forfait."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
-    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un vol EgyptAir au départ de l'UE retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un vol EgyptAir au départ de l'UE retardé de 3h+ : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable."
   - q: "EgyptAir invoque une panne technique. C'est une excuse valable ?"
     a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : sur un vol couvert par le CE 261, l'indemnité reste due. Seules la météo extrême, la fermeture d'espace aérien ou une grève externe (contrôleurs aériens) peuvent exonérer la compagnie."
   - q: "Mon vol EgyptAir date d'il y a deux ans. Est-ce trop tard ?"
@@ -84,11 +84,11 @@ Robin des Airs conteste systématiquement les refus fondés sur de fausses circo
 
 ## Famille : chaque passager compte
 
-L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un vol EgyptAir au départ de l'UE arrivé avec 4h de retard : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un vol EgyptAir au départ de l'UE arrivé avec 4h de retard : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable.
 
 ## Comment réclamer avec Robin des Airs
 
-Spécialiste des corridors Afrique-Europe et de leurs hubs (Le Caire, Casablanca, Addis-Abeba, Nairobi, Istanbul), Robin des Airs détermine d'abord le **bon fondement** (forfait CE 261 ou frais réels Montréal) selon votre sens et votre compagnie, puis monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+Spécialiste des corridors Afrique-Europe et de leurs hubs (Le Caire, Casablanca, Addis-Abeba, Nairobi, Istanbul), Robin des Airs détermine d'abord le **bon fondement** (forfait CE 261 ou frais réels Montréal) selon votre sens et votre compagnie, puis monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en arabe.
 

@@ -77,7 +77,7 @@ Beaucoup de Gambiens vivant en France prennent un billet combiné CDG → BRU �
 
 Famille de 6 sur Bruxelles-Banjul retardé de 5h pour mariage à Brikama :
 - 6 × 600€ = **3 600€ brut**
-- **2 700€ nets** après commission Robin de 25 %
+- **2 700€ nets** en phase amiable (vous recevez 75 %)
 
 Service en français, anglais, wolof (Gambie a une diaspora wolof), mandinka, peul.
 

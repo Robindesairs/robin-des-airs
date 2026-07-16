@@ -38,8 +38,8 @@ Bonne nouvelle : même sans carte d'embarquement, il est souvent possible de ret
 
 Vous ne réglez rien à l'avance : **0 € d'avance**, aucune carte bancaire. La rémunération se fait uniquement en cas de succès.
 
-- **En phase amiable**, la commission est de **25 %** : vous conservez **75 %** de l'indemnité obtenue.
-- **En phase contentieuse** (dossier porté devant le tribunal), la commission passe à **40 %** : vous conservez **60 %**. Les frais d'avocat, d'huissier et de procédure sont inclus et avancés par Robin des Airs — vous ne débour­sez rien.
+- **En phase amiable**, vous recevez **75 %** de l'indemnité obtenue.
+- **En phase contentieuse** (dossier porté devant le tribunal), vous recevez **60 %**. Les frais d'avocat, d'huissier et de procédure sont inclus et avancés par Robin des Airs — vous ne débour­sez rien.
 
 Rien n'est garanti d'avance : chaque dossier dépend de son éligibilité et des circonstances du vol. Mais faire vérifier ne coûte rien et ne prend que quelques minutes.
 

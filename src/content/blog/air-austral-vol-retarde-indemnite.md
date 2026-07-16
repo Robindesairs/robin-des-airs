@@ -14,7 +14,7 @@ faq:
   - q: "Air Austral invoque une panne technique. C'est une excuse valable ?"
     a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Seules la météo extrême (cyclone) ou la fermeture d'espace aérien peuvent exonérer la compagnie."
   - q: "Nous étions une famille de 5. L'indemnité est par personne ?"
-    a: "Oui. Chaque passager avec un billet compte, enfants et bébés compris. Famille de 5 sur un Réunion-Paris retardé de 4h : 5 x 600 € = 3 000 € bruts, soit 2 250 € nets après la commission de 25 % au succès."
+    a: "Oui. Chaque passager avec un billet compte, enfants et bébés compris. Famille de 5 sur un Réunion-Paris retardé de 4h : 5 x 600 € = **3 000 € récupérés**, dont vous recevez **2 250 €** (75 %) en phase amiable."
   - q: "Mon vol Air Austral date d'il y a deux ans. Trop tard ?"
     a: "Non. Vous avez **5 ans** pour réclamer une indemnité CE 261 devant les juridictions françaises (art. 2224 du Code civil). Un vol Air Austral retardé il y a deux ans reste indemnisable."
 ---
@@ -67,11 +67,11 @@ En cas de bagage perdu, retardé ou endommagé sur Air Austral, la Convention de
 
 ## Famille : chaque passager compte
 
-L'indemnité est due **par passager**, sans distinction d'âge. Famille de 5 sur un Réunion-Paris retardé de 4h : 5 x 600 € = **3 000 € bruts**, soit **2 250 € nets** après la commission de 25 % au succès.
+L'indemnité est due **par passager**, sans distinction d'âge. Famille de 5 sur un Réunion-Paris retardé de 4h : 5 x 600 € = **3 000 € récupérés**, dont vous recevez **2 250 €** (75 %) en phase amiable.
 
 ## Comment réclamer avec Robin des Airs
 
-Robin des Airs vérifie l'éligibilité de votre vol, monte le dossier, envoie la réclamation à Air Austral et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+Robin des Airs vérifie l'éligibilité de votre vol, monte le dossier, envoie la réclamation à Air Austral et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible dans votre langue.
 

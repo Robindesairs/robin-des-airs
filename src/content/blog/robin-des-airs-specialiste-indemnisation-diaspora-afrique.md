@@ -14,7 +14,7 @@ faq:
   - q: "Est-ce que je peux parler à quelqu'un au téléphone ?"
     a: "Oui : laissez votre numéro (sur WhatsApp ou le formulaire) et **un expert dédié vous rappelle dans votre langue**. Pas de robot, pas de formulaire anonyme : un expert dédié qui suit votre dossier, du début à la fin."
   - q: "Combien ça coûte ?"
-    a: "**0 € d'avance et 0 € si rien n'est récupéré.** Notre commission est de 25 % uniquement en cas de succès, prélevée sur l'indemnité obtenue. Jamais de carte bancaire demandée pour lancer un dossier."
+    a: "**0 € d'avance et 0 € si rien n'est récupéré.** vous recevez 75 % de l'indemnité obtenue, et 0 € n'est dû si rien n'est récupéré. Jamais de carte bancaire demandée pour lancer un dossier."
   - q: "Sur quelles routes et compagnies êtes-vous spécialisés ?"
     a: "Les corridors Afrique-Europe : Dakar, Abidjan, Bamako, Douala, Yaoundé, Lagos, Kinshasa, Conakry, Cotonou, Lomé, Brazzaville, Libreville, et les compagnies comme Air France, Air Sénégal, Ethiopian, Kenya Airways, Royal Air Maroc, ASKY, RwandAir."
 ---
@@ -57,7 +57,7 @@ Chez Robin des Airs, **un expert dédié vous rappelle dans votre langue**, suit
 
 - **0 € à payer pour lancer votre dossier.** Aucune carte bancaire demandée.
 - **0 € si rien n'est récupéré.** Vous ne prenez aucun risque.
-- **25 % de commission uniquement au succès**, prélevés sur l'indemnité obtenue. Le reste est pour vous.
+- **vous recevez 75 % de l'indemnité obtenue**. Le reste est pour vous.
 - **C'est nous qui vous payons** : après réception des fonds, on vous vire votre part.
 
 ## Chaque passager de la famille compte

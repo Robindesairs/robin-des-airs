@@ -64,6 +64,19 @@ La plupart des pays africains ont ratifié Montréal, y compris ceux que dessert
 
 Cela ne veut pas dire que vous n'avez aucun droit : il vous reste le **contrat de transport** et les conditions générales de la compagnie, ainsi que le droit national applicable. Mais vous perdez le socle international, et c'est précisément là que le choix de la compagnie devient décisif : sur un vol Paris-Djibouti opéré par un transporteur européen, le règlement européen rétablit à lui seul le régime de Montréal.
 
+### « Un texte de 1929 pour des pays africains ? »
+
+La question vient naturellement : en 1929, presque aucun État africain n'existait en tant que pays indépendant. Comment peuvent-ils être parties à une convention signée à Varsovie cette année-là ?
+
+Parce que **la date du traité n'est pas la date d'adhésion**. Une convention reste ouverte : chaque État y adhère quand il le décide, parfois soixante ans après. Les États africains l'ont fait au fil de leurs indépendances :
+
+- **Guinée** : adhésion en septembre 1961, trois ans après l'indépendance.
+- **Mauritanie** : août 1962. **Algérie** : juin 1964, deux ans après l'indépendance. **Libye** : mai 1969. **Malawi** : octobre 1977. **Comores** : juin 1991.
+- **Liberia** : mai 1942, tout simplement parce que le pays était indépendant depuis 1847.
+- **Lesotho** : le cas d'école. Le pays a procédé par **succession** en 1975, avec un effet rétroactif au **4 octobre 1966**, jour de son indépendance. En droit, il était donc lié dès le premier jour de son existence.
+
+Varsovie n'est pas un vestige colonial qui s'appliquerait par défaut : c'est un texte que ces États ont choisi de ratifier en tant qu'États souverains, et qui est toujours en vigueur chez eux aujourd'hui. C'est précisément pour cela qu'il faut le connaître.
+
 Ces statuts évoluent au fil des ratifications. Les listes officielles font foi et sont publiées par l'OACI : [États parties à la Convention de Montréal 1999](https://www.icao.int/sites/default/files/secretariat/legal/CurrentListofParties/Mtl99_EN.pdf) et [États parties à Varsovie et au Protocole de La Haye](https://www.icao.int/sites/default/files/secretariat/legal/CurrentListofParties/WC-HP_EN.pdf).
 
 ## Et le CE 261 dans tout ça ?

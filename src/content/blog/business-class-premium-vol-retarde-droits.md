@@ -24,7 +24,7 @@ Qu'importe que vous ayez payé votre billet 600€ en éco ou 4 500€ en busine
 
 L'indemnité forfaitaire compense **partiellement** le surcoût payé pour le confort. Mais surtout :
 
-1. **Vous ne perdez rien** à réclamer (commission Robin uniquement sur succès)
+1. **Vous ne perdez rien** à réclamer (vous recevez 75 % en cas de succès)
 2. **600€ s'additionnent aux 4 500€** déjà payés — c'est de l'argent récupéré
 3. **Les frais réels** (taxi, hôtel manqué, réunion ratée) peuvent être réclamés en plus via Convention Montréal
 
@@ -70,7 +70,7 @@ Si votre vol est retardé en business :
 
 Robin des Airs gère votre dossier comme un dossier éco : même tarif (25 %), même attention. Pas de "supplément business" abusif.
 
-Sur un dossier business class Paris-Lagos retardé de 6h : 600€ d'indemnité + 2 500€ Convention Montréal (réunion manquée prouvée) = **3 100€ récupérés**, environ **2 500€ nets** après commission.
+Sur un dossier business class Paris-Lagos retardé de 6h : 600€ d'indemnité + 2 500€ Convention Montréal (réunion manquée prouvée) = **3 100€ récupérés**, dont environ **2 500€ pour vous** en phase amiable (75 % sur le CE 261, 100 % de vos frais réels).
 
 Voir : [Réglementation CE 261](/blog/reglementation-ce261-resume.html), [Vol Paris-Lagos](/blog/vol-retarde-lagos-paris-indemnite.html), [Assurance vs CE 261](/blog/assurance-voyage-vs-indemnite-ce261-difference.html).
 

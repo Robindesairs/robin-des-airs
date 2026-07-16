@@ -45,7 +45,7 @@ Si votre vol Paris-Antananarivo fait une escale technique (refueling stop) et qu
 
 ## Famille malgache
 
-Famille de 4 sur Paris-Antananarivo retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%. Les enfants avec billet comptent chacun pour 600€.
+Famille de 4 sur Paris-Antananarivo retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable. Les enfants avec billet comptent chacun pour 600€.
 
 Voir aussi : [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [Vol annulé 600€](/blog/vol-annule-indemnite-600-euros.html).
 

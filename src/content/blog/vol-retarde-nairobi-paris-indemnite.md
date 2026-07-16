@@ -43,7 +43,7 @@ Nairobi est un hub important pour l'Afrique de l'Est et centrale. Si votre bille
 
 ## Famille en Afrique de l'Est
 
-Famille de 5 Paris → Nairobi, retardée de 4h : 5 × 600€ = 3 000€ brut, **2 250€ nets** après commission Robin de 25%.
+Famille de 5 Paris → Nairobi, retardée de 4h : 5 × 600€ = **3 000€ récupérés**, dont **2 250€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Kenya Airways vol retardé](/blog/kenya-airways-vol-retarde-indemnite.html), [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Ethiopian Airlines vol retardé](/blog/ethiopian-airlines-vol-retarde-indemnite.html).
 

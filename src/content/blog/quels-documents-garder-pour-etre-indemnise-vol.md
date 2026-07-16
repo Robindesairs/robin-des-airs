@@ -82,7 +82,7 @@ En cas de longue attente, la compagnie doit vous prendre en charge (repas, hôte
 
 ## Bagages perdus ou endommagés (Convention de Montréal)
 
-Si vos bagages sont perdus, retardés ou abîmés (jusqu'à 1 414 € par passager) :
+Si vos bagages sont perdus, retardés ou abîmés (jusqu'à environ 1 800 € par passager) :
 
 - Remplissez un **PIR (Property Irregularity Report)** au comptoir bagages **avant de quitter l'aéroport**. Sans PIR, la réclamation est quasi impossible.
 - Gardez l'**étiquette bagage** et les **reçus** des achats de première nécessité.
