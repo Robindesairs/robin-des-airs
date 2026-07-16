@@ -85,7 +85,105 @@ function inlineMd(s: string): string {
     .replace(/\n/g, '<br>');
 }
 
-function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string {
+/**
+ * Mots vides : n'apportent aucun signal de proximité thématique entre articles
+ * (ils sont dans presque tous les slugs). On garde les tokens porteurs de sens :
+ * villes, compagnies, situations (tabaski, hajj, bebe, greve…).
+ */
+const REL_STOPWORDS = new Set([
+  'vol', 'retarde', 'retardee', 'annule', 'annulee', 'annulation', 'indemnite', 'indemnites',
+  'droit', 'droits', 'paris', 'europe', 'html', 'les', 'des', 'aux', 'pour', 'sur', 'vers',
+  'correspondance', 'manquee', 'ce261', '2004', 'guide', 'comment', 'faire', 'depuis', 'depart',
+]);
+
+function relTokens(slug: string): Set<string> {
+  return new Set(slug.split('-').filter((t) => t.length >= 3 && !REL_STOPWORDS.has(t)));
+}
+
+/**
+ * Articles piliers : ancrages transverses utilisés en complément quand un article
+ * a trop peu de voisins thématiques (garantit >= 3 liens sortants par page).
+ */
+const PILLAR_SLUGS = [
+  'reglementation-ce261-resume',
+  'indemnite-vol-montants-250-400-600',
+  'reclamer-seul-ou-passer-par-un-service-indemnite-vol',
+];
+
+/**
+ * Type d'article, déduit du slug. Sert de 2e signal de maillage quand un article
+ * a peu de voisins par tokens (ex. une compagnie a un nom unique → 0 voisin
+ * thématique, mais doit pointer vers les AUTRES compagnies).
+ */
+function postType(slug: string): 'jurisprudence' | 'route' | 'compagnie' | 'situation' {
+  if (slug.startsWith('arret-')) return 'jurisprudence';
+  if (slug.startsWith('vol-retarde-') || slug.startsWith('vol-annule-')) return 'route';
+  if (/-vol-retarde-indemnite$/.test(slug)) return 'compagnie';
+  return 'situation';
+}
+
+/**
+ * Maillage interne à 3 niveaux :
+ *  1. voisins thématiques (tokens partagés : même ville, compagnie, thème) ;
+ *  2. articles du MÊME TYPE (compagnie↔compagnie, arrêt↔arrêt…), avec rotation
+ *     par article pour répartir le jus de lien sur tout le cluster ;
+ *  3. piliers transverses en dernier recours (garantit >= 3 liens sortants).
+ */
+function computeRelated(
+  targetSlug: string,
+  all: Array<{ slug: string; title: string }>,
+  max = 6
+): Array<{ slug: string; title: string }> {
+  const tks = relTokens(targetSlug);
+  const tType = postType(targetSlug);
+  const picked: Array<{ slug: string; title: string }> = [];
+  const seen = new Set<string>([targetSlug]);
+  const add = (p: { slug: string; title: string }) => {
+    if (picked.length < max && !seen.has(p.slug)) {
+      seen.add(p.slug);
+      picked.push(p);
+    }
+  };
+
+  // 1) Voisins thématiques
+  const scored = all
+    .filter((p) => p.slug !== targetSlug)
+    .map((p) => {
+      const ot = relTokens(p.slug);
+      let score = 0;
+      for (const t of tks) if (ot.has(t)) score++;
+      return { p, score };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || a.p.slug.localeCompare(b.p.slug));
+  for (const x of scored) add(x.p);
+
+  // 2) Même type, avec point de départ tournant par article
+  if (picked.length < max) {
+    const sameType = all
+      .filter((p) => p.slug !== targetSlug && postType(p.slug) === tType)
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+    if (sameType.length) {
+      let off = 0;
+      for (const c of targetSlug) off = (off + c.charCodeAt(0)) % sameType.length;
+      for (let i = 0; i < sameType.length; i++) add(sameType[(off + i) % sameType.length]);
+    }
+  }
+
+  // 3) Piliers
+  if (picked.length < 3) {
+    for (const ps of PILLAR_SLUGS) {
+      const found = all.find((p) => p.slug === ps);
+      if (found) add(found);
+    }
+  }
+  return picked;
+}
+
+function renderArticlePage(
+  post: Awaited<ReturnType<typeof getBySlug>>,
+  related: Array<{ slug: string; title: string }> = []
+): string {
   if (!post) return '';
   const canonical = `${SITE_URL}/blog/${post.slug}.html`;
   const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
@@ -150,6 +248,16 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
         .join('\n      ')}
     </section>`
     : '';
+  const relatedHtml = related.length
+    ? `<section class="related">
+      <h2>Articles liés</h2>
+      <ul>
+        ${related
+          .map((r) => `<li><a href="/blog/${r.slug}.html">${escapeHtml(r.title)}</a></li>`)
+          .join('\n        ')}
+      </ul>
+    </section>`
+    : '';
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -203,14 +311,7 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
         <a href="https://wa.me/33756863630">WhatsApp direct</a>
       </p>
     </div>
-    <section class="related">
-      <h2>Articles liés</h2>
-      <ul>
-        <li><a href="/blog/reglementation-ce261-resume.html">Résumé du règlement CE 261/2004</a></li>
-        <li><a href="/blog/indemnite-vol-montants-250-400-600.html">Montants 250 €, 400 €, 600 €</a></li>
-        <li><a href="/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html">Réclamer seul ou se faire accompagner</a></li>
-      </ul>
-    </section>
+    ${relatedHtml}
   </main>
 </body>
 </html>`;
@@ -344,15 +445,17 @@ function main(): void {
   );
   console.log('[build-blog] blog/index.html écrit.');
 
+  const linkPool = merged.map((m) => ({ slug: m.slug, title: m.title }));
   for (const p of posts) {
     const full = getBySlug(p.slug);
     if (full) {
+      const related = computeRelated(full.slug, linkPool, 6);
       fs.writeFileSync(
         path.join(BLOG_OUT_DIR, `${full.slug}.html`),
-        renderArticlePage(full),
+        renderArticlePage(full, related),
         'utf-8'
       );
-      console.log(`[build-blog] blog/${full.slug}.html écrit.`);
+      console.log(`[build-blog] blog/${full.slug}.html écrit (${related.length} liens).`);
     }
   }
 

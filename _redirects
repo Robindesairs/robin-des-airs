@@ -55,9 +55,11 @@
 /gambia/travel-agents              /travel-agents-programme-gambia-en.html    200
 /gambia-travel-agents               /travel-agents-programme-gambia-en.html    301
 
-# Hub navigation interne (équipe — noindex)
-/navigation-interne    /navigation-interne.html    200
-/interne               /navigation-interne.html    200
+# Hub navigation interne : plan de TOUT le site (pages test/admin/statistiques + variante easyJet).
+# Fichier sensible — publish='.' le servirait en clair. Bloqué (404). Ajouté 2026-07-16.
+/navigation-interne.html    /404.html    404!
+/navigation-interne         /404.html    404!
+/interne                    /404.html    404!
 
 # Accueil anglais (URL /en) — vraie page statique anglaise (anglais figé : SEO + aperçus WhatsApp/Meta).
 # index-en.html est GÉNÉRÉ par scripts/build-en-home.js (source : index.html + dico EN de i18n.js). Ne pas l'éditer à la main.
