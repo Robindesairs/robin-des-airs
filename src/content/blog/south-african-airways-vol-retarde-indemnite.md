@@ -12,7 +12,7 @@ faq:
   - q: "Mon vol Johannesburg vers l'Europe sur South African Airways a été très retardé. Je n'ai droit à rien ?"
     a: "Pas au forfait CE 261 sur ce sens (compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs). Et votre vol aller au départ d'Europe, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
-    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un vol au départ d'Europe retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un vol au départ d'Europe retardé de 3h+ : 4 x 600 € = 2 400 € récupérés, dont vous recevez **75 % en phase amiable**, soit 1 800 €. Si la compagnie refuse de payer et qu'il faut saisir le tribunal, vous recevez 60 %, soit 1 440 €, avocat et frais de procédure à notre charge."
   - q: "South African Airways parle d'une panne technique. C'est une excuse valable ?"
     a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Seules la météo extrême, la fermeture d'espace aérien ou une grève externe peuvent exonérer la compagnie."
   - q: "Mon vol date d'il y a deux ans. Est-ce trop tard ?"
@@ -75,11 +75,24 @@ Robin des Airs conteste systématiquement les refus fondés sur de fausses circo
 
 ## Famille : chaque passager compte
 
-L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un vol au départ d'Europe arrivé à Johannesburg avec 4h de retard : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un vol au départ d'Europe arrivé à Johannesburg avec 4h de retard : **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable.
 
 ## Comment réclamer avec Robin des Airs
 
-Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), détermine le bon fondement (forfait CE 261 ou frais réels Montréal), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), détermine le bon fondement (forfait CE 261 ou frais réels Montréal), monte le dossier, envoie la réclamation et conteste les refus.
+
+**Ce que vous recevez, dit en entier :**
+
+Robin des Airs ne travaille pas pour vous : Robin des Airs **vous achète votre créance** et la recouvre en son nom. Vous n'avez donc pas de frais à payer, vous avez un **prix de cession** à recevoir, qui dépend de ce qui est effectivement récupéré.
+
+- **0 € d'avance, et 0 € si rien n'est récupéré.** Le risque est pour nous, pas pour vous.
+- On commence **toujours par la phase amiable** : réclamation à la compagnie, puis mise en demeure. Vous recevez alors **75 %** des sommes récupérées.
+- Le **tribunal** n'intervient que si la compagnie refuse de payer. Vous recevez alors **60 %**, et l'avocat, l'huissier et les frais de procédure sont **avancés et à notre charge**, y compris si nous perdons.
+- Versement sur votre compte sous **5 jours ouvrés** après encaissement.
+
+**Pourquoi 60 % et pas 75 % au tribunal ?** Parce qu'à ce stade un avocat devient obligatoire, et qu'en France ses honoraires sont libres : il n'existe aucun barème officiel, et l'heure se facture couramment entre 150 et 450 € HT. Sur une indemnité de 600 €, **une seule heure d'avocat peut absorber la moitié du dossier**. C'est ce coût que les 15 points d'écart couvrent, et c'est nous qui le portons, gagné ou perdu.
+
+Les deux taux sont sur la table **avant** votre signature, jamais après. Barème complet : [nos tarifs](https://robindesairs.eu/nos-tarifs).
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en anglais ou en zoulou.
 
