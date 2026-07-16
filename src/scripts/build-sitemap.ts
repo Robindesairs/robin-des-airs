@@ -6,6 +6,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { execSync } from 'child_process';
 import { getAllSlugs } from '../services/blogService';
 
 const SITE_URL = 'https://robindesairs.eu';
@@ -16,26 +17,85 @@ const FR_PATH = path.join(process.cwd(), 'sitemap-fr.xml');
 const INDEX_PATH = path.join(process.cwd(), 'sitemap-index.xml');
 const BLOG_DIR = path.join(process.cwd(), 'blog');
 const DEST_DIR = path.join(process.cwd(), 'destinations');
-const LASTMOD = new Date().toISOString().slice(0, 10);
 
 /**
- * Liste des sub-sitemaps publiés à la racine. L'index doit être regénéré
- * à chaque build avec un lastmod frais, sinon Google ne re-crawle pas les
- * sub-sitemaps même s'ils changent (cause typique de pages non découvertes).
+ * Date du dernier commit touchant chaque fichier, en un seul passage de `git log`
+ * (le log est antéchronologique : la première occurrence d'un chemin est la plus récente).
+ *
+ * ⚠️ NE JAMAIS remplacer par la date du jour. Google n'utilise le `lastmod` que s'il est
+ * « consistently and verifiably accurate » : un site qui tamponne toutes ses URL à la date
+ * du build apprend à Google que son `lastmod` est du bruit, et Google cesse de le croire
+ * pour l'ensemble du site. C'était le cas ici jusqu'au 16/07/2026 (258 URL à la date du
+ * jour, sitemap non relu depuis le 19/06) : l'inverse exact de l'effet recherché.
+ * Si la date est inconnue, on OMET le lastmod — un signal absent vaut mieux qu'un faux.
+ */
+let gitDates: Map<string, string> | null = null;
+function lastCommitDate(relPath: string): string | null {
+  if (!gitDates) {
+    gitDates = new Map();
+    try {
+      const log = execSync('git log --format=%cs --name-only --no-merges', {
+        cwd: process.cwd(),
+        maxBuffer: 64 * 1024 * 1024,
+      }).toString();
+      let current = '';
+      for (const line of log.split('\n')) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(line)) current = line;
+        else if (line && !gitDates.has(line)) gitDates.set(line, current);
+      }
+    } catch {
+      console.warn('[build:sitemap] git indisponible : lastmod omis (préférable à une date fausse).');
+    }
+  }
+  return gitDates.get(relPath) ?? null;
+}
+
+/** `<lastmod>` seulement si on connaît la vraie date. Sinon : rien. */
+function lastmodTag(relPath: string | null): string {
+  const d = relPath ? lastCommitDate(relPath) : null;
+  return d ? `<lastmod>${d}</lastmod>` : '';
+}
+
+/** Fichier source qui fait foi pour la date d'une URL du site. */
+function sourceFor(loc: string): string | null {
+  const p = loc.replace(SITE_URL, '');
+  if (p === '/' || p === '') return 'index.html';
+  if (p === '/blog/') return 'blog/index.html';
+  const m = p.match(/^\/blog\/(.+)\.html$/);
+  if (m) {
+    // le Markdown fait foi ; à défaut (articles legacy en HTML autonome), le HTML publié
+    const md = path.join('src', 'content', 'blog', `${m[1]}.md`);
+    return fs.existsSync(path.join(process.cwd(), md)) ? md : `blog/${m[1]}.html`;
+  }
+  return p.replace(/^\//, '') || null;
+}
+
+/**
+ * Liste des sub-sitemaps publiés à la racine. Le lastmod de l'index reflète la date
+ * de modification la plus récente parmi les URL du sub-sitemap correspondant.
  */
 const SUB_SITEMAPS = ['sitemap.xml', 'sitemap-fr.xml', 'sitemap-en.xml'];
 
+/** Date la plus récente réellement présente dans un sub-sitemap déjà écrit. */
+function newestLastmodIn(name: string): string | null {
+  const f = path.join(process.cwd(), name);
+  if (!fs.existsSync(f)) return null;
+  const dates = [...fs.readFileSync(f, 'utf-8').matchAll(/<lastmod>([\d-]+)<\/lastmod>/g)].map((m) => m[1]);
+  return dates.length ? dates.sort().pop()! : null;
+}
+
 function writeSitemapIndex(): void {
-  const items = SUB_SITEMAPS.map(
-    (name) => `  <sitemap><loc>${SITE_URL}/${name}</loc><lastmod>${LASTMOD}</lastmod></sitemap>`
-  ).join('\n');
+  const items = SUB_SITEMAPS.map((name) => {
+    const d = newestLastmodIn(name);
+    return `  <sitemap><loc>${SITE_URL}/${name}</loc>${d ? `<lastmod>${d}</lastmod>` : ''}</sitemap>`;
+  }).join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items}
 </sitemapindex>
 `;
   fs.writeFileSync(INDEX_PATH, xml, 'utf-8');
-  console.log(`[build:sitemap] ${INDEX_PATH} écrit (${SUB_SITEMAPS.length} sub-sitemaps, lastmod ${LASTMOD}).`);
+  console.log(`[build:sitemap] ${INDEX_PATH} écrit (${SUB_SITEMAPS.length} sub-sitemaps, lastmod réels).`);
 }
 
 /**
@@ -101,7 +161,7 @@ function getDestinationPages(): Array<{ loc: string; changefreq: string; priorit
 
 /**
  * Régénère un sitemap de langue (EN/DE/ES) à partir de son dossier /<lang>/blog/*.html,
- * avec un lastmod frais à chaque build. Inclut la home localisée si elle existe (index-<lang>.html).
+ * avec le lastmod réel de chaque page (cf. lastCommitDate). Inclut la home localisée si elle existe.
  * Corrige le point Bing « sitemaps non rafraîchis quotidiennement » : ces sub-sitemaps étaient statiques.
  */
 function writeLangSitemap(lang: string, dirRel: string, homePath: string): void {
@@ -118,10 +178,10 @@ function writeLangSitemap(lang: string, dirRel: string, homePath: string): void 
   if (!urls.length) return;
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${urls.map((u) => `  <url><loc>${u.loc}</loc>${lastmodTag(sourceFor(u.loc))}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 </urlset>`;
   fs.writeFileSync(path.join(process.cwd(), `sitemap-${lang}.xml`), xml, 'utf-8');
-  console.log(`[build:sitemap] sitemap-${lang}.xml écrit (${urls.length} URLs, lastmod ${LASTMOD}).`);
+  console.log(`[build:sitemap] sitemap-${lang}.xml écrit (${urls.length} URLs, lastmod réels).`);
 }
 
 function main(): void {
@@ -157,7 +217,7 @@ function main(): void {
   const urls = [...staticPages, ...destPages, ...blogUrls];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+${urls.map((u) => `  <url><loc>${u.loc}</loc>${lastmodTag(sourceFor(u.loc))}<changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 </urlset>`;
   fs.writeFileSync(OUT_PATH, xml, 'utf-8');
   fs.writeFileSync(FR_PATH, xml, 'utf-8'); // alias FR identique (contourne le blocage GSC sur sitemap.xml)
