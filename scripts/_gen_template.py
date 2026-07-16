@@ -3,7 +3,7 @@ import json
 import re
 from pathlib import Path
 
-BLOG = Path.home() / "Documents/GitHub/robin-des-airs/blog"
+BLOG = Path(__file__).resolve().parent.parent / "blog"
 
 CSS = """*,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
