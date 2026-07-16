@@ -23,7 +23,7 @@ const LASTMOD = new Date().toISOString().slice(0, 10);
  * à chaque build avec un lastmod frais, sinon Google ne re-crawle pas les
  * sub-sitemaps même s'ils changent (cause typique de pages non découvertes).
  */
-const SUB_SITEMAPS = ['sitemap.xml', 'sitemap-fr.xml', 'sitemap-en.xml', 'sitemap-de.xml', 'sitemap-es.xml'];
+const SUB_SITEMAPS = ['sitemap.xml', 'sitemap-fr.xml', 'sitemap-en.xml'];
 
 function writeSitemapIndex(): void {
   const items = SUB_SITEMAPS.map(
@@ -164,8 +164,7 @@ ${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><chang
   console.log(`[build:sitemap] ${OUT_PATH} + sitemap-fr.xml écrits (${urls.length} URLs).`);
   // Sitemaps de langue régénérés à chaque build (fini les fichiers statiques périmés).
   writeLangSitemap('en', 'en/blog', '/en');
-  writeLangSitemap('de', 'de/blog', '/de');
-  writeLangSitemap('es', 'es/blog', '/es');
+  // DE/ES supprimés (2026-07-16) : traductions partielles non indexées (diluaient le crawl budget). FR + EN uniquement.
   writeSitemapIndex();
 }
 
