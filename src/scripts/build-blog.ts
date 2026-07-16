@@ -55,6 +55,7 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 #blog-body strong{color:#0B1F3A}
 #blog-body a{color:#009960;font-weight:600}
 #blog-body a:hover{color:#00C87A;text-decoration:underline}
+#blog-body img{display:block;max-width:100%;height:auto;margin:1.25rem 0;border-radius:.5rem;border:1px solid #E2E6EE}
 #blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}

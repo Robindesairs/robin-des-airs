@@ -3,7 +3,7 @@ title: "Bagage retardé : ce que vous pouvez vraiment acheter (cas vécu au Ghan
 meta_title: "Bagage retardé : achats de première nécessité remboursés - Convention de Montréal"
 meta_description: "Bagage non récupéré à l'arrivée ? La Convention de Montréal rembourse bien plus qu'une brosse à dents : jusqu'à ~1 800 € par passager sur justificatifs. Cas vécu au Ghana."
 slug: bagage-retarde-mariage-ghana-achats-premiere-necessite
-image_url: /og-blog.png
+image_url: /assets/images/bagage-retarde-etiquette-pir.png
 faq:
   - q: "Que puis-je acheter quand mon bagage est retardé ?"
     a: "Tout ce qui est **raisonnable au regard de votre voyage**, pas seulement une brosse à dents. Si vous partez à un mariage, une tenue correcte pour le mariage entre dans les achats de première nécessité. Le plafond est d'environ **1 800 € par passager**, sur justificatifs."
@@ -25,7 +25,11 @@ Début 2020, quelques jours avant que le monde ne s'arrête pour le Covid, je pa
 
 Résultat à l'arrivée : deux hommes attendus à un mariage, à des heures de route de la capitale, avec pour tout bagage les vêtements portés dans l'avion. Pas de tenue, pas d'affaires, rien.
 
-Avant de créer Robin des Airs, j'ai travaillé en agence de voyage. Je savais donc ce que la Convention autorise réellement. Nous avons fait le PIR, puis nous avons acheté ce dont nous avions besoin pour le voyage prévu : de vraies tenues, pour environ **1 000 € à deux**. J'ai envoyé la réclamation à la compagnie avec les justificatifs. J'ai été remboursé de la quasi-totalité de ce que j'avais avancé, dans la semaine, plus des miles à titre commercial. Je dois le reconnaître : sur ce dossier, la compagnie a été réactive.
+Avant de créer Robin des Airs, j'ai travaillé en agence de voyage. Je savais donc ce que la Convention autorise réellement. Nous avons fait le PIR, puis nous avons acheté ce dont nous avions besoin pour le voyage prévu : de vraies tenues, **près de 1 000 € chacun**, soit environ 2 000 € à deux. J'ai envoyé la réclamation à la compagnie avec les justificatifs. J'ai été remboursé de la quasi-totalité de ce que j'avais avancé, dans la semaine, plus des miles à titre commercial. Je dois le reconnaître : sur ce dossier, la compagnie a été réactive.
+
+Notez bien : **le plafond est par passager, pas par valise ni par dossier**. Nous étions deux, chacun avec son billet et son bagage, donc chacun avec sa propre enveloppe d'environ 1 800 €. C'est ce qui rend 1 000 € par personne parfaitement réclamable là où beaucoup s'autocensurent à 150 €.
+
+![Étiquette bagage et PIR annotés : les deux documents à sécuriser en cas de bagage retardé](/assets/images/bagage-retarde-etiquette-pir.png)
 
 La leçon n'est pas « faites-vous plaisir ». Elle est plus simple : **le mot « nécessaire » s'apprécie par rapport à votre voyage, pas par rapport à un kit de survie**.
 
@@ -77,9 +81,18 @@ Dans tous les cas, l'action en justice se prescrit par **2 ans** à compter de l
 
 ## Le PIR : sans lui, rien
 
-Le **PIR (Property Irregularity Report)** est le constat qui date et matérialise l'incident. Il s'établit au comptoir « Bagages » de l'aéroport d'arrivée, **avant de passer les portes**, ou via le formulaire en ligne de la compagnie lorsqu'elle en propose un, dans le délai qu'elle indique.
+**PIR** veut dire **Property Irregularity Report**, littéralement « rapport d'irrégularité sur un bien ». En français, les compagnies l'appellent le plus souvent **constat d'irrégularité bagage**, parfois « déclaration de perte » ou « déclaration de bagage manquant ». C'est le même document, et c'est un standard mondial du transport aérien : toutes les compagnies utilisent le même formulaire.
 
-Une fois que vous avez quitté l'aéroport sans PIR, prouver que le bagage manquait à l'arrivée devient très difficile. Gardez la référence du PIR : c'est elle qui ouvre chaque échange ultérieur avec la compagnie.
+Concrètement, c'est le constat qui **date et matérialise l'incident**. Il acte trois choses que vous ne pourrez plus prouver après coup : que le bagage manquait bien à l'arrivée, à quelle heure vous l'avez signalé, et à quelle adresse il doit vous être livré.
+
+Où et quand l'établir :
+
+- Au **comptoir « Bagages »** (ou « Service bagages ») de l'aéroport d'arrivée, **avant de passer les portes de la douane**. Une fois sorti, vous ne pouvez plus y revenir.
+- Ou via le **formulaire en ligne** de la compagnie lorsqu'elle en propose un, dans le délai qu'elle indique.
+
+À la fin, on vous remet une **référence PIR** : un code d'environ dix caractères qui combine le code de l'aéroport, celui de la compagnie et un numéro de dossier (du type `ACCXX00000`). **Photographiez-la immédiatement.** C'est elle qui ouvre chaque échange ultérieur avec la compagnie, et sans elle votre réclamation repart de zéro.
+
+Un PIR n'est pas une réclamation. Il ouvre le dossier, rien de plus. La demande de remboursement chiffrée, avec vos justificatifs, reste à envoyer séparément dans les délais ci-dessus.
 
 ## La valise éventrée : même logique, délai de 7 jours
 
