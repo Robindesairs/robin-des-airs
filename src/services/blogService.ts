@@ -22,6 +22,7 @@ export interface BlogPostFrontmatter {
   slug: string;
   image_url?: string;
   faq?: FaqItem[];
+  hreflang_en?: string; // slug de l'équivalent EN sous /en/blog/, si une vraie traduction existe (pas de couplage FR/EN automatique)
 }
 
 export interface BlogPost {
@@ -32,6 +33,7 @@ export interface BlogPost {
   image_url: string;
   html: string;
   faq: FaqItem[];
+  hreflang_en?: string;
 }
 
 /**
@@ -63,6 +65,7 @@ export function getBySlug(slug: string): BlogPost | null {
     image_url: meta.image_url || '/og-blog.png',
     html,
     faq: Array.isArray(meta.faq) ? meta.faq : [],
+    hreflang_en: meta.hreflang_en || undefined,
   };
 }
 
