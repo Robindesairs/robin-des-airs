@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1F3A"/><stop offset="1" stop-color="#123152"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="6" fill="#00C87A"/>
+
+  <text x="60" y="70" fill="#FFFFFF" font-size="33" font-weight="700">Trois textes, trois régimes très différents</text>
+  <text x="60" y="103" fill="#8FE8C4" font-size="18" font-weight="600">Ce qui décide n'est pas votre destination, c'est votre compagnie.</text>
+
+  <!-- CE 261 -->
+  <g transform="translate(60,132)">
+    <rect x="0" y="0" width="350" height="290" rx="12" fill="#FFFFFF"/>
+    <rect x="0" y="0" width="350" height="52" rx="12" fill="#0B1F3A"/>
+    <rect x="0" y="40" width="350" height="12" fill="#0B1F3A"/>
+    <text x="20" y="34" fill="#FFFFFF" font-size="19" font-weight="700">CE 261/2004</text>
+    <text x="240" y="34" fill="#8FA6C0" font-size="12" letter-spacing="1">EUROPE</text>
+    <text x="20" y="82" fill="#6B7C91" font-size="11" letter-spacing="1.3">CE QU'IL VERSE</text>
+    <text x="20" y="114" fill="#0B1F3A" font-size="27" font-weight="700">Un forfait</text>
+    <text x="20" y="144" fill="#047857" font-size="19" font-weight="700">250 / 400 / 600 €</text>
+    <line x1="20" y1="164" x2="330" y2="164" stroke="#E2E6EE" stroke-width="1.5"/>
+    <text x="20" y="190" fill="#374151" font-size="14">Aucune dépense à prouver.</text>
+    <text x="20" y="214" fill="#374151" font-size="14">Pour le retard, l'annulation,</text>
+    <text x="20" y="236" fill="#374151" font-size="14">le refus d'embarquement.</text>
+    <text x="20" y="268" fill="#B45309" font-size="13.5" font-weight="700">Ne couvre pas les bagages.</text>
+  </g>
+
+  <!-- Montreal -->
+  <g transform="translate(430,132)">
+    <rect x="0" y="0" width="350" height="290" rx="12" fill="#FFFFFF"/>
+    <rect x="0" y="0" width="350" height="52" rx="12" fill="#0E4A34"/>
+    <rect x="0" y="40" width="350" height="12" fill="#0E4A34"/>
+    <text x="20" y="34" fill="#FFFFFF" font-size="19" font-weight="700">Montréal 1999</text>
+    <text x="243" y="34" fill="#8FE8C4" font-size="12" letter-spacing="1">145 ÉTATS</text>
+    <text x="20" y="82" fill="#6B7C91" font-size="11" letter-spacing="1.3">PLAFOND BAGAGE</text>
+    <text x="20" y="118" fill="#047857" font-size="31" font-weight="700">~1 800 €</text>
+    <text x="20" y="142" fill="#6B7C91" font-size="13">1 519 DTS par passager</text>
+    <line x1="20" y1="164" x2="330" y2="164" stroke="#E2E6EE" stroke-width="1.5"/>
+    <text x="20" y="190" fill="#374151" font-size="14">Frais réels, sur justificatifs.</text>
+    <text x="20" y="214" fill="#374151" font-size="14">Forfaitaire : le poids de la</text>
+    <text x="20" y="236" fill="#374151" font-size="14">valise ne change rien.</text>
+    <text x="20" y="268" fill="#047857" font-size="13.5" font-weight="700">7 j (abîmé) · 21 j (retardé)</text>
+  </g>
+
+  <!-- Varsovie -->
+  <g transform="translate(800,132)">
+    <rect x="0" y="0" width="340" height="290" rx="12" fill="#FFFFFF"/>
+    <rect x="0" y="0" width="340" height="52" rx="12" fill="#5B3038"/>
+    <rect x="0" y="40" width="340" height="12" fill="#5B3038"/>
+    <text x="20" y="34" fill="#FFFFFF" font-size="19" font-weight="700">Varsovie 1929</text>
+    <text x="243" y="34" fill="#D9A7AE" font-size="12" letter-spacing="1">VESTIGE</text>
+    <text x="20" y="82" fill="#6B7C91" font-size="11" letter-spacing="1.3">PLAFOND BAGAGE</text>
+    <text x="20" y="118" fill="#9B2C2C" font-size="31" font-weight="700">~460 €</text>
+    <text x="20" y="142" fill="#6B7C91" font-size="13">17 DTS/kg · valise de 23 kg</text>
+    <line x1="20" y1="164" x2="320" y2="164" stroke="#E2E6EE" stroke-width="1.5"/>
+    <text x="20" y="190" fill="#374151" font-size="14">Indemnise <tspan font-weight="700">au kilo</tspan> : une valise</text>
+    <text x="20" y="214" fill="#374151" font-size="14">légère plafonne encore plus bas</text>
+    <text x="20" y="236" fill="#374151" font-size="14">(10 kg = ~200 €).</text>
+    <text x="20" y="268" fill="#9B2C2C" font-size="13.5" font-weight="700">3 j (abîmé) · 14 j (retardé)</text>
+  </g>
+
+  <!-- regle decisive -->
+  <g transform="translate(60,446)">
+    <rect x="0" y="0" width="1080" height="104" rx="12" fill="#00C87A" opacity="0.13"/>
+    <rect x="0" y="0" width="5" height="104" rx="2.5" fill="#00E5A0"/>
+    <text x="26" y="36" fill="#00E5A0" font-size="13" font-weight="700" letter-spacing="2">LA RÈGLE QUI CHANGE TOUT</text>
+    <text x="26" y="68" fill="#FFFFFF" font-size="20" font-weight="700">Une compagnie européenne applique Montréal sur TOUS ses vols, quelle que soit la destination.</text>
+    <text x="26" y="92" fill="#8FE8C4" font-size="15">Règlement (CE) 2027/97, art. 3. Même route, même préjudice : ~1 800 € sur Air France, ~460 € sur une compagnie locale.</text>
+  </g>
+
+  <rect x="0" y="574" width="1200" height="56" fill="#071528"/>
+  <text x="60" y="609" fill="#FFFFFF" font-size="16" font-weight="700">Plafonds Montréal en vigueur depuis le 28 décembre 2024</text>
+  <text x="1140" y="609" fill="#00E5A0" font-size="16" font-weight="700" text-anchor="end">Robin des Airs</text>
+</svg>

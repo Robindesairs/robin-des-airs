@@ -3,7 +3,7 @@ title: "Montréal, Varsovie ou CE 261 : quel texte protège votre vol ?"
 meta_title: "Convention de Montréal, Varsovie ou CE 261 : lequel s'applique à votre vol ?"
 meta_description: "Trois textes, trois régimes très différents. Ce qui décide n'est pas votre destination mais votre compagnie. Le guide pour les vols Afrique-Europe, listes officielles OACI à l'appui."
 slug: montreal-varsovie-ce261-quel-texte-sapplique-vol
-image_url: /assets/images/bagage-retarde-etiquette-pir.png
+image_url: /assets/images/schema-montreal-varsovie-ce261.png
 faq:
   - q: "Quelle est la différence entre la Convention de Varsovie et celle de Montréal ?"
     a: "Varsovie (1929) est l'ancêtre, Montréal (1999) l'a remplacée. Là où Montréal plafonne l'indemnisation bagage à **1 519 DTS par passager** (environ 1 800 €), Varsovie raisonne **au poids** : de l'ordre de 17 DTS par kilo, soit environ 460 € pour une valise de 23 kg. Pour un même bagage perdu, l'écart est d'environ **quatre fois**."
@@ -18,6 +18,8 @@ faq:
 **Jusqu'à 600 € par passager** en cas de retard de 3 h ou plus, selon votre éligibilité. On vérifie gratuitement quel texte protège votre vol, 0 € d'avance.
 
 Trois textes peuvent s'appliquer à un vol, et presque personne ne sait lequel le concerne. Ce n'est pas un détail théorique : entre le meilleur régime et le pire, l'écart sur un bagage perdu dépasse **1 300 €**. Voici comment savoir, en une minute, de quel côté vous êtes.
+
+![Comparatif CE 261, Convention de Montréal et Convention de Varsovie : forfait, plafonds bagage et délais de réclamation](/assets/images/schema-montreal-varsovie-ce261.png)
 
 ## Les trois textes, en une phrase chacun
 

@@ -3,7 +3,7 @@ title: "Vol retardé Dar es Salaam-Europe ou Europe-Dar es Salaam : indemnité j
 meta_title: "Vol Dar es Salaam-Europe retardé : 600 € d'indemnité par passager (CE 261/2004)"
 meta_description: "Vol Dar es Salaam-Europe ou Europe-Dar es Salaam retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-dar-es-salaam-europe-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Europe-Dar es Salaam a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance entre l'Europe et Dar es Salaam dépasse largement 3 500 km (environ 7 000 km vers Amsterdam), et tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 Distance Europe-Dar es Salaam : bien plus de 3 500 km (environ 7 000 km vers Amsterdam), soit un vol long-courrier qui ouvre le palier maximal de **600 €**. Dar es Salaam est la principale porte d'entrée de la Tanzanie et un axe important de la diaspora tanzanienne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

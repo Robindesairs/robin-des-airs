@@ -3,7 +3,7 @@ title: "Vol retardé Genève-Dakar ou Dakar-Genève : indemnité jusqu'à 600 �
 meta_title: "Vol Genève-Dakar ou Dakar-Genève retardé : 600 € d'indemnité par passager"
 meta_description: "Vol Genève-Dakar ou Dakar-Genève retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-geneve-dakar-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Genève-Dakar a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance GVA-DSS est d'environ 4 300 km (vol de plus de 3 500 km) et tout vol au départ de Genève est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 Distance GVA-DSS : environ 4 300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Genève-Dakar relie une importante diaspora sénégalaise de Suisse romande, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

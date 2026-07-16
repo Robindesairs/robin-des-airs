@@ -3,7 +3,7 @@ title: "Vol retardé Lusaka-Europe ou Europe-Lusaka : indemnité jusqu'à 600 �
 meta_title: "Vol Lusaka-Europe ou Europe-Lusaka retardé : 600 € d'indemnité par passager"
 meta_description: "Vol Lusaka-Europe ou Europe-Lusaka retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-lusaka-europe-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Europe-Lusaka a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** Le trajet Lusaka-Europe dépasse largement 3 500 km (vol long-courrier), et tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée finale."
@@ -24,6 +24,8 @@ faq:
 Le trajet entre la Zambie et l'Europe est un long-courrier qui dépasse largement 3 500 km, donc le palier maximal de **600 €**. Il n'existe pas de vol direct : le voyage passe presque toujours par un hub (Johannesburg, Addis-Abeba, Nairobi, Istanbul, Doha, Dubaï, Amsterdam), et c'est souvent là que les retards et les correspondances manquées surviennent. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

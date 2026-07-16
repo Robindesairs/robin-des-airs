@@ -3,7 +3,7 @@ title: "Vol retardé Lisbonne-Luanda ou Luanda-Lisbonne : indemnité jusqu'à 60
 meta_title: "Vol Lisbonne-Luanda ou Luanda-Lisbonne retardé : 600 € d'indemnité par passager"
 meta_description: "Vol Lisbonne-Luanda ou Luanda-Lisbonne retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-lisbonne-luanda-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lisbonne-Luanda a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance LIS-LAD est d'environ 7,300 km (vol de plus de 3 500 km) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 Distance LIS-LAD : environ 7,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Luanda-Lisbonne est l'axe principal de la diaspora angolaise vers l'Europe, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

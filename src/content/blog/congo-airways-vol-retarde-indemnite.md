@@ -3,7 +3,7 @@ title: "Congo Airways : vol retardé ou annulé, vos droits"
 meta_title: "Congo Airways vol retardé ou annulé : indemnité jusqu'à 600 € et frais réels"
 meta_description: "Vol Congo Airways retardé de 3h ou annulé ? Congo Airways est une compagnie non européenne : quand touchez-vous 600 € (CE 261/2004), quand ce sont vos frais réels (Convention de Montréal), et comment réclamer."
 slug: congo-airways-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Congo Airways a été retardé de plus de 3h. Ai-je droit à 600 € ?"
     a: "Cela dépend du point de départ. Congo Airways est une compagnie **non européenne** : le forfait CE 261 ne s'applique à ses vols que s'ils **partent d'un aéroport de l'UE**, ce qui est rare pour cette compagnie surtout domestique et régionale. Au départ de Kinshasa ou d'une autre ville de RDC, le forfait n'est pas dû, mais la **Convention de Montréal** couvre vos frais réels justifiés."
@@ -24,6 +24,8 @@ faq:
 Beaucoup de passagers de la diaspora congolaise ignorent ce à quoi ils ont vraiment droit sur ce type de vol, et se font renvoyer sans rien. Voici la règle exacte, sans promesse trompeuse : qui doit payer, dans quels cas, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 (le forfait 250/400/600 €) s'applique dans deux cas seulement :
 

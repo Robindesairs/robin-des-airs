@@ -3,7 +3,7 @@ title: "Vol retardé Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles : indemnité j
 meta_title: "Vol Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles retardé : 600 € d'indemnité par passager"
 meta_description: "Vol Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-bruxelles-lubumbashi-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Bruxelles-Lubumbashi a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance Bruxelles-Lubumbashi est d'environ 6,600 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 Distance Bruxelles-Lubumbashi : environ 6,600 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Lubumbashi-Bruxelles est un axe important de la diaspora congolaise (RDC), et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

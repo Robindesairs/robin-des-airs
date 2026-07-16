@@ -3,7 +3,7 @@ title: "Vol Ethiopian Airlines retardé ou annulé : indemnité jusqu'à 600 €
 meta_title: "Vol Ethiopian Airlines retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
 meta_description: "Vol Ethiopian Airlines retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
 slug: ethiopian-airlines-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Ethiopian Airlines au départ de Paris a plus de 3h de retard. J'ai droit à quoi ?"
     a: "**Jusqu'à 600 € par passager.** Tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, Ethiopian Airlines comprise. Pour un long-courrier de plus de 3 500 km, le palier est de 600 €."
@@ -24,6 +24,8 @@ faq:
 Ethiopian Airlines relie l'Europe à toute l'Afrique via son hub d'Addis-Abeba. Le point clé à comprendre : Ethiopian Airlines est le premier hub d'Afrique : Addis-Abeba dessert plus de 60 villes africaines en correspondance. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le CE 261/2004 s'applique dans deux cas :
 

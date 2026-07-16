@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B1F3A"/><stop offset="1" stop-color="#123152"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="6" fill="#00C87A"/>
+
+  <text x="60" y="72" fill="#FFFFFF" font-size="34" font-weight="700">Vol retardé : êtes-vous couvert par le CE 261 ?</text>
+  <text x="60" y="106" fill="#8FE8C4" font-size="19" font-weight="600">Deux questions suffisent : d'où part le vol, et qui l'opère.</text>
+
+  <!-- en-tetes colonnes -->
+  <text x="470" y="168" fill="#8FA6C0" font-size="14" font-weight="700" letter-spacing="1.6" text-anchor="middle">COMPAGNIE EUROPÉENNE</text>
+  <text x="850" y="168" fill="#8FA6C0" font-size="14" font-weight="700" letter-spacing="1.6" text-anchor="middle">COMPAGNIE NON EUROPÉENNE</text>
+
+  <!-- ligne 1 : depart UE -->
+  <g transform="translate(60,190)">
+    <rect x="0" y="0" width="260" height="120" rx="10" fill="#FFFFFF" opacity="0.07"/>
+    <rect x="0" y="0" width="4" height="120" rx="2" fill="#00C87A"/>
+    <text x="22" y="44" fill="#FFFFFF" font-size="21" font-weight="700">Départ de l'UE</text>
+    <text x="22" y="72" fill="#8FA6C0" font-size="15">Paris, Bruxelles,</text>
+    <text x="22" y="94" fill="#8FA6C0" font-size="15">Lisbonne, Madrid…</text>
+  </g>
+  <g transform="translate(350,190)">
+    <rect x="0" y="0" width="240" height="120" rx="10" fill="#0E4A34" stroke="#00C87A" stroke-width="2"/>
+    <circle cx="120" cy="46" r="17" fill="#00C87A"/>
+    <path d="M112 46 l6 6 l11 -12" stroke="#0B1F3A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="120" y="88" fill="#00E5A0" font-size="19" font-weight="700" text-anchor="middle">Couvert</text>
+    <text x="120" y="108" fill="#8FE8C4" font-size="13" text-anchor="middle">jusqu'à 600 €</text>
+  </g>
+  <g transform="translate(730,190)">
+    <rect x="0" y="0" width="240" height="120" rx="10" fill="#0E4A34" stroke="#00C87A" stroke-width="2"/>
+    <circle cx="120" cy="46" r="17" fill="#00C87A"/>
+    <path d="M112 46 l6 6 l11 -12" stroke="#0B1F3A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="120" y="88" fill="#00E5A0" font-size="19" font-weight="700" text-anchor="middle">Couvert</text>
+    <text x="120" y="108" fill="#8FE8C4" font-size="13" text-anchor="middle">jusqu'à 600 €</text>
+  </g>
+
+  <!-- ligne 2 : depart hors UE -->
+  <g transform="translate(60,340)">
+    <rect x="0" y="0" width="260" height="120" rx="10" fill="#FFFFFF" opacity="0.07"/>
+    <rect x="0" y="0" width="4" height="120" rx="2" fill="#8FA6C0"/>
+    <text x="22" y="44" fill="#FFFFFF" font-size="21" font-weight="700">Départ hors UE</text>
+    <text x="22" y="72" fill="#8FA6C0" font-size="15">Dakar, Abidjan,</text>
+    <text x="22" y="94" fill="#8FA6C0" font-size="15">Douala, Bamako…</text>
+  </g>
+  <g transform="translate(350,340)">
+    <rect x="0" y="0" width="240" height="120" rx="10" fill="#0E4A34" stroke="#00C87A" stroke-width="2"/>
+    <circle cx="120" cy="46" r="17" fill="#00C87A"/>
+    <path d="M112 46 l6 6 l11 -12" stroke="#0B1F3A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="120" y="88" fill="#00E5A0" font-size="19" font-weight="700" text-anchor="middle">Couvert</text>
+    <text x="120" y="108" fill="#8FE8C4" font-size="13" text-anchor="middle">jusqu'à 600 €</text>
+  </g>
+  <g transform="translate(730,340)">
+    <rect x="0" y="0" width="240" height="120" rx="10" fill="#3A1B22" stroke="#8A4A55" stroke-width="2"/>
+    <circle cx="120" cy="46" r="17" fill="none" stroke="#FF9B9B" stroke-width="2.6"/>
+    <path d="M113 39 l14 14 M127 39 l-14 14" stroke="#FF9B9B" stroke-width="2.8" stroke-linecap="round"/>
+    <text x="120" y="88" fill="#FF9B9B" font-size="19" font-weight="700" text-anchor="middle">Pas de forfait</text>
+    <text x="120" y="108" fill="#C88A92" font-size="13" text-anchor="middle">voir Montréal / Varsovie</text>
+  </g>
+
+  <!-- note laterale -->
+  <g transform="translate(1000,190)">
+    <rect x="0" y="0" width="140" height="270" rx="10" fill="#FFFFFF" opacity="0.06"/>
+    <rect x="0" y="0" width="3" height="270" rx="1.5" fill="#00C87A"/>
+    <text x="18" y="34" fill="#FFFFFF" font-size="14" font-weight="700">LE SEUIL</text>
+    <text x="18" y="60" fill="#8FA6C0" font-size="13">se mesure</text>
+    <text x="18" y="80" fill="#00E5A0" font-size="13" font-weight="700">à l'arrivée,</text>
+    <text x="18" y="99" fill="#00E5A0" font-size="13" font-weight="700">pas au départ</text>
+    <line x1="18" y1="120" x2="122" y2="120" stroke="#28405C" stroke-width="1.5"/>
+    <text x="18" y="148" fill="#FFFFFF" font-size="14" font-weight="700">PAR PASSAGER</text>
+    <text x="18" y="174" fill="#8FA6C0" font-size="13">chaque billet</text>
+    <text x="18" y="194" fill="#8FA6C0" font-size="13">compte, enfants</text>
+    <text x="18" y="214" fill="#8FA6C0" font-size="13">inclus</text>
+    <line x1="18" y1="234" x2="122" y2="234" stroke="#28405C" stroke-width="1.5"/>
+    <text x="18" y="258" fill="#00E5A0" font-size="13" font-weight="700">3 h de retard</text>
+  </g>
+
+  <rect x="0" y="574" width="1200" height="56" fill="#071528"/>
+  <text x="60" y="609" fill="#FFFFFF" font-size="16" font-weight="700">Règlement (CE) 261/2004 · jusqu'à 600 € par passager</text>
+  <text x="1140" y="609" fill="#00E5A0" font-size="16" font-weight="700" text-anchor="end">Robin des Airs</text>
+</svg>

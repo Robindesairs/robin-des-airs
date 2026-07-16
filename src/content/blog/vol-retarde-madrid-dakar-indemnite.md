@@ -3,7 +3,7 @@ title: "Vol retardé Madrid-Dakar ou Dakar-Madrid : indemnité jusqu'à 600 €"
 meta_title: "Vol Madrid-Dakar ou Dakar-Madrid retardé : jusqu'à 600 € d'indemnité par passager"
 meta_description: "Vol Madrid-Dakar ou Dakar-Madrid retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-madrid-dakar-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Madrid-Dakar a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**Jusqu'à 600 € par passager.** La distance Madrid-Dakar est d'environ 3 500 km : selon la distance exacte retenue, l'indemnité est de 400 € (vol de 1 500 à 3 500 km) ou de 600 € (vol de plus de 3 500 km). Tout vol au départ de Madrid est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 Distance Madrid-Dakar : environ 3 500 km, soit à la frontière entre le palier de 400 € (vol de 1 500 à 3 500 km) et le palier maximal de **600 €** (vol de plus de 3 500 km). Dakar (aéroport DSS) est l'un des axes majeurs de la diaspora sénégalaise vers l'Espagne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

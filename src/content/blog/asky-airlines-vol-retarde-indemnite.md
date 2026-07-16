@@ -3,7 +3,7 @@ title: "Vol ASKY Airlines retardé ou annulé : indemnité jusqu'à 600 €"
 meta_title: "Vol ASKY Airlines retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
 meta_description: "Vol ASKY Airlines retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
 slug: asky-airlines-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol ASKY Airlines au départ de Paris a plus de 3h de retard. J'ai droit à quoi ?"
     a: "**Jusqu'à 600 € par passager.** Tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, ASKY Airlines comprise. Pour un long-courrier de plus de 3 500 km, le palier est de 600 €."
@@ -24,6 +24,8 @@ faq:
 ASKY ne dessert pas l'Europe en direct : elle achemine les passagers vers les hubs intercontinentaux. Le point clé à comprendre : ASKY Airlines relie l'Afrique de l'Ouest et centrale depuis son hub de Lomé, en correspondance avec les vols intercontinentaux. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le CE 261/2004 s'applique dans deux cas :
 

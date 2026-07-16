@@ -3,7 +3,7 @@ title: "Vol Camair-Co retardé ou annulé : indemnité jusqu'à 600 €"
 meta_title: "Vol Camair-Co retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
 meta_description: "Vol Camair-Co retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
 slug: camair-co-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Camair-Co au départ de Paris a plus de 3h de retard. J'ai droit à quoi ?"
     a: "**Jusqu'à 600 € par passager.** Tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, Camair-Co comprise. Pour un long-courrier de plus de 3 500 km, le palier est de 600 €."
@@ -24,6 +24,8 @@ faq:
 Camair-Co est la compagnie nationale camerounaise, dont Paris est la principale destination européenne. Le point clé à comprendre : Camair-Co dessert le Cameroun et l'Afrique centrale depuis ses hubs de Douala et Yaoundé. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le CE 261/2004 s'applique dans deux cas :
 

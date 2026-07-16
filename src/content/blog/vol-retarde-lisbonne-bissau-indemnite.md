@@ -3,7 +3,7 @@ title: "Vol retardé Lisbonne-Bissau ou Bissau-Lisbonne : indemnité jusqu'à 40
 meta_title: "Vol Lisbonne-Bissau ou Bissau-Lisbonne retardé : 400 € d'indemnité par passager"
 meta_description: "Vol Lisbonne-Bissau ou Bissau-Lisbonne retardé de 3h ou annulé ? Jusqu'à 400 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-lisbonne-bissau-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lisbonne-Bissau a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**400 € par passager.** La distance LIS-OXB est d'environ 3 000 km (vol entre 1 500 et 3 500 km, donc palier de 400 €) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 Distance LIS-OXB : environ 3 000 km, soit un vol situé entre 1 500 et 3 500 km, donc le palier de **400 €** (et non 600 €, réservé aux vols de plus de 3 500 km). Bissau est l'une des capitales d'Afrique subsaharienne les plus proches de l'Europe, et Lisbonne en est le principal hub. Les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

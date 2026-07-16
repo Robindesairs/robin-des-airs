@@ -3,7 +3,7 @@ title: "South African Airways : vol retardé ou annulé, vos droits"
 meta_title: "South African Airways vol retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
 meta_description: "Vol South African Airways retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004) au départ de l'UE. Dans quel sens la compagnie doit payer, et comment réclamer."
 slug: south-african-airways-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol South African Airways au départ d'Europe a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** Tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, y compris South African Airways. Les liaisons vers Johannesburg dépassent 3 500 km (environ 8 700 km depuis Paris), donc le palier maximal de 600 € dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 South African Airways (code SA) est la compagnie nationale d'Afrique du Sud, avec son hub à Johannesburg. C'est une compagnie **non européenne**, ce qui change tout pour vos droits selon la direction du vol. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 

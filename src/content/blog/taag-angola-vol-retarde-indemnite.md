@@ -3,7 +3,7 @@ title: "TAAG Angola Airlines : vol retardé ou annulé, indemnité jusqu'à 600 
 meta_title: "Vol TAAG Angola Airlines retardé ou annulé : 600 € d'indemnité par passager"
 meta_description: "Vol TAAG Angola Airlines retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Dans quel sens TAAG doit payer, quand c'est la Convention de Montréal, comment réclamer."
 slug: taag-angola-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lisbonne-Luanda sur TAAG a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance Lisbonne-Luanda est d'environ 7,400 km (vol de plus de 3 500 km) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, TAAG comprise, dès 3h de retard à l'arrivée."
@@ -24,6 +24,8 @@ faq:
 TAAG Angola Airlines est la compagnie nationale angolaise, avec son hub à Luanda, et l'axe Luanda-Lisbonne est le principal corridor de la diaspora angolaise vers l'Europe. Comme TAAG est une compagnie **non européenne**, vos droits dépendent entièrement du sens du vol. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Le règlement CE 261/2004 s'applique dans deux cas :
 
