@@ -8,9 +8,9 @@ faq:
   - q: "Mon vol Bruxelles-Bujumbura a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance Bruxelles-Bujumbura est d'environ 6 500 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Bujumbura-Bruxelles est retardé. Suis-je couvert ?"
-    a: "Oui, avec Brussels Airlines. Au départ de Bujumbura (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines est couverte dans les deux sens. Avec une compagnie non européenne (RwandAir (via Kigali) par exemple), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Oui, avec Brussels Airlines. Au départ de Bujumbura (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines est couverte dans les deux sens. Avec une compagnie non européenne (RwandAir (via Kigali) par exemple), le forfait n'est pas dû sur ce sens, et le Burundi n'étant partie **ni à la Convention de Montréal ni à celle de Varsovie**, aucune convention internationale ne prend le relais : il ne reste que le contrat de transport. D'où l'intérêt de voler européen : [quel texte protège votre vol ?](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)"
   - q: "Mon vol Bujumbura-Bruxelles sur une compagnie africaine a été très retardé. Je n'ai droit à rien ?"
-    a: "Pas au forfait CE 261 sur ce sens (une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Bruxelles-Bujumbura, lui, reste indemnisable à 600 €."
+    a: "Pas au forfait CE 261 sur ce sens (une compagnie non-UE au départ d'un pays non-UE). Et le Burundi **n'est partie à aucune convention internationale** de responsabilité du transporteur, ni Montréal ni Varsovie : il ne reste que le contrat de transport et les conditions générales de la compagnie, et votre vol aller Bruxelles-Bujumbura, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
     a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Bujumbura-Bruxelles retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
   - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
@@ -34,7 +34,7 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 |---|---|---|
 | Bruxelles vers Bujumbura | Brussels Airlines, RwandAir (via Kigali) | Oui : **600 € par passager** |
 | Bujumbura vers Bruxelles | Brussels Airlines | Oui : **600 € par passager** |
-| Bujumbura vers Bruxelles | RwandAir (via Kigali) et autres compagnies non-UE | Non : frais réels via Convention de Montréal |
+| Bujumbura vers Bruxelles | RwandAir (via Kigali) et autres compagnies non-UE | Non : aucune convention internationale (le Burundi n'est partie ni à Montréal ni à Varsovie) |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 

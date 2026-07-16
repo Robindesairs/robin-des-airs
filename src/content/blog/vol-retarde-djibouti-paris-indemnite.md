@@ -8,9 +8,9 @@ faq:
   - q: "Mon vol Paris-Djibouti a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance CDG-JIB est d'environ 5,600 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Djibouti-Paris est retardé. Suis-je couvert ?"
-    a: "Cela dépend de la compagnie. Au départ de Djibouti (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France est couverte. Avec une compagnie non européenne (Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Cela dépend de la compagnie, et à Djibouti le choix pèse très lourd. Au départ de Djibouti (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France est couverte. Avec une compagnie non européenne (Turkish Airlines via Istanbul), le forfait n'est pas dû sur ce sens. Et Djibouti n'étant partie **ni à la Convention de Montréal, ni à celle de Varsovie**, aucune convention internationale ne prend le relais : il ne vous reste que le contrat de transport. Sur Air France, le droit européen impose Montréal quelle que soit la route : [comprendre quel texte s'applique](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)."
   - q: "Mon vol Djibouti-Paris sur Turkish Airlines a été très retardé. Je n'ai droit à rien ?"
-    a: "Pas au forfait CE 261 sur ce sens (Turkish Airlines est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Paris-Djibouti, lui, reste indemnisable à 600 €."
+    a: "Pas au forfait CE 261 sur ce sens (Turkish Airlines est une compagnie non-UE au départ d'un pays non-UE). Et **Djibouti n'est partie à aucune convention internationale** de responsabilité du transporteur, ni Montréal ni Varsovie : sur une compagnie non européenne, il ne reste que le contrat de transport et les conditions générales de la compagnie. Bonne nouvelle : votre vol aller Paris-Djibouti, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
     a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Djibouti-Paris retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
   - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
@@ -34,7 +34,7 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 |---|---|---|
 | Paris vers Djibouti | Air France, Turkish Airlines (via Istanbul) | Oui : **600 € par passager** |
 | Djibouti vers Paris | Air France | Oui : **600 € par passager** |
-| Djibouti vers Paris | Turkish Airlines (via Istanbul) | Non : frais réels via Convention de Montréal |
+| Djibouti vers Paris | Turkish Airlines (via Istanbul) | Non : et aucune convention internationale ne s'applique (Djibouti n'est partie ni à Montréal ni à Varsovie) |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 

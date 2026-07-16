@@ -8,9 +8,9 @@ faq:
   - q: "Mon vol Bruxelles-Conakry a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance BRU-CKY est d'environ 4,600 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Conakry-Bruxelles est retardé. Suis-je couvert ?"
-    a: "Cela dépend de la compagnie. Au départ de Conakry (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines est couverte, y compris sur ce sens Conakry vers Bruxelles. Avec une compagnie non européenne, le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Cela dépend de la compagnie. Au départ de Conakry (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines est couverte, y compris sur ce sens Conakry vers Bruxelles. Avec une compagnie non européenne, le forfait n'est pas dû sur ce sens, et la Guinée n'étant **pas partie à la Convention de Montréal**, c'est la Convention de Varsovie (1929) qui prend le relais, avec des plafonds bagage nettement plus bas. Sur Brussels Airlines, le droit européen impose Montréal quelle que soit la route : [comprendre quel texte s'applique](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)."
   - q: "Mon vol Conakry-Bruxelles sur une compagnie africaine a été très retardé. Je n'ai droit à rien ?"
-    a: "Pas au forfait CE 261 sur ce sens (une compagnie non-UE au départ d'un pays non-UE n'est pas couverte). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Bruxelles-Conakry, lui, reste indemnisable à 600 €."
+    a: "Pas au forfait CE 261 sur ce sens (une compagnie non-UE au départ d'un pays non-UE n'est pas couverte). La **Guinée n'est pas partie à la Convention de Montréal** : sur une compagnie non européenne, vos frais réels relèvent alors de la Convention de **Varsovie**, aux plafonds plus bas et aux délais plus courts (14 jours pour un bagage retardé). Bonne nouvelle : votre vol aller Bruxelles-Conakry, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
     a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Conakry-Bruxelles retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
   - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
@@ -34,7 +34,7 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 |---|---|---|
 | Bruxelles vers Conakry | Brussels Airlines, et les compagnies non européennes desservant la ligne | Oui : **600 € par passager** |
 | Conakry vers Bruxelles | Brussels Airlines | Oui : **600 € par passager** |
-| Conakry vers Bruxelles | compagnie non européenne | Non : frais réels via Convention de Montréal |
+| Conakry vers Bruxelles | compagnie non européenne | Non : frais réels via Convention de Varsovie (la Guinée n'est pas partie à Montréal) |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 

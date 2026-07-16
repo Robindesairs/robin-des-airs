@@ -8,9 +8,9 @@ faq:
   - q: "Mon vol Europe-Monrovia a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance entre Monrovia et l'Europe dépasse 5 000 km (vol de plus de 3 500 km) et tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Monrovia-Europe est retardé. Suis-je couvert ?"
-    a: "Cela dépend de la compagnie. Au départ de Monrovia (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines (via Bruxelles) est couverte. Avec une compagnie non européenne (Royal Air Maroc (via Casablanca), ASKY (via Lomé), Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Cela dépend de la compagnie. Au départ de Monrovia (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines (via Bruxelles) est couverte. Avec une compagnie non européenne (Royal Air Maroc (via Casablanca), ASKY (via Lomé), Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, et le Liberia n'étant **pas partie à la Convention de Montréal**, ce sont les règles plus anciennes de la Convention de Varsovie qui s'appliquent à vos frais et à vos bagages : [quel texte protège votre vol ?](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)"
   - q: "Mon vol Monrovia-Europe sur une compagnie africaine a été très retardé. Je n'ai droit à rien ?"
-    a: "Pas au forfait CE 261 sur ce sens (une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Europe-Monrovia, lui, reste indemnisable à 600 €."
+    a: "Pas au forfait CE 261 sur ce sens (une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Varsovie** (1929) prend le relais pour vos frais réels : le Liberia n'est **pas partie à la Convention de Montréal**, donc les plafonds bagage sont nettement plus bas et les délais plus courts, et votre vol aller Europe-Monrovia, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
     a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Monrovia-Europe retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
   - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
@@ -34,7 +34,7 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 |---|---|---|
 | Europe vers Monrovia | Brussels Airlines (via Bruxelles), Royal Air Maroc (via Casablanca), ASKY (via Lomé), Turkish Airlines (via Istanbul) | Oui : **600 € par passager** |
 | Monrovia vers Europe | Brussels Airlines (via Bruxelles) | Oui : **600 € par passager** |
-| Monrovia vers Europe | Royal Air Maroc (via Casablanca), ASKY (via Lomé), Turkish Airlines (via Istanbul) | Non : frais réels via Convention de Montréal |
+| Monrovia vers Europe | Royal Air Maroc (via Casablanca), ASKY (via Lomé), Turkish Airlines (via Istanbul) | Non : frais réels via Convention de Varsovie (le Liberia n'est pas partie à Montréal) |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 

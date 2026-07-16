@@ -63,7 +63,7 @@ Si votre voyage combine plusieurs vols sur une **réservation unique** (par exem
 
 ## Bagages : la Convention de Montréal
 
-En cas de bagage perdu, retardé ou endommagé sur Air Austral, la Convention de Montréal s'applique : jusqu'à **1 414 €** (1 288 DTS) par passager. Réflexe indispensable : remplir un **PIR (Property Irregularity Report)** au comptoir avant de quitter l'aéroport.
+En cas de bagage perdu, retardé ou endommagé sur Air Austral, la Convention de Montréal s'applique : jusqu'à environ **1 800 €** (1 519 DTS) par passager depuis la révision du 28 décembre 2024. Réflexe indispensable : remplir un **PIR (Property Irregularity Report)** au comptoir avant de quitter l'aéroport.
 
 ## Famille : chaque passager compte
 

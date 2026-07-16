@@ -8,7 +8,7 @@ faq:
   - q: "Mon vol Lisbonne-Bissau a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**400 € par passager.** La distance LIS-OXB est d'environ 3 000 km (vol entre 1 500 et 3 500 km, donc palier de 400 €) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Bissau-Lisbonne est retardé. Suis-je couvert ?"
-    a: "Le plus souvent oui. Sur la ligne Bissau-Lisbonne, les deux compagnies principales (TAP Air Portugal et Euroatlantic Airways) sont **portugaises, donc européennes** : le CE 261 s'applique dans les deux sens, y compris au départ de Bissau. Avec une compagnie non européenne, le forfait ne serait pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Le plus souvent oui. Sur la ligne Bissau-Lisbonne, les deux compagnies principales (TAP Air Portugal et Euroatlantic Airways) sont **portugaises, donc européennes** : le CE 261 s'applique dans les deux sens, y compris au départ de Bissau. Avec une compagnie non européenne, le forfait ne serait pas dû sur ce sens, et la Guinée-Bissau n'étant partie **ni à la Convention de Montréal ni à celle de Varsovie**, aucune convention internationale ne prend le relais : il ne reste que le contrat de transport. D'où l'intérêt de voler européen : [quel texte protège votre vol ?](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)"
   - q: "Pourquoi 400 € et pas 600 € comme sur d'autres lignes africaines ?"
     a: "Parce que la distance Lisbonne-Bissau est d'environ 3 000 km, sous le seuil des 3 500 km qui déclenche le palier de 600 €. Bissau est l'une des capitales subsahariennes les plus proches de l'Europe : le règlement fixe donc l'indemnité à **400 € par passager** sur cette ligne, ce qui reste dû dès 3h de retard à l'arrivée."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
@@ -34,14 +34,14 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 |---|---|---|
 | Lisbonne vers Bissau | TAP Air Portugal, Euroatlantic Airways | Oui : **400 € par passager** |
 | Bissau vers Lisbonne | TAP Air Portugal, Euroatlantic Airways (compagnies européennes) | Oui : **400 € par passager** |
-| Bissau vers Lisbonne | compagnie non européenne | Non : frais réels via Convention de Montréal |
+| Bissau vers Lisbonne | compagnie non européenne | Non : aucune convention internationale (la Guinée-Bissau n'est partie ni à Montréal ni à Varsovie) |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 ## Les compagnies sur la ligne
 
 - **Compagnies européennes** (couvertes dans les deux sens) : TAP Air Portugal et Euroatlantic Airways, toutes deux portugaises.
-- **Compagnies non européennes** (couvertes uniquement au départ de Lisbonne) : les autres compagnies desservant la ligne. Sur le sens Bissau vers Lisbonne, elles ne relèvent pas du forfait CE 261, mais la Convention de Montréal reste applicable pour vos frais réels.
+- **Compagnies non européennes** (couvertes uniquement au départ de Lisbonne) : les autres compagnies desservant la ligne. Sur le sens Bissau vers Lisbonne, elles ne relèvent pas du forfait CE 261, et la Guinée-Bissau n'étant partie à aucune convention internationale (ni Montréal ni Varsovie), il ne vous reste que le contrat de transport et les conditions générales de la compagnie.
 
 Sur Lisbonne-Bissau, la bonne nouvelle est que les deux transporteurs habituels étant européens, les deux sens ouvrent en pratique droit au forfait de 400 €.
 
