@@ -184,3 +184,26 @@
 /blog/robin-des-airs-vs-skycop-comparatif.html                  /blog/pourquoi-choisir-robin-des-airs-difference.html         301!
 /blog/air-indemnite-liquidation-dossier-en-cours.html   /blog/pourquoi-choisir-robin-des-airs-difference.html   301!
 /blog/dossiers-types-robin-cas-reels-anonymises.html	/blog	301!
+
+# --- Traductions DE/ES supprimees le 16/07/2026 (commit 7cf72e1) ---
+# Elles renvoyaient un 404 alors que Copilot les cite encore (ex. jurisprudencia-tjue-ce-261
+# = 5 citations dans Bing AI Performance). On envoie chacune vers son equivalent ANGLAIS reel :
+# c'est le blog EN qui porte l'essentiel des citations IA, et il couvre les memes sujets.
+/es/blog/aerolinea-rechaza-indemnizacion.html            /en/blog/airline-refuses-compensation-next-steps.html      301!
+/es/blog/circunstancias-extraordinarias-ce-261.html      /en/blog/extraordinary-circumstances-ec-261.html           301!
+/es/blog/indemnizacion-vuelo-importes-250-400-600.html   /en/blog/flight-compensation-amounts-250-400-600-eur.html  301!
+/es/blog/jurisprudencia-tjue-ce-261.html                 /en/blog/ec-261-case-law-cjeu-rulings.html                 301!
+/es/blog/resumen-reglamento-ce-261.html                  /en/blog/ec-261-regulation-summary.html                    301!
+/es/blog/vuelo-cancelado-indemnizacion-600.html          /en/blog/cancelled-flight-compensation-600-eur.html        301!
+# Pas d'article Vueling en EN ni en FR : on renvoie vers le resume du reglement, le sujet parent.
+/es/blog/vueling-vuelo-retrasado-indemnizacion.html      /en/blog/ec-261-regulation-summary.html                    301!
+/de/blog/aussergewoehnliche-umstaende-eg-261.html        /en/blog/extraordinary-circumstances-ec-261.html           301!
+/de/blog/eg-261-rechtsprechung-ghurteile.html            /en/blog/ec-261-case-law-cjeu-rulings.html                 301!
+/de/blog/flug-annulliert-entschaedigung-600.html         /en/blog/cancelled-flight-compensation-600-eur.html        301!
+/de/blog/flugentschaedigung-betraege-250-400-600.html    /en/blog/flight-compensation-amounts-250-400-600-eur.html  301!
+/de/blog/fluggesellschaft-lehnt-ab-was-tun.html          /en/blog/airline-refuses-compensation-next-steps.html      301!
+/de/blog/lufthansa-verspaeteter-flug-entschaedigung.html /en/blog/lufthansa-delayed-flight-compensation.html         301!
+/de/blog/verordnung-eg-261-zusammenfassung.html          /en/blog/ec-261-regulation-summary.html                    301!
+# Filet : toute autre URL DE/ES oubliee atterrit sur le blog EN plutot que sur un 404.
+/es/*                                                    /en/                                                        301
+/de/*                                                    /en/                                                        301
