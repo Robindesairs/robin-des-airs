@@ -12,6 +12,19 @@ const BLOG_OUT_DIR = path.join(process.cwd(), 'blog');
 const SITE_URL = 'https://robindesairs.eu';
 const TODAY = new Date().toISOString().slice(0, 10);
 
+/**
+ * Durcit les <img> du corps d'article : bascule les schémas PNG vers WebP (~5x plus léger),
+ * diffère le chargement (aucune image n'est above-the-fold) et fixe les dimensions
+ * pour éviter tout décalage de mise en page (CLS).
+ * Les schémas de /assets/images/ sont tous en 1200x630.
+ */
+function enhanceBodyImages(html: string): string {
+  return html.replace(/<img\s+src="(\/assets\/images\/[^"]+)\.png"([^>]*)>/g, (_m, base, rest) => {
+    const attrs = rest.replace(/\s*\/?$/, '');
+    return `<img src="${base}.webp"${attrs} width="1200" height="630" loading="lazy" decoding="async">`;
+  });
+}
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, '&amp;')
@@ -188,6 +201,9 @@ function renderArticlePage(
   if (!post) return '';
   const canonical = `${SITE_URL}/blog/${post.slug}.html`;
   const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
+  // Images du corps : servir le WebP (5x plus léger que le PNG), différer le chargement
+  // et fixer les dimensions pour ne pas provoquer de CLS. Les schémas font tous 1200x630.
+  const body = enhanceBodyImages(post.html);
   const faq = post.faq || [];
   const hasFaq = faq.length > 0;
   const blogPostingJson = JSON.stringify({
@@ -300,7 +316,7 @@ function renderArticlePage(
       <a class="btn" href="${SITE_URL}/depot-express">Vérifier mon vol en 2 min</a>
       <span class="muted">ou lisez le guide ci-dessous 👇</span>
     </div>
-    <div id="blog-body">${post.html}</div>
+    <div id="blog-body">${body}</div>
     ${faqHtml}
     <div class="cta-box">
       <p>Prêt à récupérer votre indemnité ?</p>
