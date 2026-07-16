@@ -225,12 +225,24 @@ exports.handler = async (event) => {
   const segs = n.segments || [];
   const legs = segs.length > 1 ? segs.map((s) => ({ num: s.vol || '', dep: s.ville_depart || s.depart || '', arr: s.ville_arrivee || s.arrivee || '' })) : [];
   const dm = (n.date || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  const dateIso = dm ? `${dm[3]}-${dm[2]}-${dm[1]}` : '';
+  const dmShort = (n.date || '').match(/^(\d{2})\/(\d{2})$/);
+  let dateIso = '', yearUnsure = false;
+  if (dm) { dateIso = `${dm[3]}-${dm[2]}-${dm[1]}`; }
+  else if (dmShort) {
+    // Fréquent : le billet / la carte d'embarquement n'affiche PAS l'année (« 16 juil. »). On devine l'année
+    // qui rapproche le plus la date d'aujourd'hui (la carte est scannée près du vol) et on signale qu'elle est
+    // à confirmer → étape « année seule » côté client. Avant, une date sans année était purement jetée.
+    const dd = +dmShort[1], mo = +dmShort[2], now = Date.now(), y0 = new Date().getFullYear();
+    let best = y0, bestDiff = Infinity;
+    [y0 - 1, y0, y0 + 1].forEach((y) => { const diff = Math.abs(new Date(y, mo - 1, dd).getTime() - now); if (diff < bestDiff) { bestDiff = diff; best = y; } });
+    dateIso = `${best}-${dmShort[2]}-${dmShort[1]}`;
+    yearUnsure = true;
+  }
   const firstSeg = segs[0] || {}, lastSeg = segs[segs.length - 1] || {};
   return { statusCode: 200, headers: H, body: JSON.stringify({ ok: true, eticket: {
     flightNum: n.vol, compagnie: n.compagnie, route: n.route,
     dep: firstSeg.ville_depart || n.depart || '', arr: lastSeg.ville_arrivee || n.arrivee || '',
-    dateFr: n.date, dateIso, pnr: n.pnr, escale: n.escale && legs.length > 1, legs,
+    dateFr: n.date, dateIso, yearUnsure, pnr: n.pnr, escale: n.escale && legs.length > 1, legs,
     passengers: n.passengers, pax: n.pax, allerRetour: n.allerRetour, multiPNR: n.multiPNR,
   } }) };
 };
