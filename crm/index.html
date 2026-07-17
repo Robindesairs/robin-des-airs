@@ -2690,6 +2690,7 @@ function loadServerPieces(ref){
         return '<div class="crm-doc-row"><label style="display:flex;align-items:center;margin-right:8px" title="Inclure dans le dossier complet"><input type="checkbox" class="crm-piece-pick" data-key="' + escHtml(p.key || '') + '" checked></label><div style="flex:1"><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
           + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + fn + '</div></div>'
           + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a> <a class="btn btn-sm" href="' + p.url + '&dl=1" download>Télécharger</a>'
+          + ' <button type="button" class="btn btn-sm crm-piece-edit" data-key="' + escHtml(p.key || '') + '" data-label="' + escHtml(p.filename || '') + '" data-pax="' + escHtml(JSON.stringify(p.passengers || [])) + '">✏️ Renommer</button>'
           + (canDel ? ' <button type="button" class="btn btn-sm btn-danger crm-piece-del" data-key="' + escHtml(p.key || '') + '" data-url="' + escHtml(p.url || '') + '" data-label="' + escHtml(serverPieceLabel(p) + (p.filename ? ' — ' + p.filename : '')) + '">Supprimer</button>' : '')
           + '</div></div>';
       }).join('') + '</div>';
@@ -2699,10 +2700,67 @@ function loadServerPieces(ref){
           crmAskDeletePiece(ref, b.getAttribute('data-key'), b.getAttribute('data-url'), b.getAttribute('data-label'));
         });
       });
+      // Renommer / affecter à un ou plusieurs passagers du dossier.
+      var paxNames = (j && j.paxNames) || [];
+      Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-edit'), function(b){
+        b.addEventListener('click', function(){
+          var cur = []; try{ cur = JSON.parse(b.getAttribute('data-pax') || '[]'); }catch(_e){ cur = []; }
+          crmAskEditPiece(ref, b.getAttribute('data-key'), b.getAttribute('data-label'), cur, paxNames);
+        });
+      });
     })
     .catch(function(e){
       wrap.innerHTML = '<p class="crm-doc-empty">Pièces serveur indisponibles' + (e && e.message ? ' (' + escHtml(e.message) + ')' : '') + '.</p>';
     });
+}
+
+/** Renommer une pièce + l'affecter à UN OU PLUSIEURS passagers du dossier.
+ *  L'override est stocké à part (meta/<ref>) : le fichier d'origine n'est jamais réécrit.
+ *  Nom vide + aucun passager coché = retour au nom et à l'attribution d'origine. */
+function crmAskEditPiece(ref, key, currentLabel, currentPax, paxNames){
+  if(!requireCrmAgent()) return;
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(11,31,58,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  var paxHtml = (paxNames && paxNames.length)
+    ? paxNames.map(function(n){
+        var on = (currentPax || []).indexOf(n) >= 0;
+        return '<label style="display:flex;align-items:center;gap:8px;padding:7px 2px;font-size:13.5px;color:#0B1F3A;cursor:pointer">'
+          + '<input type="checkbox" class="crm-ed-pax" value="' + escHtml(n) + '"' + (on ? ' checked' : '') + '> ' + escHtml(n) + '</label>';
+      }).join('')
+    : '<div style="font-size:12.5px;color:#8592A6;padding:4px 0">Aucun passager connu sur ce dossier.</div>';
+  ov.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:430px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.32)">'
+    + '<div style="font-weight:800;color:#0B1F3A;font-size:16px;margin-bottom:12px">✏️ Renommer / affecter la pièce</div>'
+    + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#8592A6;margin-bottom:4px">Nom du document</div>'
+    + '<input class="crm-ed-label" maxlength="120" placeholder="ex. Passeport — Awa Diallo" style="width:100%;padding:10px;font-size:14px;border:1.5px solid #CBD5E1;border-radius:8px;box-sizing:border-box">'
+    + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#8592A6;margin:14px 0 2px">Passager(s) concerné(s)</div>'
+    + '<div style="font-size:12px;color:#8592A6;margin-bottom:4px">Un document peut concerner plusieurs passagers (ex. livret de famille).</div>'
+    + '<div style="border:1px solid #E5E9F0;border-radius:8px;padding:6px 10px;background:#F7F9FC;max-height:180px;overflow:auto">' + paxHtml + '</div>'
+    + '<div class="crm-ed-err" style="display:none;color:#B91C1C;font-size:12.5px;margin-top:8px;font-weight:600"></div>'
+    + '<div style="display:flex;gap:8px;margin-top:14px">'
+    +   '<button type="button" class="btn crm-ed-cancel" style="flex:1">Annuler</button>'
+    +   '<button type="button" class="btn btn-primary crm-ed-ok" style="flex:1">Enregistrer</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+  var lab = ov.querySelector('.crm-ed-label'), err = ov.querySelector('.crm-ed-err');
+  lab.value = currentLabel || '';
+  ov.querySelector('.crm-ed-cancel').onclick = function(){ ov.remove(); };
+  ov.querySelector('.crm-ed-ok').onclick = async function(){
+    var btn = this;
+    var pax = Array.prototype.slice.call(ov.querySelectorAll('.crm-ed-pax')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
+    btn.disabled = true; btn.textContent = 'Enregistrement…';
+    try{
+      var r = await crmApiFetch('/api/crm-piece-meta', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ref: ref, key: key, label: (lab.value||'').trim(), passengers: pax, agent: getCrmAgent() }) });
+      var j = {}; try{ j = await r.json(); }catch(_e){}
+      if(!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+      ov.remove(); showCrmToast('Pièce mise à jour ✅');
+      loadServerPieces(ref);
+    }catch(e){
+      err.textContent = (e && e.message) ? e.message : 'Enregistrement impossible.'; err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Enregistrer';
+    }
+  };
+  setTimeout(function(){ lab.focus(); }, 60);
 }
 
 /** Suppression d'UNE pièce — jamais à l'aveugle : on AFFICHE ce qu'on s'apprête à supprimer,

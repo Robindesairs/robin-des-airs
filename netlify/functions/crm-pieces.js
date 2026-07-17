@@ -268,6 +268,27 @@ exports.handler = async (event) => {
 
     items.sort((a, b) => String(a.ts).localeCompare(String(b.ts)));
 
+    // ── Couche d'ÉDITION : renommage + affectation à UN OU PLUSIEURS passagers ──────────────────
+    // Stockée à part dans meta/<ref> (même motif que les statuts status/<ref>), PAS dans les
+    // métadonnées du blob : @netlify/blobs v8 n'expose pas setMetadata, il faudrait relire et
+    // réécrire tout le fichier (plusieurs Mo) juste pour renommer. Ici : non destructif et instantané.
+    try {
+      const ovMap = (await pieces.get('meta/' + ref, { type: 'json' })) || {};
+      items.forEach((it) => {
+        const ov = ovMap[it.key];
+        if (ov && ov.label) it.filename = ov.label; // nom donné par l'opérateur
+        const list = (ov && Array.isArray(ov.passengers) && ov.passengers.length)
+          ? ov.passengers
+          : (it.passenger ? [it.passenger] : []);
+        it.passengers = list;                 // nouveau modèle : plusieurs passagers par document
+        it.passenger = list.join(', ');       // rétro-compat : l'affichage existant lit encore ce champ
+      });
+    } catch (_) {}
+
+    // Passagers du dossier : le CRM s'en sert pour proposer à qui affecter un document.
+    const paxNames = ((dossier && Array.isArray(dossier.passengers)) ? dossier.passengers : [])
+      .map((p) => (p && p.name) || '').filter(Boolean);
+
     // Statut de purge RGPD (visible dans le CRM) — best-effort : si Airtable indispo/quota, pas de badge (ne casse rien).
     let purge = null;
     try {
@@ -291,7 +312,7 @@ exports.handler = async (event) => {
       }
     } catch (_) { purge = null; }
 
-    return J(200, { ref, count: items.length, pieces: items, purge });
+    return J(200, { ref, count: items.length, pieces: items, purge, paxNames });
   } catch (e) {
     return J(500, { error: e.message });
   }
