@@ -149,7 +149,14 @@ async function fetchAerodatabox(flightNumber, dateYmd, rapidKey) {
         continue;
       }
       if (!response.ok) {
-        lastErr = new Error(`ADB ${response.status}: ${text.slice(0, 120)}`);
+        const err = new Error(`ADB ${response.status}: ${text.slice(0, 120)}`);
+        err.status = response.status;
+        // 429 (quota/débit) et 401/403 (clé) ne dépendent PAS de la casse du n° de vol : réessayer la
+        // variante minuscule ne peut pas aider, tire une 2ᵉ requête dans la même seconde (→ « rate limit
+        // per second ») et consomme une API Unit de plus. `fatal` fait sortir de la boucle des paths.
+        if (response.status === 429 || response.status === 401 || response.status === 403) err.fatal = true;
+        lastErr = err;
+        if (err.fatal) break;
         continue;
       }
       const rows = extractAdbRows(json);

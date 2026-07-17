@@ -4057,7 +4057,12 @@ const _H = 3600000;
 // hors_champ/sous_seuil → null = pas de chiffre ferme (cohérent avec « montant à confirmer » vu dans le tunnel).
 function leadTotal(lead) {
   if (lead && (lead.flightVerdict === 'hors_champ' || lead.flightVerdict === 'sous_seuil')) return null;
-  const per = (lead && Number(lead.perPax) > 0) ? Number(lead.perPax) : 600;
+  // Pas de perPax VÉRIFIÉ (vol introuvable, ou /api/flight-verdict indisponible : quota AeroDataBox épuisé)
+  // → aucun chiffre ferme. Un 600 € par défaut annoncerait 600 € sur une route courte (BSL→IBZ = 1 089 km
+  // → art. 7.1.a = 250 €), soit 350 €/passager de trop. La relance garde le lead via la copie
+  // « un expert confirme le montant exact » ; l'accroche « jusqu'à 600 € » reste vraie, elle.
+  const per = lead && Number(lead.perPax);
+  if (!(per > 0)) return null;
   return (per * ((lead && lead.pax) || 1)) + ' €';
 }
 function relanceText(n, lead) {

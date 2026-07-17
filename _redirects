@@ -120,6 +120,7 @@
 /api/ocr-eticket             /.netlify/functions/ocr-eticket             200
 /api/retract                 /.netlify/functions/retract                 200
 /api/rib-submit              /.netlify/functions/rib-submit              200
+/api/flight-info             /.netlify/functions/flight-info             200
 /api/flight-verdict          /.netlify/functions/flight-verdict          200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
 /api/radar-today             /.netlify/functions/radar-today             200
