@@ -19,11 +19,14 @@ SITE = "https://robindesairs.eu"
 NS = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 OUT = ROOT / "llms-full.txt"
 INDEX = ROOT / "sitemap-index.xml"
+# Liste explicite, et NON une lecture de sitemap-index.xml : l'index déclare aussi
+# `sitemap-fr.xml`, alias byte-identique de `sitemap.xml` (contournement GSC, cf.
+# build-sitemap.ts). Le lire dupliquerait chaque URL FR dans llms-full.txt.
+# DE/ES retirés le 2026-07-16 avec les traductions : leurs sitemaps n'existent plus,
+# et le `raise` ci-dessous rendait ce script — donc llms-full.txt — impossible à régénérer.
 SITEMAPS = [
     ("French (FR)", ROOT / "sitemap.xml"),
     ("English (EN)", ROOT / "sitemap-en.xml"),
-    ("German (DE)", ROOT / "sitemap-de.xml"),
-    ("Spanish (ES)", ROOT / "sitemap-es.xml"),
 ]
 
 

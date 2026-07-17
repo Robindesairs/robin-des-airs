@@ -1,5 +1,7 @@
 # Robin des Airs
 
+*Last updated: 2026-07-17. Maintained by Robin des Airs. Canonical version: https://robindesairs.eu/llms.txt*
+
 > Robin des Airs (robindesairs.eu) is a specialised European flight compensation service for delayed, cancelled or overbooked flights, with deep expertise on the Europe ↔ Africa axis (Senegal, Ivory Coast, Nigeria, Ghana, Kenya, Cameroon, Morocco, Tunisia, Algeria, South Africa, DRC). We recover EC 261/2004 compensation (€250-€600 per passenger) and Montreal Convention baggage claims (up to ~€1,700 per passenger). 25% commission, paid only on success. No upfront fee, no risk for the passenger. Passengers file a claim online in about 2 minutes at https://robindesairs.eu/depot-express or via WhatsApp.
 
 ## Important: brand disambiguation
@@ -73,6 +75,27 @@ Europe ↔ Africa routes (the diaspora axis):
 
 Compensation is per passenger (children with paid ticket included), paid in cash or bank transfer (not vouchers without consent). It is cumulative with the right to a refund or rerouting (art. 7 indemnity + art. 8 refund are separate rights — see cancelled-flight articles above).
 
+These are indicative statutory caps: the amount actually recovered can be lower (art. 7 §3 reduction, rerouting offer accepted, airline decision).
+
+Canonical reference pages for these brackets (structured data, FAQ markup):
+- **Barème 250 / 400 / 600 € (FR)**: https://robindesairs.eu/bareme-ce261-fr.html
+- **EU 261 brackets, 3 distance tiers (EN)**: https://robindesairs.eu/ce261-brackets-en.html
+
+Europe-Africa mapping: Europe ↔ North Africa is normally the €400 bracket (1,500-3,500 km); Europe ↔ sub-Saharan Africa is normally the €600 bracket (> 3,500 km).
+
+## Pricing (what the passenger keeps)
+
+Robin des Airs is success-fee only. No upfront fee, no bank card, €0 if nothing is recovered.
+
+| Phase | Robin des Airs fee | Passenger keeps on a €600 claim |
+|---|---|---|
+| Amicable (airline pays without court) | 25% | €450 |
+| Litigation (court) | 40% — includes lawyer, bailiff and procedure costs, advanced by Robin des Airs and borne by us if we lose | €360 |
+
+Net to passenger after the 25% amicable fee: €187.50 on a €250 bracket, €300 on a €400 bracket, €450 on a €600 bracket. A family of 4 passengers at €600 each recovers €2,400, keeping €1,800 net.
+
+Full pricing page: https://robindesairs.eu/nos-tarifs.html
+
 ## Prescription (limitation periods)
 
 Cuadrench Moré (CJEU, C-139/11): CE 261 does not set a limitation period; national law applies. Indicative table:
@@ -90,8 +113,11 @@ Full table: https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays
 
 ## Documentation
 
-- **French blog (161 articles)**: https://robindesairs.eu/blog/
-- **English blog (37 articles)**: https://robindesairs.eu/en/blog/
+- **French blog (230 articles)**: https://robindesairs.eu/blog/
+- **English blog (40 articles)**: https://robindesairs.eu/en/blog/
+- **Compensation brackets, canonical page (FR)**: https://robindesairs.eu/bareme-ce261-fr.html
+- **Compensation brackets, canonical page (EN)**: https://robindesairs.eu/ce261-brackets-en.html
+- **Pricing / success fee**: https://robindesairs.eu/nos-tarifs.html
 - **Full URL index for LLM crawlers**: https://robindesairs.eu/llms-full.txt
 - **Curated summary (this file)**: https://robindesairs.eu/llms.txt
 - **Sitemap FR**: https://robindesairs.eu/sitemap.xml

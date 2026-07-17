@@ -164,10 +164,22 @@ function getDestinationPages(): Array<{ loc: string; changefreq: string; priorit
  * avec le lastmod réel de chaque page (cf. lastCommitDate). Inclut la home localisée si elle existe.
  * Corrige le point Bing « sitemaps non rafraîchis quotidiennement » : ces sub-sitemaps étaient statiques.
  */
+/**
+ * Pages d'une langue qui vivent à la RACINE et non dans /<lang>/blog/, donc invisibles
+ * à l'auto-découverte ci-dessous. Sans cette liste, elles n'entrent dans aucun sitemap.
+ */
+const LANG_ROOT_PAGES: Record<string, Array<{ file: string; changefreq: string; priority: string }>> = {
+  en: [{ file: 'ce261-brackets-en.html', changefreq: 'monthly', priority: '0.8' }],
+};
+
 function writeLangSitemap(lang: string, dirRel: string, homePath: string): void {
   const urls: Array<{ loc: string; changefreq: string; priority: string }> = [];
   if (fs.existsSync(path.join(process.cwd(), `index-${lang}.html`))) {
     urls.push({ loc: SITE_URL + homePath, changefreq: 'weekly', priority: '1.0' });
+  }
+  for (const p of LANG_ROOT_PAGES[lang] ?? []) {
+    if (!fs.existsSync(path.join(process.cwd(), p.file))) continue;
+    urls.push({ loc: `${SITE_URL}/${p.file}`, changefreq: p.changefreq, priority: p.priority });
   }
   const dir = path.join(process.cwd(), dirRel);
   if (fs.existsSync(dir)) {
@@ -188,7 +200,11 @@ function main(): void {
   const slugs = getAllBlogSlugs();
   const staticPages: Array<{ loc: string; changefreq: string; priority: string }> = [
     { loc: SITE_URL + '/', changefreq: 'weekly', priority: '1.0' },
-    { loc: SITE_URL + '/depot-en-ligne.html', changefreq: 'monthly', priority: '0.9' },
+    // /depot-en-ligne.html RETIRÉ : la page est en `<meta name="robots" content="noindex">`
+    // (c'est le lien de dépôt personnalisé du CRM, servi en `?r=<réf>` — il n'a aucun sens
+    // hors dossier). La déclarer au sitemap tout en la marquant noindex envoie deux ordres
+    // contradictoires aux crawlers. La page publique équivalente est /depot-express.html,
+    // déjà déclarée juste en dessous.
     { loc: SITE_URL + '/depot-express.html', changefreq: 'monthly', priority: '0.9' },
     { loc: SITE_URL + '/dossier.html', changefreq: 'monthly', priority: '0.9' },
     { loc: SITE_URL + '/suivi-dossier.html', changefreq: 'monthly', priority: '0.8' },
@@ -202,13 +218,22 @@ function main(): void {
     { loc: SITE_URL + '/programme-agents-voyage.html', changefreq: 'monthly', priority: '0.75' },
     { loc: SITE_URL + '/cgv.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/politique-confidentialite.html', changefreq: 'yearly', priority: '0.4' },
-    { loc: SITE_URL + '/mandat-representation.html', changefreq: 'yearly', priority: '0.4' },
+    // /mandat-representation.html RETIRÉ : ce n'est plus qu'un stub de redirection
+    // (meta-refresh vers /autorisation.html, cf. le 301 dans _redirects). Même règle que
+    // pour /partenaires-agences-fcfa.html ci-dessus : on ne soumet pas une redirection au
+    // sitemap, la cible porte déjà le canonical.
     { loc: SITE_URL + '/droit-retractation.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/blog/', changefreq: 'weekly', priority: '0.9' },
     { loc: SITE_URL + '/nos-tarifs.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/parrainage.html', changefreq: 'monthly', priority: '0.6' },
     { loc: SITE_URL + '/a-propos.html', changefreq: 'monthly', priority: '0.6' },
-    { loc: SITE_URL + '/jurisprudence-ce261.html', changefreq: 'monthly', priority: '0.7' },
+    // Barème 250/400/600 : la page qui répond littéralement à « combien puis-je récupérer ».
+    // Live en prod et indexable depuis toujours, mais jamais déclarée ici (ajoutée le 17/07/2026).
+    { loc: SITE_URL + '/bareme-ce261-fr.html', changefreq: 'monthly', priority: '0.8' },
+    // /jurisprudence-ce261.html RETIRÉ : la page est en `<meta name="robots" content="noindex, nofollow">`
+    // (recueil interne). La déclarer au sitemap tout en la marquant noindex envoie deux ordres
+    // contradictoires à Google. Si le codex devient public un jour, retirer le noindex D'ABORD,
+    // puis la remettre ici.
   ];
   // Destinations : auto-découvertes (toutes les /destinations/*.html, plus de liste en dur)
   const destPages = getDestinationPages();
