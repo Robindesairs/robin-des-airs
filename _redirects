@@ -137,6 +137,8 @@
 /api/wa-recent              /.netlify/functions/wa-recent              200
 /api/crm-wa-send            /.netlify/functions/crm-wa-send            200
 /api/crm-pieces             /.netlify/functions/crm-pieces             200
+/api/crm-piece-delete       /.netlify/functions/crm-piece-delete       200
+/api/crm-piece-meta         /.netlify/functions/crm-piece-meta         200
 /api/crm-dossier-pdf        /.netlify/functions/crm-dossier-pdf        200
 /api/send-whatsapp          /.netlify/functions/send-whatsapp          200
 /api/wati-agency-webhook    /.netlify/functions/wati-agency-webhook    200
