@@ -2685,14 +2685,75 @@ function loadServerPieces(ref){
         var when = p.ts ? new Date(p.ts).toLocaleDateString('fr-FR') : '';
         var who = p.passenger ? ' <span class="crm-doc-who">— ' + escHtml(p.passenger) + '</span>' : '';
         var fn = p.filename ? (' · ' + escHtml(p.filename)) : '';
+        // Le contrat de cession SIGNÉ est une preuve juridique : pas de bouton Supprimer (le serveur le refuse aussi).
+        var canDel = !/^(pdf\/|signed\/)/.test(p.key || '');
         return '<div class="crm-doc-row"><label style="display:flex;align-items:center;margin-right:8px" title="Inclure dans le dossier complet"><input type="checkbox" class="crm-piece-pick" data-key="' + escHtml(p.key || '') + '" checked></label><div style="flex:1"><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
           + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + fn + '</div></div>'
-          + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a> <a class="btn btn-sm" href="' + p.url + '&dl=1" download>Télécharger</a></div></div>';
+          + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a> <a class="btn btn-sm" href="' + p.url + '&dl=1" download>Télécharger</a>'
+          + (canDel ? ' <button type="button" class="btn btn-sm btn-danger crm-piece-del" data-key="' + escHtml(p.key || '') + '" data-url="' + escHtml(p.url || '') + '" data-label="' + escHtml(serverPieceLabel(p) + (p.filename ? ' — ' + p.filename : '')) + '">Supprimer</button>' : '')
+          + '</div></div>';
       }).join('') + '</div>';
+      // Suppression : aperçu de la pièce + double authentification (voir crmAskDeletePiece).
+      Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-del'), function(b){
+        b.addEventListener('click', function(){
+          crmAskDeletePiece(ref, b.getAttribute('data-key'), b.getAttribute('data-url'), b.getAttribute('data-label'));
+        });
+      });
     })
     .catch(function(e){
       wrap.innerHTML = '<p class="crm-doc-empty">Pièces serveur indisponibles' + (e && e.message ? ' (' + escHtml(e.message) + ')' : '') + '.</p>';
     });
+}
+
+/** Suppression d'UNE pièce — jamais à l'aveugle : on AFFICHE ce qu'on s'apprête à supprimer,
+ *  puis on exige un code TOTP frais (2ᵉ facteur) en plus de la session CRM. Le serveur
+ *  (crm-piece-delete) revérifie tout et refuse le contrat signé + trace l'agent. */
+function crmAskDeletePiece(ref, key, url, label){
+  if(!requireCrmAgent()) return;
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(11,31,58,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:430px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.32)">'
+    + '<div style="font-weight:800;color:#0B1F3A;font-size:16px">🗑️ Supprimer cette pièce ?</div>'
+    + '<div style="font-size:13px;color:#51607A;margin:3px 0 10px">' + escHtml(label || '') + '</div>'
+    + '<div class="crm-del-prev" style="border:1px solid #E5E9F0;border-radius:10px;overflow:hidden;background:#F7F9FC;min-height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:12px">'
+    +   '<img alt="Aperçu de la pièce" style="max-width:100%;max-height:260px;display:block">'
+    + '</div>'
+    + '<div style="font-size:12.5px;color:#51607A;margin-bottom:7px">Action <b>définitive</b>. Entrez votre <b>code d’authentification</b> (Google Authenticator) pour confirmer.</div>'
+    + '<input class="crm-del-totp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="6 chiffres" style="width:100%;padding:10px;font-size:20px;letter-spacing:.3em;text-align:center;border:1.5px solid #CBD5E1;border-radius:8px;box-sizing:border-box;font-variant-numeric:tabular-nums">'
+    + '<div class="crm-del-err" style="display:none;color:#B91C1C;font-size:12.5px;margin-top:8px;font-weight:600"></div>'
+    + '<div style="display:flex;gap:8px;margin-top:14px">'
+    +   '<button type="button" class="btn crm-del-cancel" style="flex:1">Annuler</button>'
+    +   '<button type="button" class="btn btn-danger crm-del-ok" style="flex:1">Supprimer définitivement</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+  var img = ov.querySelector('img'), prev = ov.querySelector('.crm-del-prev');
+  // PDF / document non rendu par <img> → on propose de l'ouvrir pour vérifier avant de supprimer.
+  img.onerror = function(){
+    prev.innerHTML = '<div style="padding:20px;text-align:center;font-size:13px;color:#51607A;line-height:1.6">📄 Aperçu image indisponible (document PDF).<br>'
+      + '<a href="' + escHtml(url) + '" target="_blank" rel="noopener" style="font-weight:800;color:#047857">Ouvrir pour vérifier avant de supprimer</a></div>';
+  };
+  img.src = url;
+  var totp = ov.querySelector('.crm-del-totp'), err = ov.querySelector('.crm-del-err');
+  function fail(m){ err.textContent = m; err.style.display = 'block'; }
+  ov.querySelector('.crm-del-cancel').onclick = function(){ ov.remove(); };
+  ov.querySelector('.crm-del-ok').onclick = async function(){
+    var btn = this, code = (totp.value || '').replace(/\D/g, '');
+    if(code.length !== 6){ fail('Entrez le code à 6 chiffres de votre application d’authentification.'); return; }
+    btn.disabled = true; btn.textContent = 'Suppression…';
+    try{
+      var r = await crmApiFetch('/api/crm-piece-delete', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ref: ref, key: key, agent: getCrmAgent(), totp: code }) });
+      var j = {}; try{ j = await r.json(); }catch(_e){}
+      if(!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+      ov.remove(); showCrmToast('Pièce supprimée ✅');
+      loadServerPieces(ref); // recharge la liste
+    }catch(e){
+      fail(e && e.message ? e.message : 'Suppression impossible.');
+      btn.disabled = false; btn.textContent = 'Supprimer définitivement';
+    }
+  };
+  totp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); ov.querySelector('.crm-del-ok').click(); } });
+  setTimeout(function(){ totp.focus(); }, 60);
 }
 
 function togglePaiementField(val){
