@@ -285,6 +285,23 @@
   .crm-doc-who { font-weight: 700; color: #3730A3; }
   .crm-doc-meta { font-size: 11px; color: var(--text2); margin-top: 4px; }
   .crm-doc-actions { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+  /* Vignette : l'opérateur VOIT la pièce sans quitter le dossier. Clic = aperçu plein écran. */
+  .crm-doc-thumb { width: 62px; height: 62px; flex-shrink: 0; border: 1px solid var(--border); border-radius: 8px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: zoom-in; overflow: hidden; padding: 0; }
+  .crm-doc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Qualification : vert = validé (remonte en tête), rouge = rejeté (tombe en bas, grisé). */
+  .crm-doc-row.is-valide { border-color: #6EE7B7; background: #F0FDF9; }
+  .crm-doc-row.is-rejete { border-color: #FCA5A5; background: #FEF2F2; opacity: .72; }
+  .crm-qual { display: flex; gap: 5px; }
+  .crm-qual button { border-radius: 8px; padding: 5px 10px; font-size: 14px; font-weight: 800; cursor: pointer; line-height: 1; background: #fff; }
+  .crm-qual .q-ok { border: 1.5px solid #A7F3D0; color: #047857; }
+  .crm-qual .q-ko { border: 1.5px solid #FECACA; color: #B91C1C; }
+  .crm-qual .q-ok.on { background: #047857; border-color: #047857; color: #fff; }
+  .crm-qual .q-ko.on { background: #B91C1C; border-color: #B91C1C; color: #fff; }
+  .crm-doc-tag { display: inline-block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; padding: 2px 6px; border-radius: 5px; margin-left: 6px; vertical-align: 1px; }
+  .crm-doc-tag.t-coll { background: #EDE9FE; color: #5B21B6; }
+  .crm-doc-tag.t-ko { background: #FEE2E2; color: #B91C1C; }
+  .crm-doc-grp { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--text2); margin: 14px 0 6px; }
+  .crm-doc-grp:first-child { margin-top: 0; }
   .crm-piece-add { background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: var(--radius-sm); padding: 14px; margin-top: 8px; }
   .crm-piece-add-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
   .doc-count-pill { display: inline-block; min-width: 22px; text-align: center; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: #E0E7FF; color: #3730A3; }
@@ -2672,6 +2689,25 @@ function serverPieceLabel(p){
   if(/frais|re[çc]u|recu/.test(s)) return PIECE_CAT_LABEL.FRAIS;
   return PIECE_CAT_LABEL.AUTRE;
 }
+/** Une pièce se qualifie à l'œil : vignette cliquable plutôt qu'un aller-retour d'onglets.
+ *  Les PDF ne se rendent pas dans <img> → icône, et l'aperçu les affiche en <iframe>. */
+function pieceIsPdf(p){
+  return /\.pdf$/i.test(String((p && p.filename) || '')) || /pdf/i.test(String((p && p.kind) || ''))
+    || /^(claim\/|pdf\/|signed\/)/.test(String((p && p.key) || ''));
+}
+function pieceThumb(p){
+  var u = escHtml(p.url || '');
+  if(pieceIsPdf(p)) return '<button type="button" class="crm-doc-thumb crm-piece-view" data-url="' + u + '" title="Aperçu">📄</button>';
+  // onerror : une pièce illisible (HEIC non décodé, blob cassé) ne doit pas laisser un carré vide.
+  return '<button type="button" class="crm-doc-thumb crm-piece-view" data-url="' + u + '" title="Aperçu">'
+    + '<img src="' + u + '" loading="lazy" alt="" onerror="this.parentNode.textContent=\'🖼️\'"></button>';
+}
+
+/** Ordre de tri : ce qui est VALIDÉ remonte, ce qui est REJETÉ tombe en bas.
+ *  L'opérateur voit d'abord le dossier tel qu'il partira à la compagnie. */
+var PIECE_ORDER = { valide: 0, '': 1, attente: 1, rejete: 2 };
+var PIECE_GROUP_TITLE = { 0: '✅ Validées — prêtes pour la réclamation', 1: '⏳ À qualifier', 2: '❌ Rejetées — exclues du dossier' };
+
 function loadServerPieces(ref){
   var wrap = document.getElementById('crm-server-pieces-wrap');
   if(!wrap) return;
@@ -2680,32 +2716,79 @@ function loadServerPieces(ref){
     .then(function(j){
       var list = (j && j.pieces) || [];
       if(!list.length){ wrap.innerHTML = '<p class="crm-doc-empty">Aucune pièce déposée par le client (le client n’a pas encore envoyé ses documents).</p>'; return; }
-      wrap.innerHTML = '<p style="font-size:11px;color:var(--text3,#9CA3AF);margin:0 0 8px">☑️ Cochées = incluses dans le « 📦 Dossier complet ». Décochez les pièces à exclure.</p><div class="crm-doc-list">' + list.map(function(p){
-        var src = p.source === 'bot' ? 'WhatsApp' : (p.source === 'genere' ? '⚖️ Généré par Robin des Airs' : 'Dépôt web');
+      var paxNames = (j && j.paxNames) || [];
+
+      // Tri stable : rang de qualification d'abord, date ensuite (index d'origine = ordre serveur, déjà daté).
+      var rows = list.map(function(p, i){ return { p: p, i: i, rank: PIECE_ORDER[p.status || ''] }; });
+      rows.sort(function(a, b){ return a.rank - b.rank || a.i - b.i; });
+
+      var html = '<p style="font-size:11px;color:var(--text3,#9CA3AF);margin:0 0 8px">☑️ Cochées = incluses dans le « 📦 Dossier complet ». Une pièce rejetée est décochée automatiquement.</p>';
+      var grp = -1;
+      rows.forEach(function(row){
+        var p = row.p;
+        if(row.rank !== grp){
+          if(grp !== -1) html += '</div>';
+          grp = row.rank;
+          html += '<div class="crm-doc-grp">' + PIECE_GROUP_TITLE[grp] + '</div><div class="crm-doc-list">';
+        }
+        var src = p.source === 'bot' ? 'WhatsApp'
+          : p.source === 'genere' ? '⚖️ Généré par Robin des Airs'
+          : p.source === 'signe' ? '✍️ Signé par le client'
+          : p.source === 'crm' ? 'Ajouté depuis le CRM' : 'Dépôt web';
         var when = p.ts ? new Date(p.ts).toLocaleDateString('fr-FR') : '';
-        var who = p.passenger ? ' <span class="crm-doc-who">— ' + escHtml(p.passenger) + '</span>' : '';
+        var who = p.collectif
+          ? ' <span class="crm-doc-tag t-coll">Tout le dossier</span>'
+          : (p.passenger ? ' <span class="crm-doc-who">— ' + escHtml(p.passenger) + '</span>' : '');
         var fn = p.filename ? (' · ' + escHtml(p.filename)) : '';
+        var why = (p.status === 'rejete' && p.statusReason) ? ' <span class="crm-doc-tag t-ko">' + escHtml(p.statusReason) + '</span>' : '';
         // Le contrat de cession SIGNÉ est une preuve juridique : pas de bouton Supprimer (le serveur le refuse aussi).
         var canDel = !/^(pdf\/|signed\/)/.test(p.key || '');
-        return '<div class="crm-doc-row"><label style="display:flex;align-items:center;margin-right:8px" title="Inclure dans le dossier complet"><input type="checkbox" class="crm-piece-pick" data-key="' + escHtml(p.key || '') + '" checked></label><div style="flex:1"><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
+        var k = escHtml(p.key || '');
+        html += '<div class="crm-doc-row' + (p.status ? ' is-' + p.status : '') + '">'
+          + '<label style="display:flex;align-items:center" title="Inclure dans le dossier complet"><input type="checkbox" class="crm-piece-pick" data-key="' + k + '"' + (p.status === 'rejete' ? '' : ' checked') + '></label>'
+          + pieceThumb(p)
+          + '<div style="flex:1;min-width:0"><div class="crm-doc-name">' + serverPieceLabel(p) + who + why + '</div>'
           + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + fn + '</div></div>'
-          + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a> <a class="btn btn-sm" href="' + p.url + '&dl=1" download>Télécharger</a>'
-          + ' <button type="button" class="btn btn-sm crm-piece-edit" data-key="' + escHtml(p.key || '') + '" data-label="' + escHtml(p.filename || '') + '" data-pax="' + escHtml(JSON.stringify(p.passengers || [])) + '">✏️ Renommer</button>'
-          + (canDel ? ' <button type="button" class="btn btn-sm btn-danger crm-piece-del" data-key="' + escHtml(p.key || '') + '" data-url="' + escHtml(p.url || '') + '" data-label="' + escHtml(serverPieceLabel(p) + (p.filename ? ' — ' + p.filename : '')) + '">Supprimer</button>' : '')
+          + '<div class="crm-doc-actions">'
+          +   '<div class="crm-qual">'
+          +     '<button type="button" class="q-ok crm-piece-ok' + (p.status === 'valide' ? ' on' : '') + '" data-key="' + k + '" title="Valider cette pièce">✓</button>'
+          +     '<button type="button" class="q-ko crm-piece-ko' + (p.status === 'rejete' ? ' on' : '') + '" data-key="' + k + '" title="Rejeter cette pièce">✗</button>'
+          +   '</div>'
+          +   '<button type="button" class="btn btn-sm crm-piece-edit" data-key="' + k + '" data-label="' + escHtml(p.filename || '') + '" data-cat="' + escHtml(p.category || '') + '" data-coll="' + (p.collectif ? '1' : '') + '" data-pax="' + escHtml(JSON.stringify(p.passengers || [])) + '">✏️ Modifier</button>'
+          +   '<a class="btn btn-sm" href="' + p.url + '&dl=1" download>⬇︎</a>'
+          +   (canDel ? '<button type="button" class="btn btn-sm btn-danger crm-piece-del" data-key="' + k + '" data-url="' + escHtml(p.url || '') + '" data-label="' + escHtml(serverPieceLabel(p) + (p.filename ? ' — ' + p.filename : '')) + '">Supprimer</button>' : '')
           + '</div></div>';
-      }).join('') + '</div>';
+      });
+      wrap.innerHTML = html + (grp !== -1 ? '</div>' : '');
+
+      // Aperçu plein écran, sans quitter le dossier.
+      Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-view'), function(b){
+        b.addEventListener('click', function(){ crmShowPiecePreview(b.getAttribute('data-url')); });
+      });
+      // Qualification : re-cliquer sur un bouton déjà actif remet la pièce « à qualifier ».
+      Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-ok'), function(b){
+        b.addEventListener('click', function(){
+          crmSetPieceStatus(ref, b.getAttribute('data-key'), b.classList.contains('on') ? 'attente' : 'valide');
+        });
+      });
+      Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-ko'), function(b){
+        b.addEventListener('click', function(){
+          if(b.classList.contains('on')){ crmSetPieceStatus(ref, b.getAttribute('data-key'), 'attente'); return; }
+          crmAskRejectPiece(ref, b.getAttribute('data-key'));
+        });
+      });
       // Suppression : aperçu de la pièce + double authentification (voir crmAskDeletePiece).
       Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-del'), function(b){
         b.addEventListener('click', function(){
           crmAskDeletePiece(ref, b.getAttribute('data-key'), b.getAttribute('data-url'), b.getAttribute('data-label'));
         });
       });
-      // Renommer / affecter à un ou plusieurs passagers du dossier.
-      var paxNames = (j && j.paxNames) || [];
+      // Renommer / requalifier / affecter à un ou plusieurs passagers du dossier.
       Array.prototype.forEach.call(wrap.querySelectorAll('.crm-piece-edit'), function(b){
         b.addEventListener('click', function(){
           var cur = []; try{ cur = JSON.parse(b.getAttribute('data-pax') || '[]'); }catch(_e){ cur = []; }
-          crmAskEditPiece(ref, b.getAttribute('data-key'), b.getAttribute('data-label'), cur, paxNames);
+          crmAskEditPiece(ref, b.getAttribute('data-key'), b.getAttribute('data-label'), cur, paxNames,
+            b.getAttribute('data-cat'), b.getAttribute('data-coll') === '1');
         });
       });
     })
@@ -2714,10 +2797,76 @@ function loadServerPieces(ref){
     });
 }
 
-/** Renommer une pièce + l'affecter à UN OU PLUSIEURS passagers du dossier.
+/** Aperçu plein écran d'une pièce — image ou PDF — sans ouvrir d'onglet. */
+function crmShowPiecePreview(url){
+  if(!url) return;
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(11,31,58,.86);z-index:10000;display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out';
+  // L'URL est déjà signée par le serveur ; on ne la ré-échappe pas dans un attribut construit à la main.
+  var inner = document.createElement('div');
+  inner.style.cssText = 'max-width:1000px;width:100%;height:100%;display:flex;align-items:center;justify-content:center';
+  var img = document.createElement('img');
+  img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;border-radius:10px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.45)';
+  img.alt = 'Aperçu de la pièce';
+  // Un PDF ne se rend pas dans <img> → bascule en <iframe> plein cadre.
+  img.onerror = function(){
+    var fr = document.createElement('iframe');
+    fr.src = url;
+    fr.style.cssText = 'width:100%;height:100%;border:0;border-radius:10px;background:#fff';
+    inner.innerHTML = ''; inner.appendChild(fr);
+    fr.addEventListener('click', function(e){ e.stopPropagation(); });
+  };
+  img.src = url;
+  inner.appendChild(img);
+  ov.appendChild(inner);
+  var close = function(){ ov.remove(); document.removeEventListener('keydown', onKey); };
+  var onKey = function(e){ if(e.key === 'Escape') close(); };
+  ov.addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(ov);
+}
+
+/** Qualifier une pièce (valider / rejeter / remettre en attente). */
+async function crmSetPieceStatus(ref, key, status, reason){
+  try{
+    var r = await crmApiFetch('/api/crm-piece-status', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ ref: ref, key: key, status: status, reason: reason || '' }) });
+    var j = {}; try{ j = await r.json(); }catch(_e){}
+    if(!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    showCrmToast(status === 'valide' ? 'Pièce validée ✅' : (status === 'rejete' ? 'Pièce rejetée ❌' : 'Pièce remise à qualifier'));
+    loadServerPieces(ref);
+  }catch(e){ showCrmToast('Échec : ' + ((e && e.message) || 'qualification impossible')); }
+}
+
+/** Rejet : on demande POURQUOI. Le motif s'affiche sur la pièce et sert à relancer le client. */
+function crmAskRejectPiece(ref, key){
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(11,31,58,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  var motifs = ['Photo floue / illisible', 'Document coupé', 'Mauvais document', 'Document expiré', 'Ne correspond pas au passager'];
+  ov.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:400px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.32)">'
+    + '<div style="font-weight:800;color:#0B1F3A;font-size:16px;margin-bottom:4px">❌ Rejeter cette pièce</div>'
+    + '<div style="font-size:12.5px;color:#51607A;margin-bottom:12px">Le motif reste visible sur le dossier — c’est ce qu’on redemandera au client.</div>'
+    + motifs.map(function(m){ return '<button type="button" class="btn btn-sm crm-rj-m" data-m="' + escHtml(m) + '" style="margin:0 6px 6px 0">' + escHtml(m) + '</button>'; }).join('')
+    + '<input class="crm-rj-other" maxlength="300" placeholder="Autre motif…" style="width:100%;margin-top:8px;padding:9px;font-size:13.5px;border:1.5px solid #CBD5E1;border-radius:8px;box-sizing:border-box">'
+    + '<div style="display:flex;gap:8px;margin-top:14px">'
+    +   '<button type="button" class="btn crm-rj-cancel" style="flex:1">Annuler</button>'
+    +   '<button type="button" class="btn btn-danger crm-rj-ok" style="flex:1">Rejeter</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+  var other = ov.querySelector('.crm-rj-other');
+  Array.prototype.forEach.call(ov.querySelectorAll('.crm-rj-m'), function(b){
+    b.addEventListener('click', function(){ ov.remove(); crmSetPieceStatus(ref, key, 'rejete', b.getAttribute('data-m')); });
+  });
+  ov.querySelector('.crm-rj-cancel').onclick = function(){ ov.remove(); };
+  ov.querySelector('.crm-rj-ok').onclick = function(){ ov.remove(); crmSetPieceStatus(ref, key, 'rejete', (other.value || '').trim()); };
+  setTimeout(function(){ other.focus(); }, 60);
+}
+
+/** Renommer une pièce, corriger son TYPE et l'affecter à UN OU PLUSIEURS passagers
+ *  (ou la marquer collective : elle couvre alors tout le dossier).
  *  L'override est stocké à part (meta/<ref>) : le fichier d'origine n'est jamais réécrit.
- *  Nom vide + aucun passager coché = retour au nom et à l'attribution d'origine. */
-function crmAskEditPiece(ref, key, currentLabel, currentPax, paxNames){
+ *  Tout vide = retour au nom, au type et à l'attribution d'origine. */
+function crmAskEditPiece(ref, key, currentLabel, currentPax, paxNames, currentCat, currentColl){
   if(!requireCrmAgent()) return;
   var ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(11,31,58,.62);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
@@ -2728,13 +2877,22 @@ function crmAskEditPiece(ref, key, currentLabel, currentPax, paxNames){
           + '<input type="checkbox" class="crm-ed-pax" value="' + escHtml(n) + '"' + (on ? ' checked' : '') + '> ' + escHtml(n) + '</label>';
       }).join('')
     : '<div style="font-size:12.5px;color:#8592A6;padding:4px 0">Aucun passager connu sur ce dossier.</div>';
-  ov.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:430px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.32)">'
-    + '<div style="font-weight:800;color:#0B1F3A;font-size:16px;margin-bottom:12px">✏️ Renommer / affecter la pièce</div>'
-    + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#8592A6;margin-bottom:4px">Nom du document</div>'
+  // Seuls les types que l'opérateur peut légitimement corriger : un contrat signé ou une mise en
+  // demeure sont générés par Robin des Airs, leur type n'est pas une devinette à rectifier.
+  var catHtml = ['IDENTITE','EMBARQUEMENT','EBILLET','CERTIFICAT','FRAIS','AUTRE'].map(function(c){
+    return '<option value="' + c + '"' + (currentCat === c ? ' selected' : '') + '>' + escHtml(PIECE_CAT_LABEL[c]) + '</option>';
+  }).join('');
+  ov.innerHTML = '<div style="background:#fff;border-radius:14px;max-width:430px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.32);max-height:90vh;overflow:auto">'
+    + '<div style="font-weight:800;color:#0B1F3A;font-size:16px;margin-bottom:12px">✏️ Modifier la pièce</div>'
+    + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#8592A6;margin-bottom:4px">Type de document</div>'
+    + '<select class="crm-ed-cat" style="width:100%;padding:10px;font-size:14px;border:1.5px solid #CBD5E1;border-radius:8px;box-sizing:border-box;background:#fff">' + catHtml + '</select>'
+    + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#8592A6;margin:14px 0 4px">Nom du document</div>'
     + '<input class="crm-ed-label" maxlength="120" placeholder="ex. Passeport — Awa Diallo" style="width:100%;padding:10px;font-size:14px;border:1.5px solid #CBD5E1;border-radius:8px;box-sizing:border-box">'
     + '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#8592A6;margin:14px 0 2px">Passager(s) concerné(s)</div>'
-    + '<div style="font-size:12px;color:#8592A6;margin-bottom:4px">Un document peut concerner plusieurs passagers (ex. livret de famille).</div>'
-    + '<div style="border:1px solid #E5E9F0;border-radius:8px;padding:6px 10px;background:#F7F9FC;max-height:180px;overflow:auto">' + paxHtml + '</div>'
+    + '<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;margin-bottom:6px;font-size:13.5px;font-weight:700;color:#5B21B6;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;cursor:pointer">'
+    +   '<input type="checkbox" class="crm-ed-coll"' + (currentColl ? ' checked' : '') + '> Document collectif (tout le dossier)</label>'
+    + '<div style="font-size:12px;color:#8592A6;margin-bottom:4px">Collectif = livret de famille, réservation groupée… Sinon, cochez les passagers concernés (un document peut en concerner plusieurs).</div>'
+    + '<div class="crm-ed-paxbox" style="border:1px solid #E5E9F0;border-radius:8px;padding:6px 10px;background:#F7F9FC;max-height:180px;overflow:auto">' + paxHtml + '</div>'
     + '<div class="crm-ed-err" style="display:none;color:#B91C1C;font-size:12.5px;margin-top:8px;font-weight:600"></div>'
     + '<div style="display:flex;gap:8px;margin-top:14px">'
     +   '<button type="button" class="btn crm-ed-cancel" style="flex:1">Annuler</button>'
@@ -2742,15 +2900,20 @@ function crmAskEditPiece(ref, key, currentLabel, currentPax, paxNames){
     + '</div></div>';
   document.body.appendChild(ov);
   var lab = ov.querySelector('.crm-ed-label'), err = ov.querySelector('.crm-ed-err');
+  var coll = ov.querySelector('.crm-ed-coll'), paxbox = ov.querySelector('.crm-ed-paxbox');
   lab.value = currentLabel || '';
+  // Collectif et affectation nominative s'excluent : on grise la liste plutôt que de laisser un choix contradictoire.
+  var syncColl = function(){ paxbox.style.opacity = coll.checked ? '.4' : '1'; paxbox.style.pointerEvents = coll.checked ? 'none' : 'auto'; };
+  coll.addEventListener('change', syncColl); syncColl();
   ov.querySelector('.crm-ed-cancel').onclick = function(){ ov.remove(); };
   ov.querySelector('.crm-ed-ok').onclick = async function(){
     var btn = this;
-    var pax = Array.prototype.slice.call(ov.querySelectorAll('.crm-ed-pax')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
+    var pax = coll.checked ? [] : Array.prototype.slice.call(ov.querySelectorAll('.crm-ed-pax')).filter(function(c){return c.checked;}).map(function(c){return c.value;});
     btn.disabled = true; btn.textContent = 'Enregistrement…';
     try{
       var r = await crmApiFetch('/api/crm-piece-meta', { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ ref: ref, key: key, label: (lab.value||'').trim(), passengers: pax, agent: getCrmAgent() }) });
+        body: JSON.stringify({ ref: ref, key: key, label: (lab.value||'').trim(), cat: ov.querySelector('.crm-ed-cat').value,
+          collectif: coll.checked, passengers: pax, agent: getCrmAgent() }) });
       var j = {}; try{ j = await r.json(); }catch(_e){}
       if(!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
       ov.remove(); showCrmToast('Pièce mise à jour ✅');

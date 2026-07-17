@@ -277,9 +277,11 @@ exports.handler = async (event) => {
       items.forEach((it) => {
         const ov = ovMap[it.key];
         if (ov && ov.label) it.filename = ov.label; // nom donné par l'opérateur
-        const list = (ov && Array.isArray(ov.passengers) && ov.passengers.length)
+        if (ov && ov.cat) it.category = ov.cat;     // type corrigé par l'opérateur > type deviné
+        it.collectif = !!(ov && ov.collectif);      // document couvrant tout le dossier
+        const list = it.collectif ? [] : ((ov && Array.isArray(ov.passengers) && ov.passengers.length)
           ? ov.passengers
-          : (it.passenger ? [it.passenger] : []);
+          : (it.passenger ? [it.passenger] : []));
         it.passengers = list;                 // nouveau modèle : plusieurs passagers par document
         it.passenger = list.join(', ');       // rétro-compat : l'affichage existant lit encore ce champ
       });

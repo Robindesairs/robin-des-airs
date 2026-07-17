@@ -1,10 +1,16 @@
 /**
- * Éditer une pièce : la RENOMMER et l'affecter à UN OU PLUSIEURS passagers — accès CRM requis.
+ * Éditer une pièce : la RENOMMER, corriger son TYPE et l'affecter à UN OU PLUSIEURS
+ * passagers (ou la marquer COLLECTIVE) — accès CRM requis.
  *
- *   POST { ref, key, label?, passengers?: string[], agent }  → enregistre l'override
- *   GET  ?r=REF                                              → renvoie la map d'overrides
+ *   POST { ref, key, label?, cat?, collectif?, passengers?: string[], agent }  → enregistre l'override
+ *   GET  ?r=REF                                                               → renvoie la map d'overrides
  *
- * Stocké dans le store 'pieces' sous meta/<ref> = { <pieceKey>: { label, passengers[], by, ts } }.
+ * Stocké dans le store 'pieces' sous meta/<ref> = { <pieceKey>: { label, cat, collectif, passengers[], by, ts } }.
+ *
+ * `cat` corrige la catégorie DEVINÉE par crm-pieces (ex. un titre de séjour classé « IDENTITE »
+ * que l'opérateur requalifie). Vide = on garde la déduction automatique.
+ * `collectif` = document qui couvre tout le dossier (livret de famille, réservation groupée) :
+ * il n'appartient à personne en particulier, donc il ignore la liste de passagers.
  *
  * Pourquoi une map à côté plutôt que les métadonnées du blob : @netlify/blobs v8 n'expose PAS de
  * setMetadata. Modifier les métadonnées obligerait à relire puis réécrire le fichier entier
@@ -22,6 +28,9 @@ const J = (code, obj) => ({
   headers: { ...corsHeaders(), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   body: JSON.stringify(obj),
 });
+
+// Doit rester aligné sur categoryOf() de crm-pieces.js et sur PIECE_CAT_LABEL du CRM.
+const VALID_CATS = ['IDENTITE', 'EMBARQUEMENT', 'EBILLET', 'CERTIFICAT', 'FRAIS', 'AUTRE'];
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: corsHeaders(), body: '' };
@@ -51,19 +60,22 @@ exports.handler = async (event) => {
     if (!agent) return J(400, { error: 'Votre nom est requis pour modifier une pièce (traçabilité).' });
 
     const label = String(b.label || '').replace(/\s+/g, ' ').trim().slice(0, 120);
-    const passengers = (Array.isArray(b.passengers) ? b.passengers : [])
+    const cat = VALID_CATS.includes(String(b.cat || '')) ? String(b.cat) : '';
+    const collectif = b.collectif === true;
+    // Un document collectif couvre tout le dossier : l'affectation nominative n'a pas de sens.
+    const passengers = collectif ? [] : (Array.isArray(b.passengers) ? b.passengers : [])
       .map((p) => String(p || '').replace(/\s+/g, ' ').trim().slice(0, 80))
       .filter(Boolean)
       .slice(0, 20);
 
     const mkey = 'meta/' + ref;
     const map = (await pieces.get(mkey, { type: 'json' })) || {};
-    // label/passengers vides = on retire l'override (retour au nom et à l'attribution d'origine).
-    if (!label && !passengers.length) delete map[key];
-    else map[key] = { label, passengers, by: agent, ts: new Date().toISOString() };
+    // Tout vide = on retire l'override (retour au nom, au type et à l'attribution d'origine).
+    if (!label && !cat && !collectif && !passengers.length) delete map[key];
+    else map[key] = { label, cat, collectif, passengers, by: agent, ts: new Date().toISOString() };
     await pieces.setJSON(mkey, map);
 
-    return J(200, { ok: true, key, label, passengers });
+    return J(200, { ok: true, key, label, cat, collectif, passengers });
   } catch (e) {
     return J(500, { error: e.message });
   }
