@@ -2,6 +2,16 @@
 
 > Modèle interne paramétrable. Remplacer les `[CHAMPS]`. Envoi en LRAR.
 > 🔴 **GATE avocat (Me Joyce Pitcher) avant tout envoi réel.** Ce modèle applique la décision fondateur du 01/07/2026 mais aucun arrêt ne tranche la mécanique retenue.
+> 🔴 **GATE immatriculation.** Tant que la SASU n'est pas immatriculée (env `RDA_SIREN` absent), **ne pas envoyer**. Les PDF générés portent un filigrane BROUILLON et la mention « en cours d'immatriculation » ; ce modèle Markdown n'a aucun garde-fou automatique, d'où ce rappel manuel.
+>
+> **Ce courrier n'est PAS la notification de cession.** Trois documents distincts, à ne pas confondre :
+> | Document | Rôle | Généré par |
+> |---|---|---|
+> | Acte de cession | le contrat, preuve du transfert (bilingue) | `lib/acte-cession-pdf.js` · `/api/acte-cession?r=REF` |
+> | **Notification de cession** | rend la cession **opposable** (art. 1324), verrouille le paiement libératoire | `lib/notification-creance-pdf.js` · `/api/notification-creance` |
+> | **Ce modèle** | la **demande de paiement** qui accompagne les deux | ce fichier |
+>
+> La notification est l'instrument : elle est mieux armée que ce courrier (eIDAS art. 25 / art. 1366 C. civ. sur la signature, clause de conflit de lois « quelle que soit la loi applicable au contrat de transport », résumé EN de courtoisie). **Ce courrier doit y renvoyer, jamais la dupliquer** : deux actes prétendant chacun notifier ouvrent une discussion sur lequel a produit l'opposabilité.
 >
 > ⚠️ **Cession notifiée dès l'amiable (décision du 01/07/2026).** Le document signé par le client est un **contrat de cession de créance à titre de recouvrement**. Depuis le 01/07/2026, la cession est **notifiée à la compagnie dès la réclamation amiable** (art. 1324 C. civ.), et non plus différée au contentieux. Robin agit donc **en son nom propre, en qualité de Cessionnaire**, à ses risques et périls.
 > Conséquences rédactionnelles, à ne pas casser :
@@ -28,15 +38,23 @@
 
 Madame, Monsieur,
 
-**[NOM(S) PASSAGER(S)]**, passager(s) du vol **[N° VOL]** opéré par **[COMPAGNIE]** le **[DATE VOL]** reliant **[AÉROPORT DÉPART]** à **[AÉROPORT ARRIVÉE]**, nous a/ont cédé la créance d'indemnisation détenue contre vous au titre de ce vol, par contrat de cession de créance signé le **[DATE SIGNATURE]** (copie ci-jointe).
+**[NOM(S) PASSAGER(S)]**, passager(s) du vol **[N° VOL]** opéré par **[COMPAGNIE]** le **[DATE VOL]** reliant **[AÉROPORT DÉPART]** à **[AÉROPORT ARRIVÉE]**, nous a/ont cédé l'intégralité de la créance détenue contre vous au titre de ce vol.
 
-**La présente vaut notification de cession au sens de l'article 1324 du Code civil.** La cession vous est donc opposable à compter de la réception de ce courrier. Nous agissons en notre nom propre, en qualité de cessionnaire, et sommes seuls titulaires de la créance.
-
-Nous vous rappelons qu'une éventuelle clause de vos conditions générales de transport prohibant la cession des droits du passager est **nulle et inopposable**, l'article 15 du Règlement (CE) n° 261/2004 s'opposant à une telle clause (**CJUE, 29 février 2024, *Eventmedia Soluciones c/ Air Europa*, C-11/23**).
+Vous trouverez ci-joint la **notification de cession de créance** (art. 1324 du Code civil) [adressée ce jour / adressée le **[DATE NOTIF]**], accompagnée de l'**acte de cession** et du certificat de signature électronique. Nous agissons en notre nom propre, en qualité de **cessionnaire**, et sommes seuls titulaires de la créance. Conformément à cette notification, **seul un paiement effectué entre les mains du Cessionnaire sera libératoire**, à l'exclusion du ou des cédant(s).
 
 Ce vol a subi **[un retard de plus de 3 heures à l'arrivée / une annulation / un refus d'embarquement]**, ouvrant droit à l'indemnité forfaitaire prévue par les **articles 5 et 7 du Règlement (CE) n° 261/2004**.
 
-En conséquence, nous vous mettons en demeure de verser la somme de **[MONTANT] € par passager**, soit un **total de [MONTANT TOTAL] €** pour les **[N] passagers** concernés, dans un délai de **15 jours** à compter de la réception de la présente.
+En conséquence, nous vous mettons en demeure de verser, dans un délai de **15 jours** à compter de la réception de la présente :
+
+- au titre de l'**article 7** : **[MONTANT] € par passager**, soit **[MONTANT TOTAL] €** pour les **[N] passagers** concernés ;
+- [le cas échéant] au titre de l'**article 8** (remboursement ou réacheminement) : **[MONTANT ART.8] €** ;
+- [le cas échéant] au titre de l'**article 9** (frais de repas, d'hébergement et de communication, justificatifs joints) : **[MONTANT ART.9] €** ;
+- [le cas échéant] au titre de l'**article 12** (préjudice complémentaire) : **[MONTANT ART.12] €** ;
+- outre les **intérêts au taux légal** à compter de la présente et tous accessoires.
+
+**Total réclamé : [TOTAL GÉNÉRAL] €.**
+
+> ⚠️ **Ne pas se limiter à l'article 7.** La cession signée par le passager porte sur les articles 7, 8, 9 et 12, intérêts et accessoires compris, et la commission de 25 % porte sur **toutes** les sommes recouvrées. Réclamer le seul forfait laisse les frais Art. 9 à la compagnie. Barème et seuils : voir `docs/` (frais Art. 9 sur justificatifs).
 
 ### Clause « carte d'embarquement » (à inclure si la compagnie l'exige ou risque de l'exiger)
 
