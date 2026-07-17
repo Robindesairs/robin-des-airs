@@ -7,8 +7,9 @@
 # Default rules (all crawlers)
 # ============================================================
 User-agent: *
-Allow: /
-
+# No "Allow: /" here: allow is the default, and a blank line or a leading
+# "Allow: /" makes strict parsers drop or override every Disallow below.
+# Keep these Disallow lines glued to the User-agent line above — no blank line.
 # Internal tools (do not index)
 Disallow: /crm/
 Disallow: /crm
@@ -28,114 +29,26 @@ Disallow: /verification-fonctions.html
 Disallow: /api/
 
 # ============================================================
-# AI / LLM crawlers — explicitly allowed for AEO / GEO visibility
-# (Answer Engine Optimization)
+# AI / LLM crawlers — allowed for AEO / GEO visibility
 # ============================================================
-
-# OpenAI (ChatGPT, ChatGPT Search, GPT-4o web browsing)
-User-agent: GPTBot
-Allow: /
-User-agent: ChatGPT-User
-Allow: /
-User-agent: OAI-SearchBot
-Allow: /
-
-# Anthropic (Claude, Claude.ai web search, Claude in Cursor/IDEs)
-User-agent: ClaudeBot
-Allow: /
-User-agent: anthropic-ai
-Allow: /
-User-agent: Claude-Web
-Allow: /
-User-agent: Claude-SearchBot
-Allow: /
-
-# Perplexity AI
-User-agent: PerplexityBot
-Allow: /
-User-agent: Perplexity-User
-Allow: /
-
-# Google AI (Bard, Gemini, AI Overviews) — separate from Googlebot
-User-agent: Google-Extended
-Allow: /
-
-# Apple (Siri, Apple Intelligence, Apple Search)
-User-agent: Applebot
-Allow: /
-User-agent: Applebot-Extended
-Allow: /
-
-# Common Crawl (training set used by most LLMs)
-User-agent: CCBot
-Allow: /
-
-# You.com
-User-agent: YouBot
-Allow: /
-
-# Bing AI (Copilot)
-User-agent: bingbot
-Allow: /
-
-# Meta (Llama, Meta AI in WhatsApp/Instagram)
-User-agent: meta-externalagent
-Allow: /
-User-agent: FacebookBot
-Allow: /
-
-# Mistral AI (Le Chat)
-User-agent: MistralAI-User
-Allow: /
-
-# DuckDuckGo AI
-User-agent: DuckAssistBot
-Allow: /
-
-# Brave AI (Brave Search Leo)
-User-agent: Bravebot
-Allow: /
-
-# Cohere
-User-agent: cohere-ai
-Allow: /
-User-agent: cohere-training-data-crawler
-Allow: /
-
-# xAI (Grok)
-User-agent: xAI
-Allow: /
-
-# Diffbot (used by many AI products)
-User-agent: Diffbot
-Allow: /
-
-# Amazon (Alexa, Rufus)
-User-agent: Amazonbot
-Allow: /
-
-# Internal tools blocked for AI crawlers too
-User-agent: GPTBot
-User-agent: ClaudeBot
-User-agent: PerplexityBot
-User-agent: Google-Extended
-User-agent: Applebot-Extended
-Disallow: /crm/
-Disallow: /crm
-Disallow: /radar
-Disallow: /radar.html
-Disallow: /radar-vols-v2
-Disallow: /radar-vols-v2.html
-Disallow: /radar-choix
-Disallow: /navigation-interne
-Disallow: /interne
-Disallow: /generateur-pub
-Disallow: /generateur-pub.html
-Disallow: /test-radar.html
-Disallow: /radar-direct.html
-Disallow: /radar-v3.html
-Disallow: /verification-fonctions.html
-Disallow: /api/
+# Deliberately NOT declared as named groups. A crawler obeys only the most
+# specific group that matches it, and rules are never inherited from "*".
+# So "User-agent: GPTBot / Allow: /" would grant nothing extra (the "*" group
+# above already allows everything) while silently exempting that bot from every
+# Disallow above — including /crm/ and /api/.
+#
+# Falling under "*" is what we want: full access to the public site, and the
+# internal-tool Disallows apply to every crawler, AI included.
+#
+# Covered this way: GPTBot, ChatGPT-User, OAI-SearchBot (OpenAI) · ClaudeBot,
+# anthropic-ai, Claude-Web, Claude-SearchBot (Anthropic) · PerplexityBot,
+# Perplexity-User · Google-Extended (Gemini, AI Overviews) · Applebot,
+# Applebot-Extended · CCBot (Common Crawl) · YouBot · bingbot (Copilot) ·
+# meta-externalagent, FacebookBot · MistralAI-User · DuckAssistBot · Bravebot ·
+# cohere-ai · xAI (Grok) · Diffbot · Amazonbot
+#
+# Google-Extended and Applebot-Extended are opt-OUT controls: staying silent
+# means allowed. Only name a bot here to BLOCK it.
 
 # ============================================================
 # Sitemaps
