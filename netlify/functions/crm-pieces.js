@@ -229,6 +229,20 @@ exports.handler = async (event) => {
             status: '', statusReason: '',
           });
         }
+        // NOTIFICATION DE CESSION (courrier art. 1324) — archivée par /api/notification-creance sous
+        // claim/<ref>/notification-cession.pdf. Document DISTINCT de la mise en demeure ci-dessus.
+        const notifKey = 'claim/' + ref + '/notification-cession.pdf';
+        const nm = await claims.getMetadata(notifKey);
+        if (nm) {
+          const nmd = (nm && (nm.metadata || nm)) || {};
+          items.push({
+            key: notifKey, source: 'genere', kind: 'notification_cession', category: 'MISE_EN_DEMEURE', passenger: '',
+            filename: 'Notification de cession de créance.pdf',
+            ts: nmd.generatedAt || '',
+            url: `/api/crm-pieces?k=${encodeURIComponent(notifKey)}&t=${encodeURIComponent(makeToken(notifKey))}`,
+            status: '', statusReason: '',
+          });
+        }
       }
     } catch (_) {}
 

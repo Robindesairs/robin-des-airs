@@ -81,6 +81,19 @@ exports.handler = async (event) => {
       .normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'Dossier';
     const filename = `Notification-cession-${nomPrincipal}-${String(dossier.vol || '').replace(/[^A-Za-z0-9]/g, '') || 'VOL'}-${codeFromRef(ref)}.pdf`;
 
+    // ARCHIVE au dossier (store 'robin-claims', clé claim/<ref>/notification-cession.pdf) → la notification
+    // apparaît dans la liste des documents du CRM, comme la mise en demeure (claim/<ref>/lrar.pdf).
+    // Avant, elle était générée puis renvoyée sans jamais être archivée → absente du dossier.
+    // Best-effort : si l'archivage échoue, on renvoie quand même le PDF (ne casse pas la génération).
+    try {
+      const claims = getBlobStore(event, 'robin-claims');
+      if (claims) {
+        await claims.set(`claim/${ref}/notification-cession.pdf`, pdf, {
+          metadata: { ref, filename, mime: 'application/pdf', kind: 'notification_cession', generatedAt: new Date().toISOString() },
+        });
+      }
+    } catch (_) { /* archivage best-effort : ne bloque jamais la génération */ }
+
     return {
       statusCode: 200,
       headers: {
