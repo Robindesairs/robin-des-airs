@@ -31,11 +31,30 @@ function json(statusCode, body) {
   return { statusCode, headers: HEADERS, body: JSON.stringify(body) };
 }
 
+/**
+ * Normalise vers un E.164 STRICT (`+` puis 8 à 15 chiffres, premier chiffre 1-9), ou "" si impossible.
+ *
+ * ⚠️ L'ancienne version préfixait bêtement « + » : « 0756863630 » → « +0756863630 », invalide (E.164
+ * interdit le 0 initial). Yousign REJETTE le signataire sur un numéro mal formé → signature impossible.
+ * C'est CE bug qui a rendu l'OTP SMS inutilisable et forcé le repli en SES sans authentification :
+ * la faiblesse probatoire de la chaîne de signature venait d'un bug de formatage, pas d'un arbitrage.
+ *
+ * Renvoyer "" plutôt qu'un numéro douteux est volontaire : l'appelant retombe alors proprement en
+ * no_otp au lieu de casser toute la demande de signature.
+ *
+ * DEFAULT_PHONE_CC : indicatif présumé pour un numéro national commençant par 0 (France par défaut ;
+ * le formulaire du mandat fournit normalement déjà l'indicatif, ce n'est qu'un filet).
+ */
 function normalizePhone(raw) {
-  const digits = String(raw || "").replace(/[^\d+]/g, "");
-  if (!digits) return "";
-  if (digits.startsWith("+")) return digits;
-  return `+${digits}`;
+  let s = String(raw || "").replace(/[^\d+]/g, "");
+  if (!s) return "";
+  if (s.startsWith("00")) s = "+" + s.slice(2);           // 0033… → +33…
+  else if (!s.startsWith("+") && /^0\d{6,}$/.test(s)) {   // national 0X… → +<cc>X…
+    const cc = String(process.env.DEFAULT_PHONE_CC || "33").replace(/\D/g, "") || "33";
+    s = "+" + cc + s.slice(1);
+  } else if (!s.startsWith("+")) s = "+" + s;             // déjà international sans +
+  s = "+" + s.slice(1).replace(/\D/g, "");                // un seul + en tête
+  return /^\+[1-9]\d{7,14}$/.test(s) ? s : "";            // E.164 strict, sinon rien
 }
 
 exports.handler = async (event) => {
@@ -69,7 +88,15 @@ exports.handler = async (event) => {
   // SES + livraison WhatsApp : l'email n'est plus obligatoire. Yousign exige un email dans la fiche signataire,
   // mais avec delivery_mode "none" rien n'y est envoyé → si le signataire n'a pas d'email, placeholder technique.
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const techEmail = (ph, idx) => `sign-${idx}-${String(ph || "").replace(/\D/g, "") || "x"}@robindesairs.eu`;
+  // ⚠️ Le placeholder ne doit JAMAIS être sur robindesairs.eu : le dossier de preuve Yousign afficherait
+  // alors, comme adresse du SIGNATAIRE, une adresse contrôlée par le CESSIONNAIRE. Un adversaire en tire
+  // l'apparence que Robin des Airs a signé à la place du passager — argument dévastateur en SES, où la
+  // charge de prouver la fiabilité du procédé pèse déjà sur nous (art. 1367 al. 2 C. civ.).
+  // `.invalid` est un TLD réservé et non routable (RFC 2606) : aucune ambiguïté sur la propriété, et rien
+  // n'y est envoyé de toute façon (delivery_mode "none"). Surchargeable via YOUSIGN_PLACEHOLDER_DOMAIN
+  // si Yousign venait à refuser ce TLD.
+  const PLACEHOLDER_DOMAIN = String(process.env.YOUSIGN_PLACEHOLDER_DOMAIN || "non-fourni.invalid").trim();
+  const techEmail = (ph, idx) => `signataire-${idx}-${String(ph || "").replace(/\D/g, "") || "x"}@${PLACEHOLDER_DOMAIN}`;
 
   const dossierLabel = String(payload.label || "Dossier Robin des Airs").trim();
   const dossierRef = String(payload.ref || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
@@ -236,6 +263,12 @@ exports.handler = async (event) => {
       const useOtpSms = envAuthMode === "otp_sms" && !!s.phone;
       const authMode = useOtpSms ? "otp_sms" : (envAuthMode === "otp_sms" ? "no_otp" : envAuthMode);
       const sigLevel = useOtpSms ? envLevel : "electronic_signature";
+      // Le repli otp_sms → no_otp dégrade la valeur probatoire (plus aucun facteur de possession) :
+      // il doit être VISIBLE. Avant, il était totalement silencieux : on croyait signer en AES+OTP
+      // alors que tout le parc retombait en SES sans authentification à cause d'un numéro mal formé.
+      if (envAuthMode === "otp_sms" && !useOtpSms) {
+        console.warn(`[yousign-init] ⚠️ OTP SMS demandé mais numéro E.164 absent/invalide pour le signataire ${i + 1} → repli SES sans authentification (valeur probatoire dégradée). Vérifier le numéro collecté.`);
+      }
 
       const signerBody = {
         info: {
