@@ -194,6 +194,25 @@ function computeRelated(
   return picked;
 }
 
+/**
+ * Lien WhatsApp PORTEUR DE LA SOURCE : le message prérempli finit par « (réf. article : <slug>) »,
+ * que le bot lit, attribue au lead, puis retire du texte (cf. railway/server.js, handleMessage).
+ *
+ * Pourquoi : un lien wa.me ne transmet AUCUN referral. L'objet `referral` de l'API WhatsApp Business
+ * n'existe que pour les pubs Click-to-WhatsApp de Meta. Sans ce tag, un clic organique est donc
+ * indiscernable d'un clic Instagram ou d'un accès direct, et on ne peut pas relier un article au
+ * dossier qu'il génère. C'est le seul maillon entre le SEO et la conversion.
+ *
+ * Limite assumée : si le client efface le texte prérempli avant d'envoyer, l'attribution est perdue.
+ * Inhérent à wa.me ; on mesure donc un plancher, jamais un chiffre gonflé.
+ */
+function waLink(src: string): string {
+  const msg =
+    `Bonjour Robin ! Mon vol a été retardé ou annulé, ai-je droit à une indemnité (jusqu'à 600 €) ?` +
+    `\n(réf. article : ${src})`;
+  return `https://wa.me/33756863630?text=${encodeURIComponent(msg)}`;
+}
+
 function renderArticlePage(
   post: Awaited<ReturnType<typeof getBySlug>>,
   related: Array<{ slug: string; title: string }> = []
@@ -330,7 +349,7 @@ function renderArticlePage(
         <span class="sep">·</span>
         <a href="${SITE_URL}/#funnel-box">Vérifier mon indemnité</a>
         <span class="sep">·</span>
-        <a href="https://wa.me/33756863630">WhatsApp direct</a>
+        <a href="${waLink(post.slug)}">WhatsApp direct</a>
       </p>
     </div>
     ${relatedHtml}
@@ -433,7 +452,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
         <span class="sep">·</span>
         <a href="${SITE_URL}/#funnel-box">Diagnostic gratuit</a>
         <span class="sep">·</span>
-        <a href="https://wa.me/33756863630">WhatsApp direct</a>
+        <a href="${waLink('blog-index')}">WhatsApp direct</a>
       </p>
     </div>
   </main>

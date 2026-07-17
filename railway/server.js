@@ -1873,6 +1873,23 @@ async function archivePiece(phone, kind, mediaUrl, cfg, passenger) {
 async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, referral) {
   let input = (text || '').trim();
   let lower = input.toLowerCase();
+  // ─── Attribution ORGANIQUE (SEO → dossier) ────────────────────────────────────────────────────
+  // Le CTA des articles préremplit « (réf. article : <slug>) » (cf. src/scripts/build-blog.ts, waLink).
+  // On capte la source AVANT tout traitement, puis on la RETIRE : sans ça le tunnel verrait un message
+  // long au lieu d'un simple bonjour, et l'accueil ne se déclencherait pas.
+  // Pourquoi ce détour : un lien wa.me ne transmet aucun referral (l'objet `referral` de l'API n'existe
+  // que pour les pubs Click-to-WhatsApp), donc c'est le SEUL lien entre un clic organique et un dossier.
+  if (input) {
+    const m = input.match(/\(\s*r[ée]f\.?\s*article\s*:\s*([a-z0-9._-]{2,80})\s*\)/i);
+    if (m) {
+      input = input.replace(m[0], '').trim();
+      lower = input.toLowerCase();
+      try {
+        upsertLead(phone, { srcArticle: m[1].toLowerCase(), srcAt: Date.now() });
+        console.log(`[src organique] ${phone} ← ${m[1].toLowerCase()}`);
+      } catch (e) { console.error('[src organique]', e.message); }
+    }
+  }
   const id = replyId || ''; // id du bouton/liste envoyé par WATI (ex: 'pass_ok', 'mdt_0'…)
   // Re-dispatch : si l'état a avancé entre la lecture et le traitement (race Blobs),
   // on re-lit l'état et on relance une fois. Évite le silence quand le bouton incident
