@@ -3,6 +3,7 @@ title: "Vol retardé Monrovia-Europe ou Europe-Monrovia : indemnité jusqu'à 60
 meta_title: "Vol Monrovia-Europe ou Europe-Monrovia retardé : 600 € d'indemnité par passager"
 meta_description: "Vol Monrovia-Europe ou Europe-Monrovia retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-monrovia-europe-indemnite
+hreflang_en: monrovia-europe-flight-delay-compensation
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Europe-Monrovia a plus de 3h de retard. Combien puis-je réclamer ?"

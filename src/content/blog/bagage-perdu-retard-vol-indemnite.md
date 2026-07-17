@@ -3,6 +3,7 @@ title: "Bagage perdu ou retardé : vos droits (différents du CE 261)"
 meta_title: "Bagage perdu ou retardé : Convention Montréal - jusqu'à 1600€"
 meta_description: "Bagage perdu, abîmé, retardé après votre vol ? La Convention de Montréal prévoit jusqu'à ~1 800 €. Différent du CE 261, on vous explique."
 slug: bagage-perdu-retard-vol-indemnite
+hreflang_en: lost-baggage-compensation-airline
 image_url: /og-blog.png
 faq:
   - q: "Combien je touche pour un bagage perdu ?"

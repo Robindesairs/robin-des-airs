@@ -3,6 +3,7 @@ title: "KLM vol retardé : vos droits à l'indemnité"
 meta_title: "KLM vol retardé ou annulé : jusqu'à 600€ par passager (CE 261)"
 meta_description: "Vol KLM retardé ou annulé ? La compagnie néerlandaise vous doit jusqu'à 600€ par passager selon le CE 261. Robin des Airs récupère votre indemnité."
 slug: klm-vol-retarde-indemnite
+hreflang_en: klm-delayed-flight-compensation
 image_url: /og-blog.png
 faq:
   - q: "Mon vol KLM Amsterdam-Nairobi a eu 4h de retard. Combien je touche ?"

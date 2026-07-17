@@ -3,6 +3,7 @@ title: "Vol retardé Paris-Accra ou Accra-Paris : vos droits"
 meta_title: "Vol retardé Paris-Accra ou Accra-Paris : jusqu'à 600€ (CE261)"
 meta_description: "Retard sur votre vol Paris-Accra (Ghana) via Bruxelles ou Amsterdam ? Jusqu'à 600€ par passager. KLM et Brussels Airlines couvrent les deux sens."
 slug: vol-retarde-accra-paris-indemnite
+hreflang_en: accra-paris-flight-delay-compensation
 image_url: /og-blog.png
 faq:
   - q: "Vol KLM Amsterdam-Accra retardé de 4h. Combien je touche ?"

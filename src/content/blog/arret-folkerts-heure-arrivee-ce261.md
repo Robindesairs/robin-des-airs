@@ -3,6 +3,7 @@ title: "Arrêt Folkerts : l'heure d'arrivée, c'est quand les portes s'ouvrent"
 meta_title: "Arrêt Folkerts (CJUE 2013) : comment calculer le retard de votre vol"
 meta_description: "L'heure d'arrivée selon le CE261, c'est l'ouverture des portes — pas le toucher des roues. L'arrêt Folkerts de 2013 protège les passagers contre les calculs trompeurs des compagnies."
 slug: arret-folkerts-heure-arrivee-ce261
+hreflang_en: folkerts-connecting-flight-cjeu-ruling
 image_url: /og-blog.png
 faq:
   - q: "Ma compagnie dit que l'avion est arrivé à l'heure car les roues ont touché la piste à temps. Est-ce vrai ?"

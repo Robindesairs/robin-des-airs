@@ -201,6 +201,11 @@ function renderArticlePage(
   if (!post) return '';
   const canonical = `${SITE_URL}/blog/${post.slug}.html`;
   const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
+  // hreflang : posé UNIQUEMENT si une vraie traduction EN existe (hreflang_en en frontmatter) —
+  // pas de couplage FR/EN automatique, les deux corpus sont indépendants (cf. audit SEO 16/07/2026).
+  const hreflangHtml = post.hreflang_en
+    ? `\n  <link rel="alternate" hreflang="fr" href="${canonical}">\n  <link rel="alternate" hreflang="en" href="${SITE_URL}/en/blog/${post.hreflang_en}.html">`
+    : '';
   // Images du corps : servir le WebP (5x plus léger que le PNG), différer le chargement
   // et fixer les dimensions pour ne pas provoquer de CLS. Les schémas font tous 1200x630.
   const body = enhanceBodyImages(post.html);
@@ -285,7 +290,7 @@ function renderArticlePage(
   <link rel="icon" href="/favicon.png" type="image/png">
   <title>${escapeHtml(post.meta_title)}</title>
   <meta name="description" content="${escapeHtml(post.meta_description)}">
-  <link rel="canonical" href="${canonical}">
+  <link rel="canonical" href="${canonical}">${hreflangHtml}
   <meta property="og:title" content="${escapeHtml(post.meta_title)}">
   <meta property="og:description" content="${escapeHtml(post.meta_description)}">
   <meta property="og:url" content="${canonical}">

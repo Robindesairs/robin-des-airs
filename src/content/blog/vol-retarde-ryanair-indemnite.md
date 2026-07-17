@@ -3,6 +3,7 @@ title: "Vol retardé Ryanair — vos droits à l'indemnité"
 meta_title: "Ryanair vol retardé : indemnité 250€ à 600€ (CE 261)"
 meta_description: "Low-cost ne veut pas dire sans droits. Vol Ryanair en retard ? Indemnité jusqu'à 600€ par passager. Comment réclamer."
 slug: vol-retarde-ryanair-indemnite
+hreflang_en: ryanair-delayed-flight-compensation
 image_url: /og-blog.png
 ---
 

@@ -3,6 +3,7 @@ title: "Indemnité vol retardé ou annulé : montants 250€, 400€, 600€"
 meta_title: "Indemnité vol : 250€, 400€ ou 600€ selon la distance (CE 261)"
 meta_description: "Les montants de l'indemnité pour vol retardé ou annulé dépendent de la distance : 250€, 400€ ou 600€ par passager. Tableau et explications."
 slug: indemnite-vol-montants-250-400-600
+hreflang_en: flight-compensation-amounts-250-400-600-eur
 image_url: /og-blog.png
 ---
 

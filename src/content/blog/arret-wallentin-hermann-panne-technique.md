@@ -3,6 +3,7 @@ title: "Panne technique et CE261 : la compagnie doit payer (arrêt Wallentin-Her
 meta_title: "Panne technique vol : la compagnie doit payer — arrêt Wallentin-Hermann (CJUE)"
 meta_description: "Ma compagnie invoque une panne technique pour ne pas payer l'indemnité. Est-ce légal ? L'arrêt Wallentin-Hermann de la CJUE dit non, dans la grande majorité des cas."
 slug: arret-wallentin-hermann-panne-technique
+hreflang_en: wallentin-hermann-technical-issue-cjeu
 image_url: /og-blog.png
 faq:
   - q: "Ma compagnie dit que mon vol a été retardé pour 'raisons techniques'. Elle est exonérée ?"

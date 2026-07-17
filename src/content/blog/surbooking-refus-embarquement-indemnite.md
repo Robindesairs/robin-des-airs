@@ -3,6 +3,7 @@ title: "Surbooking : vos droits quand on vous refuse l'embarquement"
 meta_title: "Surbooking : vos droits quand on vous refuse l'embarquement (jusqu'à 600€)"
 meta_description: "Refus d'embarquement pour surbooking ? La compagnie vous doit immédiatement 250€ à 600€ par passager. Voici comment réclamer."
 slug: surbooking-refus-embarquement-indemnite
+hreflang_en: denied-boarding-overbooking-compensation
 image_url: /og-blog.png
 ---
 

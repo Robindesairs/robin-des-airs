@@ -3,6 +3,7 @@ title: "Vol retardé Banjul (Gambie) depuis Bruxelles, Barcelone ou Londres"
 meta_title: "Vol retardé Banjul Gambie : indemnité CE 261 jusqu'à 600€"
 meta_description: "Retard ou annulation sur votre vol Banjul (Gambie) depuis Bruxelles, Barcelone, Lisbonne ou Londres ? Indemnité CE 261 jusqu'à 600€ par passager."
 slug: vol-retarde-banjul-bruxelles-barcelone-indemnite
+hreflang_en: banjul-flight-delay-compensation-gambia
 image_url: /og-blog.png
 faq:
   - q: "Pourquoi pas de vol direct Paris-Banjul ?"

@@ -3,6 +3,7 @@ title: "Vol retardé Paris-Nairobi ou Nairobi-Paris : vos droits"
 meta_title: "Vol retardé Paris-Nairobi : jusqu'à 600€ par passager (CE261)"
 meta_description: "Retard sur votre vol Paris-Nairobi ? Jusqu'à 600€ par passager selon le CE261. Les vols retour sur Kenya Airways ne sont pas couverts — voici pourquoi."
 slug: vol-retarde-nairobi-paris-indemnite
+hreflang_en: nairobi-paris-flight-delay-compensation
 image_url: /og-blog.png
 faq:
   - q: "Vol Paris-Nairobi sur Kenya Airways retardé de 4h. Combien je touche ?"

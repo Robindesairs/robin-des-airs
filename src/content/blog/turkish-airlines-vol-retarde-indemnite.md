@@ -3,6 +3,7 @@ title: "Turkish Airlines vol retardé depuis Paris : vos droits"
 meta_title: "Turkish Airlines vol retardé depuis Paris : jusqu'à 600€ (CE 261)"
 meta_description: "Vol Turkish Airlines retardé au départ de Paris ou d'un aéroport UE ? Vous pouvez réclamer jusqu'à 600€ par passager. Les vols retour depuis Istanbul ne sont pas couverts."
 slug: turkish-airlines-vol-retarde-indemnite
+hreflang_en: turkish-airlines-delayed-flight-compensation
 image_url: /og-blog.png
 faq:
   - q: "Mon vol Paris-Istanbul Turkish Airlines a eu 4h de retard. Je touche combien ?"

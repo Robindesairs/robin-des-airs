@@ -3,6 +3,7 @@ title: "Vol annulé : comment obtenir votre indemnité de 600€"
 meta_title: "Vol annulé : comment obtenir 600€ d'indemnité par passager"
 meta_description: "Vol annulé moins de 14 jours avant le départ ? Vous avez droit à 250€ à 600€ par passager. Voici comment récupérer votre argent."
 slug: vol-annule-indemnite-600-euros
+hreflang_en: cancelled-flight-compensation-600-eur
 image_url: /og-blog.png
 ---
 

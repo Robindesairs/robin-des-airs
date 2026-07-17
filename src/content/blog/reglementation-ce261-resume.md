@@ -3,6 +3,7 @@ title: "Réglementation CE 261 : résumé de vos droits en vol"
 meta_title: "Règlement CE 261/2004 : résumé des droits vol retardé, annulé, surbooking"
 meta_description: "CE 261 en bref : droits des passagers en cas de vol retardé, annulé, correspondance manquée ou refus d'embarquement. Applicable depuis la France et l'UE."
 slug: reglementation-ce261-resume
+hreflang_en: ec-261-regulation-summary
 image_url: /og-blog.png
 ---
 

@@ -3,6 +3,7 @@ title: "La compagnie refuse de payer mon indemnité : que faire ?"
 meta_title: "Compagnie refuse indemnité vol : 5 étapes pour récupérer vos 600€"
 meta_description: "La compagnie refuse votre indemnité CE 261 ? Voici les 5 étapes pour récupérer 600€ : lettre, médiateur, tribunal. Ou laissez Robin des Airs s'en charger."
 slug: compagnie-refuse-payer-indemnite-que-faire
+hreflang_en: airline-refuses-compensation-next-steps
 image_url: /og-blog.png
 faq:
   - q: "La compagnie a refusé ma demande. Je peux quand même obtenir les 600€ ?"

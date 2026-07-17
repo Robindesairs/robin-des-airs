@@ -3,6 +3,7 @@ title: "Vol retardé Freetown-Europe ou Europe-Freetown : indemnité jusqu'à 60
 meta_title: "Vol Freetown-Europe retardé : 600 € d'indemnité par passager (Brussels Airlines)"
 meta_description: "Vol Freetown-Europe ou Europe-Freetown retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-freetown-europe-indemnite
+hreflang_en: freetown-europe-flight-delay-compensation
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Europe-Freetown a plus de 3h de retard. Combien puis-je réclamer ?"
