@@ -194,9 +194,12 @@ function main(): void {
     { loc: SITE_URL + '/suivi-dossier.html', changefreq: 'monthly', priority: '0.8' },
     { loc: SITE_URL + '/guide-whatsapp.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/choix-reclamation.html', changefreq: 'monthly', priority: '0.8' },
-    { loc: SITE_URL + '/partenaires-agences.html', changefreq: 'monthly', priority: '0.75' },
+    // /partenaires-agences.html RETIRÉ : supprimée par 91f1db1, elle renvoyait 404 tout en restant
+    // déclarée ici (seul 404 des 259 URLs du sitemap, vérifié le 17/07). Remplacée par
+    // programme-agents-voyage.html. /partenaires-agences-fcfa.html RETIRÉ aussi : ce n'est plus qu'une
+    // redirection meta-refresh vers programme-agents-voyage.html, et on ne soumet pas une redirection
+    // au sitemap (le canonical y pointe déjà). Les deux landing partenaires restent, elles.
     { loc: SITE_URL + '/programme-agents-voyage.html', changefreq: 'monthly', priority: '0.75' },
-    { loc: SITE_URL + '/partenaires-agences-fcfa.html', changefreq: 'monthly', priority: '0.75' },
     { loc: SITE_URL + '/cgv.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/politique-confidentialite.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/mandat-representation.html', changefreq: 'yearly', priority: '0.4' },
