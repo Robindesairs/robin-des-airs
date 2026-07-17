@@ -50,6 +50,51 @@ exports.handler = async (event) => {
     const mandats = getBlobStore(event, 'mandats');
     const dossier = (mandats && (await mandats.get('m/' + ref, { type: 'json' }))) || {};
 
+    // 3) GATE ENVOI — un filigrane BROUILLON n'a jamais empêché personne d'envoyer le PDF (c'est arrivé).
+    //    Tant que la SASU n'est pas immatriculée, l'aperçu exige ?draft=1 EXPLICITE : impossible d'obtenir
+    //    par accident un document qui a l'air définitif. Une notification émise par une entité sans
+    //    personnalité morale est nulle (rien à reprendre au sens de l'art. L.210-6 al. 2 C. com.).
+    const siren = (process.env.RDA_SIREN || '').trim();
+    const draftOk = q.draft === '1' || q.draft === 'true';
+    if (!siren && !draftOk) {
+      return J(409, {
+        error: 'SASU non immatriculée (RDA_SIREN absent) : notification non émettable.',
+        detail: 'Une notification émise par une entité sans personnalité morale est nulle et non reprenable (art. L.210-6 al. 2 C. com.). Ajoutez ?draft=1 pour un aperçu filigrané non destiné à l\'envoi.',
+      });
+    }
+
+    // 4) Montant : OBLIGATOIRE et explicite. Jamais dérivé d'une heuristique — bareme.js renvoie 600 €
+    //    par défaut et ne détecte le Maghreb que par nom de ville : sur un vol court (<1500 km = 250 €)
+    //    il produirait une réclamation surévaluée, qui décrédibilise la lettre et fonde un rejet.
+    const montantPerPax = Number(q.montant || q.m || dossier.montantPerPax || 0);
+    if (!draftOk && !(montantPerPax > 0)) {
+      return J(400, {
+        error: 'Montant par passager requis.',
+        detail: 'Passez ?montant=250|400|600 selon la distance orthodromique du vol (art. 7 §1 CE 261/2004). Le montant n\'est jamais deviné : une lettre chiffrée faux est plus attaquable qu\'une lettre sans chiffre.',
+      });
+    }
+
+    // 5) Coordonnées de paiement : sans IBAN, la dette reste quérable (art. 1342-6 C. civ.), la lettre
+    //    ne vaut pas mise en demeure (art. 1344) et le débiteur peut se libérer par consignation
+    //    (art. 1345-1). On refuse donc d'émettre une notification définitive sans compte de paiement.
+    const ibanEnv = (process.env.RDA_IBAN_RECOUVREMENT || '').trim();
+    if (!draftOk && !ibanEnv) {
+      return J(409, {
+        error: 'IBAN du compte dédié absent (RDA_IBAN_RECOUVREMENT).',
+        detail: 'Une notification sans coordonnées de paiement n\'interpelle pas valablement le débiteur et l\'autorise à consigner (art. 1345-1 C. civ.).',
+      });
+    }
+
+    // 6) Signataire : une personne physique nommée est indispensable avant immatriculation (reprise
+    //    des actes, art. L.210-6 al. 2 C. com.) et reste requise après (identification du représentant).
+    const signataireNom = (process.env.RDA_SIGNATAIRE || '').trim();
+    if (!draftOk && !signataireNom) {
+      return J(409, {
+        error: 'Signataire absent (RDA_SIGNATAIRE).',
+        detail: 'Un acte signé par personne n\'engage personne. Renseignez le nom du représentant légal.',
+      });
+    }
+
     const pdf = await genererNotificationCreancePdf({
       ref,
       certId: signed.cert_id || '',
@@ -72,8 +117,12 @@ exports.handler = async (event) => {
       arrAirport: dossier.arrAirport || '',
       route: dossier.route || '',
       incident: dossier.incident || '',
-      siren: (process.env.RDA_SIREN || '').trim(),
-      iban: (process.env.RDA_IBAN_RECOUVREMENT || '').trim(),
+      montantPerPax,
+      siren,
+      siege: (process.env.RDA_SIEGE || '').trim(),
+      signataireNom,
+      signataireQualite: (process.env.RDA_SIGNATAIRE_QUALITE || '').trim(),
+      iban: ibanEnv,
       bankName: (process.env.RDA_BANK_NAME || '').trim(),
     });
 

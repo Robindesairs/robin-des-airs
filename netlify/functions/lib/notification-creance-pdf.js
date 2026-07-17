@@ -55,8 +55,11 @@ function fmtDate(iso, lang) {
  *   ref, certId, signedAt,                       // ISO signature (GATE en amont)
  *   passengers: [{ name, dob, birth, minor, legalRepName }],
  *   airline, flightNum, flightDate, pnr, route, depAirport, arrAirport, incident,
+ *   montantPerPax,                               // € par passager (250/400/600) — OBLIGATOIRE, jamais deviné
  *   siren,                                       // '' → BROUILLON ; sinon lève le filigrane
- *   iban, bankName,                              // compte dédié ('' → « communiqué sur demande »)
+ *   siege,                                       // adresse du siège (art. R.123-237) — requis hors brouillon
+ *   signataireNom, signataireQualite,            // personne physique signataire — requis (art. L.210-6)
+ *   iban, bankName,                              // compte dédié — requis hors brouillon (art. 1342-6)
  * }
  * @returns {Promise<Buffer>}
  */
@@ -84,9 +87,24 @@ function genererNotificationCreancePdf(d) {
     const contactEmail = `${String(d.ref || '').trim() || 'contact'}@robindesairs.eu`;
     const siren = String(d.siren || '').trim();
     const draft = !siren;
+    const siege = String(d.siege || '').trim();
+    const siegePhrase = siege ? `, dont le siège social est situé ${siege}` : '';
     const identiteRDA = siren
-      ? `Robin des Airs, SASU au capital social variable, immatriculée au RCS de Paris sous le n° ${siren}`
-      : `Robin des Airs, SASU en cours d'immatriculation au RCS de Paris`;
+      ? `Robin des Airs, SASU au capital social variable, immatriculée au RCS de Paris sous le n° ${siren}${siegePhrase}`
+      : `Robin des Airs, SASU en cours d'immatriculation au RCS de Paris${siegePhrase}`;
+
+    // Montant : JAMAIS deviné. Un montant faux (ex. 600 € réclamés sur un vol à 250 €) est plus
+    // dommageable qu'une absence de montant : il décrédibilise la lettre et fonde un rejet.
+    // L'appelant DOIT le fournir ; à défaut on n'écrit aucun chiffre.
+    const mpp = Number(d.montantPerPax);
+    const hasMontant = !!mpp && !Number.isNaN(mpp) && mpp > 0;
+    const nbPax = pax.length;
+    const montantTotal = hasMontant ? mpp * nbPax : 0;
+    const montantPhrase = hasMontant
+      ? (nbPax > 1
+          ? `, soit un montant principal de ${montantTotal} € (${nbPax} passagers × ${mpp} €)`
+          : `, soit un montant principal de ${montantTotal} €`)
+      : '';
 
     const cedantPhrase = isMulti
       ? `les passagers désignés ci-dessous (ci-après les « Cédants »)`
@@ -123,7 +141,7 @@ function genererNotificationCreancePdf(d) {
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5)
       .text(`Objet : Notification de cession de créance — art. 1324 du Code civil`, left + 12, objTop + 7, { width: contentW - 24 });
     doc.fillColor(TEXT).font('Helvetica').fontSize(8.6)
-      .text(`Vol ${d.flightNum || '—'} du ${d.flightDate || '—'} · ${routeTxt}${d.pnr ? ` · PNR ${d.pnr}` : ''} · Réf. ${d.ref || '—'}`, left + 12, objTop + 19, { width: contentW - 24 });
+      .text(`Vol ${d.flightNum || '—'} du ${d.flightDate || '—'} · ${routeTxt}${d.pnr ? ` · PNR ${d.pnr}` : ''}${hasMontant ? ` · ${montantTotal} €` : ''} · Réf. ${d.ref || '—'}`, left + 12, objTop + 19, { width: contentW - 24 });
     doc.y = objTop + 30 + 14;
 
     // ── Corps (paragraphes justifiés)
@@ -138,19 +156,32 @@ function genererNotificationCreancePdf(d) {
     doc.fillColor(TEXT).font('Helvetica').fontSize(FS).text('Madame, Monsieur,', left, doc.y, { width: contentW });
     doc.y += 8;
 
-    para(`Par la présente, ${identiteRDA} (ci-après le « Cessionnaire »), vous notifie qu'aux termes d'un contrat de cession de créance signé électroniquement le ${sigFr} (via Yousign, prestataire de services de confiance au sens du Règlement eIDAS, art. 25 ; art. 1366 C. civ.)${d.certId ? `, certificat n° ${d.certId}` : ''}, ${cedantPhrase} ${ontCede}, avec effet immédiat, l'intégralité de ${leurSa} et prétentions détenue${isMulti ? 's' : ''} à votre encontre au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire de l'art. 7 et remboursement des frais de l'art. 9), née de l'irrégularité — ${incFr} — du vol ${d.flightNum || '—'} du ${d.flightDate || '—'} reliant ${routeTxt}.`);
+    para(`Par la présente, ${identiteRDA} (ci-après le « Cessionnaire »), vous notifie qu'aux termes d'un contrat de cession de créance signé électroniquement le ${sigFr} (via Yousign, prestataire de services de confiance au sens du Règlement eIDAS, art. 25 ; art. 1366 C. civ.)${d.certId ? `, certificat n° ${d.certId}` : ''}, ${cedantPhrase} ${ontCede}, avec effet immédiat, l'intégralité de ${leurSa} détenue${isMulti ? 's' : ''} à votre encontre au titre du Règlement (CE) n° 261/2004, née de l'irrégularité (${incFr}) du vol ${d.flightNum || '—'} du ${d.flightDate || '—'} reliant ${routeTxt}${montantPhrase}.`);
 
-    para(`Conformément aux articles 1321 à 1324 du Code civil, la présente notification rend cette cession opposable à votre compagnie. En conséquence, à compter de sa réception, vous ne pourrez valablement vous acquitter de votre dette qu'entre les mains du Cessionnaire, Robin des Airs, à l'exclusion du ou des cédant(s) : seul un paiement effectué au Cessionnaire sera libératoire.`);
+    para(`La cession porte sur l'intégralité de la créance et de ses accessoires : l'indemnité forfaitaire de l'article 7, le droit au remboursement et au réacheminement de l'article 8, la prise en charge et le remboursement des frais de l'article 9, l'indemnisation complémentaire de l'article 12 du Règlement, ainsi que les intérêts et tous accessoires attachés à cette créance (art. 1321 al. 3 du Code civil).`);
 
-    para(`Tout règlement devra être effectué par virement au bénéfice de Robin des Airs (${banquePhrase}). Toute correspondance, demande de pièces ou proposition de règlement relative à ce dossier est à adresser à ${contactEmail}.`);
+    para(`Conformément aux articles 1321 à 1324 du Code civil, la présente notification rend cette cession opposable à votre compagnie. En conséquence, à compter de sa réception, vous ne pourrez valablement vous acquitter de votre dette qu'entre les mains du Cessionnaire, Robin des Airs, à l'exclusion du ou des cédant(s) : seul un paiement effectué au Cessionnaire sera libératoire. À toutes fins utiles, et quelle que soit la loi applicable au contrat de transport, la présente notification satisfait aux conditions d'opposabilité de la cession au débiteur cédé.`);
 
-    para(`Nous vous rappelons que toute stipulation de vos conditions générales de transport qui restreindrait ou exclurait la cession des créances nées du Règlement (CE) n° 261/2004 vous est inopposable (art. 15 du Règlement ; CJUE, 6 février 2025, aff. C-11/23).`);
+    para(`Tout règlement devra être effectué${hasMontant ? `, à hauteur de ${montantTotal} € en principal,` : ''} par virement au bénéfice de Robin des Airs sur le compte suivant : ${banquePhrase}. Toute correspondance, demande de pièces ou proposition de règlement relative à ce dossier est à adresser à ${contactEmail}.`);
+
+    para(`Nous vous rappelons que toute stipulation de vos conditions générales de transport qui restreindrait ou exclurait la cession des créances nées du Règlement (CE) n° 261/2004 vous est inopposable (art. 15 du Règlement ; CJUE, 29 février 2024, aff. C-11/23).`);
 
     para(`Le contrat de cession de créance et le certificat de signature électronique sont joints à la présente, ou disponibles sur simple demande. Nous vous remercions de bien vouloir prendre acte de la présente cession et vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées.`);
 
-    // ── Bloc signataire (institutionnel, pas de nom personnel)
+    // ── Bloc signataire : une PERSONNE PHYSIQUE nommée, jamais un bloc institutionnel anonyme.
+    // Avant immatriculation, l'art. L.210-6 al. 2 C. com. ne permet la reprise des actes par la société
+    // QUE s'ils ont été accomplis « par des personnes pour le compte de la société en formation ».
+    // Une société inexistante qui contracte en son propre nom n'engage personne → rien à reprendre → nullité.
+    // D'où la formule « agissant au nom et pour le compte de la société en formation » tant que draft.
     doc.y += 2;
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text('Robin des Airs — Cessionnaire', left, doc.y, { width: contentW });
+    const qualite = String(d.signataireQualite || '').trim() || (draft ? 'fondateur' : 'Président');
+    const signataire = String(d.signataireNom || '').trim();
+    const ligneSignataire = signataire
+      ? (draft
+          ? `${signataire}, ${qualite}, agissant au nom et pour le compte de la SASU Robin des Airs en formation`
+          : `${signataire}, ${qualite} de la SASU Robin des Airs`)
+      : 'Robin des Airs — Cessionnaire';
+    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9).text(ligneSignataire, left, doc.y, { width: contentW });
     doc.fillColor(GRAY).font('Helvetica').fontSize(8).text('Service recouvrement · ' + contactEmail, left, doc.y + 1, { width: contentW });
 
     // ── Cédant(s) : nom + DDN pour permettre à la compagnie de rapprocher le passager
@@ -174,7 +205,7 @@ function genererNotificationCreancePdf(d) {
     // ── Résumé de courtoisie en anglais (compagnies anglophones)
     doc.y += 4;
     doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(
-      `English (courtesy summary): Robin des Airs hereby gives you formal notice that, by an electronically signed assignment agreement dated ${sigEn}, the passenger(s) listed above assigned to us all their claims under Regulation (EC) No 261/2004 (compensation Art. 7, expenses Art. 9) arising from the ${incEn} of flight ${d.flightNum || '—'} on ${d.flightDate || '—'} (${routeTxt}). Under Art. 1321-1324 of the French Civil Code, from receipt of this notice only payment to Robin des Airs is discharging. Any clause restricting the assignment of EC 261/2004 claims is unenforceable (Art. 15; CJEU, 6 Feb. 2025, C-11/23). Assignment deed and e-signature certificate enclosed or available on request.`,
+      `English (courtesy summary): Robin des Airs hereby gives you formal notice that, by an electronically signed assignment agreement dated ${sigEn}, the passenger(s) listed above assigned to us all their claims under Regulation (EC) No 261/2004 (Art. 7 compensation, Art. 8 reimbursement/re-routing, Art. 9 care and expenses, Art. 12 further compensation, together with interest and all accessories) arising from the ${incEn} of flight ${d.flightNum || '—'} on ${d.flightDate || '—'} (${routeTxt})${hasMontant ? `, in a principal amount of EUR ${montantTotal}` : ''}. Under Art. 1321-1324 of the French Civil Code, from receipt of this notice only payment to Robin des Airs is discharging; this notice satisfies the conditions for enforceability against the debtor whichever law governs the contract of carriage. Any clause restricting the assignment of EC 261/2004 claims is unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23). Assignment deed and e-signature certificate enclosed or available on request.`,
       left, doc.y, { width: contentW, align: 'justify', lineGap: 1.3 }
     );
 

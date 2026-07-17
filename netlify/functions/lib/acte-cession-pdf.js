@@ -154,7 +154,7 @@ function genererActeCessionPdf(d) {
       '4. Notification (art. 1324 C. civ.)',
       `Le présent document vaut notification de la cession à la compagnie : à compter de sa réception, seul un paiement effectué au Cessionnaire est libératoire. Correspondance : ${contactEmail}. Les clauses restreignant la cession des créances CE 261/2004 sont inopposables (art. 15 du Règlement ; CJUE, 6 févr. 2025, C-11/23).`,
       '4. Notice (Art. 1324 Civil Code)',
-      `This document is formal notice of the assignment to the carrier: upon receipt, only payment made to the Assignee discharges the debtor. Correspondence: ${contactEmail}. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (Art. 15; CJEU, 6 Feb. 2025, C-11/23).`
+      `This document is formal notice of the assignment to the carrier: upon receipt, only payment made to the Assignee discharges the debtor. Correspondence: ${contactEmail}. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23).`
     );
 
     // ── Tableau des cédants (pleine largeur, entêtes bilingues)
