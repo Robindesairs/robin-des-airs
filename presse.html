@@ -53,6 +53,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
 tbody tr:last-child td{border-bottom:none}
 .nom{font-weight:600}
 .nom small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
+.nom .hint{display:block;margin-top:4px;max-width:340px;font-style:normal;font-size:11.5px;line-height:1.45;color:var(--warn);opacity:.9}
 .mail{font-family:var(--m);font-size:11.5px;color:var(--muted);word-break:break-all}
 .tier{font-family:var(--m);font-size:11px;padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.07);color:var(--muted)}
 .tier.t1{background:rgba(61,214,140,.15);color:var(--ok)}
@@ -144,7 +145,7 @@ async function api(method,body,qs){
 function fusion(){
   return MEDIAS.map(m=>{
     const e=ETAT[m.id]||{};
-    return {...m, statut:e.statut||'a_envoyer', date_contact:e.date_contact||'', relance_due:e.relance_due||'',
+    return {...m, note:m.note||'', statut:e.statut||'a_envoyer', date_contact:e.date_contact||'', relance_due:e.relance_due||'',
             url_publication:e.url_publication||'', notes:e.notes||''};
   });
 }
@@ -176,7 +177,7 @@ function rendre(){
   document.getElementById('rows').innerHTML=all.filter(visible).map(x=>{
     const due=x.relance_due&&x.relance_due<=TODAY;
     return `<tr data-id="${esc(x.id)}">
-      <td class="nom">${esc(x.nom)} <span class="tier t${x.tier}">T${x.tier}</span><small>${esc(x.pays)}${x.url?` · <a href="${esc(x.url)}" target="_blank" rel="noopener">rubrique</a>`:''}</small></td>
+      <td class="nom">${esc(x.nom)} <span class="tier t${x.tier}">T${x.tier}</span><small>${esc(x.pays)}${x.url?` · <a href="${esc(x.url)}" target="_blank" rel="noopener">rubrique</a>`:''}</small>${x.note?`<em class="hint">${esc(x.note)}</em>`:''}</td>
       <td><span class="mail">${esc(x.email)}</span><br><button class="copy" data-copy="${esc(x.email)}">copier</button></td>
       <td><select class="st st-${esc(x.statut)}">${STATUTS.map(([v,l])=>`<option value="${v}"${v===x.statut?' selected':''}>${l}</option>`).join('')}</select></td>
       <td class="date">${esc(x.date_contact)||'—'}</td>

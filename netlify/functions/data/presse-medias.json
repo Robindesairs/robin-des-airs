@@ -6,7 +6,8 @@
     "email": "contact@lalternative.info",
     "url": "https://lalternative.info/category/tribune/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m002",
@@ -15,7 +16,8 @@
     "email": "redchef@burkina24.com",
     "url": "https://burkina24.com/category/actualite/opinion/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m003",
@@ -24,7 +26,8 @@
     "email": "contact@togobreakingnews.info",
     "url": "https://togobreakingnews.info/category/opinions/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m004",
@@ -33,7 +36,8 @@
     "email": "contact@lefaso.net",
     "url": "https://lefaso.net/spip.php?rubrique21",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m005",
@@ -42,7 +46,8 @@
     "email": "contact@actuniger.com",
     "url": "https://www.actuniger.com/tribune-opinion.html",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m006",
@@ -51,7 +56,8 @@
     "email": "redaction@journaldumali.com",
     "url": "https://journaldumali.com/category/idees/tribune/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m007",
@@ -60,7 +66,8 @@
     "email": "malijet@malijet.com",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m008",
@@ -69,7 +76,8 @@
     "email": "info@connectionivoirienne.net",
     "url": "https://connectionivoirienne.net/category/libre-opinion/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m009",
@@ -78,7 +86,8 @@
     "email": "pointsurcom@gmail.com",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m010",
@@ -87,7 +96,8 @@
     "email": "contact@koaci.com",
     "url": "https://www.koaci.com/theme/tribune",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m011",
@@ -96,7 +106,8 @@
     "email": "redaction@banouto.bj",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m012",
@@ -105,7 +116,8 @@
     "email": "redaction@lelynx.net",
     "url": "",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m013",
@@ -114,7 +126,8 @@
     "email": "Contact@ledjely.com",
     "url": "https://ledjely.com/category/tribune/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m014",
@@ -123,7 +136,8 @@
     "email": "contact@mosaiqueguinee.com",
     "url": "https://mosaiqueguinee.com/chroniques/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m015",
@@ -132,7 +146,8 @@
     "email": "boussouriou.bah@visionguinee.info",
     "url": "",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m016",
@@ -141,7 +156,8 @@
     "email": "mediaguinee@gmail.com",
     "url": "",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m017",
@@ -150,7 +166,8 @@
     "email": "nigerdiaspora@gmail.com",
     "url": "https://www.nigerdiaspora.net/magazine/idees-et-opinions",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m018",
@@ -159,7 +176,8 @@
     "email": "lesechosduniger@yahoo.com",
     "url": "https://lesechosduniger.com/category/opinion-tribune/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m019",
@@ -168,7 +186,8 @@
     "email": "info@sahelien.com",
     "url": "",
     "type": "redaction",
-    "tier": 3
+    "tier": 3,
+    "note": ""
   },
   {
     "id": "m020",
@@ -177,7 +196,8 @@
     "email": "redaction@lesdepechesdebrazzaville.fr",
     "url": "https://www.adiac-congo.com/opinion_rubrique/Tribune%20libre",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m021",
@@ -186,7 +206,8 @@
     "email": "redaction.gabonreview@gmail.com",
     "url": "https://www.gabonreview.com/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m022",
@@ -195,7 +216,8 @@
     "email": "courriel@zoom-eco.net",
     "url": "https://zoom-eco.net/category/tribune/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m023",
@@ -204,7 +226,8 @@
     "email": "redaction@7sur7.cd",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m024",
@@ -213,7 +236,8 @@
     "email": "info@datacameroon.com",
     "url": "https://datacameroon.com/category/tribune/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m025",
@@ -222,7 +246,8 @@
     "email": "contact@lejour.cm",
     "url": "",
     "type": "redaction",
-    "tier": 3
+    "tier": 3,
+    "note": ""
   },
   {
     "id": "m026",
@@ -231,7 +256,8 @@
     "email": "dakaractu@gmail.com",
     "url": "https://www.dakaractu.com/submit/",
     "type": "formulaire",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m027",
@@ -240,7 +266,8 @@
     "email": "redaction@seneweb.com",
     "url": "https://www.seneweb.com/news/contributions",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m028",
@@ -249,7 +276,8 @@
     "email": "redchef@pressafrik.com",
     "url": "https://www.pressafrik.com/Opinion_r12.html",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m029",
@@ -258,7 +286,8 @@
     "email": "sudquotidien@yahoo.fr",
     "url": "",
     "type": "redaction",
-    "tier": 3
+    "tier": 3,
+    "note": ""
   },
   {
     "id": "m030",
@@ -267,7 +296,8 @@
     "email": "redaction@xalimasn.com",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m031",
@@ -276,7 +306,8 @@
     "email": "redaction@madagascar-tribune.com",
     "url": "https://www.madagascar-tribune.com/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m032",
@@ -285,7 +316,8 @@
     "email": "contact@vahiny.com",
     "url": "",
     "type": "diaspora",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m033",
@@ -294,7 +326,8 @@
     "email": "redaction@mayottehebdo.com",
     "url": "",
     "type": "redaction",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m034",
@@ -303,7 +336,8 @@
     "email": "lemauricien.redaction@gmail.com",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m035",
@@ -312,7 +346,8 @@
     "email": "opinion@premiumtimesng.com",
     "url": "https://www.premiumtimesng.com/contact",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m036",
@@ -321,7 +356,8 @@
     "email": "opinion@thecable.ng",
     "url": "https://www.thecable.ng/contact-us/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m037",
@@ -330,7 +366,8 @@
     "email": "editor@thebftonline.com",
     "url": "https://thebftonline.com/contact/",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m038",
@@ -339,7 +376,8 @@
     "email": "letters@dailymaverick.co.za",
     "url": "https://www.dailymaverick.co.za/contact-us",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m039",
@@ -348,7 +386,8 @@
     "email": "newsdesk@thevoicemediagroup.co.uk",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m040",
@@ -357,7 +396,8 @@
     "email": "info@africanvoiceonline.co.uk",
     "url": "",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m041",
@@ -366,7 +406,8 @@
     "email": "aviationghana.info@gmail.com",
     "url": "",
     "type": "redaction",
-    "tier": 3
+    "tier": 3,
+    "note": ""
   },
   {
     "id": "m042",
@@ -375,7 +416,8 @@
     "email": "redaction@financialafrik.com",
     "url": "https://www.financialafrik.com/author/contribution/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m043",
@@ -384,7 +426,8 @@
     "email": "redaction@jeuneafrique.com",
     "url": "https://www.jeuneafrique.com/idees/opinion/",
     "type": "tribune",
-    "tier": 4
+    "tier": 4,
+    "note": ""
   },
   {
     "id": "m044",
@@ -393,7 +436,8 @@
     "email": "contact@afrik.com",
     "url": "https://www.afrik.com/contact-ours",
     "type": "tribune",
-    "tier": 3
+    "tier": 3,
+    "note": ""
   },
   {
     "id": "m045",
@@ -402,7 +446,8 @@
     "email": "redaction@i-tourisme.fr",
     "url": "https://www.quotidiendutourisme.com/statics/contacts.html",
     "type": "redaction",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m046",
@@ -411,7 +456,8 @@
     "email": "remi@i-tourisme.fr",
     "url": "https://www.tourhebdo.fr/",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m047",
@@ -420,7 +466,8 @@
     "email": "redaction@tourmag.com",
     "url": "https://www.tourmag.com/",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m048",
@@ -429,7 +476,8 @@
     "email": "contact@air-journal.fr",
     "url": "https://www.air-journal.fr/contact",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m049",
@@ -438,7 +486,8 @@
     "email": "contact@mizane.info",
     "url": "https://www.mizane.info/contact/",
     "type": "tribune",
-    "tier": 1
+    "tier": 1,
+    "note": ""
   },
   {
     "id": "m050",
@@ -447,7 +496,8 @@
     "email": "llb.debats@lalibre.be",
     "url": "https://www.lalibre.be/debats/opinions/",
     "type": "tribune",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m051",
@@ -456,7 +506,8 @@
     "email": "steven.addamah@legriot.info",
     "url": "https://www.legriot.info/qui-sommes-nous",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m052",
@@ -465,7 +516,8 @@
     "email": "info@aminamag.com",
     "url": "https://aminamag.com/contact/",
     "type": "redaction",
-    "tier": 2
+    "tier": 2,
+    "note": ""
   },
   {
     "id": "m053",
@@ -474,6 +526,207 @@
     "email": "sarah@lebb.fr",
     "url": "https://www.bondyblog.fr/qui-sommes-nous/",
     "type": "redaction",
-    "tier": 3
+    "tier": 3,
+    "note": ""
+  },
+  {
+    "id": "m054",
+    "nom": "Afrique XXI",
+    "pays": "France (panafricain)",
+    "email": "afriquexxi@afriquexxi.info",
+    "url": "https://afriquexxi.info/proposer-des-articles",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Consignes publiées : 8 000 à 12 000 signes. Association sans but lucratif, zéro signal commercial. Lire leur charte avant d'écrire."
+  },
+  {
+    "id": "m055",
+    "nom": "Le Temps",
+    "pays": "Suisse",
+    "email": "Opinions@letemps.ch",
+    "url": "https://www.letemps.ch/opinions/publie-pages-debats-temps",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes."
+  },
+  {
+    "id": "m056",
+    "nom": "Addis Standard",
+    "pays": "Éthiopie",
+    "email": "newsalert.English@addisstandard.com",
+    "url": "https://addisstandard.com/contact/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire."
+  },
+  {
+    "id": "m057",
+    "nom": "Daily Monitor",
+    "pays": "Ouganda",
+    "email": "editorial@ug.nationmedia.com",
+    "url": "https://www.monitor.co.ug/uganda/oped",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Groupe Nation Media. letters@ug.nationmedia.com pour le format court."
+  },
+  {
+    "id": "m058",
+    "nom": "News Diggers",
+    "pays": "Zambie",
+    "email": "editor@diggers.news",
+    "url": "https://diggers.news/opinion/",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Indépendant, rubriques Opinion et Letters distinctes, aucun signal payant."
+  },
+  {
+    "id": "m059",
+    "nom": "NewsDay",
+    "pays": "Zimbabwe",
+    "email": "feedback@newsday.co.zw",
+    "url": "https://www.newsday.co.zw/category/9/opinion-analysis",
+    "type": "tribune",
+    "tier": 2,
+    "note": ""
+  },
+  {
+    "id": "m060",
+    "nom": "New Vision",
+    "pays": "Ouganda",
+    "email": "news@newvision.co.ug",
+    "url": "",
+    "type": "redaction",
+    "tier": 3,
+    "note": ""
+  },
+  {
+    "id": "m061",
+    "nom": "New African Magazine",
+    "pays": "Royaume-Uni / France",
+    "email": "editorial@icpublications.com",
+    "url": "https://newafricanmagazine.com/contact-us/",
+    "type": "tribune",
+    "tier": 2,
+    "note": "ATTENTION UK261 : siège Londres. Angle 220/350/520 £, pas 600 €, sauf transporteur communautaire."
+  },
+  {
+    "id": "m062",
+    "nom": "Expresso das Ilhas",
+    "pays": "Cap-Vert",
+    "email": "jornal@expressodasilhas.cv",
+    "url": "https://expressodasilhas.cv/opiniao",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Lusophone. Diaspora cap-verdienne dense en Europe, trafic réel vers Lisbonne et Paris."
+  },
+  {
+    "id": "m063",
+    "nom": "O Pais",
+    "pays": "Mozambique",
+    "email": "opais@soico.co.mz",
+    "url": "https://opais.co.mz/opiniao-2/",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Lusophone. Commercial séparé (comercial@soico.co.mz), écrire uniquement à la rédaction."
+  },
+  {
+    "id": "m064",
+    "nom": "Times of Eswatini",
+    "pays": "Eswatini",
+    "email": "news@times.co.sz",
+    "url": "",
+    "type": "redaction",
+    "tier": 4,
+    "note": ""
+  },
+  {
+    "id": "m065",
+    "nom": "Atlantico",
+    "pays": "France",
+    "email": "touslescontacts@atlantico.fr",
+    "url": "https://atlantico.fr/contact",
+    "type": "redaction",
+    "tier": 2,
+    "note": "Média d'opinion, aucune barrière professionnelle."
+  },
+  {
+    "id": "m066",
+    "nom": "La Provence",
+    "pays": "France (Marseille)",
+    "email": "redaction-web@laprovence.com",
+    "url": "https://www.laprovence.com/contact",
+    "type": "redaction",
+    "tier": 2,
+    "note": "Marseille et Marignane, forte diaspora comorienne et maghrébine."
+  },
+  {
+    "id": "m067",
+    "nom": "HuffPost France",
+    "pays": "France",
+    "email": "contributions@huffpost.fr",
+    "url": "",
+    "type": "tribune",
+    "tier": 2,
+    "note": "EMAIL À VÉRIFIER. ~5 000 signes, exige expertise avérée ou témoignage vécu : profil chef de cabine adapté."
+  },
+  {
+    "id": "m068",
+    "nom": "La Tribune",
+    "pays": "France",
+    "email": "latribunelibre@latribune.fr",
+    "url": "https://www.latribune.fr/opinions/",
+    "type": "tribune",
+    "tier": 3,
+    "note": "EMAIL À VÉRIFIER. Angle économique : coût réel du CE 261 pour les compagnies."
+  },
+  {
+    "id": "m069",
+    "nom": "Contrepoints",
+    "pays": "France",
+    "email": "redaction@contrepoints.org",
+    "url": "https://www.contrepoints.org/nous-contacter",
+    "type": "tribune",
+    "tier": 3,
+    "note": "EMAIL À VÉRIFIER. Contributions spontanées acceptées."
+  },
+  {
+    "id": "m070",
+    "nom": "Slate.fr",
+    "pays": "France",
+    "email": "infos@slate.fr",
+    "url": "",
+    "type": "tribune",
+    "tier": 3,
+    "note": "EMAIL À VÉRIFIER. Accepte tribunes et témoignages."
+  },
+  {
+    "id": "m071",
+    "nom": "Ouest-France",
+    "pays": "France",
+    "email": "courrierdeslecteurs@ouest-france.fr",
+    "url": "",
+    "type": "courrier",
+    "tier": 3,
+    "note": "EMAIL À VÉRIFIER. 1re PQR de France, format court. Nantes et Rennes ont des communautés africaines."
+  },
+  {
+    "id": "m072",
+    "nom": "20 Minutes",
+    "pays": "France",
+    "email": "redaction@20minutes.fr",
+    "url": "",
+    "type": "redaction",
+    "tier": 3,
+    "note": "EMAIL À VÉRIFIER. Lectorat jeune et urbain."
+  },
+  {
+    "id": "m073",
+    "nom": "Agoravox",
+    "pays": "France",
+    "email": "",
+    "url": "https://www.agoravox.fr/qui-sommes-nous/faq-et-conseils/article/devenir-redacteur-124",
+    "type": "formulaire",
+    "tier": 4,
+    "note": "Inscription requise, pas d'email. Publication quasi assurée après modération, mais faible autorité : utiliser pour tester un angle, pas pour la notoriété."
   }
 ]
