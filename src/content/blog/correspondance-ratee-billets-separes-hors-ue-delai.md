@@ -3,7 +3,7 @@ title: "Correspondance ratée sur billets séparés : vos droits au départ d'Eu
 meta_title: "Correspondance ratée, billets séparés : vos droits et les délais"
 meta_description: "Paris-Dakar retardé ou correspondance ratée hors UE ? 600 € au départ d'Europe, frais réels ailleurs. Le délai de 2 ans ne s'interrompt pas."
 slug: correspondance-ratee-billets-separes-hors-ue-delai
-image_url: /og-blog.png
+image_url: /assets/images/aeroport-blaise-diagne-dakar-nuit.jpg
 faq:
   - q: "Mon vol Dakar-Casablanca a été retardé de 24h. Le CE 261 s'applique-t-il ?"
     a: "Non. Le CE 261 suppose un départ depuis l'Union européenne, ou une compagnie européenne. Entre deux pays hors UE avec une compagnie non européenne, le règlement ne s'applique pas. La **Convention de Montréal** peut en revanche couvrir vos frais réels sur justificatifs."
@@ -30,6 +30,8 @@ Le cas revient régulièrement, en particulier sur les trajets de la diaspora. U
 La famille écrit à la compagnie. Puis réécrit. Aucune réponse ne vient. Les mois passent.
 
 Ce scénario cumule les trois difficultés que les services d'indemnisation classiques évitent : un vol hors du champ européen, des billets séparés, et un délai qui s'épuise sans que personne ne prévienne.
+
+![Façade illuminée de l'aéroport international Blaise Diagne de Dakar, de nuit](/assets/images/aeroport-blaise-diagne-dakar-nuit.jpg)
 
 ## Pourquoi le CE 261 ne s'applique pas ici
 

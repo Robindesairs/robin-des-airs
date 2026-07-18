@@ -16,12 +16,19 @@ const TODAY = new Date().toISOString().slice(0, 10);
  * Durcit les <img> du corps d'article : bascule les schémas PNG vers WebP (~5x plus léger),
  * diffère le chargement (aucune image n'est above-the-fold) et fixe les dimensions
  * pour éviter tout décalage de mise en page (CLS).
- * Les schémas de /assets/images/ sont tous en 1200x630.
+ * Les images de /assets/images/ sont toutes en 1200x630.
+ *
+ * Les PHOTOGRAPHIES sont servies en JPEG et gardent leur extension : elles n'ont pas de
+ * contrepartie WebP (aucun encodeur webp dans la chaîne de build), et un PNG photo pèse
+ * ~5x plus lourd qu'un JPEG de qualité équivalente. Elles bénéficient en revanche du même
+ * durcissement (dimensions figées, chargement différé) : sans lui, un <img> sans width ni
+ * height provoque un décalage de mise en page au chargement.
  */
 function enhanceBodyImages(html: string): string {
-  return html.replace(/<img\s+src="(\/assets\/images\/[^"]+)\.png"([^>]*)>/g, (_m, base, rest) => {
+  return html.replace(/<img\s+src="(\/assets\/images\/[^"]+)\.(png|jpe?g)"([^>]*)>/g, (_m, base, ext, rest) => {
     const attrs = rest.replace(/\s*\/?$/, '');
-    return `<img src="${base}.webp"${attrs} width="1200" height="630" loading="lazy" decoding="async">`;
+    const src = ext === 'png' ? `${base}.webp` : `${base}.${ext}`;
+    return `<img src="${src}"${attrs} width="1200" height="630" loading="lazy" decoding="async">`;
   });
 }
 
