@@ -4,7 +4,7 @@
 > Human-oriented summary: see `/llms.txt`.
 > Brand: robindesairs.eu (passenger rights) — NOT robindesairs.fr (air quality).
 
-Generated from `sitemap-index.xml` — **298 URLs** total.
+Generated from `sitemap-index.xml` — **299 URLs** total.
 
 ## How to use
 
@@ -12,7 +12,7 @@ Generated from `sitemap-index.xml` — **298 URLs** total.
 - Jurisprudence hub and CJEU sub-pages are primary legal reference content.
 - For prescription by country, use the prescription table article (Belgium: 5 years, art. 2262bis Belgian Civil Code for CE 261 contractual claims).
 
-## French (FR) — 256 URLs
+## French (FR) — 257 URLs
 
 - [Homepage](https://robindesairs.eu/)
 - [À propos, Robin des Airs : qui est derrière le service ?](https://robindesairs.eu/a-propos.html)
@@ -150,6 +150,7 @@ Generated from `sitemap-index.xml` — **298 URLs** total.
 - [Surbooking : guide droits CE 261 et compensation](https://robindesairs.eu/blog/surbooking-guide-complet-droits-passager.html)
 - [Surbooking : vos droits quand on vous refuse l'embarquement (jusqu'à 600€)](https://robindesairs.eu/blog/surbooking-refus-embarquement-indemnite.html)
 - [Surclassement gratuit en avion : 7 facteurs qui maximisent vos chances](https://robindesairs.eu/blog/surclassement-gratuit-avion-7-facteurs.html)
+- [Surclassement gratuit : les 7 facteurs qui marchent vraiment](https://robindesairs.eu/blog/surclassement-gratuit-avion-facteurs-reels.html)
 - [TAAG Angola Airlines vol retardé : vos droits CE 261 (Luanda)](https://robindesairs.eu/blog/taag-angola-airlines-vol-retarde-indemnite.html)
 - [Vol TAAG Angola Airlines retardé ou annulé : 600 € d'indemnité par passager](https://robindesairs.eu/blog/taag-angola-vol-retarde-indemnite.html)
 - [TAP Air Portugal vol retardé : jusqu'à 600€ par passager (CE261)](https://robindesairs.eu/blog/tap-air-portugal-vol-retarde-indemnite.html)
