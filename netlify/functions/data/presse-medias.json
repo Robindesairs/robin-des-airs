@@ -728,5 +728,145 @@
     "type": "formulaire",
     "tier": 4,
     "note": "Inscription requise, pas d'email. Publication quasi assurée après modération, mais faible autorité : utiliser pour tester un angle, pas pour la notoriété."
+  },
+  {
+    "id": "m074",
+    "nom": "Blueprint",
+    "pays": "Nigeria",
+    "email": "chambasimeh@gmail.com",
+    "url": "https://blueprint.ng/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Desk 'Letters, Opinions & Pages' nomme dans l'ours. Contact le plus qualifie du lot anglophone. Adresse generale de secours : blueprintdaily2011@gmail.com. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m075",
+    "nom": "Daily Trust",
+    "pays": "Nigeria",
+    "email": "dtonline@dailytrust.com",
+    "url": "https://dailytrust.com/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Titre du Nord nigerian, tres lu par la diaspora. Section Letters en navigation. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m076",
+    "nom": "The Nation",
+    "pays": "Nigeria",
+    "email": "akinola.w@thenationonlineng.net",
+    "url": "https://thenationonlineng.net/contact-us",
+    "type": "redaction",
+    "tier": 1,
+    "note": "Adresse de l'Online Editor, nomme. Meilleure chance de reponse humaine qu'une boite generique. General : info@thenationonlineng.net. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m077",
+    "nom": "Leadership",
+    "pays": "Nigeria",
+    "email": "editor@leadership.ng",
+    "url": "https://leadership.ng/",
+    "type": "tribune",
+    "tier": 2,
+    "note": "editor@ direct, rare. Publicite sur adresse separee (adverts@), canal editorial propre. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m078",
+    "nom": "ThisDay",
+    "pays": "Nigeria",
+    "email": "hello@thisdaylive.com",
+    "url": "https://www.thisdaylive.com/contact-us",
+    "type": "redaction",
+    "tier": 2,
+    "note": "Titre haut de gamme, lectorat business et institutionnel. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m079",
+    "nom": "Ripples Nigeria",
+    "pays": "Nigeria",
+    "email": "info@ripples.com.ng",
+    "url": "https://www.ripplesnigeria.com/",
+    "type": "redaction",
+    "tier": 3,
+    "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m080",
+    "nom": "The Whistler",
+    "pays": "Nigeria",
+    "email": "info@thewhistler.ng",
+    "url": "https://thewhistler.ng/",
+    "type": "redaction",
+    "tier": 3,
+    "note": "Section 'Opinion & Interviews'. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m081",
+    "nom": "Daily Graphic",
+    "pays": "Ghana",
+    "email": "webcontact@graphic.com.gh",
+    "url": "https://www.graphic.com.gh/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Quotidien de reference. Rubriques Opinion, Features et Editorials distinctes. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m082",
+    "nom": "Ghanaian Times",
+    "pays": "Ghana",
+    "email": "ghanaiantimes@gmail.com",
+    "url": "https://www.ghanaiantimes.com.gh/contact/",
+    "type": "redaction",
+    "tier": 3,
+    "note": "Quotidien d'Etat, forte diffusion. Cible d'appoint. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m083",
+    "nom": "3News",
+    "pays": "Ghana",
+    "email": "editorial@mg.com.gh",
+    "url": "https://3news.com/",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Adresse editorial@ du groupe Media General, canal clairement redactionnel. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m084",
+    "nom": "Capital FM",
+    "pays": "Kenya",
+    "email": "capital@capitalfm.co.ke",
+    "url": "https://www.capitalfm.co.ke/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Rubrique 'Op-Eds' affichee en navigation = politique de tribunes assumee. Seule vraie porte kenyane. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m085",
+    "nom": "The Standard",
+    "pays": "Kenya",
+    "email": "corporate@standardmedia.co.ke",
+    "url": "https://www.standardmedia.co.ke/corporate/contact-us",
+    "type": "redaction",
+    "tier": 3,
+    "note": "Adresse corporate, pas un desk opinion. Reponse incertaine. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m086",
+    "nom": "The Citizen",
+    "pays": "Afrique du Sud",
+    "email": "letters@citizen.co.za",
+    "url": "https://www.citizen.co.za/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Adresse letters@ DEDIEE aux contributions de lecteurs. Aucune friction. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m087",
+    "nom": "Nation Media Group",
+    "pays": "Kenya",
+    "email": "customercare@ke.nationmedia.com",
+    "url": "https://nation.africa/kenya/blogs-opinion",
+    "type": "redaction",
+    "tier": 4,
+    "note": "ATTENTION : adresse service lecteurs, PAS un desk opinion. Toutes les pages nation.africa bloquees en 403, a qualifier a la main. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
   }
 ]
