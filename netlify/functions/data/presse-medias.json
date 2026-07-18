@@ -1,0 +1,479 @@
+[
+  {
+    "id": "m001",
+    "nom": "L'Alternative",
+    "pays": "Togo",
+    "email": "contact@lalternative.info",
+    "url": "https://lalternative.info/category/tribune/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m002",
+    "nom": "Burkina24",
+    "pays": "Burkina Faso",
+    "email": "redchef@burkina24.com",
+    "url": "https://burkina24.com/category/actualite/opinion/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m003",
+    "nom": "Togobreakingnews",
+    "pays": "Togo",
+    "email": "contact@togobreakingnews.info",
+    "url": "https://togobreakingnews.info/category/opinions/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m004",
+    "nom": "Lefaso.net",
+    "pays": "Burkina Faso",
+    "email": "contact@lefaso.net",
+    "url": "https://lefaso.net/spip.php?rubrique21",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m005",
+    "nom": "ActuNiger",
+    "pays": "Niger",
+    "email": "contact@actuniger.com",
+    "url": "https://www.actuniger.com/tribune-opinion.html",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m006",
+    "nom": "Journal du Mali",
+    "pays": "Mali",
+    "email": "redaction@journaldumali.com",
+    "url": "https://journaldumali.com/category/idees/tribune/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m007",
+    "nom": "Malijet",
+    "pays": "Mali",
+    "email": "malijet@malijet.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m008",
+    "nom": "Connectionivoirienne",
+    "pays": "Côte d'Ivoire",
+    "email": "info@connectionivoirienne.net",
+    "url": "https://connectionivoirienne.net/category/libre-opinion/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m009",
+    "nom": "Le Point Sur",
+    "pays": "Côte d'Ivoire",
+    "email": "pointsurcom@gmail.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m010",
+    "nom": "Koaci",
+    "pays": "Côte d'Ivoire",
+    "email": "contact@koaci.com",
+    "url": "https://www.koaci.com/theme/tribune",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m011",
+    "nom": "Banouto",
+    "pays": "Bénin",
+    "email": "redaction@banouto.bj",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m012",
+    "nom": "Le Lynx / La Lance",
+    "pays": "Guinée",
+    "email": "redaction@lelynx.net",
+    "url": "",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m013",
+    "nom": "Le Djely",
+    "pays": "Guinée",
+    "email": "Contact@ledjely.com",
+    "url": "https://ledjely.com/category/tribune/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m014",
+    "nom": "Mosaïque Guinée",
+    "pays": "Guinée",
+    "email": "contact@mosaiqueguinee.com",
+    "url": "https://mosaiqueguinee.com/chroniques/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m015",
+    "nom": "Vision Guinée",
+    "pays": "Guinée",
+    "email": "boussouriou.bah@visionguinee.info",
+    "url": "",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m016",
+    "nom": "Mediaguinee",
+    "pays": "Guinée",
+    "email": "mediaguinee@gmail.com",
+    "url": "",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m017",
+    "nom": "Nigerdiaspora",
+    "pays": "Niger + diaspora",
+    "email": "nigerdiaspora@gmail.com",
+    "url": "https://www.nigerdiaspora.net/magazine/idees-et-opinions",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m018",
+    "nom": "Les Échos du Niger",
+    "pays": "Niger",
+    "email": "lesechosduniger@yahoo.com",
+    "url": "https://lesechosduniger.com/category/opinion-tribune/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m019",
+    "nom": "Sahelien.com",
+    "pays": "Mali / Sahel",
+    "email": "info@sahelien.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 3
+  },
+  {
+    "id": "m020",
+    "nom": "ADIAC / Dépêches de Brazzaville",
+    "pays": "Congo + RDC",
+    "email": "redaction@lesdepechesdebrazzaville.fr",
+    "url": "https://www.adiac-congo.com/opinion_rubrique/Tribune%20libre",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m021",
+    "nom": "Gabonreview",
+    "pays": "Gabon",
+    "email": "redaction.gabonreview@gmail.com",
+    "url": "https://www.gabonreview.com/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m022",
+    "nom": "Zoom Eco",
+    "pays": "RDC",
+    "email": "courriel@zoom-eco.net",
+    "url": "https://zoom-eco.net/category/tribune/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m023",
+    "nom": "7sur7.cd",
+    "pays": "RDC",
+    "email": "redaction@7sur7.cd",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m024",
+    "nom": "DataCameroon",
+    "pays": "Cameroun",
+    "email": "info@datacameroon.com",
+    "url": "https://datacameroon.com/category/tribune/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m025",
+    "nom": "Le Jour",
+    "pays": "Cameroun",
+    "email": "contact@lejour.cm",
+    "url": "",
+    "type": "redaction",
+    "tier": 3
+  },
+  {
+    "id": "m026",
+    "nom": "Dakaractu",
+    "pays": "Sénégal",
+    "email": "dakaractu@gmail.com",
+    "url": "https://www.dakaractu.com/submit/",
+    "type": "formulaire",
+    "tier": 1
+  },
+  {
+    "id": "m027",
+    "nom": "Seneweb",
+    "pays": "Sénégal",
+    "email": "redaction@seneweb.com",
+    "url": "https://www.seneweb.com/news/contributions",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m028",
+    "nom": "PressAfrik",
+    "pays": "Sénégal",
+    "email": "redchef@pressafrik.com",
+    "url": "https://www.pressafrik.com/Opinion_r12.html",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m029",
+    "nom": "Sud Quotidien",
+    "pays": "Sénégal",
+    "email": "sudquotidien@yahoo.fr",
+    "url": "",
+    "type": "redaction",
+    "tier": 3
+  },
+  {
+    "id": "m030",
+    "nom": "Xalima",
+    "pays": "Sénégal + diaspora",
+    "email": "redaction@xalimasn.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m031",
+    "nom": "Madagascar Tribune",
+    "pays": "Madagascar",
+    "email": "redaction@madagascar-tribune.com",
+    "url": "https://www.madagascar-tribune.com/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m032",
+    "nom": "Madagascar Tribune Europe",
+    "pays": "France",
+    "email": "contact@vahiny.com",
+    "url": "",
+    "type": "diaspora",
+    "tier": 1
+  },
+  {
+    "id": "m033",
+    "nom": "Mayotte Hebdo",
+    "pays": "Mayotte (France)",
+    "email": "redaction@mayottehebdo.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 1
+  },
+  {
+    "id": "m034",
+    "nom": "Le Mauricien",
+    "pays": "Maurice",
+    "email": "lemauricien.redaction@gmail.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m035",
+    "nom": "Premium Times",
+    "pays": "Nigeria",
+    "email": "opinion@premiumtimesng.com",
+    "url": "https://www.premiumtimesng.com/contact",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m036",
+    "nom": "The Cable",
+    "pays": "Nigeria",
+    "email": "opinion@thecable.ng",
+    "url": "https://www.thecable.ng/contact-us/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m037",
+    "nom": "B&FT Online",
+    "pays": "Ghana",
+    "email": "editor@thebftonline.com",
+    "url": "https://thebftonline.com/contact/",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m038",
+    "nom": "Daily Maverick",
+    "pays": "Afrique du Sud",
+    "email": "letters@dailymaverick.co.za",
+    "url": "https://www.dailymaverick.co.za/contact-us",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m039",
+    "nom": "The Voice",
+    "pays": "Diaspora UK",
+    "email": "newsdesk@thevoicemediagroup.co.uk",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m040",
+    "nom": "African Voice",
+    "pays": "Diaspora UK",
+    "email": "info@africanvoiceonline.co.uk",
+    "url": "",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m041",
+    "nom": "Aviation Ghana",
+    "pays": "Ghana (aviation)",
+    "email": "aviationghana.info@gmail.com",
+    "url": "",
+    "type": "redaction",
+    "tier": 3
+  },
+  {
+    "id": "m042",
+    "nom": "Financial Afrik",
+    "pays": "Panafricain",
+    "email": "redaction@financialafrik.com",
+    "url": "https://www.financialafrik.com/author/contribution/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m043",
+    "nom": "Jeune Afrique",
+    "pays": "Panafricain",
+    "email": "redaction@jeuneafrique.com",
+    "url": "https://www.jeuneafrique.com/idees/opinion/",
+    "type": "tribune",
+    "tier": 4
+  },
+  {
+    "id": "m044",
+    "nom": "Afrik.com",
+    "pays": "Panafricain",
+    "email": "contact@afrik.com",
+    "url": "https://www.afrik.com/contact-ours",
+    "type": "tribune",
+    "tier": 3
+  },
+  {
+    "id": "m045",
+    "nom": "Le Quotidien du Tourisme",
+    "pays": "France (pro)",
+    "email": "redaction@i-tourisme.fr",
+    "url": "https://www.quotidiendutourisme.com/statics/contacts.html",
+    "type": "redaction",
+    "tier": 1
+  },
+  {
+    "id": "m046",
+    "nom": "Tour Hebdo",
+    "pays": "France (pro)",
+    "email": "remi@i-tourisme.fr",
+    "url": "https://www.tourhebdo.fr/",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m047",
+    "nom": "TourMaG",
+    "pays": "France (pro)",
+    "email": "redaction@tourmag.com",
+    "url": "https://www.tourmag.com/",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m048",
+    "nom": "Air Journal",
+    "pays": "France (aviation)",
+    "email": "contact@air-journal.fr",
+    "url": "https://www.air-journal.fr/contact",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m049",
+    "nom": "Mizane.info",
+    "pays": "France (diaspora)",
+    "email": "contact@mizane.info",
+    "url": "https://www.mizane.info/contact/",
+    "type": "tribune",
+    "tier": 1
+  },
+  {
+    "id": "m050",
+    "nom": "La Libre",
+    "pays": "Belgique",
+    "email": "llb.debats@lalibre.be",
+    "url": "https://www.lalibre.be/debats/opinions/",
+    "type": "tribune",
+    "tier": 2
+  },
+  {
+    "id": "m051",
+    "nom": "Le Griot",
+    "pays": "France (panafricain)",
+    "email": "steven.addamah@legriot.info",
+    "url": "https://www.legriot.info/qui-sommes-nous",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m052",
+    "nom": "Amina Magazine",
+    "pays": "France (diaspora)",
+    "email": "info@aminamag.com",
+    "url": "https://aminamag.com/contact/",
+    "type": "redaction",
+    "tier": 2
+  },
+  {
+    "id": "m053",
+    "nom": "Bondy Blog",
+    "pays": "France",
+    "email": "sarah@lebb.fr",
+    "url": "https://www.bondyblog.fr/qui-sommes-nous/",
+    "type": "redaction",
+    "tier": 3
+  }
+]

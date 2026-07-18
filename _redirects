@@ -81,6 +81,7 @@
 /stats                      /statistiques.html                200
 /crm.html                   /crm/                             301
 /api/crm-auth               /.netlify/functions/crm-auth      200
+/api/presse-crm              /.netlify/functions/presse-crm              200
 /api/crm-backup             /.netlify/functions/crm-backup    200
 /api/crm-status-notify       /.netlify/functions/crm-status-notify       200
 /api/crm-template-send       /.netlify/functions/crm-template-send       200

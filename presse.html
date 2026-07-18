@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salle de presse, Robin des Airs · Suivi des tribunes</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="robin-des-airs-logo-profil-1024.png">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sky:#0A1628; --card:#112850; --card2:#0E2244; --border:rgba(255,255,255,.09);
+  --gold:#C8A85A; --ink:#E8EEF7; --muted:#8FA3BF;
+  --ok:#3DD68C; --warn:#F0B357; --bad:#FF8A7D; --info:#6BA8F5;
+  --f:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --m:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+body{background:var(--sky);color:var(--ink);font-family:var(--f);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:22px 18px 80px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:20px}
+h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px}
+a{color:var(--gold)}
+.back{margin-left:auto;font-size:13px;text-decoration:none}
+
+/* barre de stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;margin-bottom:18px;overflow:hidden}
+.stat{background:var(--card2);padding:11px 13px}
+.stat b{display:block;font-family:var(--m);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stat.due b{color:var(--warn)} .stat.pub b{color:var(--ok)}
+
+/* alerte relances */
+.due-box{border:1px solid rgba(240,179,87,.35);background:rgba(240,179,87,.08);border-radius:4px;padding:13px 15px;margin-bottom:18px}
+.due-box h2{font-size:14px;color:var(--warn);margin-bottom:7px}
+.due-box ul{list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+.due-box li{background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:3px;padding:5px 9px;font-size:12.5px}
+.due-box .none{color:var(--muted);font-size:13px}
+
+/* filtres */
+.filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.filters button{background:var(--card2);color:var(--muted);border:1px solid var(--border);border-radius:3px;padding:6px 11px;font:inherit;font-size:12.5px;cursor:pointer}
+.filters button:hover{color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--gold);color:#0A1628;border-color:var(--gold);font-weight:600}
+.filters input{flex:1;min-width:170px;background:var(--card2);border:1px solid var(--border);border-radius:3px;color:var(--ink);padding:6px 11px;font:inherit;font-size:13px}
+
+/* table */
+.tw{overflow-x:auto;border:1px solid var(--border);border-radius:4px}
+table{border-collapse:collapse;width:100%;min-width:900px;background:var(--card2);font-size:13.5px}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--border);vertical-align:middle}
+thead th{background:var(--card);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;position:sticky;top:0}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody tr:last-child td{border-bottom:none}
+.nom{font-weight:600}
+.nom small{display:block;color:var(--muted);font-weight:400;font-size:11.5px}
+.mail{font-family:var(--m);font-size:11.5px;color:var(--muted);word-break:break-all}
+.tier{font-family:var(--m);font-size:11px;padding:2px 6px;border-radius:2px;background:rgba(255,255,255,.07);color:var(--muted)}
+.tier.t1{background:rgba(61,214,140,.15);color:var(--ok)}
+.tier.t2{background:rgba(107,168,245,.15);color:var(--info)}
+td.date{font-family:var(--m);font-size:11.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+td.date.due{color:var(--warn);font-weight:600}
+select,.note-in{background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--ink);padding:5px 8px;font:inherit;font-size:12.5px;max-width:100%}
+.note-in{width:100%;min-width:130px}
+.st-envoye{color:var(--info)} .st-relance1,.st-relance2{color:var(--warn)}
+.st-publie,.st-accepte{color:var(--ok)} .st-refus,.st-sans_suite{color:var(--bad)}
+.copy{background:none;border:1px solid var(--border);color:var(--muted);border-radius:3px;padding:3px 7px;font-size:11px;cursor:pointer}
+.copy:hover{color:var(--ink);border-color:var(--gold)}
+.msg{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--card);border:1px solid var(--gold);border-radius:4px;padding:9px 16px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.msg.on{opacity:1}
+.gate{max-width:340px;margin:70px auto;background:var(--card2);border:1px solid var(--border);border-radius:5px;padding:22px}
+.gate h2{font-size:16px;margin-bottom:12px}
+.gate input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--ink);padding:9px 11px;font:inherit;margin-bottom:10px}
+.gate button{width:100%;background:var(--gold);color:#0A1628;border:none;border-radius:3px;padding:9px;font:inherit;font-weight:700;cursor:pointer}
+.gate .err{color:var(--bad);font-size:12.5px;margin-top:9px;min-height:16px}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="gate" class="gate hidden">
+  <h2>Salle de presse</h2>
+  <input id="code" type="password" placeholder="Code CRM" autocomplete="off">
+  <button id="login">Entrer</button>
+  <div id="gate-err" class="err"></div>
+</div>
+
+<div id="app" class="wrap hidden">
+  <header>
+    <h1>Salle de presse</h1>
+    <span class="sub">Suivi des tribunes et relances</span>
+    <a class="back" href="/bureau.html">← Le Bureau</a>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="due-box">
+    <h2>À relancer aujourd'hui</h2>
+    <div id="due"></div>
+  </div>
+
+  <div class="filters">
+    <button data-f="tous" aria-pressed="true">Tous</button>
+    <button data-f="a_envoyer" aria-pressed="false">À envoyer</button>
+    <button data-f="envoye" aria-pressed="false">Envoyés</button>
+    <button data-f="relance" aria-pressed="false">Relancés</button>
+    <button data-f="reponse" aria-pressed="false">Réponses</button>
+    <button data-f="publie" aria-pressed="false">Publiés</button>
+    <button data-f="tier1" aria-pressed="false">Tier 1</button>
+    <input id="q" type="search" placeholder="Filtrer par nom ou pays">
+  </div>
+
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th>Média</th><th>Contact</th><th>Statut</th>
+          <th>Envoyé le</th><th>Relance due</th><th>URL publiée</th><th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="msg" class="msg"></div>
+
+<script>
+const STATUTS=[["a_envoyer","À envoyer"],["envoye","Envoyé"],["relance1","Relance 1"],["relance2","Relance 2"],
+  ["reponse","Réponse reçue"],["accepte","Accepté"],["publie","Publié"],["refus","Refus"],["sans_suite","Sans suite"]];
+let MEDIAS=[], ETAT={}, FILTRE='tous', TODAY='';
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(t){const m=document.getElementById('msg');m.textContent=t;m.classList.add('on');setTimeout(()=>m.classList.remove('on'),1900);}
+
+async function api(method,body,qs){
+  const r=await fetch('/api/presse-crm'+(qs||''),{method,credentials:'same-origin',
+    headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});
+  if(r.status===401){document.getElementById('app').classList.add('hidden');document.getElementById('gate').classList.remove('hidden');throw new Error('auth');}
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+function fusion(){
+  return MEDIAS.map(m=>{
+    const e=ETAT[m.id]||{};
+    return {...m, statut:e.statut||'a_envoyer', date_contact:e.date_contact||'', relance_due:e.relance_due||'',
+            url_publication:e.url_publication||'', notes:e.notes||''};
+  });
+}
+function visible(x){
+  const q=document.getElementById('q').value.trim().toLowerCase();
+  if(q && !(x.nom+' '+x.pays).toLowerCase().includes(q))return false;
+  if(FILTRE==='tous')return true;
+  if(FILTRE==='tier1')return x.tier===1;
+  if(FILTRE==='relance')return x.statut==='relance1'||x.statut==='relance2';
+  if(FILTRE==='reponse')return ['reponse','accepte'].includes(x.statut);
+  if(FILTRE==='publie')return x.statut==='publie';
+  return x.statut===FILTRE;
+}
+
+function rendre(){
+  const all=fusion();
+  const n=s=>all.filter(x=>x.statut===s).length;
+  const dues=all.filter(x=>x.relance_due && x.relance_due<=TODAY);
+  document.getElementById('stats').innerHTML=[
+    ['Médias',all.length,''],['À envoyer',n('a_envoyer'),''],['Envoyés',n('envoye'),''],
+    ['Relancés',n('relance1')+n('relance2'),''],['Réponses',n('reponse')+n('accepte'),''],
+    ['Publiés',n('publie'),'pub'],['Relances dues',dues.length,'due']
+  ].map(([l,v,c])=>`<div class="stat ${c}"><b>${v}</b><span>${esc(l)}</span></div>`).join('');
+
+  document.getElementById('due').innerHTML = dues.length
+    ? '<ul>'+dues.map(x=>`<li><b>${esc(x.nom)}</b> · ${esc(x.pays)} · <span class="mail">${esc(x.email)}</span></li>`).join('')+'</ul>'
+    : '<div class="none">Rien à relancer. Une relance part 10 jours après l\'envoi, la seconde 11 jours plus tard.</div>';
+
+  document.getElementById('rows').innerHTML=all.filter(visible).map(x=>{
+    const due=x.relance_due&&x.relance_due<=TODAY;
+    return `<tr data-id="${esc(x.id)}">
+      <td class="nom">${esc(x.nom)} <span class="tier t${x.tier}">T${x.tier}</span><small>${esc(x.pays)}${x.url?` · <a href="${esc(x.url)}" target="_blank" rel="noopener">rubrique</a>`:''}</small></td>
+      <td><span class="mail">${esc(x.email)}</span><br><button class="copy" data-copy="${esc(x.email)}">copier</button></td>
+      <td><select class="st st-${esc(x.statut)}">${STATUTS.map(([v,l])=>`<option value="${v}"${v===x.statut?' selected':''}>${l}</option>`).join('')}</select></td>
+      <td class="date">${esc(x.date_contact)||'—'}</td>
+      <td class="date${due?' due':''}">${esc(x.relance_due)||'—'}</td>
+      <td><input class="note-in url" value="${esc(x.url_publication)}" placeholder="https://…"></td>
+      <td><input class="note-in notes" value="${esc(x.notes)}" placeholder="note"></td>
+    </tr>`;}).join('') || '<tr><td colspan="7" style="color:var(--muted);padding:18px">Aucun média pour ce filtre.</td></tr>';
+}
+
+async function sauver(tr){
+  const id=tr.dataset.id, m=MEDIAS.find(x=>x.id===id);
+  const body={id,nom:m.nom,statut:tr.querySelector('.st').value,
+    url_publication:tr.querySelector('.url').value.trim(),notes:tr.querySelector('.notes').value.trim()};
+  try{const r=await api('POST',body);ETAT[id]=r.item;rendre();toast('Enregistré');}
+  catch(e){if(e.message!=='auth')toast('Échec de l\'enregistrement');}
+}
+
+document.addEventListener('change',e=>{const tr=e.target.closest('tr[data-id]');if(tr&&e.target.matches('.st,.url,.notes'))sauver(tr);});
+document.addEventListener('blur',e=>{const tr=e.target.closest('tr[data-id]');if(tr&&e.target.matches('.url,.notes'))sauver(tr);},true);
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.copy');
+  if(c){navigator.clipboard.writeText(c.dataset.copy).then(()=>toast('Adresse copiée'),()=>toast('Copie impossible'));return;}
+  const f=e.target.closest('.filters button');
+  if(f){FILTRE=f.dataset.f;document.querySelectorAll('.filters button').forEach(b=>b.setAttribute('aria-pressed',String(b===f)));rendre();}
+});
+document.getElementById('q').addEventListener('input',rendre);
+
+document.getElementById('login').addEventListener('click',async()=>{
+  const code=document.getElementById('code').value.trim();
+  const err=document.getElementById('gate-err');err.textContent='';
+  try{
+    const r=await fetch('/api/crm-auth',{method:'POST',credentials:'same-origin',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
+    if(!r.ok){err.textContent='Code refusé';return;}
+    document.getElementById('gate').classList.add('hidden');demarrer();
+  }catch{err.textContent='Erreur réseau';}
+});
+document.getElementById('code').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login').click();});
+
+async function demarrer(){
+  try{
+    // Catalogue ET état arrivent par la même requête authentifiée : la liste de
+    // prospection ne doit jamais être servie en statique (elle serait publique).
+    const etat=await api('GET');
+    MEDIAS=etat.medias||[]; TODAY=etat.today;
+    ETAT=Object.fromEntries((etat.items||[]).map(i=>[i.id,i]));
+    document.getElementById('app').classList.remove('hidden');
+    rendre();
+  }catch(e){ if(e.message!=='auth') { document.getElementById('gate').classList.remove('hidden'); } }
+}
+demarrer();
+</script>
+</body>
+</html>
