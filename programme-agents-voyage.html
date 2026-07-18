@@ -1288,7 +1288,7 @@
 
 <!-- Bandeau, promesse commission -->
 <div class="stripe">
-  45€ (30 000 FCFA) <strong>nets pour votre agence</strong> par passager indemnisé &nbsp;·&nbsp; Versement sur <strong>votre compte</strong> &nbsp;·&nbsp; Zéro frais fixe &nbsp;·&nbsp; Robin gère le dossier
+  45€ (30 000 FCFA) <strong>nets pour votre agence</strong> par passager indemnisé sur le long-courrier &nbsp;·&nbsp; Soit <strong>7,5 % de l'indemnité encaissée</strong> &nbsp;·&nbsp; Versement sur <strong>votre compte</strong> &nbsp;·&nbsp; Zéro frais fixe
 </div>
 <section class="aida-close" aria-labelledby="aida-title">
   <div class="aida-close-inner">
@@ -1382,7 +1382,7 @@
   <div class="container">
     <div class="stats-row">
       <div class="stat-item">
-        <div class="stat-num">600€ <span class="money-sub">(395 000 FCFA)</span></div>
+        <div class="stat-num">600€ <span class="money-sub">(394 000 FCFA)</span></div>
         <div class="stat-label">Indemnité maximale indicative<br/>par passager (barème EU261)</div>
       </div>
       <div class="stat-item">
@@ -1408,7 +1408,8 @@
     <h2 id="transparence-title">Ce que votre agence voit, noir sur blanc</h2>
     <p class="lead">Les mêmes règles pour tout le monde : pas de surprise au moment du versement.</p>
     <ul class="transparence-list">
-      <li><strong>Rémunération agence :</strong> 45€ (30.000 FCFA) par passager indemnisé, <strong>versés sur le compte que vous indiquez</strong> (Wave, Orange Money, SEPA…). Délai typique : sous 48h après réception des fonds côté passager, c’est un <strong>encaissement agence</strong>, pas un avoir interne.</li>
+      <li><strong>Rémunération agence :</strong> <strong>7,5 % de l'indemnité réellement encaissée</strong>, par passager indemnisé, soit <strong>45€ (30.000 FCFA)</strong> sur un dossier long-courrier à 600€, <strong>versés sur le compte que vous indiquez</strong> (Wave, Orange Money, SEPA…). Délai typique : sous 48h après réception des fonds côté passager, c’est un <strong>encaissement agence</strong>, pas un avoir interne. <a href="/paliers-commission-agence-fr.html">Voir le détail par tranche</a>.</li>
+      <li><strong>Un taux, pas un forfait.</strong> L'indemnité CE 261 vaut 600€ au-delà de 3 500 km, 400€ ou 250€ en deçà : la commission suit. Et si la compagnie règle un montant inférieur au barème, elle baisse dans la même proportion, jamais davantage. <strong>Toutes les liaisons Europe-Afrique subsaharienne sont à 600€</strong> : Dakar-Paris, Abidjan-Paris, Kinshasa-Bruxelles.</li>
       <li><strong>Frais de succès passager :</strong> 25 % sur l'indemnité seulement si l'argent est récupéré ; sinon le passager ne paie rien à Robin des Airs, cohérent avec votre discours « zéro risque ».</li>
       <li><strong>Aucun frais côté agence.</strong> Pas d'abonnement, pas de frais d'entrée, pas de minimum de dossiers.</li>
       <li><strong>Suivi :</strong> vous pouvez demander où en est un dossier référé ; vous restez le point de contact relationnel de votre client.</li>
@@ -1573,7 +1574,7 @@
       <p>Selon l'EU, moins de 5 % des passagers éligibles réclament réellement leur indemnité. Chaque mois, vos clients laissent sur la table des sommes importantes en euros (et en FCFA) qui leur reviennent de droit, et vous une commission que vous pourriez toucher.</p>
       <div class="loss-numbers">
         <div class="loss-num"><strong>95 %</strong><span>des passagers éligibles abandonnent</span></div>
-        <div class="loss-num"><strong>600€</strong><span>(395 000 FCFA) non réclamés au maximum par passager concerné</span></div>
+        <div class="loss-num"><strong>600€</strong><span>(394 000 FCFA) non réclamés au maximum par passager concerné</span></div>
         <div class="loss-num"><strong>0€</strong><span>(0 FCFA) pour votre agence</span></div>
       </div>
       <a href="#rejoindre" class="btn-teal" style="background:var(--navy);color:#fff">
@@ -1594,7 +1595,7 @@
         <div class="comm-tag">Priorité affichage</div>
         <div class="comm-currency">Commission agence</div>
         <div class="comm-amount">45€ <span style="font-size:0.52em;font-weight:700;">(30 000 FCFA)</span></div>
-        <div class="comm-per">net par passager indemnisé, <strong>reste chez l’agence</strong></div>
+        <div class="comm-per">net par passager indemnisé sur le long-courrier, soit <strong>7,5 % de l'indemnité encaissée</strong></div>
         <ul class="comm-list">
           <li>✅ Wise € compte pro</li>
           <li>✅ Orange Money CFA instant</li>
@@ -1703,7 +1704,7 @@
       <details>
         <summary>Puis-je choisir la commission en euros ou en FCFA ?</summary>
         <div class="faq-body">
-          Oui. Au moment de l'inscription, vous sélectionnez <strong>EUR (45 €)</strong> ou <strong>FCFA (30.000 FCFA)</strong> par passager indemnisé. La convention est ajustée en conséquence (versement SEPA en euros vs Mobile Money / virement local).
+          Oui. Au moment de l'inscription, vous sélectionnez <strong>EUR (45 €)</strong> ou <strong>FCFA (30.000 FCFA)</strong> par passager indemnisé sur un dossier long-courrier, la commission étant dans les deux cas de 7,5 % de l'indemnité encaissée. Le franc CFA étant rattaché à l'euro à parité fixe, les deux montants restent équivalents dans le temps. La convention est ajustée en conséquence (versement SEPA en euros vs Mobile Money / virement local).
         </div>
       </details>
 
@@ -2018,8 +2019,8 @@
     var convRadio = form.querySelector('input[name="convention"]:checked');
     var isEur = convRadio && convRadio.value.indexOf('EUR') !== -1;
     var conventionText = isEur
-      ? '45 € nets par passager indemnisé, commission agence versée sur le compte pro (SEPA), typiquement sous 48h après encaissement côté passager.'
-      : '30 000 FCFA nets par passager indemnisé (équivalent 45€), versés sur le compte agence (Orange Money / Wave), typiquement sous 48h après encaissement côté passager.';
+      ? '7,5 % de l\'indemnité encaissée, soit 45 € nets par passager indemnisé sur le long-courrier, commission agence versée sur le compte pro (SEPA), typiquement sous 48h après encaissement côté passager.'
+      : '7,5 % de l\'indemnité encaissée, soit 30 000 FCFA nets par passager indemnisé sur le long-courrier (équivalent 45€), versés sur le compte agence (Orange Money / Wave), typiquement sous 48h après encaissement côté passager.';
 
     var volumeText =
       volume && volume.value
