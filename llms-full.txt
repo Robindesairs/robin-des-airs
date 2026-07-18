@@ -4,7 +4,7 @@
 > Human-oriented summary: see `/llms.txt`.
 > Brand: robindesairs.eu (passenger rights) — NOT robindesairs.fr (air quality).
 
-Generated from `sitemap-index.xml` — **297 URLs** total.
+Generated from `sitemap-index.xml` — **298 URLs** total.
 
 ## How to use
 
@@ -12,7 +12,7 @@ Generated from `sitemap-index.xml` — **297 URLs** total.
 - Jurisprudence hub and CJEU sub-pages are primary legal reference content.
 - For prescription by country, use the prescription table article (Belgium: 5 years, art. 2262bis Belgian Civil Code for CE 261 contractual claims).
 
-## French (FR) — 255 URLs
+## French (FR) — 256 URLs
 
 - [Homepage](https://robindesairs.eu/)
 - [À propos, Robin des Airs : qui est derrière le service ?](https://robindesairs.eu/a-propos.html)
@@ -76,6 +76,7 @@ Generated from `sitemap-index.xml` — **297 URLs** total.
 - [Convention de Montréal : rembourser frais réels d'un vol retardé (jusqu'à ~6 300 DTS)](https://robindesairs.eu/blog/convention-montreal-retard-frais-prouver-prejudice.html)
 - [Correspondance ratée Addis-Abeba / Nairobi vers l'UE : jusqu'à 600€ (CE 261)](https://robindesairs.eu/blog/correspondance-manquee-addis-abeba-nairobi-vers-europe-ce261.html)
 - [Correspondance manquée : qui paie l'indemnité ? Jusqu'à 600€](https://robindesairs.eu/blog/correspondance-manquee-indemnite-vol.html)
+- [Correspondance ratée hors UE : vos droits et le délai de 2 ans](https://robindesairs.eu/blog/correspondance-ratee-billets-separes-hors-ue-delai.html)
 - [Corsair vol retardé : vos droits à l'indemnité (jusqu'à 600€)](https://robindesairs.eu/blog/corsair-vol-retarde-indemnite.html)
 - [Délai paiement indemnité CE 261 : vos droits](https://robindesairs.eu/blog/delai-paiement-indemnite-ce261.html)
 - [Combien de temps pour réclamer selon le pays de départ (France, Belgique, Allemagne)](https://robindesairs.eu/blog/delai-prescription-reclamer-indemnite-vol-afrique-par-pays.html)
