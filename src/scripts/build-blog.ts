@@ -69,7 +69,11 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 #blog-body a{color:#009960;font-weight:600}
 #blog-body a:hover{color:#00C87A;text-decoration:underline}
 #blog-body img{display:block;max-width:100%;height:auto;margin:1.25rem 0;border-radius:.5rem;border:1px solid #E2E6EE}
-#blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
+/* Tableaux : 92 articles en contiennent, certains à 4 colonnes. Sans overflow, la
+   dernière colonne était purement coupée sur mobile (vérifié à 375px : la colonne
+   « Délai pour agir » disparaissait hors écran, sans scroll possible). Le trafic
+   étant majoritairement mobile, on rend le tableau scrollable horizontalement. */
+#blog-body table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;font-size:14px}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}

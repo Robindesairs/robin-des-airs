@@ -1,7 +1,7 @@
 ---
-title: "Correspondance ratée sur billets séparés hors UE : vos droits et le délai qui efface tout"
-meta_title: "Correspondance ratée hors UE : vos droits et le délai de 2 ans"
-meta_description: "Vol hors UE retardé, correspondance ratée sur billet séparé ? La Convention de Montréal couvre vos frais réels. Le délai de 2 ans ne s'interrompt pas."
+title: "Correspondance ratée sur billets séparés : vos droits au départ d'Europe et hors UE"
+meta_title: "Correspondance ratée, billets séparés : vos droits et les délais"
+meta_description: "Paris-Dakar retardé ou correspondance ratée hors UE ? 600 € au départ d'Europe, frais réels ailleurs. Le délai de 2 ans ne s'interrompt pas."
 slug: correspondance-ratee-billets-separes-hors-ue-delai
 image_url: /og-blog.png
 faq:
@@ -15,6 +15,10 @@ faq:
     a: "Non, et c'est le piège principal. Une réclamation, une lettre recommandée ou une mise en demeure n'arrêtent pas une forclusion, contrairement à une prescription ordinaire. Seule **l'introduction effective d'une action en justice** stoppe le compteur."
   - q: "Une panne technique dispense-t-elle la compagnie de payer ?"
     a: "Rarement. Sous l'article 19, le transporteur s'exonère seulement s'il prouve avoir pris toutes les mesures raisonnablement requises. Une défaillance technique est inhérente à l'activité de transporteur, ce qui rend cette preuve difficile à rapporter."
+  - q: "Mon vol Paris-Dakar a été retardé de plus de 3h. Quels sont mes droits ?"
+    a: "Le départ a lieu depuis l'Union européenne, donc le **CE 261 s'applique quelle que soit la compagnie**, y compris africaine. Vous avez droit à **600 € forfaitaires par passager** (Paris-Dakar dépasse 3 500 km), sans avoir à justifier la moindre dépense. Pour une famille de quatre, cela représente 2 400 €. Le délai pour agir est de 5 ans en droit français."
+  - q: "Mon retour Dakar-Paris est couvert ou non ?"
+    a: "Cela dépend de la compagnie. Sur une compagnie **européenne** (Air France, Corsair, Brussels Airlines), le CE 261 s'applique : 600 € forfaitaires et 5 ans pour agir. Sur une compagnie **non européenne**, il ne s'applique pas : seule la Convention de Montréal joue, avec des frais réels sur justificatifs et un délai de 2 ans non interruptible."
   - q: "Faut-il un avocat pour réclamer 1 500 € ?"
     a: "En France, devant le tribunal judiciaire, la représentation par avocat n'est pas obligatoire pour les demandes **inférieures à 10 000 €**, et la saisine ne coûte rien. L'aide juridictionnelle et les consultations juridiques gratuites existent par ailleurs."
 ---
@@ -65,6 +69,29 @@ Autrement dit, une famille qui relance la compagnie pendant vingt-trois mois, de
 
 Seule l'**introduction effective d'une action en justice** stoppe le compteur. Si votre vol approche des deux ans, cessez d'écrire et occupez-vous de saisir un tribunal.
 
+## Et si votre vol partait d'Europe ? Tout change
+
+C'est le point que la plupart des passagers ignorent : **le même incident n'ouvre pas du tout les mêmes droits selon l'aéroport de départ et la compagnie**.
+
+Au départ de Paris, Lyon, Marseille, Bruxelles ou de n'importe quel aéroport de l'Union européenne, le CE 261 s'applique quelle que soit la compagnie, y compris africaine. Vous basculez alors sur l'indemnité forfaitaire, sans avoir à prouver la moindre dépense, et le délai pour agir en France passe à **cinq ans** au lieu de deux.
+
+| Trajet | Texte applicable | Ce que vous obtenez | Délai pour agir |
+|---|---|---|---|
+| Paris → Dakar, toute compagnie | CE 261 | 600 € forfaitaires par passager | 5 ans (France) |
+| Paris → Abidjan, Bamako, Douala | CE 261 | 600 € forfaitaires par passager | 5 ans (France) |
+| Paris → Casablanca ou Tunis | CE 261 | 400 € forfaitaires par passager | 5 ans (France) |
+| Dakar → Paris sur compagnie **européenne** (Air France, Corsair, Brussels) | CE 261 | 600 € forfaitaires par passager | 5 ans (France) |
+| Dakar → Paris sur compagnie **non européenne** | Montréal seulement | Frais réels sur justificatifs | **2 ans, forclusion** |
+| Dakar → Casablanca, Abidjan → Dakar | Montréal seulement | Frais réels sur justificatifs | **2 ans, forclusion** |
+
+Deux conséquences pratiques méritent d'être retenues.
+
+**Sur le vol aller depuis l'Europe, vous êtes très bien protégé.** Un Paris vers Dakar retardé de plus de trois heures ouvre 600 € par passager, soit 2 400 € pour une famille de quatre, sans justificatif à produire. Beaucoup de familles de la diaspora ne réclament jamais cette somme.
+
+**Sur le retour, tout dépend de la compagnie.** Un Dakar vers Paris opéré par Air France reste couvert par le CE 261, parce que la compagnie est européenne. Le même trajet sur une compagnie africaine ne l'est pas. À trajet identique, le choix de la compagnie change vos droits du tout au tout, et personne ne vous le dit au moment de la réservation.
+
+Enfin, si votre correspondance ratée se situe à l'intérieur de l'Europe, par exemple Paris vers Bruxelles ou Paris vers Genève acheté séparément, le CE 261 couvre chaque vol européen concerné, et la difficulté redevient celle des billets séparés plutôt que celle du délai.
+
 ## Quel tribunal saisir
 
 L'**article 33** de la Convention laisse le choix entre plusieurs juridictions : le domicile du transporteur, son siège principal, le lieu de l'établissement par lequel le contrat a été conclu, ou le lieu de destination.
@@ -83,7 +110,9 @@ Deux ressources gratuites méritent d'être sollicitées avant toute chose. L'**
 
 ## Ce qu'il faut retenir
 
-Un vol hors UE ne donne pas droit aux 600 € forfaitaires, mais peut ouvrir le remboursement de vos frais réels. Les billets séparés compliquent le dossier sans le condamner. Et surtout, le compte à rebours de deux ans tourne dès l'atterrissage manqué, sans jamais s'arrêter pour vos courriers.
+Au départ d'Europe, vous êtes bien protégé : 600 € forfaitaires par passager sur Paris vers Dakar, Abidjan, Bamako ou Douala, sans justificatif, et cinq ans pour agir. Sur le retour, tout dépend de la compagnie : européenne, vous restez couvert ; africaine, vous basculez sur la Convention de Montréal.
+
+Un vol entièrement hors UE ne donne pas droit aux 600 € forfaitaires, mais peut ouvrir le remboursement de vos frais réels. Les billets séparés compliquent le dossier sans le condamner. Et surtout, le compte à rebours de deux ans tourne dès l'atterrissage manqué, sans jamais s'arrêter pour vos courriers.
 
 Si votre vol date de plus de dix-huit mois, la priorité n'est plus de réclamer. Elle est de vérifier votre échéance.
 
