@@ -1,7 +1,7 @@
 ---
 title: "Air Sénégal retard, annulation, bagage : indemnité et droits complets"
-meta_title: "Air Sénégal retard ou annulation : jusqu'à 600€ d'indemnité — guide complet"
-meta_description: "Vol Air Sénégal retardé, annulé ou bagages perdus ? Guide complet : montants CE261 (jusqu'à 600€), Convention de Montréal, quels vols sont couverts, documents à fournir."
+meta_title: "Air Sénégal retardé : 600 € par passager au départ de Paris"
+meta_description: "Vol Air Sénégal retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Paris, même si la compagnie n'est pas européenne. Au départ de Dakar, c'est différent."
 slug: air-senegal-vol-retarde-indemnite
 image_url: /og-blog.png
 faq:

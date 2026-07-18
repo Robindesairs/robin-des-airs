@@ -1,7 +1,7 @@
 ---
 title: "Vol Ethiopian Airlines retardé ou annulé : indemnité jusqu'à 600 €"
-meta_title: "Vol Ethiopian Airlines retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
-meta_description: "Vol Ethiopian Airlines retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
+meta_title: "Ethiopian Airlines retardé : 600 € au départ d'Europe"
+meta_description: "Vol Ethiopian Airlines retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Paris, Bruxelles ou Francfort. Au départ d'Addis-Abeba, c'est différent."
 slug: ethiopian-airlines-vol-retarde-indemnite
 hreflang_en: ethiopian-airlines-delayed-flight-compensation
 image_url: /assets/images/schema-ce261-sens-compagnie.png
