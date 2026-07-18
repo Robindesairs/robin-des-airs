@@ -35,7 +35,11 @@ const themeRank = (t) => {
 };
 
 const nCJUE = cases.filter((c) => c.juridiction === 'CJUE').length;
-const nFR = cases.length - nCJUE;
+const nTribUE = cases.filter((c) => c.juridiction === 'Tribunal UE').length;
+// Depuis le règl. (UE, Euratom) 2024/2019, les renvois préjudiciels en droits des
+// passagers sont jugés par le TRIBUNAL de l'UE (affaires en T-), pas par la Cour.
+// Sans cette ligne, ces arrêts étaient comptés comme jurisprudence FRANÇAISE.
+const nFR = cases.length - nCJUE - nTribUE;
 const nConfirmer = cases.filter((c) => c.confiance === 'à confirmer').length;
 const themes = [...new Set(cases.map((c) => c.theme))].sort((a, b) => themeRank(a) - themeRank(b));
 const dateMin = cases.reduce((m, c) => (c.date < m ? c.date : m), '9999');
@@ -220,6 +224,7 @@ const html = `<!DOCTYPE html>
     <div class="statline">
       <span class="stat"><b>${cases.length}</b> arrêts</span>
       <span class="stat"><span class="dot">●</span> <b>${nCJUE}</b> CJUE</span>
+      ${nTribUE ? `<span class="stat"><span class="dot">●</span> <b>${nTribUE}</b> Tribunal UE</span>` : ''}
       <span class="stat"><span class="dot">●</span> <b>${nFR}</b> France</span>
       <span class="stat">${yMin}–${yMax}</span>
       <span class="stat" id="stat-su">Su : <b>0</b></span>
@@ -320,7 +325,8 @@ const state = { q:'', jur:'all', theme:'all', mode:'lecture', onlyUnknown:false,
 
 const norm = (s) => (s||'').toString().toLowerCase()
   .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');
-const isFR = (c) => c.juridiction !== 'CJUE';
+const EU_JUR = ['CJUE', 'Tribunal UE'];
+const isFR = (c) => !EU_JUR.includes(c.juridiction);
 
 function searchText(c){
   return norm([c.nom,c.ref,c.theme,(c.tags||[]).join(' '),c.question,c.decision,c.portee,c.robin].join(' '));
@@ -342,7 +348,7 @@ function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').repla
 function badge(c){
   const jur = isFR(c)
     ? '<span class="b jur-fr">'+esc(c.juridiction)+'</span>'
-    : '<span class="b jur-cjue">CJUE</span>';
+    : '<span class="b jur-cjue">'+esc(c.juridiction)+'</span>';
   const warn = c.confiance==='à confirmer' ? '<span class="b warn">à confirmer</span>' : '';
   const su = progress[c.id]==='su' ? '<span class="b su">✓ su</span>' : '';
   return jur + '<span class="b theme">'+esc(c.theme)+'</span>' + warn + su;
