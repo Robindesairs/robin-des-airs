@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
   <defs>
     <g id="bc">
-      <rect x="0" y="0" width="3" height="34" fill="#111"/><rect x="5" y="0" width="1" height="34" fill="#111"/>
-      <rect x="8" y="0" width="2" height="34" fill="#111"/><rect x="13" y="0" width="4" height="34" fill="#111"/>
-      <rect x="19" y="0" width="1" height="34" fill="#111"/><rect x="22" y="0" width="3" height="34" fill="#111"/>
-      <rect x="28" y="0" width="2" height="34" fill="#111"/><rect x="33" y="0" width="1" height="34" fill="#111"/>
-      <rect x="36" y="0" width="4" height="34" fill="#111"/><rect x="42" y="0" width="2" height="34" fill="#111"/>
-      <rect x="47" y="0" width="1" height="34" fill="#111"/><rect x="50" y="0" width="3" height="34" fill="#111"/>
-      <rect x="56" y="0" width="2" height="34" fill="#111"/><rect x="60" y="0" width="4" height="34" fill="#111"/>
-      <rect x="67" y="0" width="1" height="34" fill="#111"/><rect x="70" y="0" width="2" height="34" fill="#111"/>
-      <rect x="75" y="0" width="3" height="34" fill="#111"/><rect x="80" y="0" width="1" height="34" fill="#111"/>
-      <rect x="84" y="0" width="4" height="34" fill="#111"/><rect x="91" y="0" width="2" height="34" fill="#111"/>
+      <rect x="0" y="0" width="3" height="26" fill="#111"/><rect x="5" y="0" width="1" height="26" fill="#111"/>
+      <rect x="8" y="0" width="2" height="26" fill="#111"/><rect x="13" y="0" width="4" height="26" fill="#111"/>
+      <rect x="19" y="0" width="1" height="26" fill="#111"/><rect x="22" y="0" width="3" height="26" fill="#111"/>
+      <rect x="28" y="0" width="2" height="26" fill="#111"/><rect x="33" y="0" width="1" height="26" fill="#111"/>
+      <rect x="36" y="0" width="4" height="26" fill="#111"/><rect x="42" y="0" width="2" height="26" fill="#111"/>
+      <rect x="47" y="0" width="1" height="26" fill="#111"/><rect x="50" y="0" width="3" height="26" fill="#111"/>
+      <rect x="56" y="0" width="2" height="26" fill="#111"/><rect x="60" y="0" width="4" height="26" fill="#111"/>
+      <rect x="67" y="0" width="1" height="26" fill="#111"/><rect x="70" y="0" width="2" height="26" fill="#111"/>
+      <rect x="75" y="0" width="3" height="26" fill="#111"/><rect x="80" y="0" width="1" height="26" fill="#111"/>
     </g>
+    <g id="pin"><circle r="15" fill="#0B1F3A"/><circle r="15" fill="none" stroke="#FFFFFF" stroke-width="2.5"/></g>
   </defs>
 
   <rect width="1200" height="630" fill="#F7F8FA"/>
@@ -20,83 +20,101 @@
   <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Celle que vous gardez n'est pas celle qui prouve votre vol.</text>
   <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
 
-  <!-- ================= 1. LE RECU ================= -->
-  <text x="56" y="128" fill="#62718A" font-size="13" font-weight="800" letter-spacing="1.2">1 · LE REÇU</text>
-  <text x="56" y="148" fill="#8C99AC" font-size="13">on vous le remet en main propre</text>
+  <!-- ============ LA VALISE ============ -->
+  <g transform="translate(120,150)">
+    <!-- poignee telescopique -->
+    <rect x="86" y="-16" width="14" height="58" rx="6" fill="#8FA0B5"/>
+    <rect x="176" y="-16" width="14" height="58" rx="6" fill="#8FA0B5"/>
+    <rect x="80" y="-30" width="116" height="20" rx="10" fill="#5C6E88"/>
 
-  <g transform="translate(78,166)">
-    <rect x="0" y="0" width="196" height="152" rx="5" fill="#FFFFFF" stroke="#C9D2DE" stroke-width="2"/>
-    <rect x="0" y="0" width="196" height="22" rx="5" fill="#EDF0F5"/>
-    <rect x="0" y="14" width="196" height="8" fill="#EDF0F5"/>
-    <text x="10" y="16" fill="#4A5A70" font-size="10" font-weight="800" letter-spacing=".5">BAGGAGE CLAIM CHECK</text>
-    <text x="10" y="46" fill="#111" font-size="13" font-weight="700">DIOP/AWA MME</text>
-    <text x="10" y="66" fill="#111" font-size="22" font-weight="800">DSS</text>
-    <text x="10" y="84" fill="#6B7A90" font-size="11">DAKAR</text>
-    <g transform="translate(10,92)"><use href="#bc"/><use href="#bc" x="96"/></g>
-    <text x="10" y="142" fill="#111" font-size="14" font-weight="700" letter-spacing="1.2">0057 123456</text>
+    <!-- corps -->
+    <rect x="30" y="40" width="216" height="278" rx="26" fill="#20344F"/>
+    <rect x="30" y="40" width="216" height="278" rx="26" fill="none" stroke="#16263B" stroke-width="3"/>
+    <line x1="138" y1="46" x2="138" y2="312" stroke="#2C4360" stroke-width="4"/>
+    <rect x="44" y="58" width="188" height="242" rx="18" fill="none" stroke="#2C4360" stroke-width="2.5"/>
+
+    <!-- poignee laterale -->
+    <rect x="248" y="120" width="16" height="62" rx="8" fill="#5C6E88"/>
+
+    <!-- roues -->
+    <circle cx="62" cy="330" r="15" fill="#16263B"/><circle cx="62" cy="330" r="6" fill="#3B5470"/>
+    <circle cx="214" cy="330" r="15" fill="#16263B"/><circle cx="214" cy="330" r="6" fill="#3B5470"/>
+
+    <!-- 2 : la grande etiquette enroulee sur la poignee -->
+    <g transform="translate(96,-4)">
+      <rect x="-4" y="-4" width="92" height="56" rx="6" fill="#00C87A" opacity=".22"/>
+      <rect x="0" y="0" width="84" height="48" rx="4" fill="#FFFFFF" stroke="#00C87A" stroke-width="2.5"/>
+      <rect x="0" y="0" width="84" height="12" rx="4" fill="#0B1F3A"/>
+      <rect x="0" y="7" width="84" height="5" fill="#0B1F3A"/>
+      <text x="5" y="9" fill="#FFFFFF" font-size="6.5" font-weight="800">AIR FRANCE</text>
+      <text x="5" y="27" fill="#111" font-size="14" font-weight="900">DSS</text>
+      <text x="40" y="22" fill="#111" font-size="7.5" font-weight="800">AF 718</text>
+      <text x="40" y="31" fill="#111" font-size="7.5" font-weight="800">19JUL</text>
+      <g transform="translate(5,34) scale(0.85,0.34)"><use href="#bc"/></g>
+      <text x="52" y="44" fill="#111" font-size="7" font-weight="700">0057123456</text>
+    </g>
+
+    <!-- 3 : la languette collee sur la coque -->
+    <g transform="translate(58,208)">
+      <rect x="0" y="0" width="76" height="30" rx="3" fill="#FFFFFF" stroke="#C9D2DE" stroke-width="1.5"/>
+      <g transform="translate(5,5) scale(0.78,0.6)"><use href="#bc"/></g>
+      <text x="5" y="27" fill="#111" font-size="7" font-weight="800">0057123456</text>
+    </g>
+
+    <use href="#pin" x="66" y="18"/>
+    <text x="66" y="23" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">2</text>
+    <line x1="82" y1="18" x2="94" y2="18" stroke="#0B1F3A" stroke-width="2.5"/>
+    <use href="#pin" x="162" y="223"/>
+    <text x="162" y="228" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">3</text>
+    <line x1="136" y1="223" x2="146" y2="223" stroke="#FFFFFF" stroke-width="2.5"/>
   </g>
 
-  <rect x="56" y="336" width="304" height="130" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
-  <text x="76" y="362" fill="#62718A" font-size="12" font-weight="800" letter-spacing=".7">CE QU'IL PORTE</text>
-  <text x="76" y="386" fill="#374151" font-size="14.5">✓ numéro à 10 chiffres et code-barres</text>
-  <text x="76" y="408" fill="#374151" font-size="14.5">✓ votre nom, la destination</text>
-  <text x="76" y="430" fill="#B04A3C" font-size="14.5" font-weight="700">✗ vol et date : pas toujours</text>
-  <text x="76" y="454" fill="#8C99AC" font-size="13">souvent collé au dos de la carte d'embarquement</text>
+  <!-- 1 : le recu, dans la main du passager -->
+  <g transform="translate(96,470)">
+    <rect x="0" y="0" width="240" height="16" rx="8" fill="#D9C3A8"/>
+    <rect x="16" y="-56" width="150" height="62" rx="4" fill="#FFFFFF" stroke="#C9D2DE" stroke-width="2" transform="rotate(-5 91 -25)"/>
+    <g transform="rotate(-5 91 -25)">
+      <text x="24" y="-40" fill="#4A5A70" font-size="7.5" font-weight="800">BAGGAGE CLAIM CHECK</text>
+      <text x="24" y="-28" fill="#111" font-size="9" font-weight="700">DIOP/AWA MME · DSS</text>
+      <g transform="translate(24,-22) scale(0.9,0.5)"><use href="#bc"/></g>
+      <text x="24" y="-3" fill="#111" font-size="9" font-weight="800">0057 123456</text>
+    </g>
+    <use href="#pin" x="-8" y="-34"/>
+    <text x="-8" y="-29" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">1</text>
+    <line x1="8" y1="-34" x2="20" y2="-34" stroke="#0B1F3A" stroke-width="2.5"/>
+  </g>
+  <text x="96" y="512" fill="#8C99AC" font-size="12.5">il finit souvent au dos de la carte d'embarquement</text>
 
-  <!-- ================= 2. LA GRANDE ETIQUETTE ================= -->
-  <text x="424" y="128" fill="#047857" font-size="13" font-weight="800" letter-spacing="1.2">2 · LA GRANDE ÉTIQUETTE</text>
-  <text x="424" y="148" fill="#047857" font-size="13" font-weight="600">enroulée sur la poignée · celle qu'on jette</text>
-
-  <g transform="translate(452,160)">
-    <rect x="-8" y="-6" width="196" height="176" rx="8" fill="#00C87A" opacity=".16"/>
-    <rect x="0" y="0" width="180" height="164" rx="5" fill="#FFFFFF" stroke="#00C87A" stroke-width="2.5"/>
-    <rect x="0" y="0" width="180" height="24" rx="5" fill="#0B1F3A"/>
-    <rect x="0" y="16" width="180" height="8" fill="#0B1F3A"/>
-    <text x="10" y="17" fill="#FFFFFF" font-size="10.5" font-weight="800" letter-spacing=".5">AIR FRANCE</text>
-    <text x="170" y="17" fill="#8FA3BF" font-size="9.5" font-weight="700" text-anchor="end">2ABCDE</text>
-
-    <text x="10" y="58" fill="#111" font-size="34" font-weight="900" letter-spacing="1">DSS</text>
-    <text x="92" y="44" fill="#111" font-size="13" font-weight="800">AF 718</text>
-    <text x="92" y="60" fill="#111" font-size="13" font-weight="800">19JUL</text>
-    <text x="10" y="76" fill="#4A5A70" font-size="10.5">CDG → DSS</text>
-    <text x="92" y="76" fill="#4A5A70" font-size="10.5">DIOP/AWA</text>
-
-    <line x1="10" y1="84" x2="170" y2="84" stroke="#D7DDE7" stroke-width="1"/>
-    <g transform="translate(10,92)"><use href="#bc"/><use href="#bc" x="96"/></g>
-    <text x="10" y="148" fill="#111" font-size="15" font-weight="800" letter-spacing="1.3">0057 123456</text>
+  <!-- ============ LES TROIS FICHES ============ -->
+  <g transform="translate(430,128)">
+    <rect x="0" y="0" width="700" height="132" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="34" cy="34" r="15" fill="#0B1F3A"/><text x="34" y="39" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">1</text>
+    <text x="62" y="32" fill="#0B1F3A" font-size="19" font-weight="800">Le reçu</text>
+    <text x="62" y="53" fill="#8C99AC" font-size="13.5">on vous le remet en main propre, vous le gardez</text>
+    <text x="62" y="82" fill="#374151" font-size="14.5">✓ numéro à 10 chiffres, code-barres, votre nom, la destination</text>
+    <text x="62" y="106" fill="#B04A3C" font-size="14.5" font-weight="700">✗ le numéro de vol et la date n'y figurent pas toujours</text>
   </g>
 
-  <rect x="424" y="336" width="304" height="130" rx="12" fill="#EFF9F4" stroke="#00C87A" stroke-width="2.5"/>
-  <text x="444" y="362" fill="#047857" font-size="12" font-weight="800" letter-spacing=".7">CE QU'ELLE PORTE</text>
-  <text x="444" y="386" fill="#0B1F3A" font-size="14.5" font-weight="800">✓ le numéro de vol et la date</text>
-  <text x="444" y="408" fill="#0B1F3A" font-size="14.5" font-weight="800">✓ le trajet et les escales</text>
-  <text x="444" y="430" fill="#374151" font-size="14.5">✓ nom, numéro, code-barres</text>
-  <rect x="444" y="440" width="264" height="20" rx="10" fill="#00C87A"/>
-  <text x="576" y="454" fill="#04372A" font-size="12" font-weight="800" text-anchor="middle">PHOTOGRAPHIEZ CELLE-CI</text>
-
-  <!-- ================= 3. LA LANGUETTE ================= -->
-  <text x="792" y="128" fill="#62718A" font-size="13" font-weight="800" letter-spacing="1.2">3 · LA LANGUETTE</text>
-  <text x="792" y="148" fill="#8C99AC" font-size="13">collée sur la coque · dite « bingo tag »</text>
-
-  <g transform="translate(812,196)">
-    <rect x="0" y="0" width="196" height="72" rx="4" fill="#FFFFFF" stroke="#C9D2DE" stroke-width="2"/>
-    <g transform="translate(10,10)"><use href="#bc"/><use href="#bc" x="96"/></g>
-    <text x="10" y="62" fill="#111" font-size="14" font-weight="800" letter-spacing="1.3">0057 123456</text>
+  <g transform="translate(430,276)">
+    <rect x="0" y="0" width="700" height="132" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+    <circle cx="34" cy="34" r="15" fill="#047857"/><text x="34" y="39" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">2</text>
+    <text x="62" y="32" fill="#0B1F3A" font-size="19" font-weight="800">La grande étiquette, enroulée sur la poignée</text>
+    <text x="62" y="53" fill="#047857" font-size="13.5" font-weight="600">c'est celle que tout le monde arrache et jette en sortant</text>
+    <text x="62" y="82" fill="#0B1F3A" font-size="14.5" font-weight="800">✓ le numéro de vol, la date, le trajet et les escales</text>
+    <rect x="62" y="94" width="240" height="24" rx="12" fill="#00C87A"/>
+    <text x="182" y="111" fill="#04372A" font-size="13" font-weight="800" text-anchor="middle">PHOTOGRAPHIEZ CELLE-CI</text>
   </g>
-  <text x="812" y="292" fill="#8C99AC" font-size="12.5">collée ailleurs que la poignée, pour survivre</text>
-  <text x="812" y="310" fill="#8C99AC" font-size="12.5">si l'étiquette principale est arrachée</text>
 
-  <rect x="792" y="336" width="304" height="130" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
-  <text x="812" y="362" fill="#62718A" font-size="12" font-weight="800" letter-spacing=".7">CE QU'ELLE PORTE</text>
-  <text x="812" y="386" fill="#374151" font-size="14.5">✓ numéro à 10 chiffres</text>
-  <text x="812" y="408" fill="#374151" font-size="14.5">✓ code-barres</text>
-  <text x="812" y="430" fill="#B04A3C" font-size="14.5" font-weight="700">✗ ni nom, ni vol, ni date</text>
-  <text x="812" y="454" fill="#8C99AC" font-size="13">simple secours, ce n'est pas un mouchard</text>
+  <g transform="translate(430,424)">
+    <rect x="0" y="0" width="700" height="120" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="34" cy="34" r="15" fill="#0B1F3A"/><text x="34" y="39" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">3</text>
+    <text x="62" y="32" fill="#0B1F3A" font-size="19" font-weight="800">La languette, collée sur la coque</text>
+    <text x="62" y="53" fill="#8C99AC" font-size="13.5">dite « bingo tag » · simple secours, ce n'est pas un mouchard</text>
+    <text x="62" y="82" fill="#374151" font-size="14.5">✓ le numéro et son code-barres, rien d'autre</text>
+    <text x="62" y="104" fill="#8C99AC" font-size="13">elle sert si l'étiquette de poignée est arrachée par les convoyeurs</text>
+  </g>
 
-  <rect x="56" y="486" width="1040" height="90" rx="14" fill="#0B1F3A"/>
-  <text x="88" y="518" fill="#00E5A0" font-size="17" font-weight="800">Ce que ça prouve, et ce que ça ne prouve pas</text>
-  <text x="88" y="544" fill="rgba(255,255,255,.92)" font-size="14.5">Ces étiquettes établissent qu'un bagage a été enregistré à votre nom sur ce vol. Elles ne prouvent pas à elles seules que vous</text>
-  <text x="88" y="565" fill="rgba(255,255,255,.92)" font-size="14.5">avez embarqué : joignez-les à votre réservation, pas à la place.</text>
-
-  <text x="56" y="606" fill="#8C99AC" font-size="12">Exemple fictif. Le numéro à 10 chiffres suit la norme IATA (Résolutions 740 et 751) : 1 chiffre de type, 3 chiffres de compagnie, 6 chiffres de séquence.</text>
+  <text x="430" y="576" fill="#0B1F3A" font-size="14" font-weight="800">Ces étiquettes prouvent qu'un bagage a été enregistré à votre nom sur ce vol,</text>
+  <text x="430" y="597" fill="#374151" font-size="14">pas que vous avez embarqué. Joignez-les à votre réservation, pas à la place.</text>
+  <text x="56" y="612" fill="#8C99AC" font-size="11.5">Exemple fictif · norme IATA 740 et 751</text>
 </svg>
