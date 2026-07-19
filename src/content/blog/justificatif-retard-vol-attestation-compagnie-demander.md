@@ -1,6 +1,6 @@
 ---
 title: "Justificatif de retard de vol : comment l'obtenir de la compagnie"
-meta_title: "Justificatif retard de vol : attestation officielle compagnie - mode d'emploi"
+meta_title: "Justificatif de retard de vol : modèle et recours"
 meta_description: "Comment obtenir un justificatif officiel de retard ou un voyage alternatif auprès de la compagnie aérienne. Modèle de demande + recours si refus."
 slug: justificatif-retard-vol-attestation-compagnie-demander
 image_url: /og-blog.png
