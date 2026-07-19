@@ -50,6 +50,38 @@ async function twilioSendText(phone, text, cfg) {
   } catch (e) { console.error('twilioSendText', e.message); return { ok: false }; }
 }
 
+// ─── Indicateur « en train d'écrire » (3 points) ───────────────────────────────
+// Affiche les 3 points chez le CLIENT pendant que le bot prépare sa réponse, et marque
+// au passage son message comme lu (double coche bleue). Utile surtout sur les temps longs :
+// OCR d'un e-billet, extraction PDF, appel gpt-4o — le client voit que ça travaille.
+//
+// L'indicateur s'éteint TOUT SEUL à la livraison de notre réponse, ou après 25 s.
+// Il n'y a donc rien à « arrêter » : si le traitement dépasse 25 s, les points disparaissent
+// avant la réponse (on ne peut pas les prolonger, l'API ne le permet pas).
+//
+// ⚠️ API en Public Beta chez Twilio (hors SLA, peut changer). Traitée comme du confort pur :
+// jamais attendue, jamais bloquante, toute erreur est avalée. Kill-switch : TWILIO_TYPING=0.
+const TYPING_URL = 'https://messaging.twilio.com/v3/Indicators/Typing.json';
+
+async function twilioSendTyping(messageId, cfg) {
+  if (!cfg || !messageId) return { ok: false };
+  if ((process.env.TWILIO_TYPING || '').trim() === '0') return { ok: false, off: true };
+  if (!/^(SM|MM)[0-9a-f]{32}$/i.test(String(messageId))) return { ok: false }; // SID entrant seulement
+  try {
+    const res = await fetch(TYPING_URL, {
+      method: 'POST', signal: AbortSignal.timeout(3000), // court : c'est du confort, pas un envoi
+      headers: { Authorization: basicAuth(cfg), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ channel: 'WHATSAPP', messageId: String(messageId) }),
+    });
+    if (!res.ok) {
+      const t = await res.text().catch(() => '');
+      console.warn('twilio typing', res.status, t.slice(0, 160)); // warn, pas error : non bloquant
+      return { ok: false };
+    }
+    return { ok: true };
+  } catch (e) { console.warn('twilioSendTyping', e.message); return { ok: false }; }
+}
+
 // ─── Vrais boutons WhatsApp (Content API twilio/quick-reply) ──────────────────
 // Utilisables EN SESSION (fenêtre 24h) sans validation Meta : on crée le Content Template
 // via un simple POST (jamais soumis à validation), puis on l'envoie par ContentSid.
@@ -226,6 +258,8 @@ function parseTwilioInbound(body, normalizeWaPhone) {
     mediaUrl,
     dedupId: realId || `${phone}|${String(text).trim()}`,
     hasId: !!realId,
+    messageId: realId, // SID du message entrant : requis pour l'indicateur « en train d'écrire »
+
     interactive: !!replyId,
     replyId: replyId || '',
     referral: null, // la Sandbox ne transmet pas le referral pub ; en prod on le mappera si présent
@@ -249,4 +283,4 @@ function validateTwilioSignature(authToken, url, params, signature) {
   } catch (_) { return false; }
 }
 
-module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioSendListPicker, twilioMediaHeaders, parseTwilioInbound, toWa, validateTwilioSignature };
+module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioSendListPicker, twilioSendTyping, twilioMediaHeaders, parseTwilioInbound, toWa, validateTwilioSignature };

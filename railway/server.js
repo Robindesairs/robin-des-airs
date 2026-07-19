@@ -3841,7 +3841,7 @@ function enqueue(phone, task) {
 // Boucle de traitement des messages entrants — PARTAGÉE entre le webhook WATI et le webhook Twilio.
 // items = sortie de extractInbound() (WATI) OU de twilio.parseTwilioInbound() : même forme.
 async function processInboundItems(items, cfg) {
-  for (const { phone, text, mediaUrl, dedupId, hasId, replyId, referral } of items) {
+  for (const { phone, text, mediaUrl, dedupId, hasId, replyId, referral, messageId } of items) {
     if (!phone) continue;
     if (hasId && memSeen(dedupId)) continue;
     if (hasId && await isDuplicateMessage(dedupId, true)) continue;
@@ -3861,6 +3861,10 @@ async function processInboundItems(items, cfg) {
     if (referral) { upsertLead(phone, { referral, referralAt: Date.now() }); console.log('📣 referral ad', (phone.length > 6 ? phone.slice(0, 4) + '***' + phone.slice(-2) : phone), referral.sourceType || '?', (referral.headline || referral.body || '').slice(0, 60)); }
     recordConvo(phone, 'in', mediaUrl && !String(text || '').trim() ? '[pièce jointe]' : text); // historique léger pour le Bureau
     console.log('📩 inbound', (phone.length > 6 ? phone.slice(0, 4) + '***' + phone.slice(-2) : phone), 'len', String(text || '').length, mediaUrl ? '+media' : '', cfg ? '' : '⚠️cfgNULL');
+    // Les 3 points « en train d'écrire » chez le client, dès l'accusé de réception du message.
+    // Twilio uniquement (WATI n'expose pas l'API) et volontairement NON attendu : c'est du confort,
+    // il ne doit jamais retarder ni faire échouer le traitement. S'éteint seul à notre réponse (ou 25 s).
+    if (messageId && cfg && cfg.provider === 'twilio') twilio.twilioSendTyping(messageId, cfg).catch(() => {});
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId, false, referral).catch(e => {
       console.error('bot error', e.message, e.stack);
