@@ -115,6 +115,22 @@ L'oiseau explique **une heure**. Les trois autres relèvent de l'organisation de
 
 On retranche donc une heure des quatre. Il reste trois heures de retard ordinaire. **Le seuil est atteint, l'indemnisation est due.**
 
+### Le repère que vous avez sous les yeux
+
+Vous n'avez pas accès aux documents de la compagnie, mais vous disposez d'un indice fiable, et il est sous vos yeux : **le moment où l'embarquement commence.**
+
+Quand un problème technique est en cours, on ne fait pas monter les passagers. Personne ne veut embarquer trois cents personnes pour devoir les faire redescendre une heure plus tard. On attend donc que l'intervention soit terminée.
+
+Autrement dit, **le début de l'embarquement marque la fin de la partie technique**. Ce qui s'écoule ensuite jusqu'au décollage relève d'autre chose : le tour de piste administratif, la disponibilité de l'équipage, le créneau, la logistique de l'escale.
+
+Notez donc trois heures sur votre téléphone, elles ne vous coûtent rien :
+
+1. l'heure de l'annonce du problème ;
+2. l'heure à laquelle l'embarquement a réellement commencé ;
+3. l'heure du décollage effectif.
+
+Vous venez de fabriquer votre propre chronologie. C'est exactement le document que vous allez demander à la compagnie, et s'il diverge du vôtre, c'est à elle de l'expliquer.
+
 <img src="/assets/images/ventilation-retard-circonstance-extraordinaire.svg" alt="Schéma : sur quatre heures de retard, seule l'heure d'inspection après la collision aviaire se retranche, les trois heures d'attente du technicien relèvent de l'organisation de la compagnie" width="1200" height="630" loading="lazy" decoding="async">
 
 ### Et si la compagnie ne fournit aucune chronologie ?
