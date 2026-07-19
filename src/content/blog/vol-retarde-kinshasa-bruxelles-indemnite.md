@@ -1,7 +1,7 @@
 ---
 title: "Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : indemnité jusqu'à 600 €"
-meta_title: "Vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles retardé : 600 € d'indemnité par passager"
-meta_description: "Vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
+meta_title: "Kinshasa-Bruxelles retardé : 600 € selon la compagnie"
+meta_description: "Vol Kinshasa-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager sur Brussels Airlines. Au départ de Kinshasa, la compagnie change tout."
 slug: vol-retarde-kinshasa-bruxelles-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:

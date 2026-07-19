@@ -114,7 +114,7 @@ const REDIRECTED_SLUGS = new Set<string>([
   'reforme-reglement-ce261-2026-droits-passagers-afrique',
   'lettre-mise-en-demeure-compagnie-aerienne-modele',
   'preuve-retard-vol-documents-conserver',
-  'antananarivo-madagascar-paris-indemnite',
+  'vol-retarde-antananarivo-madagascar-paris-indemnite',
 ]);
 
 // Pages-villes à faible ROI diaspora passées en noindex (X-Robots-Tag via _headers) :
