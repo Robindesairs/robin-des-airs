@@ -10,7 +10,7 @@ faq:
   - q: "Je rentre de Kinshasa à Bruxelles sur Brussels Airlines avec 5h de retard. Je peux réclamer ?"
     a: "Oui. Brussels Airlines est une compagnie belge (UE), donc **éligible dans les deux sens** — y compris les vols au départ de l'Afrique."
   - q: "Brussels Airlines a invoqué une 'circonstance extraordinaire'. C'est vrai ?"
-    a: "Les compagnies invoquent souvent cet argument pour éviter de payer. Mais pannes techniques récurrentes, sous-effectifs ou retards de rotation ne sont **pas** des circonstances extraordinaires selon la CJUE. Robin des Airs conteste systématiquement."
+    a: "Les compagnies invoquent souvent cet argument pour éviter de payer. Mais pannes techniques récurrentes, sous-effectifs ou [retards de rotation](/blog/retard-rotation-avion-vol-precedent-indemnisation.html) ne sont **pas**, en eux-mêmes, des circonstances extraordinaires selon la CJUE. Robin des Airs conteste systématiquement."
 ---
 
 **Vol Brussels Airlines retardé de 3h ou plus, annulé ou surbooké ? Vous pouvez réclamer jusqu'à 600 € par passager.** Compagnie européenne, donc vos vols Afrique ⇄ Europe sont couverts dans les deux sens. Vérification gratuite, 0 € d'avance.

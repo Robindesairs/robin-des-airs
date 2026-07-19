@@ -51,7 +51,7 @@ Si Air Austral annule votre vol et vous prévient **moins de 14 jours** avant le
 **Excuses non valables** (l'indemnité reste due) :
 
 - panne technique (arrêt Wallentin-Hermann, CJUE)
-- retard de l'avion sur la rotation précédente
+- [retard de l'avion sur la rotation précédente](/blog/retard-rotation-avion-vol-precedent-indemnisation.html), sauf si la compagnie prouve une cause extraordinaire en amont
 - grève du personnel d'Air Austral elle-même (arrêt Krüsemann, CJUE)
 - sous-effectif ou problème d'organisation
 

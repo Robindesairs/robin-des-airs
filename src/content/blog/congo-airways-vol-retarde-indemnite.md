@@ -71,7 +71,7 @@ Lorsque le vol est couvert, la compagnie n'échappe à l'indemnité qu'en cas de
 **Excuses non valables** (l'indemnité reste due) :
 
 - panne technique (arrêt Wallentin-Hermann, CJUE)
-- retard de l'avion sur la rotation précédente
+- [retard de l'avion sur la rotation précédente](/blog/retard-rotation-avion-vol-precedent-indemnisation.html), sauf si la compagnie prouve une cause extraordinaire en amont
 - grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
 - sous-effectif ou problème d'organisation
 

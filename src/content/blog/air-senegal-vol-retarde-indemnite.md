@@ -84,7 +84,7 @@ Air Sénégal peut être exonérée si elle prouve une circonstance extraordinai
 **Ce qui n'est PAS une circonstance extraordinaire :**
 - Panne technique (sauf défaut constructeur récemment découvert) — arrêt Wallentin-Hermann, CJUE
 - Sous-effectif ou problème de planification
-- Retard de rotation (avion précédent en retard)
+- [Retard de rotation (avion précédent en retard)](/blog/retard-rotation-avion-vol-precedent-indemnisation.html)
 
 ---
 
