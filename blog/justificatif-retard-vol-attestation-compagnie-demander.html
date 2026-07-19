@@ -123,6 +123,11 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 <p>La compagnie ne peut pas refuser d&#39;attester un fait objectif. Votre vol a été retardé, ou il ne l&#39;a pas été.</p>
 <h2>Le modèle de demande</h2>
 <p>À envoyer par mail au service client ou réclamations, avec en pièce jointe la confirmation de réservation et la carte d&#39;embarquement.</p>
+<div class="copy-modele">
+  <button type="button" id="btn-copie-modele" class="copy-btn">Copier le modèle</button>
+  <span id="copie-etat" class="copy-etat" role="status" aria-live="polite"></span>
+</div>
+
 <hr>
 <p><strong>Objet</strong> : Demande d&#39;attestation officielle de retard, vol [N° vol] du [date]</p>
 <p>Madame, Monsieur,</p>
@@ -150,6 +155,12 @@ Pièces jointes : confirmation de réservation, carte d&#39;embarquement</p>
 <li><strong>Mettez en demeure</strong> par recommandé avec accusé de réception, voir notre <a href="/blog/mise-en-demeure-compagnie-aerienne-ce261.html">modèle de mise en demeure</a></li>
 <li><strong>Saisissez le médiateur</strong>, voir <a href="/blog/saisir-mediateur-mtv-tourisme-voyage.html">comment saisir le MTV</a></li>
 </ol>
+<aside class="cta-inline">
+  <p class="cta-inline-t">Pas le temps de courir après les recommandés ?</p>
+  <p class="cta-inline-p">Relance, mise en demeure, médiation : on fait ces trois étapes à votre place, et vous ne payez que si vous êtes indemnisé.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Confier mon dossier, vérification gratuite</a></p>
+</aside>
+
 <h2>Si vous avez été réacheminé</h2>
 <p>Quand la compagnie vous replace sur un autre vol, demandez en plus :</p>
 <ul>
@@ -180,6 +191,54 @@ Pièces jointes : confirmation de réservation, carte d&#39;embarquement</p>
 <p>Voir aussi : <a href="/blog/preuves-retard-vol-conserver-indemnite.html">les preuves à conserver</a>, <a href="/blog/carte-embarquement-perdue-recuperer-indemnite.html">carte d&#39;embarquement perdue</a>, <a href="/blog/arret-folkerts-heure-arrivee-ce261.html">l&#39;heure d&#39;arrivée qui compte vraiment</a>.</p>
 <p>→ <a href="https://robindesairs.eu/#funnel-box">Vérifier mon dossier</a>
 → <a href="https://wa.me/33756863630">WhatsApp direct</a></p>
+<style>
+#blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}
+#blog-body .copy-btn{font:inherit;font-size:.875rem;font-weight:700;color:#047857;background:#EFF9F4;border:1px solid #00C87A;border-radius:.5rem;padding:.5rem .95rem;cursor:pointer}
+#blog-body .copy-btn:hover{background:#DFF3EA}
+#blog-body .copy-btn:focus-visible{outline:2px solid #047857;outline-offset:2px}
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+#blog-body .cta-inline{margin:1.5rem 0;padding:1.15rem 1.3rem;border-radius:.75rem;background:#0B1F3A;color:#fff}
+#blog-body .cta-inline p{margin:0;color:rgba(255,255,255,.9)}
+#blog-body .cta-inline-t{font-size:1.0625rem;font-weight:800;color:#fff !important;margin-bottom:.4rem !important}
+#blog-body .cta-inline-p{font-size:.9375rem;margin-bottom:.85rem !important}
+#blog-body a.cta-inline-a{display:inline-block;background:#00C87A;color:#04372A !important;font-weight:800;font-size:.9375rem;padding:.6rem 1.1rem;border-radius:.5rem;text-decoration:none}
+#blog-body a.cta-inline-a:hover{background:#00E5A0;color:#04372A !important}
+</style>
+
+<script>
+(function(){
+  var btn=document.getElementById('btn-copie-modele');
+  if(!btn) return;
+  var etat=document.getElementById('copie-etat');
+  // Le modele est le contenu situe entre les deux traits horizontaux qui suivent
+  // le bouton. On le lit dans le DOM plutot que de le dupliquer ici : une seule
+  // source de verite, le texte reste juste meme si l'article est reecrit.
+  function texteModele(){
+    var n=btn.closest('.copy-modele'), out=[], started=false;
+    while((n=n.nextElementSibling)){
+      if(n.tagName==='HR'){ if(started) break; started=true; continue; }
+      if(started && n.innerText) out.push(n.innerText.trim());
+    }
+    return out.join('\n\n');
+  }
+  btn.addEventListener('click',function(){
+    var t=texteModele();
+    if(!t) return;
+    function ok(){ etat.textContent='Modèle copié'; setTimeout(function(){etat.textContent='';},2600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(ok).catch(fallback);
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=t; ta.setAttribute('readonly',''); ta.style.position='absolute'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); ok(); }
+      catch(e){ etat.textContent='Copie impossible, sélectionnez le texte'; }
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
 </div>
     <section class="faq">
       <h2>Questions fréquentes</h2>

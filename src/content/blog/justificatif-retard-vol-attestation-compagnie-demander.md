@@ -77,6 +77,11 @@ La compagnie ne peut pas refuser d'attester un fait objectif. Votre vol a été 
 
 À envoyer par mail au service client ou réclamations, avec en pièce jointe la confirmation de réservation et la carte d'embarquement.
 
+<div class="copy-modele">
+  <button type="button" id="btn-copie-modele" class="copy-btn">Copier le modèle</button>
+  <span id="copie-etat" class="copy-etat" role="status" aria-live="polite"></span>
+</div>
+
 ---
 
 **Objet** : Demande d'attestation officielle de retard, vol [N° vol] du [date]
@@ -116,6 +121,12 @@ Le point 1 est le plus important, et c'est celui que les compagnies oublient le 
 1. **Relancez** par mail au bout de trente jours
 2. **Mettez en demeure** par recommandé avec accusé de réception, voir notre [modèle de mise en demeure](/blog/mise-en-demeure-compagnie-aerienne-ce261.html)
 3. **Saisissez le médiateur**, voir [comment saisir le MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html)
+
+<aside class="cta-inline">
+  <p class="cta-inline-t">Pas le temps de courir après les recommandés ?</p>
+  <p class="cta-inline-p">Relance, mise en demeure, médiation : on fait ces trois étapes à votre place, et vous ne payez que si vous êtes indemnisé.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Confier mon dossier, vérification gratuite</a></p>
+</aside>
 
 ## Si vous avez été réacheminé
 
@@ -159,3 +170,52 @@ Voir aussi : [les preuves à conserver](/blog/preuves-retard-vol-conserver-indem
 
 → [Vérifier mon dossier](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)
+
+<style>
+#blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}
+#blog-body .copy-btn{font:inherit;font-size:.875rem;font-weight:700;color:#047857;background:#EFF9F4;border:1px solid #00C87A;border-radius:.5rem;padding:.5rem .95rem;cursor:pointer}
+#blog-body .copy-btn:hover{background:#DFF3EA}
+#blog-body .copy-btn:focus-visible{outline:2px solid #047857;outline-offset:2px}
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+#blog-body .cta-inline{margin:1.5rem 0;padding:1.15rem 1.3rem;border-radius:.75rem;background:#0B1F3A;color:#fff}
+#blog-body .cta-inline p{margin:0;color:rgba(255,255,255,.9)}
+#blog-body .cta-inline-t{font-size:1.0625rem;font-weight:800;color:#fff !important;margin-bottom:.4rem !important}
+#blog-body .cta-inline-p{font-size:.9375rem;margin-bottom:.85rem !important}
+#blog-body a.cta-inline-a{display:inline-block;background:#00C87A;color:#04372A !important;font-weight:800;font-size:.9375rem;padding:.6rem 1.1rem;border-radius:.5rem;text-decoration:none}
+#blog-body a.cta-inline-a:hover{background:#00E5A0;color:#04372A !important}
+</style>
+
+<script>
+(function(){
+  var btn=document.getElementById('btn-copie-modele');
+  if(!btn) return;
+  var etat=document.getElementById('copie-etat');
+  // Le modele est le contenu situe entre les deux traits horizontaux qui suivent
+  // le bouton. On le lit dans le DOM plutot que de le dupliquer ici : une seule
+  // source de verite, le texte reste juste meme si l'article est reecrit.
+  function texteModele(){
+    var n=btn.closest('.copy-modele'), out=[], started=false;
+    while((n=n.nextElementSibling)){
+      if(n.tagName==='HR'){ if(started) break; started=true; continue; }
+      if(started && n.innerText) out.push(n.innerText.trim());
+    }
+    return out.join('\n\n');
+  }
+  btn.addEventListener('click',function(){
+    var t=texteModele();
+    if(!t) return;
+    function ok(){ etat.textContent='Modèle copié'; setTimeout(function(){etat.textContent='';},2600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(ok).catch(fallback);
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=t; ta.setAttribute('readonly',''); ta.style.position='absolute'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); ok(); }
+      catch(e){ etat.textContent='Copie impossible, sélectionnez le texte'; }
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
