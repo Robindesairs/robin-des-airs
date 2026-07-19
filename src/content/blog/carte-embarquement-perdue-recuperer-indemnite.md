@@ -94,7 +94,7 @@ Si vous nous transmettez juste les informations de base (nom passager, n° vol a
 
 Vous n'êtes pas seul face à la compagnie.
 
-Voir : [Justificatif de retard](/blog/justificatif-retard-vol-attestation-compagnie-demander.html), [Combien de temps réclamer](/blog/combien-temps-reclamer-indemnite-vol.html), [Preuve retard documents](/blog/preuve-retard-vol-documents-conserver.html).
+Voir : [Justificatif de retard](/blog/justificatif-retard-vol-attestation-compagnie-demander.html), [Combien de temps réclamer](/blog/combien-temps-reclamer-indemnite-vol.html), [Preuve retard documents](/blog/preuves-retard-vol-conserver-indemnite.html).
 
 → [Vérifier mon vol sans carte d'embarquement](https://robindesairs.eu/#funnel-box)
 → [WhatsApp — j'ai perdu ma carte](https://wa.me/33756863630?text=Bonjour%20Robin%2C%20j%27ai%20perdu%20ma%20carte%20d%27embarquement.)

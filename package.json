@@ -26,7 +26,8 @@
     "chef": "node scripts/chef.js",
     "scraper:agences": "node scripts/scraper-agences-cameroun.js",
     "prospecter": "node scripts/prospection-agences.js",
-    "prospecter:dry": "node scripts/prospection-agences.js --dry-run"
+    "prospecter:dry": "node scripts/prospection-agences.js --dry-run",
+    "audit:corpus": "node scripts/audit-corpus.mjs"
   },
   "repository": {
     "type": "git",

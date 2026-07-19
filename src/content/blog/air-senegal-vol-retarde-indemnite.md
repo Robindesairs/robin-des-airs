@@ -169,7 +169,7 @@ Robin des Airs spécialisé sur les corridors Afrique-Europe :
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp** — dans les deux cas on vous pose les questions, vous n'avez rien à rédiger.
 
-Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Corsair vol retardé](/blog/corsair-vol-retarde-indemnite.html), [Circonstances extraordinaires : ce qui exonère vraiment](/blog/circonstances-extraordinaires-ce261-ce-qui-exonere.html).
+Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Corsair vol retardé](/blog/corsair-vol-retarde-indemnite.html), [Circonstances extraordinaires : ce qui exonère vraiment](/blog/circonstances-extraordinaires-ce261.html).
 
 → [Déposer mon dossier Air Sénégal en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol Air Sénégal](https://robindesairs.eu/#funnel-box)
