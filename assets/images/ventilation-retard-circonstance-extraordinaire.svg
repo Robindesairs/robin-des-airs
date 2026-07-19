@@ -24,8 +24,8 @@
 
   <rect x="336" y="298" width="808" height="96" rx="9" fill="#FBEBE8" stroke="#C4533F" stroke-width="3"/>
   <text x="740" y="330" fill="#8A3A2E" font-size="15" font-weight="800" text-anchor="middle">3 h</text>
-  <text x="740" y="353" fill="#8A3A2E" font-size="13.5" text-anchor="middle">attente du technicien habilité, signature de la remise en service,</text>
-  <text x="740" y="371" fill="#8A3A2E" font-size="13.5" text-anchor="middle">moyens disponibles sur l'escale</text>
+  <text x="740" y="353" fill="#8A3A2E" font-size="13.5" text-anchor="middle">attente du technicien habilité venu d'ailleurs, ou de la pièce</text>
+  <text x="740" y="371" fill="#8A3A2E" font-size="13.5" text-anchor="middle">arrivée par un autre vol : moyens présents sur l'escale</text>
 
   <text x="188" y="418" fill="#62718A" font-size="13" font-weight="800" text-anchor="middle">CIRCONSTANCE EXTRAORDINAIRE</text>
   <text x="188" y="437" fill="#8C99AC" font-size="12.5" text-anchor="middle">se retranche</text>

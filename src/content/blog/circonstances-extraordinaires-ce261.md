@@ -103,7 +103,11 @@ Un oiseau est ingéré au décollage. L'avion revient au parking. La suite, tell
 
 **L'inspection est obligatoire, et elle est rapide.** On examine les moteurs et le nez de l'appareil. Il arrive qu'il faille déposer un moteur pour vérifier. Comptez de trente minutes à une heure.
 
-**Puis viennent les papiers, et c'est là que le temps passe.** L'avion ne peut pas repartir sans un certificat de remise en service, signé par une personne titulaire de la licence adéquate et habilitée pour ce type d'intervention. S'il n'y a personne de qualifié sur l'escale, il faut l'attendre, ou le faire venir.
+**Puis vient l'attente, et c'est elle qui fait les heures.** L'avion ne peut pas repartir sans un certificat de remise en service, signé par une personne titulaire de la licence adéquate et habilitée pour ce type d'intervention. Deux choses peuvent alors bloquer, et aucune des deux n'a de rapport avec l'oiseau.
+
+**Il n'y a personne de qualifié sur l'escale.** Il faut alors faire venir cette personne, parfois de loin. C'est ce trajet qui coûte le plus de temps. Une fois qu'elle est sur place, les choses avancent : la paperasse administrative se fait, mais elle ne bloque plus le départ à elle seule.
+
+**La pièce n'est pas disponible sur place.** C'est fréquent dans les escales peu desservies. Il faut alors attendre que la pièce arrive, souvent par un autre vol, ce qui peut repousser le départ de plusieurs heures, voire au lendemain. La Cour de justice a jugé qu'une pièce que la compagnie aurait dû tenir en stock ne constitue **pas** une circonstance extraordinaire.
 
 Votre vol part finalement avec quatre heures de retard.
 
