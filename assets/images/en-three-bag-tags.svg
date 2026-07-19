@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <defs>
+    <g id="bc">
+      <rect x="0" y="0" width="3" height="26" fill="#111"/><rect x="5" y="0" width="1" height="26" fill="#111"/>
+      <rect x="8" y="0" width="2" height="26" fill="#111"/><rect x="13" y="0" width="4" height="26" fill="#111"/>
+      <rect x="19" y="0" width="1" height="26" fill="#111"/><rect x="22" y="0" width="3" height="26" fill="#111"/>
+      <rect x="28" y="0" width="2" height="26" fill="#111"/><rect x="33" y="0" width="1" height="26" fill="#111"/>
+      <rect x="36" y="0" width="4" height="26" fill="#111"/><rect x="42" y="0" width="2" height="26" fill="#111"/>
+      <rect x="47" y="0" width="1" height="26" fill="#111"/><rect x="50" y="0" width="3" height="26" fill="#111"/>
+      <rect x="56" y="0" width="2" height="26" fill="#111"/><rect x="60" y="0" width="4" height="26" fill="#111"/>
+      <rect x="67" y="0" width="1" height="26" fill="#111"/><rect x="70" y="0" width="2" height="26" fill="#111"/>
+      <rect x="75" y="0" width="3" height="26" fill="#111"/><rect x="80" y="0" width="1" height="26" fill="#111"/>
+    </g>
+    <g id="pin"><circle r="15" fill="#0B1F3A"/><circle r="15" fill="none" stroke="#FFFFFF" stroke-width="2.5"/></g>
+  </defs>
+
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Your bag tag: there are three of them</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">The one you keep is not the one that proves your flight.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- ============ LA VALISE ============ -->
+  <g transform="translate(120,150)">
+    <!-- poignee telescopique -->
+    <rect x="86" y="-16" width="14" height="58" rx="6" fill="#8FA0B5"/>
+    <rect x="176" y="-16" width="14" height="58" rx="6" fill="#8FA0B5"/>
+    <rect x="80" y="-30" width="116" height="20" rx="10" fill="#5C6E88"/>
+
+    <!-- corps -->
+    <rect x="30" y="40" width="216" height="278" rx="26" fill="#20344F"/>
+    <rect x="30" y="40" width="216" height="278" rx="26" fill="none" stroke="#16263B" stroke-width="3"/>
+    <line x1="138" y1="46" x2="138" y2="312" stroke="#2C4360" stroke-width="4"/>
+    <rect x="44" y="58" width="188" height="242" rx="18" fill="none" stroke="#2C4360" stroke-width="2.5"/>
+
+    <!-- poignee laterale -->
+    <rect x="248" y="120" width="16" height="62" rx="8" fill="#5C6E88"/>
+
+    <!-- roues -->
+    <circle cx="62" cy="330" r="15" fill="#16263B"/><circle cx="62" cy="330" r="6" fill="#3B5470"/>
+    <circle cx="214" cy="330" r="15" fill="#16263B"/><circle cx="214" cy="330" r="6" fill="#3B5470"/>
+
+    <!-- 2 : la grande etiquette enroulee sur la poignee -->
+    <g transform="translate(96,-4)">
+      <rect x="-4" y="-4" width="92" height="56" rx="6" fill="#00C87A" opacity=".22"/>
+      <rect x="0" y="0" width="84" height="48" rx="4" fill="#FFFFFF" stroke="#00C87A" stroke-width="2.5"/>
+      <rect x="0" y="0" width="84" height="12" rx="4" fill="#0B1F3A"/>
+      <rect x="0" y="7" width="84" height="5" fill="#0B1F3A"/>
+      <text x="5" y="9" fill="#FFFFFF" font-size="6.5" font-weight="800">AIR FRANCE</text>
+      <text x="5" y="27" fill="#111" font-size="14" font-weight="900">DSS</text>
+      <text x="40" y="22" fill="#111" font-size="7.5" font-weight="800">AF 718</text>
+      <text x="40" y="31" fill="#111" font-size="7.5" font-weight="800">19JUL</text>
+      <g transform="translate(5,34) scale(0.85,0.34)"><use href="#bc"/></g>
+      <text x="52" y="44" fill="#111" font-size="7" font-weight="700">0057123456</text>
+    </g>
+
+    <!-- 3 : la languette collee sur la coque -->
+    <g transform="translate(58,208)">
+      <rect x="0" y="0" width="76" height="30" rx="3" fill="#FFFFFF" stroke="#C9D2DE" stroke-width="1.5"/>
+      <g transform="translate(5,5) scale(0.78,0.6)"><use href="#bc"/></g>
+      <text x="5" y="27" fill="#111" font-size="7" font-weight="800">0057123456</text>
+    </g>
+
+    <use href="#pin" x="66" y="18"/>
+    <text x="66" y="23" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">2</text>
+    <line x1="82" y1="18" x2="94" y2="18" stroke="#0B1F3A" stroke-width="2.5"/>
+    <use href="#pin" x="162" y="223"/>
+    <text x="162" y="228" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">3</text>
+    <line x1="136" y1="223" x2="146" y2="223" stroke="#FFFFFF" stroke-width="2.5"/>
+  </g>
+
+  <!-- 1 : le recu, dans la main du passager -->
+  <g transform="translate(96,470)">
+    <rect x="0" y="0" width="240" height="16" rx="8" fill="#D9C3A8"/>
+    <rect x="16" y="-56" width="150" height="62" rx="4" fill="#FFFFFF" stroke="#C9D2DE" stroke-width="2" transform="rotate(-5 91 -25)"/>
+    <g transform="rotate(-5 91 -25)">
+      <text x="24" y="-40" fill="#4A5A70" font-size="7.5" font-weight="800">BAGGAGE CLAIM CHECK</text>
+      <text x="24" y="-28" fill="#111" font-size="9" font-weight="700">DIOP/AWA MME · DSS</text>
+      <g transform="translate(24,-22) scale(0.9,0.5)"><use href="#bc"/></g>
+      <text x="24" y="-3" fill="#111" font-size="9" font-weight="800">0057 123456</text>
+    </g>
+    <use href="#pin" x="-8" y="-34"/>
+    <text x="-8" y="-29" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">1</text>
+    <line x1="8" y1="-34" x2="20" y2="-34" stroke="#0B1F3A" stroke-width="2.5"/>
+  </g>
+  <text x="96" y="512" fill="#8C99AC" font-size="12.5">it often ends up stuck to your boarding pass</text>
+
+  <!-- ============ LES TROIS FICHES ============ -->
+  <g transform="translate(430,128)">
+    <rect x="0" y="0" width="700" height="132" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="34" cy="34" r="15" fill="#0B1F3A"/><text x="34" y="39" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">1</text>
+    <text x="62" y="32" fill="#0B1F3A" font-size="19" font-weight="800">The claim check</text>
+    <text x="62" y="53" fill="#8C99AC" font-size="13.5">handed to you at check-in, and you keep it</text>
+    <text x="62" y="82" fill="#374151" font-size="14.5">✓ 10-digit number, barcode, your name, the destination</text>
+    <text x="62" y="106" fill="#B04A3C" font-size="14.5" font-weight="700">✗ the flight number and date are not always printed on it</text>
+  </g>
+
+  <g transform="translate(430,276)">
+    <rect x="0" y="0" width="700" height="132" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+    <circle cx="34" cy="34" r="15" fill="#047857"/><text x="34" y="39" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">2</text>
+    <text x="62" y="32" fill="#0B1F3A" font-size="19" font-weight="800">The main tag, wrapped around the handle</text>
+    <text x="62" y="53" fill="#047857" font-size="13.5" font-weight="600">the one everyone tears off and bins on the way out</text>
+    <text x="62" y="82" fill="#0B1F3A" font-size="14.5" font-weight="800">✓ the flight number, the date, the routing and connections</text>
+    <rect x="62" y="94" width="240" height="24" rx="12" fill="#00C87A"/>
+    <text x="182" y="111" fill="#04372A" font-size="13" font-weight="800" text-anchor="middle">PHOTOGRAPH THIS ONE</text>
+  </g>
+
+  <g transform="translate(430,424)">
+    <rect x="0" y="0" width="700" height="120" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="34" cy="34" r="15" fill="#0B1F3A"/><text x="34" y="39" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">3</text>
+    <text x="62" y="32" fill="#0B1F3A" font-size="19" font-weight="800">The strip, stuck on the shell</text>
+    <text x="62" y="53" fill="#8C99AC" font-size="13.5">the &#8220;bingo tag&#8221;#8220;bingo tag&#8220;bingo tag&#8221;#8221; · a backup, not a tracking device</text>
+    <text x="62" y="82" fill="#374151" font-size="14.5">✓ the number and its barcode, nothing else</text>
+    <text x="62" y="104" fill="#8C99AC" font-size="13">it takes over if the handle tag is ripped off by the belts</text>
+  </g>
+
+  <text x="430" y="576" fill="#0B1F3A" font-size="14" font-weight="800">These tags prove a bag was checked in under your name on that flight,</text>
+  <text x="430" y="597" fill="#374151" font-size="14">not that you boarded. Send them alongside your booking, not instead of it.</text>
+  <text x="56" y="612" fill="#8C99AC" font-size="11.5">Fictional example · IATA Resolutions 740 and 751</text>
+</svg>

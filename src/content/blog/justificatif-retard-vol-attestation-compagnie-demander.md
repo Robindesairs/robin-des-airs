@@ -3,6 +3,7 @@ title: "Justificatif de retard de vol : obtenir l'attestation de la compagnie"
 meta_title: "Justificatif de retard de vol : modèle et recours"
 meta_description: "Obtenir l'attestation officielle de retard auprès de la compagnie : ce qu'il faut photographier tout de suite, le modèle de demande, et les recours si elle ne répond pas."
 slug: justificatif-retard-vol-attestation-compagnie-demander
+hreflang_en: flight-delay-confirmation-letter-airline
 image_url: /og-blog.png
 faq:
   - q: "La compagnie a-t-elle l'obligation de me donner une attestation de retard ?"
