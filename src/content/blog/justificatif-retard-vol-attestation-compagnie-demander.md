@@ -156,13 +156,23 @@ Si elle traîne, un dossier se monte quand même. Chaque pièce ne sert pas à l
 - **relevés météo** officiels, si la compagnie invoque les conditions
 - **témoignages** d'autres passagers, utiles en complément mais jamais seuls
 
-### L'étiquette bagage, la preuve qu'on jette sans y penser
+### L'étiquette bagage : il y en a trois, et vous gardez la mauvaise
 
-C'est le petit autocollant collé sur la poignée de votre valise, ou son double collé au dos de votre carte d'embarquement. On l'arrache en sortant de l'aéroport, et c'est dommage.
+Quand vous enregistrez une valise, l'agent imprime une bande adhésive unique, détachable en trois parties. Elles ne se valent pas du tout, et c'est contre-intuitif.
 
-Elle porte en effet **votre nom, le numéro de vol, la date et le trajet complet**, escales comprises. Autrement dit, à peu près tout ce que prouve une carte d'embarquement. Quand celle-ci a été perdue, jetée ou effacée d'une application, l'étiquette prend le relais et rétablit le lien entre vous et ce vol précis.
+![Schéma : les trois parties de l'étiquette bagage, le reçu remis au passager, la grande étiquette de poignée et la languette de secours, avec ce que chacune porte comme information](/assets/images/trois-etiquettes-bagage.svg)
 
-Prenez-la en photo avant de la décoller. Et si vous l'avez déjà perdue aussi, tout n'est pas joué : notre article sur la [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html) détaille les autres façons de prouver que vous étiez à bord.
+**Le reçu**, qu'on vous remet et qu'on colle souvent au dos de votre carte d'embarquement. C'est celui que vous gardez naturellement. Il porte le numéro à dix chiffres, votre nom et la destination. Mais **le numéro de vol et la date n'y figurent pas systématiquement** : ça dépend de la compagnie.
+
+**La grande étiquette enroulée sur la poignée.** C'est la plus riche des trois, et de loin. Elle porte votre nom, le **code compagnie et le numéro de vol**, la **date**, et le **routing complet avec les escales**. C'est celle que tout le monde arrache et jette en sortant de l'aéroport.
+
+**La languette fine** collée directement sur la coque, à un autre endroit que la poignée. Dans le métier on l'appelle le *bingo tag*. Elle ne porte que le numéro à dix chiffres et son code-barres. Ce n'est pas un mouchard : c'est une simple redondance, pour que le bagage reste triable si l'étiquette principale est arrachée par les convoyeurs.
+
+**Donc : photographiez la grande étiquette de poignée avant de la jeter.** C'est la seule des trois qui prouve le vol et la date.
+
+Ce numéro à dix chiffres n'est d'ailleurs pas un code de gestion interne : il obéit à la **norme IATA**, un chiffre de type, trois chiffres identifiant la compagnie, six chiffres de séquence. C'est la clé qui relie votre bagage à tous les scans enregistrés au cours du voyage. Il reste exploitable sans difficulté dans les semaines qui suivent le vol.
+
+**Une nuance qui vous évitera une contestation.** Ces étiquettes prouvent qu'un **bagage** a été enregistré à votre nom sur un vol donné. Elles ne prouvent pas à elles seules que **vous avez embarqué** : c'est la carte scannée en porte qui l'établit. Présentez-les donc en complément de votre réservation, pas comme preuve autonome. Si vous avez tout perdu, notre article sur la [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html) détaille les autres voies.
 
 ## Ce que Robin des Airs fait à votre place
 
