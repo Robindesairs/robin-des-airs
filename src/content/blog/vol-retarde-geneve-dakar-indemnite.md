@@ -59,11 +59,11 @@ Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant l
 
 La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
 
-**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens.
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens, oiseau ou débris sur la piste, vice caché du constructeur. Même dans ces cas, la compagnie doit encore prouver qu'elle a pris **toutes les mesures raisonnables** pour limiter le retard.
 
 **Excuses non valables** (l'indemnité reste due) :
 
-- panne technique (arrêt Wallentin-Hermann, CJUE)
+- panne technique de l'appareil, même imprévue et même avec un entretien à jour (arrêts Wallentin-Hermann et van der Lans, CJUE)
 - [retard de l'avion sur la rotation précédente](/blog/retard-rotation-avion-vol-precedent-indemnisation.html), sauf si la compagnie prouve une cause extraordinaire en amont
 - grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
 - sous-effectif ou problème d'organisation
