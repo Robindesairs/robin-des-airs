@@ -3,6 +3,7 @@ title: "Surclassement gratuit en avion : les 7 facteurs qui marchent vraiment"
 meta_title: "Surclassement gratuit : les 7 facteurs qui marchent vraiment"
 meta_description: "Le surclassement gratuit existe mais reste rare, surtout en famille. Les 7 vrais critères, les 5 mythes, et le déclassement qui vous doit 75 % du billet."
 slug: surclassement-gratuit-avion-facteurs-reels
+hreflang_en: free-flight-upgrade-7-factors
 image_url: /assets/images/aeroport-blaise-diagne-dakar-nuit.jpg
 faq:
   - q: "Le surclassement gratuit existe-t-il vraiment ?"

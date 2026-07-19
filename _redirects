@@ -191,6 +191,14 @@
 /blog/air-indemnite-liquidation-dossier-en-cours.html   /blog/pourquoi-choisir-robin-des-airs-difference.html   301!
 /blog/dossiers-types-robin-cas-reels-anonymises.html	/blog	301!
 
+# --- Fusion des 2 articles surclassement le 19/07/2026 ---
+# Doublon : meme sujet, memes 7 facteurs, 41 % de recouvrement lexical.
+# La version conservee (facteurs-reels, creee le 18/07) est plus longue, a une
+# source Markdown et traite en plus le declassement (art. 10). L'ancienne
+# n'avait jamais ete redirigee.
+/blog/surclassement-gratuit-avion-7-facteurs.html   /blog/surclassement-gratuit-avion-facteurs-reels.html   301!
+/blog/surclassement-gratuit-avion-7-facteurs        /blog/surclassement-gratuit-avion-facteurs-reels.html   301!
+
 # Formes sans .html des articles concurrents retires : la regle .html ci-dessus
 # ne les couvrait pas, Netlify renvoyait un 404 (constate en GSC le 19/07/2026).
 /blog/robin-des-airs-vs-airhelp-comparatif                       /blog/pourquoi-choisir-robin-des-airs-difference.html         301!
