@@ -54,7 +54,11 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 #blog-body a{color:#009960;font-weight:600}
 #blog-body a:hover{color:#00C87A;text-decoration:underline}
 #blog-body img{display:block;max-width:100%;height:auto;margin:1.25rem 0;border-radius:.5rem;border:1px solid #E2E6EE}
-#blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
+/* Tableaux : 92 articles en contiennent, certains à 4 colonnes. Sans overflow, la
+   dernière colonne était purement coupée sur mobile (vérifié à 375px : la colonne
+   « Délai pour agir » disparaissait hors écran, sans scroll possible). Le trafic
+   étant majoritairement mobile, on rend le tableau scrollable horizontalement. */
+#blog-body table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;font-size:14px}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}
@@ -70,7 +74,7 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 .faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
 .faq details>div a{color:#009960;font-weight:600}
 .faq details>div strong{color:#0B1F3A}</style>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Petite créance européenne : récupérer 600€ d'indemnité vol (formulaire A)","description":"La compagnie refuse vos 600€ ? La procédure européenne de petite créance permet d'obtenir un jugement contraignant pour <50€ de frais. Mode d'emploi.","url":"https://robindesairs.eu/blog/formulaire-petite-creance-europeenne-vol-retarde.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-07-17","dateModified":"2026-07-17","mainEntityOfPage":{"@type":"WebPage","@id":"https://robindesairs.eu/blog/formulaire-petite-creance-europeenne-vol-retarde.html"},"author":{"@type":"Person","@id":"https://robindesairs.eu/a-propos.html#climbie","name":"Saint-Yves","url":"https://robindesairs.eu/a-propos.html"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Petite créance européenne : récupérer 600€ d'indemnité vol (formulaire A)","description":"La compagnie refuse vos 600€ ? La procédure européenne de petite créance permet d'obtenir un jugement contraignant pour <50€ de frais. Mode d'emploi.","url":"https://robindesairs.eu/blog/formulaire-petite-creance-europeenne-vol-retarde.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-07-19","dateModified":"2026-07-19","mainEntityOfPage":{"@type":"WebPage","@id":"https://robindesairs.eu/blog/formulaire-petite-creance-europeenne-vol-retarde.html"},"author":{"@type":"Person","@id":"https://robindesairs.eu/a-propos.html#climbie","name":"Saint-Yves","url":"https://robindesairs.eu/a-propos.html"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"Petite créance européenne : récupérer 600€ d'indemnité vol (formulaire A)","item":"https://robindesairs.eu/blog/formulaire-petite-creance-europeenne-vol-retarde.html"}]}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quel est le plafond de la procédure européenne de petite créance ?","acceptedAnswer":{"@type":"Answer","text":"**5 000€**. C'est largement suffisant pour les indemnités CE 261 (600€ × passagers) y compris pour une famille de 8 (4 800€)."}},{"@type":"Question","name":"Faut-il un avocat ?","acceptedAnswer":{"@type":"Answer","text":"**Non**. Procédure 100 % écrite, sans audience obligatoire. Frais de greffe ~35€, remboursés si vous gagnez. Robin prépare le dossier et, si nécessaire, un avocat partenaire se charge du dépôt."}},{"@type":"Question","name":"Combien de temps prend la procédure ?","acceptedAnswer":{"@type":"Answer","text":"Décision moyenne sous **90 jours** après la réponse de la compagnie. Plus rapide qu'un tribunal classique. Décision exécutoire dans toute l'UE."}}]}</script>
 </head>
@@ -172,12 +176,12 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
     <section class="related">
       <h2>Articles liés</h2>
       <ul>
-        <li><a href="/blog/vol-deroutement-aeroport-secondaire-droits.html">Vol dérouté vers un autre aéroport : vos droits</a></li>
-        <li><a href="/blog/vol-direct-vs-correspondance-droits-ce261.html">Vol direct vs correspondance : droits CE 261 (tableau)</a></li>
-        <li><a href="/blog/vol-manque-no-show-reacheminement-compagnie-refuse.html">Vol manqué et billet retour annulé (no-show) : que faire ?</a></li>
-        <li><a href="/blog/vol-mariage-traditionnel-retour-pays-retard.html">Vol pour mariage traditionnel retardé : récupérer 600€ par passager</a></li>
-        <li><a href="/blog/vol-pelerinage-omra-hadj-retard.html">Vol pèlerinage Omra ou Hadj retardé : vos droits</a></li>
-        <li><a href="/blog/vol-ramadan-aid-tabaski-retard-droits.html">Vol Ramadan, Aïd, Tabaski retardé : vos droits</a></li>
+        <li><a href="/blog/bagage-cabine-ryanair-payant-2026.html">Bagage cabine Ryanair payant 2026 : éviter les 60€ surprise au comptoir</a></li>
+        <li><a href="/blog/bagage-perdu-retard-vol-indemnite.html">Bagage perdu ou retardé : vos droits (différents du CE 261)</a></li>
+        <li><a href="/blog/bagage-retarde-mariage-ghana-achats-premiere-necessite.html">Bagage retardé : ce que vous pouvez vraiment acheter (cas vécu au Ghana)</a></li>
+        <li><a href="/blog/bagage-retarde-perdu-convention-montreal.html">Bagage perdu ou retardé : jusqu'à 1 700€ remboursés</a></li>
+        <li><a href="/blog/bebe-enfant-sur-les-genoux-indemnite-vol.html">Bébé ou enfant sur les genoux : a-t-il droit à l'indemnité de vol ?</a></li>
+        <li><a href="/blog/billet-achete-en-agence-indemnisation-vol-ce261.html">Billet acheté en agence : qui vous prévient pour votre indemnité (CE 261) ?</a></li>
       </ul>
     </section>
   </main>

@@ -1668,14 +1668,34 @@ function attributeId(s, nom) {
   return nmAttribute(nom, names, done);
 }
 // Formate la liste des pièces manquantes (texte WhatsApp)
+// Sur une ANNULATION, le vol n'a pas eu lieu : le passager n'a le plus souvent AUCUNE carte
+// d'embarquement (annulation annoncée la veille, jamais enregistré). La lui réclamer l'envoie
+// dans un mur et laisse croire qu'il ne peut pas réclamer. Sa preuve de voyage, c'est
+// l'e-billet / la confirmation de réservation. On ne cite donc la carte que sur retard et refus.
+// (Elle reste acceptée si le client en a une : seul le TEXTE de la demande change, pas docsStatus.)
+function isAnnulation(s) { return !!(s && s.incident === 'annulation'); }
+function proofAsk(s, en, kind) {
+  const ann = isAnnulation(s);
+  if (kind === 'solo') {
+    if (ann) return en ? `your *e-ticket* or *booking confirmation*` : `votre *e-billet* ou *confirmation de réservation*`;
+    return en ? `your *boarding pass* or *e-ticket*` : `votre *carte d'embarquement* ou *e-billet*`;
+  }
+  if (kind === 'some') {
+    if (ann) return en ? `an *e-ticket* or *booking confirmation* listing everyone` : `un *e-billet* ou une *confirmation de réservation* qui liste tout le monde`;
+    return en ? `their *boarding pass*, or an *e-ticket* listing everyone` : `sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`;
+  }
+  if (ann) return en ? `a single *e-ticket* or *booking confirmation* listing them all` : `un seul *e-billet* ou une *confirmation de réservation* qui les liste tous`;
+  return en ? `a *boarding pass* for each, or a single *e-ticket* listing them all` : `une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`;
+}
+
 function missingDocsText(s) {
   const en = !!(s && s.langue_code === 'en');
   const st = docsStatus(s); const miss = [];
   if (st.missingId.length) miss.push(en ? `the *ID* of *${st.missingId.join('*, *')}*` : `la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
   if (!st.travelProofOk) {
-    if ((s.pax || 1) <= 1) miss.push(en ? `your *boarding pass* or *e-ticket*` : `votre *carte d'embarquement* ou *e-billet*`);
-    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(en ? `the *proof of travel* of *${st.missingTravel.join('*, *')}* — their *boarding pass*, or an *e-ticket* listing everyone` : `la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`);
-    else miss.push(en ? `a *proof of travel per passenger*: a *boarding pass* for each, or a single *e-ticket* listing them all` : `une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
+    if ((s.pax || 1) <= 1) miss.push(proofAsk(s, en, 'solo'));
+    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(en ? `the *proof of travel* of *${st.missingTravel.join('*, *')}* — ${proofAsk(s, en, 'some')}` : `la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — ${proofAsk(s, en, 'some')}`);
+    else miss.push(en ? `a *proof of travel per passenger*: ${proofAsk(s, en, 'all')}` : `une *preuve de voyage par passager* : ${proofAsk(s, en, 'all')}`);
   }
   if (miss.length) return en ? `📎 Still missing: ${miss.join(' and ')}.` : `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
@@ -2047,7 +2067,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     const _ref = _l.ref || (s && s.ref) || '';
     const _url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(_ref);
     upsertLead(phone, { lastClientAt: Date.now() });
-    return send(phone, L(s, `📎 Great. Upload your documents (*ID* + *boarding pass* or *e-ticket*) securely here 👇\n${_url}\n\nYou can also *send me the photos directly here*. 🙏\n\n🔒 Your ID is used *only* to claim your money and pay it to the right name. You can *hide the line of numbers at the bottom* — we only need your name + photo. Deleted 30 days after settlement. GDPR.`, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏\n\n🔒 La pièce sert *uniquement* à réclamer votre argent et à vous le verser au bon nom. Vous pouvez *cacher la bande de chiffres en bas* — on n'a besoin que du nom + photo. Supprimée 30 j après règlement. RGPD.`), cfg);
+    return send(phone, L(s, `📎 Great. Upload your documents (*ID* + ${isAnnulation(s) ? '*e-ticket* or *booking confirmation*' : '*boarding pass* or *e-ticket*'}) securely here 👇\n${_url}\n\nYou can also *send me the photos directly here*. 🙏\n\n🔒 Your ID is used *only* to claim your money and pay it to the right name. You can *hide the line of numbers at the bottom* — we only need your name + photo. Deleted 30 days after settlement. GDPR.`, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + ${isAnnulation(s) ? '*e-billet* ou *confirmation de réservation*' : '*carte d\'embarquement* ou *e-billet*'}) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏\n\n🔒 La pièce sert *uniquement* à réclamer votre argent et à vous le verser au bon nom. Vous pouvez *cacher la bande de chiffres en bas* — on n'a besoin que du nom + photo. Supprimée 30 j après règlement. RGPD.`), cfg);
   }
 
   // Préférence de versement (posée à la signature, juste avant les pièces) : 1 tap → on stocke la préférence.
@@ -2507,7 +2527,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
     if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
-      return send(phone, L(s, `👍 Got it — tap *📎/+* (or *📷*) below and send a photo of *ONE* of these (whichever you have handy):\n🎫 your *e-ticket* — the best one, it has all your flights\n🛂 or your *boarding pass*\n🧳 or the *baggage tag* on your suitcase\n\n_One single document is enough — I read everything._ 🔒`, `👍 C'est noté — appuyez sur *📎/+* (ou *📷*) en bas et envoyez la photo d'*UN* de ces documents (celui que vous avez sous la main) :\n🎫 votre *e-billet* — le mieux, il contient tous vos vols\n🛂 ou votre *carte d'embarquement*\n🧳 ou l'*étiquette bagage* collée sur votre valise\n\n_Un seul document suffit — je lis tout._ 🔒`), cfg);
+      return send(phone, L(s, `👍 Got it — tap *📎/+* (or *📷*) below and send a photo of *ONE* of these (whichever you have handy):\n🎫 your *e-ticket* — the best one, it has all your flights\n📧 or your *booking confirmation*${isAnnulation(s) ? '' : '\\n🛂 or your *boarding pass*'}\n🧳 or the *baggage tag* on your suitcase\n\n_One single document is enough — I read everything._ 🔒`, `👍 C'est noté — appuyez sur *📎/+* (ou *📷*) en bas et envoyez la photo d'*UN* de ces documents (celui que vous avez sous la main) :\n🎫 votre *e-billet* — le mieux, il contient tous vos vols\n🛂 ou votre *carte d'embarquement*\n🧳 ou l'*étiquette bagage* collée sur votre valise\n\n_Un seul document suffit — je lis tout._ 🔒`), cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, L(s, `🔄 No problem, we'll do it together — one question at a time.`, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`));
