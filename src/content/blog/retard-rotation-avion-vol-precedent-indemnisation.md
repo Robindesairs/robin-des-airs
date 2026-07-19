@@ -17,6 +17,8 @@ faq:
     a: "Non. C'est une contrainte de sécurité connue, chiffrée et publiée, entièrement pilotable par la compagnie au moment où elle construit ses plannings. La Cour de justice de l'Union européenne considère que ce qui relève du personnel du transporteur lui est **inhérent**, donc jamais extraordinaire."
   - q: "La compagnie peut-elle invoquer un orage survenu sur un vol précédent ?"
     a: "Oui, la Cour de justice l'admet depuis 2020, à condition de prouver un **lien de causalité direct**. Mais elle doit aussi démontrer qu'aucun réacheminement plus rapide n'était possible. Vous proposer le vol du lendemain ne suffit pas : elle doit chercher d'autres vols, y compris chez d'autres compagnies."
+  - q: "Pourquoi un retard au départ d'Afrique dure-t-il si longtemps ?"
+    a: "Parce qu'il n'y a **aucun équipage de réserve** dans l'escale. Les compagnies en tiennent à leur base, pas dans une escale lointaine. Le soir de votre vol, deux équipages sont bien sur place, mais celui qui vient d'atterrir doit prendre au minimum dix heures de repos, et celui qui a découché la veille est déjà prévu pour opérer votre vol. Faire venir un équipage d'Europe prend vingt-quatre heures. Un retard qui atteint la limite se compte alors en jours, pas en heures."
   - q: "Mon vol devait partir d'Orly le soir et il a été annulé. Pourquoi ?"
     a: "Orly est le seul grand aéroport européen doté d'un couvre-feu complet. Depuis 2025, il se calcule sur le **départ du poste de stationnement à 23h15**. Un avion qui n'a pas quitté son poste à cette heure ne part plus. Et un simple retard commercial n'ouvre droit à aucune dérogation."
 ---
@@ -203,11 +205,59 @@ Le temps de service d'un équipage est plafonné par la réglementation europée
 
 Ce plafond est **absolu**. Il n'y a ni dérogation, ni arbitrage commercial possible. Le commandant de bord dispose d'une soupape pour l'imprévu, deux heures au maximum, trois si l'équipage de conduite est renforcé. Au-delà, le vol ne peut plus être opéré par cet équipage. Il faut un équipage de remplacement, ou attendre le repos réglementaire, qui est d'au moins dix heures hors base.
 
-Et c'est là que la géographie entre en jeu. Une compagnie tient des équipages de réserve à sa base et à ses grands hubs. Elle n'en tient pratiquement jamais dans une escale lointaine desservie deux ou trois fois par semaine, parce que le coût d'y immobiliser un équipage complet serait sans rapport avec la fréquence.
-
-Conséquence concrète pour un vol au départ d'une escale africaine : si l'équipage atteint sa limite sur place, il n'y a personne pour le remplacer. Le vol n'est pas retardé de deux heures, il est reporté de dix à vingt-quatre heures.
+Une compagnie tient des équipages de réserve à sa base et à ses grands hubs, où un remplaçant peut arriver en quelques heures. Loin de sa base, cette solution n'existe pas. Nous verrons dans la section suivante que sur nos lignes, la situation est encore plus contrainte qu'on ne l'imagine.
 
 **Rien n'oblige juridiquement à annuler.** Reporter le vol après le repos de l'équipage reste toujours possible. Choisir l'annulation plutôt que le report est un arbitrage économique de la compagnie, et les juges y sont attentifs.
+
+## Sur l'axe Afrique, l'avion rentre mais pas l'équipage
+
+Voici la particularité de nos lignes, et elle explique presque tout ce qui s'y passe.
+
+### L'appareil ne dort pas sur place
+
+Sur les liaisons entre l'Europe et l'Afrique de l'Ouest ou centrale, le schéma dominant des compagnies européennes est toujours le même : départ d'Europe en début d'après-midi, arrivée en fin de journée, redépart dans la nuit, arrivée en Europe au petit matin. **L'avion fait demi-tour.** Il ne passe pas la nuit sur place.
+
+Et le temps qu'il passe au sol est très court. Sur une liaison quotidienne vers Abidjan, l'escale tourne autour de deux heures et demie. Vers Kinshasa, autour de deux heures. Pour un gros-porteur qu'il faut vider, nettoyer, réavitailler, recharger en fret et en bagages puis réembarquer, le temps incompressible est déjà d'une heure et demie à deux heures.
+
+**La marge réelle est donc de trente minutes à une heure.** Un retard d'une heure à l'arrivée est intégralement absorbé par l'escale, et le vol de nuit vers l'Europe repart en retard. Le retard parti d'Europe le matin vous revient dessus le soir même.
+
+Les compagnies africaines appliquent souvent le schéma inverse, leur appareil passant la nuit en Europe. Mais le point commun demeure : **aucune de ces rotations n'a de marge significative**, d'un côté comme de l'autre.
+
+### Le cas des lignes triangulaires
+
+Certaines dessertes ne rentrent pas directement. Le même appareil enchaîne deux escales africaines avant de rentrer en Europe, par exemple Abidjan puis Lomé, ou Cotonou puis Accra.
+
+Si vous embarquez à la seconde escale, votre retard s'est joué à la première, deux heures plus tôt, dans une ville où vous n'êtes jamais allé. Et chaque étape supplémentaire **abaisse de trente minutes** le plafond de temps de service de l'équipage, ce qui fragilise encore la fin de chaîne.
+
+### L'équipage, lui, reste sur place
+
+C'est ici que se trouve le point que presque personne n'explique.
+
+Un aller-retour Paris-Abidjan représente environ seize heures quarante-cinq de service, présentation comprise. Le plafond réglementaire pour un service commençant en début d'après-midi est de treize heures. **Le même équipage ne peut donc pas ramener l'avion.** Il descend, va à l'hôtel, prend son repos réglementaire, et rentrera plus tard sur un autre appareil. C'est ce qu'on appelle un découcher.
+
+Autrement dit, l'appareil et l'équipage se séparent à l'arrivée. L'avion repart dans la nuit avec un autre équipage, celui qui a découché la veille.
+
+### Pourquoi le découcher ne vous sauve pas
+
+On pourrait croire que cette présence permanente d'équipages dans l'escale offre une solution de secours en cas de retard. C'est l'inverse, et le raisonnement mérite d'être suivi.
+
+Le soir de votre vol retour, il y a bien deux équipages de la compagnie dans la ville. Mais aucun n'est disponible :
+
+**Celui qui vient d'atterrir** a derrière lui près de huit heures de service. La réglementation lui impose au minimum dix heures de repos hors base. Il est physiquement présent et juridiquement inutilisable.
+
+**Celui qui a découché la veille** est reposé, mais il n'est pas en réserve : c'est précisément lui qui est prévu pour opérer votre vol de ce soir. Il est déjà employé.
+
+Le découcher crée donc une présence, pas une redondance. **Il n'y a aucun équipage de réserve dans l'escale.** Pour en obtenir un, il faut le faire venir d'Europe, ce qui prend au minimum vingt-quatre heures.
+
+C'est la différence structurelle avec un aéroport européen, où un remplaçant est joignable en quelques heures. Et c'est pourquoi, sur nos lignes, un retard qui atteint la limite de l'équipage ne se compte pas en heures mais en jours.
+
+### La bonne nouvelle, et la mauvaise
+
+**La bonne :** puisque ce n'est pas le même équipage, le retard de l'aller ne consomme pas son compteur. Il démarre à sa propre présentation, sur place.
+
+**La mauvaise :** ce compteur est court, parce que le vol part de nuit. Un service qui commence en soirée plafonne à onze heures, contre treize en journée. Sur une liaison de six heures et demie, la butée tombe environ trois heures et demie après l'heure de départ prévue, et jusqu'à cinq heures et demie si le commandant active sa soupape pour imprévu.
+
+Au-delà, il n'existe aucune solution locale. Le vol ne part pas, et vous passez la nuit sur place. Retenez alors que **la prise en charge vous est due**, hébergement et repas compris, quelle que soit la cause du retard, y compris une circonstance extraordinaire.
 
 ## Le couvre-feu : quand le retard devient annulation
 
