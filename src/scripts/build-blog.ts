@@ -233,8 +233,10 @@ function renderArticlePage(
   const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
   // hreflang : posé UNIQUEMENT si une vraie traduction EN existe (hreflang_en en frontmatter) —
   // pas de couplage FR/EN automatique, les deux corpus sont indépendants (cf. audit SEO 16/07/2026).
+  // x-default pointe sur le FR : c'est la version de reference du site, et les pages EN
+  // pointent deja leur x-default vers le FR. Sans lui, l'appariement etait asymetrique.
   const hreflangHtml = post.hreflang_en
-    ? `\n  <link rel="alternate" hreflang="fr" href="${canonical}">\n  <link rel="alternate" hreflang="en" href="${SITE_URL}/en/blog/${post.hreflang_en}.html">`
+    ? `\n  <link rel="alternate" hreflang="fr" href="${canonical}">\n  <link rel="alternate" hreflang="en" href="${SITE_URL}/en/blog/${post.hreflang_en}.html">\n  <link rel="alternate" hreflang="x-default" href="${canonical}">`
     : '';
   // Images du corps : servir le WebP (5x plus léger que le PNG), différer le chargement
   // et fixer les dimensions pour ne pas provoquer de CLS. Les schémas font tous 1200x630.

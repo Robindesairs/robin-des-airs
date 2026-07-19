@@ -1,7 +1,7 @@
 ---
 title: "Justificatif de retard de vol : obtenir l'attestation de la compagnie"
 meta_title: "Justificatif de retard de vol : modèle et recours"
-meta_description: "Obtenir l'attestation officielle de retard auprès de la compagnie : ce qu'il faut photographier tout de suite, le modèle de demande, et les recours si elle ne répond pas."
+meta_description: "Obtenir son justificatif de retard auprès de la compagnie : quoi photographier avant de quitter l'aéroport, le modèle à copier, et les recours si elle ignore."
 slug: justificatif-retard-vol-attestation-compagnie-demander
 hreflang_en: flight-delay-confirmation-letter-airline
 image_url: /og-blog.png
@@ -42,7 +42,7 @@ Ces gestes prennent trente secondes, et ils pèsent souvent plus lourd que le ju
 
 Dès que la mention **Retardé**, **Annulé** ou **Dérouté** apparaît, prenez-le en photo.
 
-![Schéma : ce qu'il faut cadrer sur la photo du tableau des départs et de l'écran de la porte d'embarquement, en incluant l'horloge](/assets/images/photographier-tableau-affichage-aeroport.svg)
+<img src="/assets/images/photographier-tableau-affichage-aeroport.svg" alt="Schéma : ce qu'il faut cadrer sur la photo du tableau des départs et de l'écran de la porte d'embarquement, en incluant l'horloge" width="1200" height="630" loading="lazy" decoding="async">
 
 **Photographiez les deux écrans, pas un seul.** Le tableau des départs annonce. L'écran de la porte d'embarquement, lui, engage davantage : c'est souvent là qu'un **motif** apparaît, du type incident technique ou retard de l'appareil précédent.
 
@@ -76,7 +76,7 @@ Une équipe au sol planifie sa journée sur les horaires prévus. Un avion qui s
 
 Le retard s'auto-alimente donc, et il le fait au pire moment : celui où vous êtes juste sous le seuil. **Ne concluez jamais « mon vol avait 2 h 40, tant pis ».** Tant que vous n'avez pas l'heure d'ouverture de la porte, vous ne savez pas si vous avez droit à 600 € ou à rien.
 
-![Schéma : l'heure qui compte pour le calcul du retard est celle de l'ouverture de la porte, pas celle de l'atterrissage](/assets/images/heure-arrivee-ouverture-porte.svg)
+<img src="/assets/images/heure-arrivee-ouverture-porte.svg" alt="Schéma : l'heure qui compte pour le calcul du retard est celle de l'ouverture de la porte, pas celle de l'atterrissage" width="1200" height="630" loading="lazy" decoding="async">
 
 **Le geste concret.** Dès que la porte s'ouvre et que les premiers passagers la franchissent, regardez l'heure et **prenez une photo**. Le couloir qui se vide, la passerelle accostée, la porte ouverte : n'importe quel cadrage fait l'affaire. Ce qui compte, c'est l'horodatage que votre téléphone inscrit automatiquement dans le fichier. C'est exactement ce que font les cabinets spécialisés dans ce contentieux.
 
@@ -208,7 +208,7 @@ Le retard se calcule entre l'heure d'arrivée initialement prévue et l'heure d'
 
 Si elle traîne à délivrer son justificatif, un dossier se monte quand même sans elle. Chaque pièce ne sert pas à la même chose, et c'est en les combinant qu'un dossier devient solide.
 
-![Schéma : quelle preuve établit quoi, de la carte d'embarquement à l'étiquette bagage en passant par l'historique du vol et les relevés météo](/assets/images/preuves-retard-vol-quoi-prouve-quoi.svg)
+<img src="/assets/images/preuves-retard-vol-quoi-prouve-quoi.svg" alt="Schéma : quelle preuve établit quoi, de la carte d'embarquement à l'étiquette bagage en passant par l'historique du vol et les relevés météo" width="1200" height="630" loading="lazy" decoding="async">
 
 - **cartes d'embarquement** du vol initial et du vol de remplacement
 - **étiquette bagage**, le filet de sécurité si vous avez perdu la carte d'embarquement
@@ -222,7 +222,7 @@ Si elle traîne à délivrer son justificatif, un dossier se monte quand même s
 
 Quand vous enregistrez une valise, l'agent imprime une bande adhésive unique, détachable en trois parties. Elles ne se valent pas du tout, et c'est contre-intuitif.
 
-![Schéma : les trois parties de l'étiquette bagage, le reçu remis au passager, la grande étiquette de poignée et la languette de secours, avec ce que chacune porte comme information](/assets/images/trois-etiquettes-bagage.svg)
+<img src="/assets/images/trois-etiquettes-bagage.svg" alt="Schéma : les trois parties de l'étiquette bagage sur une valise, le reçu, la grande étiquette de poignée et la languette de secours" width="1200" height="630" loading="lazy" decoding="async">
 
 **Le reçu**, qu'on vous remet et qu'on colle souvent au dos de votre carte d'embarquement. C'est celui que vous gardez naturellement. Il porte le numéro à dix chiffres, votre nom et la destination. Mais **le numéro de vol et la date n'y figurent pas systématiquement** : ça dépend de la compagnie.
 
