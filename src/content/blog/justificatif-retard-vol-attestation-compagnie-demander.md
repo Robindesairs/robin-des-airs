@@ -1,5 +1,5 @@
 ---
-title: "Justificatif de retard de vol : comment l'obtenir de la compagnie"
+title: "Justificatif de retard de vol : obtenir l'attestation de la compagnie"
 meta_title: "Justificatif de retard de vol : modèle et recours"
 meta_description: "Obtenir l'attestation officielle de retard auprès de la compagnie : ce qu'il faut photographier tout de suite, le modèle de demande, et les recours si elle ne répond pas."
 slug: justificatif-retard-vol-attestation-compagnie-demander
@@ -27,9 +27,15 @@ Un **justificatif de retard** est une attestation écrite par laquelle la compag
 
 Mais la meilleure attestation ne remplacera jamais ce que vous seul pouvez faire sur le moment. Commençons par là.
 
+<nav class="sommaire" aria-label="Sommaire de l'article">
+  <p class="sommaire-t">Dans cet article</p>
+  <ol id="sommaire-liste"></ol>
+</nav>
+
+
 ## Les trois réflexes à avoir avant de quitter l'aéroport
 
-Ces gestes prennent trente secondes et changent la solidité d'un dossier. Personne ne vous les dira au comptoir.
+Ces gestes prennent trente secondes, et ils pèsent souvent plus lourd que le justificatif que la compagnie vous enverra des semaines plus tard. Personne ne vous les dira au comptoir.
 
 ### 1. Photographiez le tableau d'affichage
 
@@ -76,6 +82,51 @@ Le retard s'auto-alimente donc, et il le fait au pire moment : celui où vous ê
 Ne confondez pas avec le choc des roues sur la piste. Il arrive bien plus tôt et ne vaut rien juridiquement.
 
 **Et surtout, vous n'êtes pas obligé de la deviner.** Les lignes directrices de la Commission européenne prévoient que **l'heure d'arrivée réelle doit vous être communiquée gratuitement, sur simple demande**. Vous pouvez donc l'exiger par écrit plutôt que de la reconstituer depuis votre siège. C'est d'ailleurs à la compagnie de prouver l'heure d'arrivée, pas à vous : votre photo n'est qu'un filet si elle traîne ou si elle annonce un horaire fantaisiste.
+
+## Le suivi de vol, le justificatif que la compagnie publie sans le savoir
+
+Il existe un justificatif que presque personne ne va chercher, et qui vaut mieux que tous les autres : **la page de suivi des vols de la compagnie elle-même**.
+
+Sa force tient à son auteur. Un traceur tiers n'engage personne. Un relevé météo est neutre. Mais une page publiée par le transporteur, où il inscrit lui-même l'heure d'arrivée de son propre vol, est difficile à contredire ensuite : il faudrait qu'il explique pourquoi il affichait autre chose au public.
+
+**Chez Air France**, l'outil s'appelle « Actualité des vols ». Il est public, sans compte, à l'adresse `wwws.airfrance.fr/flight-status`. On cherche par numéro de vol, ou par trajet et date. Et en dépliant le résultat, on obtient l'heure d'arrivée **et le motif du retard**.
+
+Ce dernier point est rare. Sur les autres compagnies que nous avons examinées, aucune n'affiche de cause. C'est cohérent avec leurs intérêts : le motif détermine la circonstance extraordinaire, donc l'exonération. Air France fait ici exception, et il faut en profiter.
+
+### Attention à l'heure affichée : elle vous dessert
+
+Les compagnies publient en général l'heure dite **« au bloc »**, celle du serrage du frein de parking. Or la CJUE a écarté explicitement cette heure, au même titre que celle de l'atterrissage : ce qui compte reste l'**ouverture de la porte**, parce que jusque-là vous êtes toujours enfermé dans l'appareil.
+
+Autrement dit, l'heure que la compagnie affiche **sous-estime votre retard réel**. Il faut y ajouter la mise en place de la passerelle ou de l'escalier. Ne renoncez donc jamais parce que la page annonce 2 h 50 : c'est un minorant, pas un verdict.
+
+### Toutes les compagnies ne se valent pas
+
+C'est là que la diaspora est mal servie, et il faut le savoir avant de partir.
+
+| Compagnie | Suivi public | Historique |
+|---|---|---|
+| Air France | Oui, avec le motif | Recherche possible sur plusieurs mois |
+| Iberia | Oui | Environ 7 jours |
+| Transavia | Oui, avec « Parti à » et « Arrivé à » | La veille et le jour même |
+| Brussels Airlines, ITA, Vueling, Ethiopian | Oui | **Aucun passé**, uniquement les vols à venir |
+| Kenya Airways, Tunisair | Oui | Le jour même |
+| **Air Sénégal** | **Non** | La page existe mais elle est vide depuis 2019 |
+| **Air Algérie** | **Non** | Aucun outil, l'adresse renvoie une erreur |
+
+Sur les deux dernières, un passager n'a **aucun moyen officiel de documenter son propre retard**. C'est une raison de plus de photographier sur place, et de ne pas compter sur la compagnie après coup.
+
+### Capturez sous 72 heures
+
+Retenez surtout ceci : la plupart de ces pages ne gardent rien du passé. Vous avez cinq ans pour réclamer en France, mais souvent moins d'une semaine pour récupérer la preuve.
+
+Capturez la page **de la compagnie**, en veillant à ce que l'adresse et la date soient visibles à l'écran. Un enregistrement en PDF de la page entière vaut mieux qu'une capture d'image.
+
+<aside class="cta-inline">
+  <p class="cta-inline-t">Votre vol est déjà passé et la page ne montre plus rien ?</p>
+  <p class="cta-inline-p">On sait où chercher ailleurs, et on demande à la compagnie ce qu'elle ne publie pas. Vérification gratuite, 0 € d'avance.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
+</aside>
+
 
 ## Quand la compagnie doit vous fournir un justificatif
 
@@ -152,9 +203,9 @@ Quand la compagnie vous replace sur un autre vol, demandez en plus :
 
 Le retard se calcule entre l'heure d'arrivée initialement prévue et l'heure d'arrivée effective sur le vol de remplacement. Pas entre les deux vols.
 
-## Les preuves qui ne dépendent pas de la compagnie
+## Les justificatifs qui ne dépendent pas de la compagnie
 
-Si elle traîne, un dossier se monte quand même. Chaque pièce ne sert pas à la même chose, et c'est en les combinant qu'un dossier devient solide.
+Si elle traîne à délivrer son justificatif, un dossier se monte quand même sans elle. Chaque pièce ne sert pas à la même chose, et c'est en les combinant qu'un dossier devient solide.
 
 ![Schéma : quelle preuve établit quoi, de la carte d'embarquement à l'étiquette bagage en passant par l'historique du vol et les relevés météo](/assets/images/preuves-retard-vol-quoi-prouve-quoi.svg)
 
@@ -178,55 +229,17 @@ Quand vous enregistrez une valise, l'agent imprime une bande adhésive unique, d
 
 **La languette fine** collée directement sur la coque, à un autre endroit que la poignée. Dans le métier on l'appelle le *bingo tag*. Elle ne porte que le numéro à dix chiffres et son code-barres. Ce n'est pas un mouchard : c'est une simple redondance, pour que le bagage reste triable si l'étiquette principale est arrachée par les convoyeurs.
 
-**Donc : photographiez la grande étiquette de poignée avant de la jeter.** C'est la seule des trois qui prouve le vol et la date.
+**Donc : photographiez la grande étiquette de poignée avant de la jeter.** C'est un justificatif gratuit que vous détenez déjà. C'est la seule des trois qui prouve le vol et la date.
 
 Ce numéro à dix chiffres n'est d'ailleurs pas un code de gestion interne : il obéit à la **norme IATA**, un chiffre de type, trois chiffres identifiant la compagnie, six chiffres de séquence. C'est la clé qui relie votre bagage à tous les scans enregistrés au cours du voyage. Il reste exploitable sans difficulté dans les semaines qui suivent le vol.
 
 **Une nuance qui vous évitera une contestation.** Ces étiquettes prouvent qu'un **bagage** a été enregistré à votre nom sur un vol donné. Elles ne prouvent pas à elles seules que **vous avez embarqué** : c'est la carte scannée en porte qui l'établit. Présentez-les donc en complément de votre réservation, pas comme preuve autonome. Si vous avez tout perdu, notre article sur la [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html) détaille les autres voies.
 
-## Le suivi de vol de la compagnie, la preuve qu'on oublie
-
-Il existe une pièce que presque personne ne va chercher, et qui vaut mieux que toutes les autres : **la page de suivi des vols de la compagnie elle-même**.
-
-Sa force tient à son auteur. Un traceur tiers n'engage personne. Un relevé météo est neutre. Mais une page publiée par le transporteur, où il inscrit lui-même l'heure d'arrivée de son propre vol, est difficile à contredire ensuite : il faudrait qu'il explique pourquoi il affichait autre chose au public.
-
-**Chez Air France**, l'outil s'appelle « Actualité des vols ». Il est public, sans compte, à l'adresse `wwws.airfrance.fr/flight-status`. On cherche par numéro de vol, ou par trajet et date. Et en dépliant le résultat, on obtient l'heure d'arrivée **et le motif du retard**.
-
-Ce dernier point est rare. Sur les autres compagnies que nous avons examinées, aucune n'affiche de cause. C'est cohérent avec leurs intérêts : le motif détermine la circonstance extraordinaire, donc l'exonération. Air France fait ici exception, et il faut en profiter.
-
-### Attention à l'heure affichée : elle vous dessert
-
-Les compagnies publient en général l'heure dite **« au bloc »**, celle du serrage du frein de parking. Or la CJUE a écarté explicitement cette heure, au même titre que celle de l'atterrissage : ce qui compte reste l'**ouverture de la porte**, parce que jusque-là vous êtes toujours enfermé dans l'appareil.
-
-Autrement dit, l'heure que la compagnie affiche **sous-estime votre retard réel**. Il faut y ajouter la mise en place de la passerelle ou de l'escalier. Ne renoncez donc jamais parce que la page annonce 2 h 50 : c'est un minorant, pas un verdict.
-
-### Toutes les compagnies ne se valent pas
-
-C'est là que la diaspora est mal servie, et il faut le savoir avant de partir.
-
-| Compagnie | Suivi public | Historique |
-|---|---|---|
-| Air France | Oui, avec le motif | Recherche possible sur plusieurs mois |
-| Iberia | Oui | Environ 7 jours |
-| Transavia | Oui, avec « Parti à » et « Arrivé à » | La veille et le jour même |
-| Brussels Airlines, ITA, Vueling, Ethiopian | Oui | **Aucun passé**, uniquement les vols à venir |
-| Kenya Airways, Tunisair | Oui | Le jour même |
-| **Air Sénégal** | **Non** | La page existe mais elle est vide depuis 2019 |
-| **Air Algérie** | **Non** | Aucun outil, l'adresse renvoie une erreur |
-
-Sur les deux dernières, un passager n'a **aucun moyen officiel de documenter son propre retard**. C'est une raison de plus de photographier sur place, et de ne pas compter sur la compagnie après coup.
-
-### Capturez sous 72 heures
-
-Retenez surtout ceci : la plupart de ces pages ne gardent rien du passé. Vous avez cinq ans pour réclamer en France, mais souvent moins d'une semaine pour récupérer la preuve.
-
-Capturez la page **de la compagnie**, en veillant à ce que l'adresse et la date soient visibles à l'écran. Un enregistrement en PDF de la page entière vaut mieux qu'une capture d'image.
-
 ## Ce que Robin des Airs fait à votre place
 
-On envoie nous-mêmes la demande d'attestation. On croise sa réponse avec l'historique du vol, les relevés météo et les autres vols opérés le même jour par le même appareil. Et on monte le dossier sans dépendre de sa bonne volonté.
+On envoie nous-mêmes la demande de justificatif. On croise sa réponse avec l'historique du vol, les relevés météo et les autres vols opérés le même jour par le même appareil. Et on monte le dossier sans dépendre de sa bonne volonté.
 
-Vous n'avez pas à courir après l'attestation. C'est notre travail.
+Vous n'avez pas à courir après votre justificatif de retard. C'est notre travail.
 
 Voir aussi : [les preuves à conserver](/blog/preuves-retard-vol-conserver-indemnite.html), [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html), [l'heure d'arrivée qui compte vraiment](/blog/arret-folkerts-heure-arrivee-ce261.html).
 
@@ -278,6 +291,40 @@ Voir aussi : [les preuves à conserver](/blog/preuves-retard-vol-conserver-indem
       catch(e){ etat.textContent='Copie impossible, sélectionnez le texte'; }
       document.body.removeChild(ta);
     }
+  });
+})();
+</script>
+
+<style>
+#blog-body nav.sommaire{display:block;margin:1.4rem 0;padding:1.05rem 1.25rem;border:1px solid #E2E6EE;border-radius:.75rem;background:#fff}
+#blog-body .sommaire-t{margin:0 0 .55rem !important;font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#62718A}
+#blog-body .sommaire ol{margin:0;padding-left:1.15rem}
+#blog-body .sommaire li{margin-bottom:.3rem;font-size:.9rem}
+#blog-body .sommaire a{color:#047857;font-weight:600;text-decoration:none}
+#blog-body .sommaire a:hover{text-decoration:underline}
+#blog-body h2[id]{scroll-margin-top:1rem}
+</style>
+
+<script>
+(function(){
+  var liste=document.getElementById('sommaire-liste');
+  if(!liste) return;
+  var corps=document.getElementById('blog-body')||document;
+  // Ancres posees a la volee : le gabarit n'en genere pas. Slug simple, sans
+  // accents, avec un suffixe si deux titres tombent sur le meme.
+  var vus={};
+  [].forEach.call(corps.querySelectorAll('h2'),function(h){
+    var t=(h.textContent||'').trim();
+    if(!t) return;
+    var id=t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+            .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);
+    if(vus[id]){ vus[id]++; id=id+'-'+vus[id]; } else { vus[id]=1; }
+    h.id=id;
+    var li=document.createElement('li');
+    var a=document.createElement('a');
+    a.href='#'+id;
+    a.textContent=t;
+    li.appendChild(a); liste.appendChild(li);
   });
 })();
 </script>
