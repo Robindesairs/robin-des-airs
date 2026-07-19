@@ -1,6 +1,6 @@
 ---
 title: "« L'avion arrive en retard du vol précédent » : ce que la compagnie doit vraiment prouver"
-meta_title: "Retard de rotation : l'avion vient du vol précédent, vos droits"
+meta_title: "Vol retardé car l'avion est arrivé en retard : vos droits"
 meta_description: "La première cause de retard en Europe, c'est l'avion lui-même. Retrouvez d'où venait le vôtre, et les trois preuves que la compagnie doit apporter."
 slug: retard-rotation-avion-vol-precedent-indemnisation
 image_url: /og-blog.png
