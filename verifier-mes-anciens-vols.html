@@ -85,8 +85,8 @@
       </ol>
 
       <div class="bonus">
-        <h2>Inscrit avant l'incident : 5 points de commission en moins</h2>
-        <p>Si votre vol est enregistré chez nous <strong>avant</strong> le retard ou l'annulation, votre commission passe de 25 % à <strong>20 %</strong> en cas de succès. C'est logique : un dossier anticipé nous fait gagner du temps de recherche, et on vous en rend la moitié. Sur une famille de quatre à 600 €, cela représente <strong>120 € de plus dans votre poche</strong>.</p>
+        <h2>Inscrivez-le même s'il n'a pas encore décollé</h2>
+        <p>C'est même le meilleur moment. Un vol inscrit à l'avance, c'est un incident repéré tout de suite, une preuve encore fraîche et un dossier monté pendant que la compagnie a encore tout en mémoire. <strong>Vous, vous n'avez plus rien à surveiller.</strong> Si rien ne se passe, vous n'entendrez jamais parler de nous.</p>
       </div>
     </div>
 
@@ -196,7 +196,8 @@
     if(mode==='num' && !flightNum) return fail("Indiquez votre numéro de vol, ou choisissez « Je ne l'ai pas ».");
     if(mode==='route' && (!dep||!arr)) return fail("Indiquez la ville de départ et la ville d'arrivée.");
 
-    // Marqueur d'anteriorite : c'est lui qui conditionne la remise de 5 points.
+    // Marqueur d'anteriorite : distingue un vol inscrit avant l'incident d'une
+    // verification retrospective. Sert au tri dans le CRM, sans effet tarifaire.
     var futur = date ? (new Date(date) > new Date()) : false;
 
     var payload={
@@ -219,7 +220,7 @@
         if(!res.ok){ throw new Error(res.j && res.j.error ? res.j.error : "Envoi impossible pour le moment."); }
         $('f').hidden=true;
         $('done-msg').textContent = futur
-          ? 'Merci '+prenom+'. Votre vol est inscrit avant tout incident : la commission réduite à 20 % vous est acquise si un droit s’ouvre.'
+          ? 'Merci '+prenom+'. Votre vol est inscrit. On le suit, et on ne vous contacte que si un droit s’ouvre.'
           : 'Merci '+prenom+'. On vérifie votre vol et on revient vers vous.';
         $('done').hidden=false;
         if(window.umami) window.umami.track(futur ? 'inscription-vol-futur' : 'verif-retrospective');
