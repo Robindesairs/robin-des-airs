@@ -130,7 +130,7 @@
 
           <div class="field" style="margin-top:.75rem">
             <label for="date">Date du vol</label>
-            <input class="input" id="date" type="date">
+            <input class="input" id="date" type="date" required>
             <p class="hint">Vol déjà passé ? Indiquez la date, même approximative, on vérifie quand même.</p>
           </div>
         </div>
@@ -195,6 +195,9 @@
     if(!tel) return fail("Indiquez un numéro pour qu'on puisse vous prévenir.");
     if(mode==='num' && !flightNum) return fail("Indiquez votre numéro de vol, ou choisissez « Je ne l'ai pas ».");
     if(mode==='route' && (!dep||!arr)) return fail("Indiquez la ville de départ et la ville d'arrivée.");
+    // La date decide du traitement cote serveur : vol futur = veille inerte,
+    // vol passe = verification retrospective. Sans elle, on ne peut pas trancher.
+    if(!date) return fail("Indiquez la date du vol, même approximative.");
 
     // Marqueur d'anteriorite : distingue un vol inscrit avant l'incident d'une
     // verification retrospective. Sert au tri dans le CRM, sans effet tarifaire.

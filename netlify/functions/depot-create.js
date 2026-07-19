@@ -54,6 +54,20 @@ exports.handler = async (event) => {
   if (!name) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'Indiquez votre nom.' }) };
   if (!phone && !email) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'Indiquez un téléphone ou un email pour vous joindre.' }) };
 
+  // VEILLE SUR VOL FUTUR (page /verifier-mes-anciens-vols.html).
+  // Le passager inscrit un vol qui n'a pas encore décollé : aucun incident n'a eu lieu,
+  // il n'y a donc AUCUNE créance à céder et rien à signer. Ce dossier doit rester inerte
+  // jusqu'à ce qu'un incident soit constaté, sinon les relances de signature partiraient
+  // vers quelqu'un qui n'a rien demandé. Le caractère futur est déterminé ICI, côté
+  // serveur : un client ne doit pas pouvoir choisir son propre statut.
+  const dateVolStr = String(b.date || '').trim().slice(0, 20);
+  let estVolFutur = false;
+  if (dateVolStr) {
+    const d = new Date(dateVolStr);
+    // Marge d'un jour : un vol du jour même peut encore connaître un incident.
+    if (!isNaN(d.getTime())) estVolFutur = d.getTime() > Date.now() - 86400000;
+  }
+
   const ref = genRef();
   const dossier = {
     ref,
@@ -71,8 +85,12 @@ exports.handler = async (event) => {
     passengers: Array.isArray(b.passengers) ? b.passengers.slice(0, 12) : [],
     pnr: String(b.pnr || '').trim().slice(0, 12),
     indemnite: b.indemnite || '',
-    source: 'depot-express.html',
-    status: 'Signature en attente',
+    source: estVolFutur ? 'verifier-mes-anciens-vols.html' : 'depot-express.html',
+    status: estVolFutur ? 'Vol inscrit' : 'Signature en attente',
+    statutSuivi: estVolFutur ? 'Vol inscrit' : undefined,
+    remarques: estVolFutur
+      ? `Veille sur vol futur inscrite le ${new Date().toISOString().slice(0, 10)}. Aucun incident constaté, aucune signature demandée. Ne pas relancer tant que le vol n'a pas eu lieu.`
+      : undefined,
     createdVia: 'web',
   };
 

@@ -125,8 +125,12 @@ async function syncNewDossierToAirtable(dossier) {
       indemnite: indemniteNumber(dossier.indemnite),
       route,
       coPassagers: coPassagersText(dossier),
-      statutSuivi: cfg.statutSignatureAttente, // « Signature en attente » : mandat prêt, pas encore signé
-      remarques: `Dossier complété via bot WhatsApp le ${new Date().toISOString().slice(0, 10)} — en attente de signature.`,
+      // Par défaut « Signature en attente » : mandat prêt, pas encore signé.
+      // Un appelant peut imposer un autre statut (ex. « Vol inscrit » pour une
+      // veille sur vol futur, qui ne doit déclencher AUCUNE relance de signature).
+      statutSuivi: dossier.statutSuivi || cfg.statutSignatureAttente,
+      remarques: dossier.remarques
+        || `Dossier complété via bot WhatsApp le ${new Date().toISOString().slice(0, 10)} — en attente de signature.`,
     });
 
     const created = await airtableCreate(cfg, fields);
