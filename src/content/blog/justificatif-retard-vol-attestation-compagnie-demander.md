@@ -33,9 +33,17 @@ Ces gestes prennent trente secondes et changent la solidité d'un dossier. Perso
 
 ### 1. Photographiez le tableau d'affichage
 
-Dès que la mention **Retardé**, **Annulé** ou **Dérouté** apparaît, prenez-le en photo. Cadrez le numéro de vol, la destination et l'horaire. Beaucoup de tableaux affichent aussi un motif court : incident technique, conditions météo, retard de l'appareil précédent.
+Dès que la mention **Retardé**, **Annulé** ou **Dérouté** apparaît, prenez-le en photo.
+
+![Schéma : ce qu'il faut cadrer sur la photo du tableau des départs et de l'écran de la porte d'embarquement, en incluant l'horloge](/assets/images/photographier-tableau-affichage-aeroport.svg)
+
+**Photographiez les deux écrans, pas un seul.** Le tableau des départs annonce. L'écran de la porte d'embarquement, lui, engage davantage : c'est souvent là qu'un **motif** apparaît, du type incident technique ou retard de l'appareil précédent.
 
 Ce motif compte énormément. C'est souvent le seul endroit où la compagnie s'engage par écrit, sur l'instant, avant que le service juridique ne reformule. Une compagnie qui a affiché « problème technique » à l'aéroport aura beaucoup de mal à invoquer ensuite des circonstances extraordinaires.
+
+**L'erreur numéro un, et elle est fatale : photographier sans l'heure.** Un écran affichant « Retardé », sans horloge et sans date, ne prouve rien du tout. Cadrez l'horloge de l'écran, ou à défaut prenez la photo de façon que votre téléphone y inscrive son horodatage.
+
+Et **n'envoyez pas ces photos par messagerie** avant de les avoir sauvegardées. La compression efface les métadonnées du fichier, celles qui portent précisément la date et l'heure. Transmettez les originaux.
 
 ### 2. Notez le motif annoncé à l'oral
 
