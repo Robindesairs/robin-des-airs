@@ -31,6 +31,22 @@ Deux surprises dans ce tableau. D'abord **Transavia dessert Dakar depuis sept vi
 
 Attention à une confusion fréquente : Transavia relie bien Paris-Orly au Sénégal, mais vers **Cap Skirring**, en Casamance, et non vers Dakar.
 
+## Vous avez réservé via CitizenPlane, Kiwi ou GoToGate ?
+
+Ces noms ne sont pas des compagnies aériennes. Ce sont des plateformes de distribution qui revendent les sièges d'autres transporteurs.
+
+CitizenPlane, par exemple, est une société française immatriculée comme **agence de voyage**. Elle ne détient ni certificat de transporteur aérien, ni licence d'exploitation en France. Elle commercialise parfois des vols sous son propre code commercial, mais ce code ne correspond à aucun exploitant.
+
+La distinction n'est pas administrative, elle décide de votre dossier. **L'indemnité est due par la compagnie qui a réellement opéré votre vol**, pas par celle qui vous a vendu le billet. Réclamer à la plateforme, c'est perdre des semaines, parfois assez pour laisser filer un délai.
+
+Pour identifier votre vrai transporteur, trois endroits :
+
+- la mention **« opéré par »** sur votre confirmation de réservation ou votre billet électronique
+- le **code à deux lettres du numéro de vol** sur votre carte d'embarquement, qui est celui du transporteur réel
+- le nom affiché au comptoir d'enregistrement et en porte d'embarquement
+
+Si vous ne le trouvez pas, envoyez-nous simplement votre billet électronique. On identifie le transporteur pour vous, c'est notre métier.
+
 ## Qui vous doit une indemnité, et dans quel sens
 
 C'est le tableau qui compte vraiment. Le règlement européen CE 261/2004 fonctionne selon une règle simple, mais dont les conséquences surprennent.
