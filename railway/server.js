@@ -1668,16 +1668,18 @@ function attributeId(s, nom) {
   return nmAttribute(nom, names, done);
 }
 // Formate la liste des pièces manquantes (texte WhatsApp)
-// Deux cas où le passager n'a le plus souvent AUCUNE carte d'embarquement :
-//   • ANNULATION : le vol n'a pas eu lieu, annoncée la veille il ne s'est jamais enregistré.
-//   • REFUS D'EMBARQUEMENT (surbooking) : il se règle en général À L'ENREGISTREMENT, ce sont
-//     les derniers arrivés qui sont recalés — donc jamais enregistrés, donc aucune carte émise.
-// Leur réclamer ce document les envoie dans un mur et laisse croire qu'ils ne peuvent pas
-// réclamer, alors que leur preuve de voyage existe : e-billet ou confirmation de réservation.
-// On ne cite donc la carte que sur le RETARD, seul cas où le passager a forcément embarqué.
-// (Elle reste acceptée si le client en a une — recalé à la porte après enregistrement :
-//  seul le TEXTE de la demande change, docsStatus() est intact.)
-function sansCarteEmbarquement(s) { return !!(s && (s.incident === 'annulation' || s.incident === 'refus')); }
+// ANNULATION : le vol n'a pas eu lieu. Annoncée la veille, le passager ne s'est jamais
+// enregistré et n'a donc AUCUNE carte d'embarquement. La lui réclamer l'envoie dans un mur
+// et laisse croire qu'il ne peut pas réclamer, alors que sa preuve de voyage existe :
+// e-billet ou confirmation de réservation. (La carte reste acceptée s'il en a une — annulation
+// annoncée au comptoir après enregistrement : seul le TEXTE change, docsStatus() est intact.)
+//
+// ⚠️ NE PAS étendre au REFUS D'EMBARQUEMENT. Contre-intuitif mais vérifié auprès d'un navigant :
+// en surbooking la carte EST bien émise, marquée « SAG » (Seat At Gate), simplement sans numéro
+// de siège attribué. Le passager recalé a donc un document, et c'est même sa MEILLEURE preuve :
+// une carte SAG établit qu'il était présent à la porte sans siège, soit exactement le refus
+// d'embarquement. Le retard et le refus citent donc tous deux la carte.
+function sansCarteEmbarquement(s) { return !!(s && s.incident === 'annulation'); }
 function proofAsk(s, en, kind) {
   const ann = sansCarteEmbarquement(s);
   if (kind === 'solo') {
