@@ -15,6 +15,8 @@ faq:
     a: "Demandez-la par écrit. Les **lignes directrices de la Commission européenne** prévoient qu'elle doit vous être communiquée **gratuitement, sur simple demande**. Et c'est à la compagnie de la prouver, pas à vous."
   - q: "La compagnie ne répond pas. Que faire ?"
     a: "Relancer par mail à J+30, puis mise en demeure en recommandé avec accusé de réception, puis saisir le médiateur. En parallèle, un dossier peut se monter sans elle, à partir de **preuves indépendantes**. Robin s'en charge à votre place."
+  - q: "Où retrouver l'heure d'arrivée de mon vol après coup ?"
+    a: "Sur la page de suivi des vols de la compagnie. Chez **Air France**, l'outil « Actualité des vols » est public et affiche même le **motif du retard**, ce qui est rare. Attention : la plupart des compagnies ne conservent aucun historique au-delà de quelques jours, et Air Sénégal comme Air Algérie n'ont aucun outil. Capturez sous 72 heures."
   - q: "Je n'ai rien photographié sur le moment. C'est perdu ?"
     a: "Non. Beaucoup d'éléments se reconstituent après coup : historique du vol, relevés météo, notifications de la compagnie, cartes d'embarquement. C'est simplement plus long, et le dossier est moins confortable."
 ---
@@ -173,6 +175,44 @@ Quand vous enregistrez une valise, l'agent imprime une bande adhésive unique, d
 Ce numéro à dix chiffres n'est d'ailleurs pas un code de gestion interne : il obéit à la **norme IATA**, un chiffre de type, trois chiffres identifiant la compagnie, six chiffres de séquence. C'est la clé qui relie votre bagage à tous les scans enregistrés au cours du voyage. Il reste exploitable sans difficulté dans les semaines qui suivent le vol.
 
 **Une nuance qui vous évitera une contestation.** Ces étiquettes prouvent qu'un **bagage** a été enregistré à votre nom sur un vol donné. Elles ne prouvent pas à elles seules que **vous avez embarqué** : c'est la carte scannée en porte qui l'établit. Présentez-les donc en complément de votre réservation, pas comme preuve autonome. Si vous avez tout perdu, notre article sur la [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html) détaille les autres voies.
+
+## Le suivi de vol de la compagnie, la preuve qu'on oublie
+
+Il existe une pièce que presque personne ne va chercher, et qui vaut mieux que toutes les autres : **la page de suivi des vols de la compagnie elle-même**.
+
+Sa force tient à son auteur. Un traceur tiers n'engage personne. Un relevé météo est neutre. Mais une page publiée par le transporteur, où il inscrit lui-même l'heure d'arrivée de son propre vol, est difficile à contredire ensuite : il faudrait qu'il explique pourquoi il affichait autre chose au public.
+
+**Chez Air France**, l'outil s'appelle « Actualité des vols ». Il est public, sans compte, à l'adresse `wwws.airfrance.fr/flight-status`. On cherche par numéro de vol, ou par trajet et date. Et en dépliant le résultat, on obtient l'heure d'arrivée **et le motif du retard**.
+
+Ce dernier point est rare. Sur les autres compagnies que nous avons examinées, aucune n'affiche de cause. C'est cohérent avec leurs intérêts : le motif détermine la circonstance extraordinaire, donc l'exonération. Air France fait ici exception, et il faut en profiter.
+
+### Attention à l'heure affichée : elle vous dessert
+
+Les compagnies publient en général l'heure dite **« au bloc »**, celle du serrage du frein de parking. Or la CJUE a écarté explicitement cette heure, au même titre que celle de l'atterrissage : ce qui compte reste l'**ouverture de la porte**, parce que jusque-là vous êtes toujours enfermé dans l'appareil.
+
+Autrement dit, l'heure que la compagnie affiche **sous-estime votre retard réel**. Il faut y ajouter la mise en place de la passerelle ou de l'escalier. Ne renoncez donc jamais parce que la page annonce 2 h 50 : c'est un minorant, pas un verdict.
+
+### Toutes les compagnies ne se valent pas
+
+C'est là que la diaspora est mal servie, et il faut le savoir avant de partir.
+
+| Compagnie | Suivi public | Historique |
+|---|---|---|
+| Air France | Oui, avec le motif | Recherche possible sur plusieurs mois |
+| Iberia | Oui | Environ 7 jours |
+| Transavia | Oui, avec « Parti à » et « Arrivé à » | La veille et le jour même |
+| Brussels Airlines, ITA, Vueling, Ethiopian | Oui | **Aucun passé**, uniquement les vols à venir |
+| Kenya Airways, Tunisair | Oui | Le jour même |
+| **Air Sénégal** | **Non** | La page existe mais elle est vide depuis 2019 |
+| **Air Algérie** | **Non** | Aucun outil, l'adresse renvoie une erreur |
+
+Sur les deux dernières, un passager n'a **aucun moyen officiel de documenter son propre retard**. C'est une raison de plus de photographier sur place, et de ne pas compter sur la compagnie après coup.
+
+### Capturez sous 72 heures
+
+Retenez surtout ceci : la plupart de ces pages ne gardent rien du passé. Vous avez cinq ans pour réclamer en France, mais souvent moins d'une semaine pour récupérer la preuve.
+
+Capturez la page **de la compagnie**, en veillant à ce que l'adresse et la date soient visibles à l'écran. Un enregistrement en PDF de la page entière vaut mieux qu'une capture d'image.
 
 ## Ce que Robin des Airs fait à votre place
 
