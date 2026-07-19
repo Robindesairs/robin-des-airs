@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="96" fill="#0B1F3A"/>
+  <text x="60" y="46" fill="#FFFFFF" font-size="27" font-weight="800">L'heure qui compte pour votre indemnité</text>
+  <text x="60" y="76" fill="#00E5A0" font-size="17" font-weight="600">Ce n'est pas l'atterrissage. C'est l'ouverture de la porte.</text>
+  <text x="1140" y="60" fill="rgba(255,255,255,.55)" font-size="14" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <line x1="120" y1="300" x2="1080" y2="300" stroke="#D7DDE7" stroke-width="6" stroke-linecap="round"/>
+  <line x1="120" y1="300" x2="810" y2="300" stroke="#9AA8BC" stroke-width="6" stroke-linecap="round"/>
+  <line x1="810" y1="300" x2="1080" y2="300" stroke="#00C87A" stroke-width="6" stroke-linecap="round"/>
+
+  <circle cx="240" cy="300" r="15" fill="#FFFFFF" stroke="#9AA8BC" stroke-width="5"/>
+  <text x="240" y="252" fill="#0B1F3A" font-size="19" font-weight="800" text-anchor="middle">Atterrissage</text>
+  <text x="240" y="277" fill="#62718A" font-size="15" text-anchor="middle">roues au sol</text>
+  <text x="240" y="352" fill="#0B1F3A" font-size="30" font-weight="900" text-anchor="middle">22 h 05</text>
+  <rect x="150" y="374" width="180" height="34" rx="17" fill="#EDF0F5"/>
+  <text x="240" y="397" fill="#62718A" font-size="15" font-weight="700" text-anchor="middle">ne compte pas</text>
+
+  <circle cx="540" cy="300" r="12" fill="#FFFFFF" stroke="#9AA8BC" stroke-width="5"/>
+  <text x="540" y="256" fill="#62718A" font-size="17" font-weight="700" text-anchor="middle">Roulage, attente</text>
+  <text x="540" y="279" fill="#8C99AC" font-size="14" text-anchor="middle">passerelle, poste éloigné</text>
+  <text x="540" y="352" fill="#62718A" font-size="20" font-weight="800" text-anchor="middle">+ 13 min</text>
+
+  <circle cx="810" cy="300" r="21" fill="#00C87A"/>
+  <circle cx="810" cy="300" r="33" fill="none" stroke="#00C87A" stroke-width="3" opacity=".45"/>
+  <text x="810" y="244" fill="#047857" font-size="21" font-weight="900" text-anchor="middle">Ouverture de la porte</text>
+  <text x="810" y="270" fill="#0B1F3A" font-size="15" font-weight="600" text-anchor="middle">vous pouvez descendre</text>
+  <text x="810" y="356" fill="#047857" font-size="34" font-weight="900" text-anchor="middle">22 h 18</text>
+  <rect x="700" y="378" width="220" height="36" rx="18" fill="#00C87A"/>
+  <text x="810" y="403" fill="#04372A" font-size="15" font-weight="800" text-anchor="middle">c'est CETTE heure</text>
+
+  <rect x="60" y="454" width="536" height="128" rx="16" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="88" y="490" fill="#0B1F3A" font-size="18" font-weight="800">Pourquoi ces minutes valent 600 €</text>
+  <text x="88" y="522" fill="#374151" font-size="15">Arrivée prévue 19 h 20. Porte ouverte 22 h 18.</text>
+  <text x="88" y="548" fill="#374151" font-size="15">Retard réel : <tspan font-weight="800" fill="#047857">2 h 58</tspan> à l'atterrissage,</text>
+  <text x="88" y="572" fill="#374151" font-size="15"><tspan font-weight="800" fill="#047857">3 h 11</tspan> à la porte. Le seuil des 3 h est franchi.</text>
+
+  <rect x="628" y="454" width="512" height="128" rx="16" fill="#EFF9F4" stroke="#00C87A" stroke-width="2"/>
+  <text x="656" y="490" fill="#0B1F3A" font-size="18" font-weight="800">L'astuce pour repérer l'instant</text>
+  <text x="656" y="522" fill="#374151" font-size="15">Sur beaucoup d'appareils, dont l'Airbus A320,</text>
+  <text x="656" y="548" fill="#374151" font-size="15">les boutons d'appel équipage <tspan font-weight="800">s'illuminent</tspan></text>
+  <text x="656" y="572" fill="#374151" font-size="15">tous ensemble à l'ouverture. Notez l'heure.</text>
+
+  <text x="60" y="614" fill="#8C99AC" font-size="13">Fondement : CJUE, Germanwings c/ Henning, 4 septembre 2014, affaire C-452/13. Horaires donnés à titre d'illustration.</text>
+</svg>

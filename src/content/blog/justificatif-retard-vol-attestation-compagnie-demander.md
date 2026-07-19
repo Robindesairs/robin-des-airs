@@ -1,113 +1,140 @@
 ---
 title: "Justificatif de retard de vol : comment l'obtenir de la compagnie"
 meta_title: "Justificatif de retard de vol : modèle et recours"
-meta_description: "Comment obtenir un justificatif officiel de retard ou un voyage alternatif auprès de la compagnie aérienne. Modèle de demande + recours si refus."
+meta_description: "Obtenir l'attestation officielle de retard auprès de la compagnie : ce qu'il faut photographier tout de suite, le modèle de demande, et les recours si elle ne répond pas."
 slug: justificatif-retard-vol-attestation-compagnie-demander
 image_url: /og-blog.png
 faq:
   - q: "La compagnie a-t-elle l'obligation de me donner une attestation de retard ?"
-    a: "Oui, sur demande écrite. C'est même prévu à l'**article 14 du règlement CE 261**. Délai de réponse moyen : 30 jours."
-  - q: "Pour quoi sert l'attestation de retard ?"
-    a: "Activer une **assurance voyage**, justifier une absence professionnelle ou scolaire, monter un dossier d'**indemnisation CE 261**, réclamer un préjudice professionnel via Convention de Montréal."
+    a: "Oui, sur demande écrite. C'est prévu à l'**article 14 du règlement CE 261**. Elle ne peut pas refuser d'attester un fait objectif : votre vol a été retardé, ou il ne l'a pas été. Comptez environ 30 jours de réponse."
+  - q: "À quoi sert l'attestation de retard ?"
+    a: "Activer une **assurance voyage**, justifier une absence professionnelle ou scolaire, monter un dossier d'**indemnisation CE 261**, ou réclamer un préjudice professionnel au titre de la Convention de Montréal."
+  - q: "Quelle heure d'arrivée compte pour les 3 heures de retard ?"
+    a: "Celle de l'**ouverture de la porte** de l'avion, pas celle de l'atterrissage. La CJUE l'a tranché dans l'arrêt Germanwings contre Henning (C-452/13). Entre les roues au sol et la porte ouverte, il se passe souvent 10 à 20 minutes, parfois bien davantage. C'est exactement ce qui fait basculer un dossier au-dessus ou en dessous du seuil."
   - q: "La compagnie ne répond pas. Que faire ?"
-    a: "1) Relancer par mail à J+30. 2) Mise en demeure recommandé AR. 3) Saisir le médiateur MTV. Robin gère ces étapes à votre place et utilise des **preuves indépendantes** (Flightradar24, METAR) en parallèle."
+    a: "Relancer par mail à J+30, puis mise en demeure en recommandé avec accusé de réception, puis saisir le médiateur. En parallèle, un dossier peut se monter sans elle, à partir de **preuves indépendantes**. Robin s'en charge à votre place."
+  - q: "Je n'ai rien photographié sur le moment. C'est perdu ?"
+    a: "Non. Beaucoup d'éléments se reconstituent après coup : historique du vol, relevés météo, notifications de la compagnie, cartes d'embarquement. C'est simplement plus long, et le dossier est moins confortable."
 ---
 
-**Une attestation de retard peut sécuriser jusqu'à 600 € par passager.** On vous aide à l'obtenir et on vérifie gratuitement votre éligibilité, 0 € d'avance.
+**Une attestation de retard peut sécuriser jusqu'à 600 € par passager.** On vous aide à l'obtenir, et on vérifie gratuitement votre éligibilité, 0 € d'avance.
 
-Un **justificatif de retard** est une attestation écrite par la compagnie aérienne qui confirme officiellement le retard de votre vol — son ampleur, sa cause éventuelle, l'heure réelle d'arrivée. Indispensable pour :
+Un **justificatif de retard** est une attestation écrite par laquelle la compagnie confirme officiellement le retard de votre vol : son ampleur, sa cause, et surtout l'heure réelle d'arrivée. Elle sert à justifier une absence professionnelle ou scolaire, à activer une assurance voyage, à monter un dossier d'indemnisation, ou à réclamer un préjudice au titre de la Convention de Montréal.
 
-- Justifier une absence professionnelle ou scolaire
-- Activer une assurance voyage
-- Compléter un dossier d'indemnité CE 261
-- Réclamer un préjudice via la Convention de Montréal
+Mais la meilleure attestation ne remplacera jamais ce que vous seul pouvez faire sur le moment. Commençons par là.
 
-Voici comment l'obtenir, même quand la compagnie tarde à répondre.
+## Les trois réflexes à avoir avant de quitter l'aéroport
 
-## Quand la compagnie doit-elle vous fournir un justificatif
+Ces gestes prennent trente secondes et changent la solidité d'un dossier. Personne ne vous les dira au comptoir.
 
-Le règlement CE 261 oblige les compagnies à **informer** le passager par écrit de ses droits (article 14). En pratique, cela inclut :
+### 1. Photographiez le tableau d'affichage
 
-- Confirmation du retard et de sa durée
-- Cause officielle invoquée par la compagnie
-- Indication des droits ouverts (indemnité, assistance, réacheminement)
+Dès que la mention **Retardé**, **Annulé** ou **Dérouté** apparaît, prenez-le en photo. Cadrez le numéro de vol, la destination et l'horaire. Beaucoup de tableaux affichent aussi un motif court : incident technique, conditions météo, retard de l'appareil précédent.
 
-Une demande explicite de votre part déclenche cette obligation.
+Ce motif compte énormément. C'est souvent le seul endroit où la compagnie s'engage par écrit, sur l'instant, avant que le service juridique ne reformule. Une compagnie qui a affiché « problème technique » à l'aéroport aura beaucoup de mal à invoquer ensuite des circonstances extraordinaires.
 
-## La demande type — modèle
+### 2. Notez le motif annoncé à l'oral
 
-À envoyer par **mail à la compagnie** (souvent service client ou réclamations) avec en pièce jointe : copie billet + carte d'embarquement.
+Si le motif est donné au micro, en salle d'embarquement ou en cabine, **écrivez-le mot pour mot avec l'heure de l'annonce**. Un simple mémo sur votre téléphone suffit.
+
+Une annonce orale n'a pas la force d'un document. Mais confrontée à la version écrite fournie des mois plus tard, elle révèle les contradictions, et c'est souvent là qu'un dossier se gagne.
+
+### 3. Relevez l'heure exacte d'ouverture de la porte
+
+C'est le geste le plus important, et le moins connu.
+
+Le retard ne se mesure **pas** à l'atterrissage. Il se mesure au moment où la porte de l'avion s'ouvre et où vous pouvez descendre. La Cour de justice de l'Union européenne l'a tranché dans l'arrêt Germanwings contre Henning, et notre article sur [l'heure d'arrivée réelle](/blog/arret-folkerts-heure-arrivee-ce261.html) détaille le raisonnement.
+
+Entre les roues au sol et la porte ouverte, il se passe couramment dix à vingt minutes. Un roulage long, une passerelle occupée, un poste de stationnement éloigné, et l'écart grimpe. Sur un vol arrivé avec 2 h 50 de retard à l'atterrissage, ces minutes décident si vous touchez 600 € ou rien.
+
+![Schéma : l'heure qui compte pour le calcul du retard est celle de l'ouverture de la porte, pas celle de l'atterrissage](/assets/images/heure-arrivee-ouverture-porte.svg)
+
+**L'astuce pour repérer l'instant précis.** Sur beaucoup d'appareils, notamment l'Airbus A320 qui assure une grande partie des vols moyen-courriers, l'ouverture de la porte s'accompagne d'un signal visible depuis la cabine : **les boutons d'appel équipage s'illuminent d'un coup**, sur toute la longueur de l'appareil. Si vous voyez cette rangée de voyants s'allumer simultanément, regardez l'heure. C'est celle-là qu'il faut noter.
+
+À défaut, notez l'heure à laquelle les premiers passagers franchissent réellement la porte. L'important est de ne pas confondre avec le choc des roues sur la piste, qui arrive bien plus tôt et qui ne vaut rien juridiquement.
+
+## Quand la compagnie doit vous fournir un justificatif
+
+Le règlement CE 261 impose aux compagnies d'informer le passager de ses droits par écrit, à l'article 14. Une demande explicite de votre part déclenche cette obligation. L'attestation doit couvrir :
+
+- la confirmation du retard et de sa durée réelle
+- la cause officiellement invoquée
+- les droits ouverts : indemnité, assistance, réacheminement
+
+La compagnie ne peut pas refuser d'attester un fait objectif. Votre vol a été retardé, ou il ne l'a pas été.
+
+## Le modèle de demande
+
+À envoyer par mail au service client ou réclamations, avec en pièce jointe la confirmation de réservation et la carte d'embarquement.
 
 ---
 
-**Objet** : Demande d'attestation officielle de retard — vol [N° vol] du [date]
+**Objet** : Demande d'attestation officielle de retard, vol [N° vol] du [date]
 
 Madame, Monsieur,
 
-Je voyageais à bord du vol [numéro de vol] du [date], reliant [aéroport départ] à [aéroport arrivée], horaire prévu d'arrivée [heure].
+Je voyageais à bord du vol [numéro] du [date], reliant [aéroport de départ] à [aéroport d'arrivée], dont l'arrivée était prévue à [heure].
 
-Ce vol a été retardé / annulé / dérouté [préciser la situation]. Je vous demande de me transmettre :
+Ce vol a été [retardé / annulé / dérouté]. Je vous demande de me transmettre :
 
-1. Une attestation écrite mentionnant l'heure réelle d'arrivée à destination
-2. La cause officielle du retard ou de l'annulation
-3. Le détail de l'assistance fournie (le cas échéant)
+1. une attestation écrite mentionnant **l'heure réelle d'ouverture des portes** à destination, et non l'heure d'atterrissage
+2. la cause officielle du retard ou de l'annulation
+3. le détail de l'assistance qui m'a été fournie, le cas échéant
 
-Cette attestation m'est nécessaire pour [justifier mon absence professionnelle / activer mon assurance voyage / monter mon dossier d'indemnisation CE 261 / autre].
+Cette attestation m'est nécessaire pour [justifier mon absence professionnelle / activer mon assurance voyage / constituer mon dossier d'indemnisation CE 261].
 
 Référence dossier : [si vous en avez une]
-PJ : confirmation de réservation + carte d'embarquement
+Pièces jointes : confirmation de réservation, carte d'embarquement
 
 Cordialement,
 [Vos coordonnées]
 
 ---
 
-## Délais et obligations de la compagnie
+Le point 1 est le plus important, et c'est celui que les compagnies oublient le plus volontiers. Demandez explicitement l'heure d'ouverture des portes : une attestation qui ne mentionne que l'atterrissage vous dessert.
 
-- **Réponse** : 30 jours en moyenne. Au-delà, vous pouvez relancer ou saisir le médiateur.
-- **Forme** : mail PDF ou courrier — peu importe, tant que c'est signé du service réclamations.
-- **Refus** : la compagnie ne peut pas refuser de fournir une attestation sur un fait objectif (votre vol a été retardé ou pas). Si refus → mise en demeure.
+## Délais, forme, refus
+
+**Réponse** : comptez une trentaine de jours. Au-delà, relancez.
+
+**Forme** : mail, PDF ou courrier, peu importe, du moment que le document émane du service réclamations.
+
+**Refus** : il est contestable. Si la compagnie refuse ou garde le silence, passez à la mise en demeure.
 
 ## Si la compagnie ne répond pas
 
-1. **Relancer** par mail au bout de 30 jours
-2. **Mise en demeure** par recommandé AR (voir [Mise en demeure](/blog/mise-en-demeure-compagnie-aerienne-ce261.html))
-3. **Médiation MTV** (voir [Saisir le MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html))
+1. **Relancez** par mail au bout de trente jours
+2. **Mettez en demeure** par recommandé avec accusé de réception, voir notre [modèle de mise en demeure](/blog/mise-en-demeure-compagnie-aerienne-ce261.html)
+3. **Saisissez le médiateur**, voir [comment saisir le MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html)
 
-## Voyage alternatif (réacheminement)
+## Si vous avez été réacheminé
 
-Si la compagnie vous a **réacheminé** sur un autre vol (même ou autre compagnie), demandez aussi :
+Quand la compagnie vous replace sur un autre vol, demandez en plus :
 
-- Confirmation du **vol alternatif** : numéro, date, heure
-- **Heure d'arrivée réelle** à votre destination prévue
-- **Preuves de prise en charge** (repas, hôtel, taxi) le cas échéant
+- le numéro, la date et l'horaire du **vol de remplacement**
+- l'**heure réelle d'arrivée** à votre destination finale
+- les **preuves de prise en charge** : repas, hôtel, transport
 
-Ces éléments servent à calculer le retard cumulé entre l'heure prévue initiale et l'heure d'arrivée effective sur le vol de remplacement.
+Le retard se calcule entre l'heure d'arrivée initialement prévue et l'heure d'arrivée effective sur le vol de remplacement. Pas entre les deux vols.
 
-## Documents complémentaires utiles (sans attestation officielle)
+## Les preuves qui ne dépendent pas de la compagnie
 
-Si la compagnie traîne, vous pouvez compléter avec :
+Si elle traîne, un dossier se monte quand même :
 
-- **Carte d'embarquement** (papier ou app) du vol initial et du vol de remplacement
-- **Screenshots** des notifications de la compagnie (SMS, mail, app)
-- **Tweets** officiels de la compagnie ou de l'aéroport
-- **Flightradar24** : historique du vol avec heures réelles décollage/atterrissage
-- **METAR/TAF** : conditions météo si contesté
-- **Témoignages** d'autres passagers (peu fiables seuls, complémentaires)
+- **cartes d'embarquement** du vol initial et du vol de remplacement
+- **captures** des notifications reçues, SMS, mails, application
+- **publications officielles** de la compagnie ou de l'aéroport le jour même
+- **historique du vol** sur les traceurs, avec les heures réelles
+- **relevés météo** officiels, si la compagnie invoque les conditions
+- **témoignages** d'autres passagers, utiles en complément mais jamais seuls
 
-Robin des Airs utilise toutes ces sources en parallèle de la demande officielle.
+## Ce que Robin des Airs fait à votre place
 
-## Robin des Airs et le justificatif
+On envoie nous-mêmes la demande d'attestation. On croise sa réponse avec l'historique du vol, les relevés météo et les autres vols opérés le même jour par le même appareil. Et on monte le dossier sans dépendre de sa bonne volonté.
 
-Quand vous confiez votre dossier à Robin :
+Vous n'avez pas à courir après l'attestation. C'est notre travail.
 
-- On envoie **nous-mêmes** la demande de justificatif à la compagnie
-- On croise avec **Flightradar24, METAR, autres vols du jour**
-- On monte un dossier sans dépendre uniquement de la compagnie
-
-Vous n'avez pas à courir après l'attestation — on le fait pour vous.
-
-Voir : [Preuve retard documents](/blog/preuve-retard-vol-documents-conserver.html), [Mise en demeure](/blog/mise-en-demeure-compagnie-aerienne-ce261.html), [Carte embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html).
+Voir aussi : [les preuves à conserver](/blog/preuves-retard-vol-conserver-indemnite.html), [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html), [l'heure d'arrivée qui compte vraiment](/blog/arret-folkerts-heure-arrivee-ce261.html).
 
 → [Vérifier mon dossier](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)
