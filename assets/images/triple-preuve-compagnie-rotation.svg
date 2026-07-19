@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Ce que la compagnie doit prouver pour ne rien vous verser</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Les trois à la fois. Il suffit qu'une seule manque.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <rect x="56" y="118" width="1088" height="44" rx="10" fill="#EDF0F5"/>
+  <text x="600" y="146" fill="#4A5A70" font-size="16" font-style="italic" text-anchor="middle">« Votre vol est retardé car l'appareil est arrivé en retard du vol précédent. »</text>
+
+  <!-- ===== les trois colonnes ===== -->
+  <g>
+    <rect x="56" y="188" width="342" height="278" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="92" cy="224" r="17" fill="#0B1F3A"/>
+    <text x="92" y="230" fill="#FFFFFF" font-size="16" font-weight="800" text-anchor="middle">1</text>
+    <text x="122" y="222" fill="#0B1F3A" font-size="17" font-weight="800">Un événement</text>
+    <text x="122" y="243" fill="#0B1F3A" font-size="17" font-weight="800">extraordinaire précis</text>
+    <line x1="80" y1="262" x2="374" y2="262" stroke="#EDF0F5" stroke-width="2"/>
+    <text x="80" y="288" fill="#374151" font-size="14">Le nommer, dire sur quel vol,</text>
+    <text x="80" y="309" fill="#374151" font-size="14">et prouver qu'il n'était pas</text>
+    <text x="80" y="330" fill="#374151" font-size="14">inhérent à son activité.</text>
+    <rect x="80" y="348" width="294" height="100" rx="8" fill="#FBEBE8"/>
+    <text x="96" y="371" fill="#B04A3C" font-size="12.5" font-weight="800">NE COMPTE PAS</text>
+    <text x="96" y="392" fill="#8A3A2E" font-size="13">« aléa opérationnel »</text>
+    <text x="96" y="412" fill="#8A3A2E" font-size="13">une panne courante</text>
+    <text x="96" y="432" fill="#8A3A2E" font-size="13">la limite de son équipage</text>
+
+    <rect x="429" y="188" width="342" height="278" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="465" cy="224" r="17" fill="#0B1F3A"/>
+    <text x="465" y="230" fill="#FFFFFF" font-size="16" font-weight="800" text-anchor="middle">2</text>
+    <text x="495" y="222" fill="#0B1F3A" font-size="17" font-weight="800">Un lien de causalité</text>
+    <text x="495" y="243" fill="#0B1F3A" font-size="17" font-weight="800">direct avec votre vol</text>
+    <line x1="453" y1="262" x2="747" y2="262" stroke="#EDF0F5" stroke-width="2"/>
+    <text x="453" y="288" fill="#374151" font-size="14">Plus elle remonte loin dans</text>
+    <text x="453" y="309" fill="#374151" font-size="14">la journée de l'appareil, plus</text>
+    <text x="453" y="330" fill="#374151" font-size="14">ce lien devient fragile.</text>
+    <rect x="453" y="348" width="294" height="100" rx="8" fill="#FBEBE8"/>
+    <text x="469" y="371" fill="#B04A3C" font-size="12.5" font-weight="800">ET SURTOUT</text>
+    <text x="469" y="392" fill="#8A3A2E" font-size="13">elle devait prévoir une</text>
+    <text x="469" y="412" fill="#8A3A2E" font-size="13">réserve de temps au</text>
+    <text x="469" y="432" fill="#8A3A2E" font-size="13">planning. Sans marge, elle perd.</text>
+
+    <rect x="802" y="188" width="342" height="278" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+    <circle cx="838" cy="224" r="17" fill="#0B1F3A"/>
+    <text x="838" y="230" fill="#FFFFFF" font-size="16" font-weight="800" text-anchor="middle">3</text>
+    <text x="868" y="222" fill="#0B1F3A" font-size="17" font-weight="800">L'impossibilité de</text>
+    <text x="868" y="243" fill="#0B1F3A" font-size="17" font-weight="800">vous réacheminer</text>
+    <line x1="826" y1="262" x2="1120" y2="262" stroke="#EDF0F5" stroke-width="2"/>
+    <text x="826" y="288" fill="#374151" font-size="14">Elle doit chercher un siège</text>
+    <text x="826" y="309" fill="#374151" font-size="14">sur d'autres vols, y compris</text>
+    <text x="826" y="330" fill="#374151" font-size="14">chez d'autres compagnies.</text>
+    <rect x="826" y="348" width="294" height="100" rx="8" fill="#FBEBE8"/>
+    <text x="842" y="371" fill="#B04A3C" font-size="12.5" font-weight="800">NE SUFFIT PAS</text>
+    <text x="842" y="396" fill="#8A3A2E" font-size="13">vous proposer le vol</text>
+    <text x="842" y="416" fill="#8A3A2E" font-size="13">du lendemain</text>
+  </g>
+
+  <!-- ===== verdict ===== -->
+  <g stroke="#00C87A" stroke-width="3" fill="none">
+    <path d="M227 466 L227 492"/><path d="M600 466 L600 492"/><path d="M973 466 L973 492"/>
+    <path d="M227 492 L973 492"/><path d="M600 492 L600 508"/>
+  </g>
+  <polygon points="600,516 593,504 607,504" fill="#00C87A"/>
+
+  <rect x="286" y="524" width="628" height="62" rx="14" fill="#00C87A"/>
+  <text x="600" y="551" fill="#04372A" font-size="18" font-weight="900" text-anchor="middle">Une seule preuve manque ?</text>
+  <text x="600" y="574" fill="#04372A" font-size="16" font-weight="700" text-anchor="middle">L'indemnisation vous est due.</text>
+
+  <text x="56" y="612" fill="#8C99AC" font-size="12">La charge de la preuve pèse entièrement sur la compagnie. Vous n'avez pas à prouver la cause du retard, seulement le retard.</text>
+</svg>

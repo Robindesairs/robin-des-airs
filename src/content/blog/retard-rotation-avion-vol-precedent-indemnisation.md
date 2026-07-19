@@ -43,6 +43,8 @@ EUROCONTROL va plus loin et écrit que supprimer le retard des un ou deux premie
 
 Autrement dit : le retard de votre vol du soir s'est peut-être formé à six heures du matin, sur un vol que vous n'avez jamais pris.
 
+<img src="/assets/images/journee-avion-retard-cascade.svg" alt="Schéma : la journée d'un avion, cinq vols enchaînés, et le retard qui grossit d'une escale à l'autre jusqu'au vol du soir" width="1200" height="630" loading="lazy" decoding="async">
+
 ### Pourquoi les rotations sont si serrées
 
 Un avion au sol ne rapporte rien. C'est la seule chose à retenir pour comprendre tout le reste.
@@ -70,6 +72,8 @@ Les valeurs de référence européennes du coût des retards publient un **multi
 Un petit retard du matin se rattrape en partie. Un gros retard ne se rattrape pas : il grossit. Passé une certaine ampleur, la journée entière de l'appareil est compromise, et c'est le dernier vol, souvent celui du soir, qui encaisse le cumul.
 
 Si votre vol part en fin de journée, vous êtes structurellement au bout de cette chaîne.
+
+<img src="/assets/images/multiplicateur-cascade-retard.svg" alt="Graphique : le multiplicateur de cascade d'un retard, de 1,52 à cinq minutes jusqu'à 6,85 à cinq heures" width="1200" height="630" loading="lazy" decoding="async">
 
 ## « Raison opérationnelle » : la traduction
 
@@ -226,6 +230,8 @@ Commençons par ce qui est acquis : **un retard de rotation n'est pas, en lui-m�
 Soyons précis, parce que c'est ici que beaucoup d'articles se trompent et promettent 600 € automatiquement. **La Cour de justice de l'Union européenne admet depuis 2020 qu'une compagnie invoque une circonstance extraordinaire ayant frappé un vol précédent du même appareil.** L'exonération peut donc remonter la chaîne des rotations.
 
 Mais elle a posé trois verrous, et ils sont exigeants. Pour ne rien vous verser, la compagnie doit établir **les trois à la fois** :
+
+<img src="/assets/images/triple-preuve-compagnie-rotation.svg" alt="Schéma : les trois preuves que la compagnie doit apporter, événement extraordinaire précis, lien de causalité direct et impossibilité de réacheminer" width="1200" height="630" loading="lazy" decoding="async">
 
 **1. Un événement extraordinaire précis, et pas une formule.** Il ne suffit pas d'écrire « aléa opérationnel » ou « contrainte technique ». Il faut nommer l'événement, sur quel vol il est survenu, et prouver qu'il n'était pas inhérent à son activité normale. La charge de la preuve pèse entièrement sur elle. Un problème technique ordinaire, une panne courante, un défaut d'organisation ou la limite de temps de service de son propre équipage n'entrent pas dans cette catégorie.
 
