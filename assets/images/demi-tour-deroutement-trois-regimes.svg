@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Demi-tour ou déroutement : le régime n'est pas le même</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Une seule question compte : le vol vous a-t-il conduit à la destination prévue ?</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- ===== CAS 1 : demi-tour ===== -->
+  <rect x="56" y="128" width="1088" height="146" rx="14" fill="#FFFFFF" stroke="#00C87A" stroke-width="3"/>
+  <text x="84" y="160" fill="#0B1F3A" font-size="18" font-weight="800">L'avion décolle, puis revient à son point de départ</text>
+
+  <circle cx="120" cy="212" r="9" fill="#0B1F3A"/>
+  <text x="120" y="245" fill="#62718A" font-size="12.5" text-anchor="middle">départ</text>
+  <path d="M129 208 C 200 168, 300 168, 366 200" stroke="#9AA8BC" stroke-width="2.5" fill="none"/>
+  <path d="M366 216 C 300 250, 200 250, 129 218" stroke="#00C87A" stroke-width="3" fill="none" stroke-dasharray="8 5"/>
+  <polygon points="150,225 168,218 166,231" fill="#00C87A"/>
+  <text x="247" y="196" fill="#8C99AC" font-size="12.5" text-anchor="middle">demi-tour</text>
+
+  <rect x="430" y="182" width="216" height="52" rx="10" fill="#EFF9F4"/>
+  <text x="538" y="203" fill="#047857" font-size="13" font-weight="800" text-anchor="middle">C'EST UNE ANNULATION</text>
+  <text x="538" y="222" fill="#0B1F3A" font-size="12.5" text-anchor="middle">le vol n'a pas été effectué</text>
+
+  <text x="684" y="196" fill="#0B1F3A" font-size="15" font-weight="800">Indemnité due sans condition de durée.</text>
+  <text x="684" y="220" fill="#374151" font-size="14">Même si l'avion n'est resté en l'air qu'une heure.</text>
+  <text x="684" y="243" fill="#8C99AC" font-size="13">Le motif du demi-tour ne change pas la qualification.</text>
+
+  <!-- ===== CAS 2 : deroutement ===== -->
+  <rect x="56" y="292" width="1088" height="146" rx="14" fill="#FFFFFF" stroke="#E8A020" stroke-width="3"/>
+  <text x="84" y="324" fill="#0B1F3A" font-size="18" font-weight="800">L'avion se pose sur un autre aéroport</text>
+
+  <circle cx="120" cy="378" r="9" fill="#0B1F3A"/>
+  <text x="120" y="410" fill="#62718A" font-size="12.5" text-anchor="middle">départ</text>
+  <path d="M129 374 C 210 344, 290 344, 350 372" stroke="#E8A020" stroke-width="3" fill="none"/>
+  <polygon points="268,349 250,343 252,356" fill="#E8A020"/>
+  <circle cx="358" cy="378" r="9" fill="#E8A020"/>
+  <text x="358" y="410" fill="#B0791F" font-size="12.5" text-anchor="middle" font-weight="700">aéroport de dégagement</text>
+  <path d="M370 378 L 476 378" stroke="#B04A3C" stroke-width="2.5" stroke-dasharray="6 4"/>
+  <polygon points="484,378 474,373 474,383" fill="#B04A3C"/>
+  <text x="428" y="368" fill="#B04A3C" font-size="11.5" text-anchor="middle" font-weight="700">transfert</text>
+  <circle cx="494" cy="378" r="9" fill="#047857"/>
+  <text x="494" y="410" fill="#047857" font-size="12.5" text-anchor="middle" font-weight="700">aéroport prévu</text>
+
+  <text x="560" y="348" fill="#0B1F3A" font-size="15" font-weight="800">Le transfert est gratuit, et la compagnie</text>
+  <text x="560" y="370" fill="#0B1F3A" font-size="15" font-weight="800">doit vous le proposer d'elle-même.</text>
+  <rect x="560" y="382" width="556" height="42" rx="10" fill="#FBEBE8"/>
+  <text x="578" y="399" fill="#8A3A2E" font-size="13.5" font-weight="800">Le retard se compte à l'arrivée à l'aéroport PRÉVU,</text>
+  <text x="578" y="416" fill="#8A3A2E" font-size="13.5">après le transfert. Pas à l'heure d'atterrissage.</text>
+
+  <!-- ===== CAS 3 : retour au parking ===== -->
+  <rect x="56" y="456" width="1088" height="96" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="84" y="486" fill="#0B1F3A" font-size="17" font-weight="800">L'avion revient au parking sans avoir décollé</text>
+  <text x="84" y="512" fill="#374151" font-size="14.5">Si le vol finit par partir : c'est un retard. S'il est abandonné : c'est une annulation.</text>
+  <text x="84" y="534" fill="#62718A" font-size="14">Dans les deux cas, repas et hôtel sont dus dès 2 à 4 heures d'attente selon la distance.</text>
+
+  <text x="56" y="586" fill="#8C99AC" font-size="12">Fondements : CJUE, Sousa Rodríguez c/ Air France, 13 octobre 2011, C-83/10 · CJUE, WZ c/ Austrian Airlines, 22 avril 2021, C-826/19.</text>
+  <text x="56" y="608" fill="#8C99AC" font-size="12">Un aéroport de déroutement éloigné ramène au régime de l'annulation.</text>
+</svg>
