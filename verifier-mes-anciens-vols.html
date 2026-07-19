@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script defer src="/assets/consent.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <title>Inscrivez votre vol : on vous prévient si vous avez droit à une indemnité</title>
+  <meta name="description" content="98 % des passagers ne réclament jamais leur indemnité. Inscrivez votre prochain vol, on vérifie et on vous contacte gratuitement si vous avez droit à quelque chose. Jusqu'à 600 € par passager.">
+  <link rel="canonical" href="https://robindesairs.eu/verifier-mes-anciens-vols.html">
+  <meta name="robots" content="index,follow">
+  <meta property="og:title" content="Inscrivez votre vol, on vous prévient si vous avez droit à une indemnité">
+  <meta property="og:description" content="98 % des passagers ne réclament jamais. Vous n'avez plus à y penser, on s'en charge.">
+  <meta property="og:url" content="https://robindesairs.eu/verifier-mes-anciens-vols.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://robindesairs.eu/og-blog.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
+  <link rel="stylesheet" href="/assets/portail-premium.css">
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="19ef6dce-8f1d-4b9b-9a0e-12dbece0cdf7"></script>
+  <style>
+    .stat{margin:0 0 1.25rem;padding:1.25rem 1.35rem;border-radius:.75rem;background:var(--navy);color:#fff}
+    .stat .big{display:block;font-size:2.4rem;line-height:1;font-weight:900;color:var(--neon-b);margin-bottom:.4rem}
+    .stat p{margin:0;font-size:.9rem;line-height:1.55;color:rgba(255,255,255,.9)}
+    .stat .src{display:block;margin-top:.6rem;font-size:.7rem;color:rgba(255,255,255,.55)}
+    .stat strong{color:#fff}
+    .stat-alt{background:var(--green-tint);border:1px solid var(--neon)}
+    .stat-alt .big{color:var(--neon-ink)}
+    .stat-alt p{color:var(--ink-soft)}
+    .stat-alt strong{color:var(--navy)}
+    .stat-alt .src{color:var(--muted)}
+    .hero-claim{font-size:1.55rem;line-height:1.25;font-weight:900;color:var(--navy);margin:0 0 .6rem}
+    .hero-claim em{font-style:normal;color:var(--neon-ink)}
+    .hero-sub{font-size:.95rem;color:var(--ink-soft);margin:0 0 .5rem;line-height:1.6}
+    .steps{counter-reset:s;display:grid;gap:.7rem;margin:1.4rem 0 0;padding:0}
+    .steps li{counter-increment:s;list-style:none;display:flex;gap:.75rem;align-items:flex-start;font-size:.9rem;color:var(--ink-soft);line-height:1.5}
+    .steps li::before{content:counter(s);flex:0 0 auto;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--green-tint);color:var(--neon-ink);font-weight:900;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+    .steps b{color:var(--navy)}
+    .bonus{margin:1.4rem 0 0;padding:1.1rem 1.25rem;border-radius:.75rem;background:var(--green-tint);border:1px solid var(--neon)}
+    .bonus h2{margin:0 0 .45rem;font-size:1rem;font-weight:900;color:var(--navy)}
+    .bonus p{margin:0;font-size:.875rem;line-height:1.55;color:var(--ink-soft)}
+    .bonus strong{color:var(--neon-ink)}
+    .why{display:grid;gap:.55rem;margin:1.4rem 0 0;padding:0}
+    .why li{list-style:none;display:flex;gap:.6rem;align-items:flex-start;font-size:.875rem;color:var(--ink-soft);line-height:1.5}
+    .why b{color:var(--navy)}
+    .why .tick{color:var(--neon-ink);font-weight:900;flex:0 0 auto}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    @media(max-width:520px){.row2{grid-template-columns:1fr}}
+    .seg{display:flex;gap:.5rem;margin:0 0 .75rem}
+    .seg button{flex:1;padding:.55rem;border:1px solid var(--line);background:#fff;border-radius:.5rem;font:inherit;font-size:.8125rem;font-weight:700;color:var(--muted);cursor:pointer}
+    .seg button[aria-pressed="true"]{border-color:var(--neon-ink);color:var(--neon-ink);background:var(--green-tint)}
+    .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+    .delai{margin-top:1.25rem;padding:.8rem 1rem;border-radius:.5rem;background:#FFF9E6;border:1px solid #FDE68A;color:#92400E;font-size:.8125rem;line-height:1.5}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="/">Robin <span class="accent">des Airs</span> <span class="bow">🏹</span></a>
+    <a class="back" href="/">← Accueil</a>
+  </header>
+
+  <main class="shell">
+    <div class="pagehead">
+      <div class="stat">
+        <span class="big">98 %</span>
+        <p>des passagers qui ont droit à une indemnité ne la réclament jamais. Pas parce qu'ils y renoncent, mais parce qu'ils ne savent pas qu'ils y ont droit, ou parce qu'ils n'y pensent plus une fois rentrés.</p>
+        <span class="src">Estimation issue des données d'associations de consommateurs européennes.</span>
+      </div>
+
+      <div class="stat stat-alt">
+        <span class="big">52 %</span>
+        <p>des réclamations <strong>pourtant valides</strong> sont rejetées par les compagnies dès la première demande. Réclamer soi-même, c'est donc une chance sur deux de s'entendre dire non à tort, et d'abandonner là.</p>
+        <span class="src">Association of Passenger Rights Advocates (APRA), 2024.</span>
+      </div>
+
+      <h1 class="hero-claim">Cet argent-là, c'est peut-être le vôtre.<br><em>Ne le laissez pas à la compagnie.</em></h1>
+      <p class="hero-sub">Inscrivez votre vol, celui de la semaine prochaine ou celui de dans six mois. S'il est retardé, annulé ou surbooké, <strong>on le voit et on vous contacte</strong>. Vous n'avez rien à surveiller, rien à retenir, rien à avancer.</p>
+
+      <ol class="steps">
+        <li><span><b>Vous inscrivez votre vol</b> en trente secondes. Un numéro de vol suffit.</span></li>
+        <li><span><b>On vérifie</b> si l'incident vous ouvre un droit, et pour combien de passagers.</span></li>
+        <li><span><b>On vous contacte</b> uniquement si vous avez droit à quelque chose. Sinon, on ne vous dérange pas.</span></li>
+      </ol>
+
+      <div class="bonus">
+        <h2>Inscrit avant l'incident : 5 points de commission en moins</h2>
+        <p>Si votre vol est enregistré chez nous <strong>avant</strong> le retard ou l'annulation, votre commission passe de 25 % à <strong>20 %</strong> en cas de succès. C'est logique : un dossier anticipé nous fait gagner du temps de recherche, et on vous en rend la moitié. Sur une famille de quatre à 600 €, cela représente <strong>120 € de plus dans votre poche</strong>.</p>
+      </div>
+    </div>
+
+    <section class="panel">
+      <form id="f" novalidate>
+        <div class="row2">
+          <div class="field"><label for="prenom">Prénom</label><input class="input" id="prenom" autocomplete="given-name" required></div>
+          <div class="field"><label for="nom">Nom</label><input class="input" id="nom" autocomplete="family-name" required></div>
+        </div>
+
+        <div class="field">
+          <label for="tel">WhatsApp ou téléphone</label>
+          <input class="input" id="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="+33 6 12 34 56 78" required>
+          <p class="hint">C'est là qu'on vous prévient. Pas de démarchage, pas de newsletter.</p>
+        </div>
+
+        <div class="field">
+          <label for="pax">Combien de passagers sur la réservation ?</label>
+          <input class="input" id="pax" type="number" min="1" max="12" value="1" required>
+          <p class="hint">L'indemnité est due <strong>par passager</strong>. Une famille de quatre, c'est quatre fois le montant.</p>
+        </div>
+
+        <div class="field">
+          <label>Votre vol</label>
+          <div class="seg" role="group" aria-label="Comment identifier votre vol">
+            <button type="button" id="mode-num" aria-pressed="true">J'ai le numéro de vol</button>
+            <button type="button" id="mode-route" aria-pressed="false">Je ne l'ai pas</button>
+          </div>
+
+          <div id="bloc-num">
+            <input class="input" id="flightnum" placeholder="ex. AF718" autocomplete="off">
+            <p class="hint">Il figure sur votre réservation, votre e-billet ou votre carte d'embarquement.</p>
+          </div>
+
+          <div id="bloc-route" hidden>
+            <div class="row2">
+              <input class="input" id="dep" placeholder="Départ (ex. Paris)" autocomplete="off">
+              <input class="input" id="arr" placeholder="Arrivée (ex. Dakar)" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:.75rem">
+            <label for="date">Date du vol</label>
+            <input class="input" id="date" type="date">
+            <p class="hint">Vol déjà passé ? Indiquez la date, même approximative, on vérifie quand même.</p>
+          </div>
+        </div>
+
+        <div class="hp" aria-hidden="true"><label for="website">Ne remplissez pas ce champ</label><input id="website" tabindex="-1" autocomplete="off"></div>
+
+        <div id="err" class="errbox" hidden></div>
+        <button class="btn" id="go" type="submit">Inscrire mon vol gratuitement</button>
+
+        <p class="rgpd">En envoyant ce formulaire, vous nous autorisez à vérifier l'éligibilité de votre vol et à vous contacter à ce sujet. Vos données servent uniquement à cela, elles ne sont ni vendues ni cédées, et vous pouvez demander leur suppression à tout moment.</p>
+      </form>
+
+      <div id="done" class="done" hidden>
+        <h2>C'est enregistré.</h2>
+        <p id="done-msg"></p>
+        <p class="hint">Vous n'avez plus rien à faire. Si votre vol connaît un incident vous ouvrant un droit, on vous contacte. Sinon, on ne vous dérange pas.</p>
+        <p><a class="btn" href="https://wa.me/33756863630">Nous écrire sur WhatsApp</a></p>
+      </div>
+    </section>
+
+    <ul class="why">
+      <li><span class="tick">✓</span><span><b>0 € d'avance, toujours.</b> On ne se rémunère qu'en cas de succès. Si le dossier échoue, vous ne devez rien.</span></li>
+      <li><span class="tick">✓</span><span><b>Jusqu'à 600 € par passager</b> selon la distance et le retard à l'arrivée, au titre du règlement européen CE 261/2004.</span></li>
+      <li><span class="tick">✓</span><span><b>Aucun engagement à l'inscription.</b> Vous décidez seulement au moment où un droit s'ouvre réellement.</span></li>
+      <li><span class="tick">✓</span><span><b>Un vol déjà passé compte aussi.</b> Selon le pays de départ, vous pouvez encore réclamer longtemps après.</span></li>
+    </ul>
+
+    <div class="delai">
+      <strong>Un vol ancien peut encore valoir de l'argent.</strong> Le délai pour agir dépend du pays de départ : d'un an dans certains États à cinq ans en France. Beaucoup de passagers laissent expirer un droit qu'ils ignoraient avoir. Si vous avez un doute sur un vol passé, inscrivez-le, la vérification ne coûte rien.
+    </div>
+
+    <p class="signoff">Robin des Airs, spécialiste des indemnités aériennes sur l'axe Europe-Afrique.</p>
+  </main>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var mode='num';
+  function setMode(m){
+    mode=m;
+    $('mode-num').setAttribute('aria-pressed', m==='num');
+    $('mode-route').setAttribute('aria-pressed', m==='route');
+    $('bloc-num').hidden = m!=='num';
+    $('bloc-route').hidden = m!=='route';
+  }
+  $('mode-num').addEventListener('click',function(){setMode('num')});
+  $('mode-route').addEventListener('click',function(){setMode('route')});
+
+  function fail(msg){ var e=$('err'); e.textContent=msg; e.hidden=false; }
+
+  $('f').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    $('err').hidden=true;
+
+    var prenom=$('prenom').value.trim(), nom=$('nom').value.trim();
+    var tel=$('tel').value.trim(), pax=parseInt($('pax').value,10)||1;
+    var flightNum=$('flightnum').value.trim();
+    var dep=$('dep').value.trim(), arr=$('arr').value.trim();
+    var date=$('date').value;
+
+    if(!prenom||!nom) return fail("Indiquez votre prénom et votre nom.");
+    if(!tel) return fail("Indiquez un numéro pour qu'on puisse vous prévenir.");
+    if(mode==='num' && !flightNum) return fail("Indiquez votre numéro de vol, ou choisissez « Je ne l'ai pas ».");
+    if(mode==='route' && (!dep||!arr)) return fail("Indiquez la ville de départ et la ville d'arrivée.");
+
+    // Marqueur d'anteriorite : c'est lui qui conditionne la remise de 5 points.
+    var futur = date ? (new Date(date) > new Date()) : false;
+
+    var payload={
+      name: prenom+' '+nom,
+      phone: tel,
+      pax: pax,
+      date: date||'',
+      incident: futur ? 'Inscrit avant incident' : 'Verification retrospective',
+      website: $('website').value
+    };
+    if(mode==='num'){ payload.flightNum=flightNum; }
+    else { payload.route=dep+' - '+arr; payload.dep=dep; payload.arr=arr; }
+
+    var btn=$('go'); btn.disabled=true; btn.textContent='Envoi…';
+
+    fetch('/api/depot-create',{
+      method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+      .then(function(res){
+        if(!res.ok){ throw new Error(res.j && res.j.error ? res.j.error : "Envoi impossible pour le moment."); }
+        $('f').hidden=true;
+        $('done-msg').textContent = futur
+          ? 'Merci '+prenom+'. Votre vol est inscrit avant tout incident : la commission réduite à 20 % vous est acquise si un droit s’ouvre.'
+          : 'Merci '+prenom+'. On vérifie votre vol et on revient vers vous.';
+        $('done').hidden=false;
+        if(window.umami) window.umami.track(futur ? 'inscription-vol-futur' : 'verif-retrospective');
+      })
+      .catch(function(e){
+        btn.disabled=false; btn.textContent='Inscrire mon vol gratuitement';
+        fail(e.message||"Envoi impossible pour le moment. Réessayez ou écrivez-nous sur WhatsApp.");
+      });
+  });
+})();
+</script>
+</body>
+</html>
