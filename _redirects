@@ -191,6 +191,32 @@
 /blog/air-indemnite-liquidation-dossier-en-cours.html   /blog/pourquoi-choisir-robin-des-airs-difference.html   301!
 /blog/dossiers-types-robin-cas-reels-anonymises.html	/blog	301!
 
+# Formes sans .html des articles concurrents retires : la regle .html ci-dessus
+# ne les couvrait pas, Netlify renvoyait un 404 (constate en GSC le 19/07/2026).
+/blog/robin-des-airs-vs-airhelp-comparatif                       /blog/pourquoi-choisir-robin-des-airs-difference.html         301!
+/blog/robin-des-airs-vs-flightright-comparatif                   /blog/pourquoi-choisir-robin-des-airs-difference.html         301!
+/blog/robin-des-airs-vs-skycop-comparatif                        /blog/pourquoi-choisir-robin-des-airs-difference.html         301!
+
+# --- Fusion des 7 guides de correspondance par hub le 19/07/2026 ---
+# Cause : 47 % de recouvrement lexical entre guides, structure de sections identique.
+# Google en indexait 5 sur 7 et classait CDG + BRU en « exploree, actuellement non indexee ».
+# Le contenu specifique (MCT, comportement des compagnies en reclamation) a ete
+# fusionne dans le comparatif des 10 hubs, qui lui est deja indexe.
+/blog/guide-correspondance-add-vers-afrique-ce261.html      /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-add-vers-afrique-ce261           /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-bru-vers-afrique-ce261.html      /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-bru-vers-afrique-ce261           /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-cas-vers-afrique-ce261.html      /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-cas-vers-afrique-ce261           /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-cdg-vers-afrique-ce261.html      /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-cdg-vers-afrique-ce261           /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-dxb-doh-vers-afrique-ce261.html  /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-dxb-doh-vers-afrique-ce261       /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-ist-vers-afrique-ce261.html      /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-ist-vers-afrique-ce261           /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-lis-vers-afrique-ce261.html      /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+/blog/guide-correspondance-lis-vers-afrique-ce261           /blog/comparatif-10-hubs-afrique-ce261-fiabilite-retards.html   301!
+
 # --- Traductions DE/ES supprimees le 16/07/2026 (commit 7cf72e1) ---
 # Elles renvoyaient un 404 alors que Copilot les cite encore (ex. jurisprudencia-tjue-ce-261
 # = 5 citations dans Bing AI Performance). On envoie chacune vers son equivalent ANGLAIS reel :

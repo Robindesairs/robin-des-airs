@@ -54,7 +54,11 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 #blog-body a{color:#009960;font-weight:600}
 #blog-body a:hover{color:#00C87A;text-decoration:underline}
 #blog-body img{display:block;max-width:100%;height:auto;margin:1.25rem 0;border-radius:.5rem;border:1px solid #E2E6EE}
-#blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
+/* Tableaux : 92 articles en contiennent, certains à 4 colonnes. Sans overflow, la
+   dernière colonne était purement coupée sur mobile (vérifié à 375px : la colonne
+   « Délai pour agir » disparaissait hors écran, sans scroll possible). Le trafic
+   étant majoritairement mobile, on rend le tableau scrollable horizontalement. */
+#blog-body table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;font-size:14px}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}
@@ -111,11 +115,27 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     </a>
     <a class="card" href="/blog/air-senegal-vol-retarde-indemnite.html">
       <h2>Air Sénégal retard, annulation, bagage : indemnité et droits complets</h2>
-      <p>Vol Air Sénégal retardé, annulé ou bagages perdus ? Guide complet : montants CE261 (jusqu'à 600€), Convention de Montréal, quels vols sont couverts, documents à fournir.</p>
+      <p>Vol Air Sénégal retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Paris, même si la compagnie n'est pas européenne. Au départ de Dakar, c'est différent.</p>
+    </a>
+    <a class="card" href="/blog/arret-bossen-distance-vol-oiseau.html">
+      <h2>Arrêt Bossen : votre indemnité se calcule à vol d'oiseau, pas sur les kilomètres parcourus</h2>
+      <p>Pour un vol avec escale, le montant dépend de la distance directe entre le premier décollage et la destination finale, jamais de la somme des segments. La CJUE l'a tranché en 2017.</p>
+    </a>
+    <a class="card" href="/blog/arret-cassation-2016-correspondance-depart-ue.html">
+      <h2>Départ d'Europe : votre correspondance reste couverte, même sur une compagnie non européenne</h2>
+      <p>La Cour de cassation a condamné Emirates à 600 € par passager sur un Paris-Dubaï-Kuala Lumpur. Dès que le premier vol part de l'Union, tout le trajet réservé d'un bloc est couvert.</p>
+    </a>
+    <a class="card" href="/blog/arret-cuadrench-more-prescription-5-ans.html">
+      <h2>Arrêt Cuadrench Moré : la compagnie vous oppose 2 ans ? Vous en avez 5</h2>
+      <p>Les compagnies invoquent souvent le délai de 2 ans de la Convention de Montréal pour refuser une indemnité CE261. La CJUE a jugé en 2012 que c'est faux : en France, vous avez 5 ans.</p>
     </a>
     <a class="card" href="/blog/arret-folkerts-heure-arrivee-ce261.html">
       <h2>Arrêt Folkerts : l'heure d'arrivée, c'est quand les portes s'ouvrent</h2>
       <p>L'heure d'arrivée selon le CE261, c'est l'ouverture des portes — pas le toucher des roues. L'arrêt Folkerts de 2013 protège les passagers contre les calculs trompeurs des compagnies.</p>
+    </a>
+    <a class="card" href="/blog/arret-rehder-tribunal-depart-ou-arrivee.html">
+      <h2>Arrêt Rehder : vous choisissez le tribunal, départ ou arrivée</h2>
+      <p>La CJUE a jugé en 2009 que le passager choisit librement entre le tribunal du lieu de départ et celui du lieu d'arrivée. Un levier décisif quand la compagnie a son siège à l'étranger.</p>
     </a>
     <a class="card" href="/blog/arret-sturgeon-3h-retard-jurisprudence.html">
       <h2>Arrêt Sturgeon : pourquoi 3h de retard = 600€</h2>
@@ -124,6 +144,10 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     <a class="card" href="/blog/arret-wallentin-hermann-panne-technique.html">
       <h2>Panne technique et CE261 : la compagnie doit payer (arrêt Wallentin-Hermann)</h2>
       <p>Ma compagnie invoque une panne technique pour ne pas payer l'indemnité. Est-ce légal ? L'arrêt Wallentin-Hermann de la CJUE dit non, dans la grande majorité des cas.</p>
+    </a>
+    <a class="card" href="/blog/arret-wirth-qui-doit-payer-wet-lease.html">
+      <h2>Arrêt Wirth : ce n'est pas l'avion qui paie, c'est celui qui a vendu le vol</h2>
+      <p>Quand un avion et son équipage sont loués à une autre compagnie, qui doit l'indemnité ? La CJUE a jugé en 2018 que c'est celle qui a décidé du vol et créé l'offre, pas le loueur.</p>
     </a>
     <a class="card" href="/blog/asky-airlines-vol-retarde-indemnite.html">
       <h2>Vol ASKY Airlines retardé ou annulé : indemnité jusqu'à 600 €</h2>
@@ -221,6 +245,10 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
       <h2>Correspondance manquée : vos droits à l'indemnité</h2>
       <p>Vous avez raté votre correspondance à cause d'un retard ? Vous avez droit à une indemnité basée sur votre retard à l'arrivée finale. Voici comment.</p>
     </a>
+    <a class="card" href="/blog/correspondance-ratee-billets-separes-hors-ue-delai.html">
+      <h2>Correspondance ratée sur billets séparés : vos droits au départ d'Europe et hors UE</h2>
+      <p>Paris-Dakar retardé ou correspondance ratée hors UE ? 600 € au départ d'Europe, frais réels ailleurs. Le délai de 2 ans ne s'interrompt pas.</p>
+    </a>
     <a class="card" href="/blog/corsair-vol-retarde-indemnite.html">
       <h2>Corsair vol retardé : vos droits à l'indemnité</h2>
       <p>Vol Corsair retardé ou annulé ? La compagnie européenne vous doit jusqu'à 600€ par passager. Robin des Airs récupère votre argent.</p>
@@ -255,7 +283,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     </a>
     <a class="card" href="/blog/ethiopian-airlines-vol-retarde-indemnite.html">
       <h2>Vol Ethiopian Airlines retardé ou annulé : indemnité jusqu'à 600 €</h2>
-      <p>Vol Ethiopian Airlines retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer.</p>
+      <p>Vol Ethiopian Airlines retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Paris, Bruxelles ou Francfort. Au départ d'Addis-Abeba, c'est différent.</p>
     </a>
     <a class="card" href="/blog/formulaire-petite-creance-europeenne-vol-retarde.html">
       <h2>Petite créance européenne : récupérer son indemnité au tribunal</h2>
@@ -368,6 +396,10 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     <a class="card" href="/blog/surbooking-refus-embarquement-indemnite.html">
       <h2>Surbooking : vos droits quand on vous refuse l'embarquement</h2>
       <p>Refus d'embarquement pour surbooking ? La compagnie vous doit immédiatement 250€ à 600€ par passager. Voici comment réclamer.</p>
+    </a>
+    <a class="card" href="/blog/surclassement-gratuit-avion-facteurs-reels.html">
+      <h2>Surclassement gratuit en avion : les 7 facteurs qui marchent vraiment</h2>
+      <p>Le surclassement gratuit existe mais reste rare, surtout en famille. Les 7 vrais critères, les 5 mythes, et le déclassement qui vous doit 75 % du billet.</p>
     </a>
     <a class="card" href="/blog/taag-angola-vol-retarde-indemnite.html">
       <h2>TAAG Angola Airlines : vol retardé ou annulé, indemnité jusqu'à 600 €</h2>
@@ -519,7 +551,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     </a>
     <a class="card" href="/blog/vol-retarde-bruxelles-kinshasa-indemnite.html">
       <h2>Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : indemnité jusqu'à 600 €</h2>
-      <p>Vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer.</p>
+      <p>Vol Bruxelles-Kinshasa retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Bruxelles, quelle que soit la compagnie, Congo Airways comprise.</p>
     </a>
     <a class="card" href="/blog/vol-retarde-bruxelles-lubumbashi-indemnite.html">
       <h2>Vol retardé Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles : indemnité jusqu'à 600 €</h2>
@@ -551,7 +583,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     </a>
     <a class="card" href="/blog/vol-retarde-douala-paris-indemnite.html">
       <h2>Vol retardé Paris-Douala ou Douala-Paris : indemnité jusqu'à 600 €</h2>
-      <p>Vol Paris-Douala ou Douala-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer.</p>
+      <p>Vol Paris-Douala ou Douala-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager. Air France et Brussels Airlines paient au retour, Camair-Co non.</p>
     </a>
     <a class="card" href="/blog/vol-retarde-freetown-europe-indemnite.html">
       <h2>Vol retardé Freetown-Europe ou Europe-Freetown : indemnité jusqu'à 600 €</h2>
@@ -587,7 +619,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     </a>
     <a class="card" href="/blog/vol-retarde-kinshasa-bruxelles-indemnite.html">
       <h2>Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : indemnité jusqu'à 600 €</h2>
-      <p>Vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer.</p>
+      <p>Vol Kinshasa-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager sur Brussels Airlines. Au départ de Kinshasa, la compagnie change tout.</p>
     </a>
     <a class="card" href="/blog/vol-retarde-lagos-paris-indemnite.html">
       <h2>Vol retardé Paris-Lagos ou Lagos-Paris : indemnité jusqu'à 600 €</h2>
@@ -832,34 +864,6 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     <a class="card" href="/blog/guide-ce261-droits-passagers-afrique.html">
       <h2>CE 261 : guide complet droits passagers vols Afrique</h2>
       <p>Guide complet CE 261 : 250€, 400€ ou 600€ selon la distance. Toutes compagnies, toutes situations, vols Afrique-Europe. Réclamez ce qui vous est dû.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-add-vers-afrique-ce261.html">
-      <h2>Correspondances Addis-Abeba ADD vers l'Afrique : guide complet CE 261</h2>
-      <p>Addis-Abeba ADD = hub Ethiopian Airlines, plus grand réseau intra-africain au monde (60+ destinations). CE 261 protège l'aller depuis l'UE. Guide complet.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-bru-vers-afrique-ce261.html">
-      <h2>Correspondances Bruxelles BRU vers l'Afrique : guide complet CE 261</h2>
-      <p>Bruxelles BRU est le hub Afrique de Brussels Airlines (ex-Sabena Congo). Compagnies, destinations, MCT, droits CE 261 expliqués pour passagers diaspora.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-cas-vers-afrique-ce261.html">
-      <h2>Correspondances Casablanca CMN vers l'Afrique : guide complet CE 261</h2>
-      <p>Casablanca CMN est le hub Royal Air Maroc vers WAF et CAF. CE 261 protège l'aller depuis l'UE. Réseau, MCT, droits expliqués pour la diaspora.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-cdg-vers-afrique-ce261.html">
-      <h2>Correspondances Paris CDG vers l'Afrique : guide complet CE 261</h2>
-      <p>Vols Afrique via Paris CDG : Air France hub, compagnies, terminaux, MCT, droits CE 261. Le guide complet pour passagers en correspondance.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-dxb-doh-vers-afrique-ce261.html">
-      <h2>Correspondances Dubaï DXB et Doha DOH vers l'Afrique : guide CE 261</h2>
-      <p>Hubs du Golfe (DXB Emirates, DOH Qatar) vers l'Afrique : ponctualité excellente, mais retour non protégé par CE 261. Comparatif et conseils complets.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-ist-vers-afrique-ce261.html">
-      <h2>Correspondances Istanbul IST vers l'Afrique : guide complet CE 261</h2>
-      <p>Istanbul IST = hub Turkish Airlines, 60 destinations Afrique. CE 261 ne protège que l'aller depuis l'UE. Tout savoir avant de prendre Turkish vers l'Afrique.</p>
-    </a>
-    <a class="card" href="/blog/guide-correspondance-lis-vers-afrique-ce261.html">
-      <h2>Correspondances Lisbonne LIS vers l'Afrique : guide complet CE 261</h2>
-      <p>TAP Air Portugal depuis Lisbonne dessert l'Afrique lusophone (Cabo Verde, Angola, Mozambique, Guinée-Bissau) + WAF. CE 261 protège aller + retour. Guide complet.</p>
     </a>
     <a class="card" href="/blog/indemnite-billet-miles-points.html">
       <h2>Billet miles ou points : avez-vous droit à l'indemnité CE 261 ?</h2>
