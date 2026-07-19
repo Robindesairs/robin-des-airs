@@ -3,23 +3,20 @@
 <head>
   <!-- Traceurs publicitaires : chargés UNIQUEMENT après consentement, cf. /assets/consent.js -->
   <script defer src="/assets/consent.js"></script>
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/favicon.png" type="image/png">
-  <title>Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer</title>
-  <meta name="description" content="Panne technique, météo, grève... La compagnie invoque des circonstances extraordinaires pour refuser votre indemnité ? Voici ce qui est légalement accepté, et ce qui ne l'est pas.">
+  <title>Circonstances extraordinaires : la liste et la faille</title>
+  <meta name="description" content="Oiseau, orage, panne, grève : la liste de ce qui exonère la compagnie. Et la règle que personne n'utilise, qui fait tomber la moitié des refus.">
   <link rel="canonical" href="https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html">
-  <link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html">
-  <link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/extraordinary-circumstances-ec-261.html">
-  <link rel="alternate" hreflang="x-default" href="https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html">
-  <meta property="og:title" content="Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer">
-  <meta property="og:description" content="Panne technique, météo, grève... La compagnie invoque des circonstances extraordinaires pour refuser votre indemnité ? Voici ce qui est légalement accepté, et ce qui ne l'est pas.">
+  <meta property="og:title" content="Circonstances extraordinaires : la liste et la faille">
+  <meta property="og:description" content="Oiseau, orage, panne, grève : la liste de ce qui exonère la compagnie. Et la règle que personne n'utilise, qui fait tomber la moitié des refus.">
   <meta property="og:url" content="https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html">
   <meta property="og:type" content="article">
   <meta property="og:image" content="https://robindesairs.eu/og-blog.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer">
-  <meta name="twitter:description" content="Panne technique, météo, grève... La compagnie invoque des circonstances extraordinaires pour refuser votre indemnité ? Voici ce qui est légalement accepté, et ce qui ne l'est pas.">
+  <meta name="twitter:title" content="Circonstances extraordinaires : la liste et la faille">
+  <meta name="twitter:description" content="Oiseau, orage, panne, grève : la liste de ce qui exonère la compagnie. Et la règle que personne n'utilise, qui fait tomber la moitié des refus.">
   <meta name="twitter:image" content="https://robindesairs.eu/og-blog.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,200 +26,329 @@
 body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
 nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
 nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
-nav>div{display:flex;align-items:center;gap:1rem}
 nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
-nav a.lang-switch{color:#F59E0B;border:1px solid rgba(245,158,11,.4);padding:.2rem .55rem;border-radius:.375rem;font-size:.75rem;font-weight:700;letter-spacing:.04em}
-nav a.lang-switch:hover{background:rgba(245,158,11,.12)}
 .wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
-h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #F59E0B}
-.byline{font-size:.8125rem;color:#6B7280;margin:0 0 1.5rem;font-weight:600}
-.byline strong{color:#0B1F3A;font-weight:700}
-.tldr{margin:0 0 1.75rem;padding:1rem 1.25rem;border-radius:.625rem;background:linear-gradient(135deg,#FFF9E6 0%,#FFF7ED 100%);border-left:4px solid #F59E0B}
-.tldr h2{margin:0 0 .5rem;font-size:.8125rem;font-weight:800;color:#0B1F3A;text-transform:uppercase;letter-spacing:.06em}
-.tldr ul{margin:0;padding-left:1.1rem;font-size:.875rem;line-height:1.5;color:#1f2937}
-.tldr li{margin-bottom:.35rem}
-.tldr li::marker{color:#F59E0B}
-.tldr strong{color:#0B1F3A}
+h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
 .cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
 .cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
-.cta-box a{color:#F59E0B;font-weight:700;margin:0 .5rem;text-decoration:none}
+.cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
 .cta-box span.sep{color:rgba(255,255,255,.5)}
+.cta-top{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin:0 0 1.5rem;padding:.9rem 1.1rem;background:#EFF9F4;border:1px solid #00C87A;border-radius:.75rem;color:#0B1F3A;font-size:.95rem}
+.cta-top strong{color:#0B1F3A}
+.cta-top .btn{background:#00C87A;color:#0B1F3A;font-weight:800;text-decoration:none;padding:.6rem 1.05rem;border-radius:.6rem;white-space:nowrap}
+.cta-top .muted{color:#4B5563;font-size:.82rem}
 .related{margin-top:1.5rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem}
 .related h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem}
 .related ul{list-style:disc;padding-left:1.25rem;margin:0;font-size:.875rem;color:#374151}
 .related li{margin-bottom:.25rem}
-.related a{color:#0B6BA3;font-weight:600;text-decoration:none}
-.related a:hover{color:#F59E0B;text-decoration:underline}
-.signature{margin-top:1.5rem;padding:1rem 1.25rem;border-radius:.5rem;background:#F3F5F8;color:#374151;font-size:.875rem;text-align:center;font-style:italic}
-.signature strong{color:#0B1F3A;font-style:normal}
-.signature .disambig{display:block;margin-top:.4rem;font-size:.7rem;color:#6B7280;font-style:normal}
-.disclaimer{margin-top:1rem;padding:.875rem 1rem;border-radius:.5rem;background:#FEFCE8;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;line-height:1.5}
-.disclaimer strong{color:#78350F}
+.related a{color:#009960;font-weight:600;text-decoration:none}
+.related a:hover{color:#00C87A;text-decoration:underline}
 #blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
-#blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #F59E0B}
+#blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #00C87A}
 #blog-body h3{font-size:1rem;font-weight:700;color:#0B1F3A;margin:1.25rem 0 .4rem}
 #blog-body p{margin-bottom:.875rem;font-size:14px;color:#374151}
 #blog-body ul,#blog-body ol{margin:.5rem 0 .875rem 1.25rem}
 #blog-body li{margin-bottom:.25rem;font-size:14px}
-#blog-body li::marker{color:#F59E0B}
+#blog-body li::marker{color:#00C87A}
 #blog-body strong{color:#0B1F3A}
-#blog-body a{color:#0B6BA3;font-weight:600}
-#blog-body a:hover{color:#F59E0B;text-decoration:underline}
-#blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
+#blog-body a{color:#009960;font-weight:600}
+#blog-body a:hover{color:#00C87A;text-decoration:underline}
+#blog-body img{display:block;max-width:100%;height:auto;margin:1.25rem 0;border-radius:.5rem;border:1px solid #E2E6EE}
+/* Tableaux : 92 articles en contiennent, certains à 4 colonnes. Sans overflow, la
+   dernière colonne était purement coupée sur mobile (vérifié à 375px : la colonne
+   « Délai pour agir » disparaissait hors écran, sans scroll possible). Le trafic
+   étant majoritairement mobile, on rend le tableau scrollable horizontalement. */
+#blog-body table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;font-size:14px}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}
-#blog-body blockquote{border-left:4px solid #F59E0B;background:#FFF9E6;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
 .faq{margin-top:2rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem 1.5rem}
-.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #F59E0B}
+.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #00C87A}
 .faq details{border-top:1px solid #F1F2F4;padding:.75rem 0}
 .faq details:first-of-type{border-top:none}
 .faq summary{font-size:.95rem;font-weight:600;color:#0B1F3A;cursor:pointer;padding:.25rem 0;list-style:none;position:relative;padding-right:1.5rem}
 .faq summary::-webkit-details-marker{display:none}
-.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#F59E0B;font-weight:700;line-height:1}
+.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#00C87A;font-weight:700;line-height:1}
 .faq details[open] summary::after{content:'−'}
 .faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
-.faq details>div a{color:#0B6BA3;font-weight:600}
-.faq details>div strong{color:#0B1F3A}
-.quick-answer{margin:0 0 1.25rem;padding:1.1rem 1.25rem;border-radius:.625rem;background:linear-gradient(135deg,#FEF3C7 0%,#FED7AA 100%);border:1px solid #F59E0B;box-shadow:0 1px 3px rgba(245,158,11,.12)}
-.quick-answer .qa-label{display:inline-block;background:#F59E0B;color:#0B1F3A;font-size:.6875rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .55rem;border-radius:.25rem;margin-bottom:.55rem}
-.quick-answer p{margin:0;font-size:.9375rem;line-height:1.55;color:#0B1F3A;font-weight:500}
-.quick-answer p strong{color:#92400E;font-weight:700}
-</style>
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer","description":"Panne technique, météo, grève... La compagnie invoque des circonstances extraordinaires pour refuser votre indemnité ? Voici ce qui est légalement accepté, et ce qui ne l'est pas.","url":"https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2025-12-25","dateModified":"2026-03-18","mainEntityOfPage":{"@type":"WebPage","@id":"https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html"},"author":{"@type":"Organization","@id":"https://robindesairs.eu/#organization","name":"Robin des Airs","url":"https://robindesairs.eu/"},"publisher":{"@type":"Organization","@id":"https://robindesairs.eu/#organization","name":"Robin des Airs","alternateName":"Robin des Airs Compensation Aérienne","url":"https://robindesairs.eu/","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"},"disambiguatingDescription":"Service de récupération d'indemnités aériennes (règlement CE 261/2004, Convention de Montréal), spécialiste de l'axe Europe-Afrique. À ne pas confondre avec des entités homonymes opérant dans d'autres secteurs."},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer","item":"https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html"}]}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Une panne technique est-elle une circonstance extraordinaire ?","acceptedAnswer":{"@type":"Answer","text":"Non, sauf exception. La CJUE (arrêt Wallentin-Hermann, 2008) a établi que les pannes techniques inhérentes au fonctionnement normal d'un avion ne sont pas des circonstances extraordinaires. Seules les pannes causées par un événement extérieur imprévisible (ex. : dommage causé par un oiseau, défaut caché de fabrication non détectable) peuvent l'être."}},{"@type":"Question","name":"La météo est-elle toujours une circonstance extraordinaire ?","acceptedAnswer":{"@type":"Answer","text":"Pas automatiquement. Une tempête soudaine et imprévisible l'est. Mais une météo hivernale prévisible (neige en décembre à Paris, brume en saison sèche en Afrique) ne l'est pas si la compagnie n'a pas pris les précautions nécessaires. La compagnie doit prouver que la météo était réellement imprévisible."}},{"@type":"Question","name":"La grève des pilotes est-elle une circonstance extraordinaire ?","acceptedAnswer":{"@type":"Answer","text":"Non. La CJUE (arrêt Airhelp, 2018) a statué que la grève interne des salariés de la compagnie n'est pas une circonstance extraordinaire, c'est un risque inhérent à l'activité. En revanche, une grève du contrôle aérien (ATC) ou une grève sauvage spontanée peuvent l'être."}},{"@type":"Question","name":"Comment contester un refus pour circonstances extraordinaires ?","acceptedAnswer":{"@type":"Answer","text":"Demandez à la compagnie de vous fournir par écrit la nature précise des circonstances invoquées et les preuves (rapport technique, NOTAM météo, rapport ATC). En l'absence de preuves, le tribunal donnera raison au passager. 80% des refus pour circonstances extraordinaires sont infondés ou insuffisamment prouvés."}}]}</script>
+.faq details>div a{color:#009960;font-weight:600}
+.faq details>div strong{color:#0B1F3A}</style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Circonstances extraordinaires : la liste et la faille","description":"Oiseau, orage, panne, grève : la liste de ce qui exonère la compagnie. Et la règle que personne n'utilise, qui fait tomber la moitié des refus.","url":"https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-07-19","dateModified":"2026-07-19","mainEntityOfPage":{"@type":"WebPage","@id":"https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html"},"author":{"@type":"Person","@id":"https://robindesairs.eu/a-propos.html#climbie","name":"Saint-Yves","url":"https://robindesairs.eu/a-propos.html"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"Circonstances extraordinaires : la liste et la faille","item":"https://robindesairs.eu/blog/circonstances-extraordinaires-ce261.html"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Qu'est-ce qu'une circonstance extraordinaire au sens du règlement CE 261 ?","acceptedAnswer":{"@type":"Answer","text":"Un événement qui, **par sa nature ou son origine, n'est pas inhérent à l'exercice normal de l'activité** du transporteur et **échappe à sa maîtrise effective**. Les deux conditions sont cumulatives. Tout ce qui relève de l'organisation de la compagnie, de son personnel ou de sa flotte y échappe par principe."}},{"@type":"Question","name":"Une panne technique est-elle une circonstance extraordinaire ?","acceptedAnswer":{"@type":"Answer","text":"En principe non, même si elle survient à l'improviste et même si l'entretien était à jour. La Cour de justice l'a jugé dans l'arrêt van der Lans. **L'exception concerne les causes extérieures** : un oiseau, un débris sur la piste, la foudre, ou un vice caché de conception révélé par le constructeur."}},{"@type":"Question","name":"La compagnie invoque une collision aviaire. Ai-je perdu ?","acceptedAnswer":{"@type":"Answer","text":"Non, et c'est le point le plus mal connu. L'oiseau est bien une circonstance extraordinaire, mais **il ne couvre que le temps qu'il a réellement causé**. L'inspection dure généralement moins d'une heure. Si votre vol est parti avec quatre heures de retard, la compagnie doit justifier les trois autres, sinon elles comptent pour le seuil des 3 heures."}},{"@type":"Question","name":"Que doit prouver la compagnie exactement ?","acceptedAnswer":{"@type":"Answer","text":"Trois choses, et pour chacune la charge repose entièrement sur elle : que l'événement était bien extraordinaire, qu'il ne pouvait pas être évité, et qu'elle a pris **toutes les mesures raisonnables** pour en limiter les conséquences. Si elle échoue sur un seul point, l'indemnisation est due."}},{"@type":"Question","name":"Existe-t-il un document qui prouve la cause de mon retard ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Chaque appareil possède un **carnet de bord technique** réglementé, où sont consignés tous les défauts et toutes les interventions, de l'éclairage cabine à une porte de soute condamnée. Il doit couvrir les 36 mois précédents. Vous n'y avez pas accès de plein droit, mais il peut être demandé, et son absence se retourne contre la compagnie."}},{"@type":"Question","name":"Puis-je demander le carnet de bord à la DGAC ?","acceptedAnswer":{"@type":"Answer","text":"Non. La DGAC veille à l'application du règlement et peut sanctionner une compagnie, mais son action est **indépendante du traitement des demandes individuelles** et elle ne vous transmettra pas les pièces techniques. La voie utile est la demande écrite à la compagnie, puis la production forcée devant le juge."}},{"@type":"Question","name":"Combien de temps la compagnie conserve-t-elle ces documents ?","acceptedAnswer":{"@type":"Answer","text":"Le carnet de bord technique couvre les **36 mois** précédant la dernière inscription. Or vous disposez de 5 ans pour réclamer en France. Une demande faite trop tard peut donc se heurter à des pièces légalement détruites : réclamez tôt."}}]}</script>
 </head>
 <body>
   <nav>
-    <a href="/">ROBIN<span style="color:#F59E0B"> des Airs</span></a>
-    <div><a href="/en/blog/extraordinary-circumstances-ec-261.html" class="lang-switch" title="Read in English">EN</a><a href="/" class="back">← Retour</a></div>
+    <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
+    <a href="/" class="back">← Retour</a>
   </nav>
   <main class="wrap">
-    <h1 class="title">Circonstances extraordinaires : ce que les compagnies peuvent invoquer (et ce qu'elles ne peuvent pas)</h1>
-    <div data-cta-top style="display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin:1rem 0 1.5rem;padding:.9rem 1.1rem;background:#EFF9F4;border:1px solid #00C87A;border-radius:.75rem;color:#0B1F3A;font-size:.95rem"><span>💰 <strong>Vol retardé, annulé ou surbooké ?</strong> Jusqu’à 600 € par passager, 0 € d’avance.</span><a style="background:#00C87A;color:#0B1F3A;font-weight:800;text-decoration:none;padding:.6rem 1.05rem;border-radius:.6rem;white-space:nowrap" href="https://robindesairs.eu/depot-express">Vérifier mon vol en 2 min</a><span style="color:#4B5563;font-size:.82rem">ou lisez le guide ci-dessous 👇</span></div>
-    <p class="byline">Par <strong>l'équipe Robin des Airs</strong> · Publié le 25 décembre 2025 · Mis à jour le 18 mars 2026</p>
-        <aside class="quick-answer" role="complementary" aria-label="Réponse rapide">
-      <span class="qa-label">Réponse rapide</span>
-      <p>C'est l'argument numéro 1 des compagnies aériennes pour refuser votre indemnité CE 261 : « les circonstances extraordinaires ».</p>
-    </aside>
-    <aside class="tldr" role="complementary" aria-label="En bref">
-      <h2>En bref</h2>
-      <ul>
-        <li><strong>Une panne technique est-elle une circonstance extraordinaire ?</strong> Non, sauf exception. La CJUE (arrêt <a href="https://curia.europa.eu/juris/liste.jsf?num=C-549/07" target="_blank" rel="noopener external">Wallentin-Hermann</a>, 2008) a établi que les pannes techniques inhérentes au fonctionnement normal d'un avion ne sont pas des circonstances extraordinaires. Seules…</li>
-        <li><strong>La météo est-elle toujours une circonstance extraordinaire ?</strong> Pas automatiquement. Une tempête soudaine et imprévisible l'est. Mais une météo hivernale prévisible (neige en décembre à Paris, brume en saison sèche en Afrique) ne l'est pas si la compagnie n'a…</li>
-        <li><strong>La grève des pilotes est-elle une circonstance extraordinaire ?</strong> Non. La CJUE (arrêt <a href="https://curia.europa.eu/juris/liste.jsf?num=C-28/20" target="_blank" rel="noopener external">Airhelp</a>, 2018) a statué que la grève interne des salariés de la compagnie n'est pas une circonstance extraordinaire, c'est un risque inhérent à l'activité. En revanche, une…</li>
-      </ul>
-    </aside>
-    <div id="blog-body"><p>C'est l'argument numéro 1 des compagnies aériennes pour refuser votre indemnité CE 261 : « les circonstances extraordinaires ». Dans les faits, <strong>80% des invocations de circonstances extraordinaires sont contestables</strong> soit parce qu'elles ne remplissent pas les critères légaux, soit parce que la compagnie ne peut pas en apporter la preuve. Voici le guide complet, fondé sur la jurisprudence de la CJUE.</p>
+    <h1 class="title">Circonstances extraordinaires : ce qui exonère vraiment la compagnie, et ce qui ne l'exonère pas</h1>
+    <div class="cta-top">
+      <span>💰 <strong>Vol retardé, annulé ou surbooké ?</strong> Jusqu'à 600 € par passager, 0 € d'avance.</span>
+      <a class="btn" href="https://robindesairs.eu/depot-express">Vérifier mon vol en 2 min</a>
+      <span class="muted">ou lisez le guide ci-dessous 👇</span>
+    </div>
+    <div id="blog-body"><p><strong>Une circonstance extraordinaire mal invoquée peut vous coûter 600 €.</strong> On vérifie gratuitement votre éligibilité, 0 € d&#39;avance, et vous ne payez rien si on ne récupère rien.</p>
+<p>C&#39;est l&#39;argument qui met fin à la conversation. « Circonstances extraordinaires, nous ne sommes pas tenus de vous indemniser. » La lettre est courte, elle cite le règlement, et la plupart des passagers s&#39;arrêtent là.</p>
+<p>Pourtant cette phrase, à elle seule, ne prouve rien. Le règlement européen pose deux conditions à l&#39;exonération, et la Cour de justice y a ajouté une règle de calcul que presque personne n&#39;utilise. Elle fait tomber une grande partie des refus.</p>
+<nav class="sommaire" aria-label="Sommaire de l'article">
+  <p class="sommaire-t">Dans cet article</p>
+  <ol id="sommaire-liste"></ol>
+</nav>
 
-<h2>Qu'est-ce qu'une circonstance extraordinaire au sens du CE 261 ?</h2>
-<p>L'article 5.3 du CE 261 dispose que la compagnie est exonérée si elle prouve que le retard/l'annulation est dû à des circonstances extraordinaires <strong>qui n'auraient pas pu être évitées même si toutes les mesures raisonnables avaient été prises</strong>.</p>
-<p>La CJUE a précisé deux critères cumulatifs :</p>
+
+<h2>La définition, et pourquoi elle est plus étroite qu&#39;on ne croit</h2>
+<p>Une circonstance extraordinaire est un événement qui remplit <strong>deux conditions à la fois</strong> :</p>
 <ol>
-  <li><strong>Extériorité</strong> : l'événement échappe au contrôle de la compagnie (pas un risque inhérent à son activité)</li>
-  <li><strong>Inévitabilité</strong> : même en prenant toutes les mesures raisonnables, le retard n'aurait pas pu être évité</li>
+<li>il n&#39;est <strong>pas inhérent à l&#39;exercice normal</strong> de l&#39;activité du transporteur ;</li>
+<li>il <strong>échappe à sa maîtrise effective</strong>, par sa nature ou son origine.</li>
 </ol>
-<blockquote>
-  <strong>Arrêt de référence :</strong> CJUE, <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:62007CJ0549" target="_blank" rel="noopener external">Wallentin-Hermann</a> c/ Alitalia, 22 décembre 2008 (C-549/07), pose les bases de la définition. Suivi par des dizaines d'arrêts précisant chaque cas concret.
-</blockquote>
-
-<h2>Tableau : ce qui est accepté et ce qui ne l'est pas</h2>
+<p>Les deux, pas l&#39;une ou l&#39;autre. C&#39;est ce qui explique la ligne de partage réelle, et elle n&#39;est pas celle qu&#39;on imagine : <strong>la question n&#39;est pas de savoir si l&#39;événement était imprévisible, mais s&#39;il venait de l&#39;extérieur.</strong></p>
+<p>Une panne surprise sur un avion correctement entretenu est imprévisible, et pourtant elle n&#39;exonère pas : entretenir sa flotte est le métier même du transporteur. À l&#39;inverse, un débris abandonné sur une piste par un tiers lui échappe totalement, même s&#39;il est banal.</p>
+<h2>Ce qui exonère, et ce qui n&#39;exonère pas</h2>
 <table>
-  <tr><th>Situation</th><th>Circonstance extraordinaire ?</th><th>Précision</th></tr>
-  <tr><td>Tempête soudaine imprévisible</td><td class="verdict-yes">✔ Oui</td><td>Si imprévisible selon les données météo disponibles</td></tr>
-  <tr><td>Neige en hiver (Paris, décembre)</td><td class="verdict-no">✘ Non</td><td>Prévisible, la compagnie doit anticiper</td></tr>
-  <tr><td>Grève contrôle aérien (ATC)</td><td class="verdict-yes">✔ Oui</td><td>Extérieure à la compagnie, imprévisible</td></tr>
-  <tr><td>Grève des pilotes de la compagnie</td><td class="verdict-no">✘ Non</td><td>CJUE 2018, risque inhérent à l'activité</td></tr>
-  <tr><td>Grève sauvage spontanée du personnel</td><td class="verdict-yes">✔ Oui (parfois)</td><td>Selon les circonstances, à analyser au cas par cas</td></tr>
-  <tr><td>Panne technique standard</td><td class="verdict-no">✘ Non</td><td>Entretien = responsabilité de la compagnie (<a href="https://curia.europa.eu/juris/document/document.jsf?docid=70689&doclang=FR" target="_blank" rel="noopener external">Wallentin-Hermann</a>)</td></tr>
-  <tr><td>Défaut caché de fabrication</td><td class="verdict-yes">✔ Oui</td><td>Si non détectable lors de l'entretien normal</td></tr>
-  <tr><td>Dommage causé par un oiseau (bird strike)</td><td class="verdict-yes">✔ Oui</td><td>Extérieur, imprévisible</td></tr>
-  <tr><td>Instabilité politique / fermeture espace aérien</td><td class="verdict-yes">✔ Oui</td><td>Si déclenchée soudainement (pas une zone de guerre connue)</td></tr>
-  <tr><td>Passager turbulent / problème de sécurité</td><td class="verdict-yes">✔ Oui</td><td>Si imprévisible et hors du contrôle de la compagnie</td></tr>
-  <tr><td>Retard de l'avion précédent (rotation)</td><td class="verdict-no">✘ Non</td><td>Risque de planification inhérent à l'activité (CJUE, <a href="https://curia.europa.eu/juris/liste.jsf?num=C-402/07" target="_blank" rel="noopener external">Sturgeon</a>)</td></tr>
-  <tr><td>Problème informatique interne</td><td class="verdict-no">✘ Non</td><td>Infrastructure gérée par la compagnie</td></tr>
-  <tr><td>Pénurie de carburant organisationnelle</td><td class="verdict-no">✘ Non</td><td>Gestion opérationnelle, pas un événement extérieur</td></tr>
-</table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Exonère la compagnie ?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Météo extrême, fermeture d&#39;espace aérien</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Grève des contrôleurs aériens</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Collision avec un oiseau</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Débris ou corps étranger sur la piste</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Foudroiement imposant une inspection</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Vice caché de conception révélé par le constructeur</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td>Sabotage, acte terroriste</td>
+<td>Oui</td>
+</tr>
+<tr>
+<td><strong>Panne technique ordinaire, même imprévue</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+<tr>
+<td><strong>Pièce qui lâche malgré un entretien à jour</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+<tr>
+<td><strong>Pièce de rechange que la compagnie aurait dû avoir en stock</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+<tr>
+<td><strong>Grève du personnel de la compagnie elle-même</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+<tr>
+<td><strong>Sous-effectif, défaut d&#39;organisation</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+<tr>
+<td><strong>Retard de l&#39;avion sur sa rotation précédente</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+<tr>
+<td><strong>Équipage ayant atteint sa limite de temps de service</strong></td>
+<td><strong>Non</strong></td>
+</tr>
+</tbody></table>
+<p>Deux précisions qui comptent plus que le tableau.</p>
+<p><strong>La fréquence ne change rien.</strong> Une compagnie qui subit beaucoup de pannes ne transforme pas ces pannes en circonstances extraordinaires. C&#39;est même l&#39;inverse : cela révèle un problème de flotte, qui relève d&#39;elle.</p>
+<p><strong>Respecter l&#39;entretien réglementaire ne suffit pas.</strong> Prouver qu&#39;on a fait les visites obligatoires n&#39;établit pas qu&#39;on a pris toutes les mesures raisonnables. Ce sont deux démonstrations différentes.</p>
+<aside class="cta-inline">
+  <p class="cta-inline-t">On vous a répondu « circonstances extraordinaires » ?</p>
+  <p class="cta-inline-p">Cette phrase ne prouve rien tant que la compagnie n'a pas apporté trois preuves. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
+</aside>
 
-<h2>La panne technique : le cas le plus fréquent et le plus mal compris</h2>
-<p>C'est la justification la plus souvent avancée. Les compagnies écrivent « problème technique » et pensent que ça suffit. <strong>Ce n'est pas le cas.</strong></p>
-<p>La CJUE a établi que <strong>les pannes techniques résultant de l'entretien normal ou anormal d'un aéronef ne sont pas des circonstances extraordinaires</strong>, car elles sont inhérentes au fonctionnement d'un avion. L'entretien est la responsabilité de la compagnie.</p>
-<blockquote>
-  <strong>Exception étroite :</strong> un défaut de fabrication caché, non détectable lors des inspections réglementaires, et dont le constructeur a informé la compagnie seulement le jour même (exemple : bulletin d'airworthiness d'urgence) peut constituer une circonstance extraordinaire. C'est extrêmement rare et la compagnie doit en apporter la preuve documentaire.
-</blockquote>
-
-<h2>Météo : la frontière entre imprévisible et négligence</h2>
-<p>Tous les aléas météo ne se valent pas :</p>
-<ul>
-  <li><strong>Tempête tropicale soudaine</strong> sur Dakar un soir d'août → circonstance extraordinaire possible si les données météo de la veille ne la prévoyaient pas</li>
-  <li><strong>Brume de sable (harmattan)</strong> en janvier sur l'Afrique de l'Ouest → <strong>prévisible</strong> (phénomène saisonnier connu). La compagnie doit planifier en conséquence</li>
-  <li><strong>Verglas sur la piste de CDG</strong> en novembre → prévisible, gestion au sol = responsabilité de l'aéroport et de la compagnie</li>
-</ul>
-
-<h2>Grève : une distinction essentielle</h2>
-<p>Depuis l'arrêt CJUE du 17 avril 2018 (<a href="https://curia.europa.eu/juris/liste.jsf?num=C-195/17" target="_blank" rel="noopener external">Krüsemann</a> c/ <a href="https://curia.europa.eu/juris/liste.jsf?num=C-195/17" target="_blank" rel="noopener external">TUIfly</a>), la grève <strong>interne</strong> des salariés d'une compagnie aérienne n'est plus une circonstance extraordinaire, c'est un risque inhérent à la gestion du personnel.</p>
-<p>En revanche :</p>
-<ul>
-  <li>Grève des contrôleurs aériens (ATC) → extraordinaire ✔</li>
-  <li>Grève des agents d'escale de l'aéroport (prestataire externe) → peut être extraordinaire selon les cas</li>
-  <li>Grève des douaniers → extraordinaire si imprévisible ✔</li>
-</ul>
-
-<h2>Comment contester un refus pour circonstances extraordinaires</h2>
-<p>La charge de la preuve appartient à la compagnie, pas à vous. Elle doit prouver :</p>
+<h2>Même valable, la circonstance n&#39;exonère jamais automatiquement</h2>
+<p>C&#39;est l&#39;erreur la plus répandue, y compris chez ceux qui connaissent le règlement. Établir qu&#39;un oiseau a percuté l&#39;appareil ne clôt pas le dossier.</p>
+<p>Le texte exige que le transporteur prouve, <strong>en plus</strong>, que le retard n&#39;aurait pas pu être évité même en prenant <strong>toutes les mesures raisonnables</strong>. La Cour de justice l&#39;a rappelé pour la collision aviaire, pour le pneu crevé par un débris, pour la foudre, et encore en octobre 2025.</p>
+<p>Concrètement, la compagnie doit établir trois choses, et elle échoue si une seule manque :</p>
 <ol>
-  <li>La nature exacte des circonstances extraordinaires (rapport technique officiel, NOTAM météo, décision ATC…)</li>
-  <li>Que ces circonstances étaient imprévisibles</li>
-  <li>Que toutes les mesures raisonnables ont été prises pour éviter le retard (avion de remplacement, réacheminement…)</li>
+<li>l&#39;événement était bien extraordinaire ;</li>
+<li>il ne pouvait pas être évité par des mesures adaptées ;</li>
+<li>elle a pris toutes les mesures raisonnables pour en limiter les conséquences.</li>
 </ol>
-<p>Demandez ces preuves <strong>par écrit</strong> dans votre réclamation. Sans justificatif, le tribunal donnera raison au passager dans la quasi-totalité des cas.</p>
+<p><strong>La charge repose entièrement sur elle.</strong> Vous n&#39;avez à prouver que votre retard.</p>
+<h2>La règle que presque personne n&#39;utilise</h2>
+<p>Voici le cœur de cet article, et l&#39;argument qui fait basculer les dossiers les plus mal engagés.</p>
+<p>Quand un retard résulte <strong>à la fois</strong> d&#39;une circonstance extraordinaire et d&#39;une cause ordinaire, le retard imputable à la circonstance extraordinaire doit être <strong>retranché</strong> du retard total. On regarde ensuite ce qui reste, et on le compare au seuil de trois heures.</p>
+<p>C&#39;est le dispositif d&#39;un arrêt de la Cour de justice, et il change tout, parce que dans la vraie vie l&#39;événement extraordinaire n&#39;explique presque jamais la totalité du retard.</p>
+<h3>Un exemple qui parle</h3>
+<p>Un oiseau est ingéré au décollage. L&#39;avion revient au parking. La suite, telle qu&#39;elle se déroule réellement :</p>
+<p><strong>L&#39;inspection est obligatoire, et elle est rapide.</strong> On examine les moteurs et le nez de l&#39;appareil. Il arrive qu&#39;il faille déposer un moteur pour vérifier. Comptez de trente minutes à une heure.</p>
+<p><strong>Puis viennent les papiers, et c&#39;est là que le temps passe.</strong> L&#39;avion ne peut pas repartir sans un certificat de remise en service, signé par une personne titulaire de la licence adéquate et habilitée pour ce type d&#39;intervention. S&#39;il n&#39;y a personne de qualifié sur l&#39;escale, il faut l&#39;attendre, ou le faire venir.</p>
+<p>Votre vol part finalement avec quatre heures de retard.</p>
+<p>L&#39;oiseau explique <strong>une heure</strong>. Les trois autres relèvent de l&#39;organisation de la compagnie : disponibilité du personnel habilité, gestion des documents, moyens présents sur l&#39;escale. Ce ne sont pas des circonstances extraordinaires.</p>
+<p>On retranche donc une heure des quatre. Il reste trois heures de retard ordinaire. <strong>Le seuil est atteint, l&#39;indemnisation est due.</strong></p>
+<img src="/assets/images/ventilation-retard-circonstance-extraordinaire.svg" alt="Schéma : sur quatre heures de retard, seule l'heure d'inspection après la collision aviaire se retranche, les trois heures d'attente du technicien relèvent de l'organisation de la compagnie" width="1200" height="630" loading="lazy" decoding="async">
 
+<h3>Et si la compagnie ne fournit aucune chronologie ?</h3>
+<p>C&#39;est la partie la plus favorable au passager, et elle est rarement exploitée.</p>
+<p>Pour retrancher une fraction du retard, la compagnie doit <strong>prouver</strong> cette fraction. Si elle se contente d&#39;écrire « collision aviaire » sans produire d&#39;horaires, sans dire à quelle heure l&#39;impact a eu lieu, à quelle heure le technicien est arrivé, à quelle heure la remise en service a été signée, alors <strong>rien n&#39;est retranché</strong>.</p>
+<p>Les quatre heures comptent en entier, et l&#39;indemnisation est due.</p>
+<p>Un dernier point, tranché par la Cour : si un expert habilité a déjà conclu que l&#39;appareil pouvait voler et que la compagnie décide de le faire réinspecter par son propre expert, le temps perdu à cette seconde inspection <strong>n&#39;est pas</strong> une circonstance extraordinaire.</p>
+<h2>Météo et grève : les deux cas où tout se joue sur un détail</h2>
+<p>Ces deux motifs sont les plus invoqués. Ils sont recevables sur le principe, et pourtant ils tombent souvent, parce que la question n&#39;est jamais « y a-t-il eu du mauvais temps ou une grève », mais « était-ce prévisible, et de qui relevait-il ».</p>
+<h3>La météo</h3>
+<p>Tous les aléas ne se valent pas, et sur nos lignes la distinction est très concrète.</p>
+<p>Une <strong>tempête soudaine</strong> un soir d&#39;août sur Dakar peut constituer une circonstance extraordinaire, à condition que les données météo de la veille ne l&#39;annonçaient pas.</p>
+<p>La <strong>brume de sable</strong>, l&#39;harmattan qui couvre l&#39;Afrique de l&#39;Ouest en janvier, est un phénomène saisonnier connu de tous. Il est prévisible, et une compagnie qui dessert la région doit en tenir compte dans sa planification.</p>
+<p>Le <strong>verglas</strong> sur une piste européenne en novembre relève de la même logique : c&#39;est attendu à cette saison, et son traitement au sol incombe à l&#39;aéroport et à la compagnie.</p>
+<p>Le test le plus simple reste celui que vous pouvez faire vous-même : <strong>les autres vols sont-ils partis ?</strong> Si les appareils des autres compagnies ont décollé dans la même fenêtre, l&#39;argument météo devient très difficile à tenir.</p>
+<h3>La grève</h3>
+<p>La ligne de partage est nette, et elle suit celle de tout le règlement : le personnel de la compagnie relève d&#39;elle, les tiers non.</p>
+<p><strong>Grève du personnel de la compagnie elle-même</strong> : ce n&#39;est pas une circonstance extraordinaire. La Cour l&#39;a jugé en 2018, et confirmé depuis, y compris pour un mouvement légalement déclenché avec préavis. Les relations sociales font partie de la gestion normale d&#39;un employeur.</p>
+<p><strong>Grève des contrôleurs aériens</strong> : extraordinaire, ils sont extérieurs à la compagnie.</p>
+<p><strong>Grève d&#39;un prestataire de l&#39;aéroport</strong>, par exemple les agents chargés du chargement des bagages : cela peut être extraordinaire, la Cour l&#39;a admis en 2024, précisément parce que ce personnel n&#39;est pas celui du transporteur.</p>
+<h2>« Toutes les mesures raisonnables » : ce que ça veut dire</h2>
+<p>C&#39;est le troisième verrou, et celui sur lequel les compagnies s&#39;expliquent le moins. Le règlement ne leur demande pas d&#39;avoir fait de leur mieux, il leur demande d&#39;avoir mobilisé <strong>tous les moyens dont elles disposaient</strong>, en personnel, en matériel et en argent, dans la limite de ce qui reste supportable pour une entreprise de leur taille.</p>
+<p>Trois exemples de ce que les juges attendent réellement :</p>
+<p><strong>Vous replacer sur un autre vol, y compris chez un concurrent.</strong> C&#39;est l&#39;exigence la plus tranchante, et la moins appliquée. Vous proposer le vol du lendemain de la même compagnie ne suffit pas. Elle doit chercher un siège sur des vols directs ou indirects opérés par d&#39;autres transporteurs, et elle n&#39;est exonérée que s&#39;il n&#39;existait aucune place à un horaire moins tardif.</p>
+<p><strong>Avoir prévu une marge dans sa planification.</strong> Le transporteur doit tenir compte, au moment où il construit ses programmes, du risque que des aléas surviennent, et prévoir une réserve de temps. Une compagnie qui enchaîne ses rotations sans aucun tampon puis invoque la cascade qui s&#39;ensuit ne peut pas prétendre avoir tout fait.</p>
+<p><strong>Avoir sur place les moyens de réagir.</strong> Si un pneu crève à cause d&#39;un débris, la question n&#39;est pas seulement le débris : c&#39;est aussi de savoir pourquoi le remplacement a pris si longtemps, alors que des contrats de maintenance standardisés existent dans les aéroports.</p>
+<p>Le point commun de ces trois exigences est simple. <strong>L&#39;événement extraordinaire ouvre une porte, il ne referme pas le dossier.</strong> Ce qui se passe après, c&#39;est de la gestion, et la gestion relève de la compagnie.</p>
+<h2>Le document qui existe pour chaque retard</h2>
+<p>Beaucoup de passagers croient qu&#39;il n&#39;existe aucune trace écrite. C&#39;est faux.</p>
+<p>Chaque appareil possède un <strong>carnet de bord technique</strong>, dont le contenu et la forme sont fixés par la réglementation européenne, et dont le système doit être approuvé par l&#39;autorité de l&#39;aviation civile. Ce n&#39;est pas un cahier informel.</p>
+<p>Tout y est consigné : les informations de chaque vol, le certificat de remise en service en cours de validité, et <strong>tous les défauts constatés ou différés</strong>. Cela va d&#39;un éclairage de cabine défaillant à un équipement de galley hors service, jusqu&#39;à une porte de soute condamnée. Autrement dit, s&#39;il s&#39;est passé quelque chose sur votre avion, c&#39;est écrit quelque part.</p>
+<p><strong>Attention à une confusion fréquente.</strong> Ce carnet n&#39;a rien à voir avec les enregistreurs de vol, les fameuses boîtes noires. Celles-ci sont protégées par la réglementation sur les enquêtes de sécurité et ne peuvent servir à autre chose. Le carnet de bord technique, lui, est un document d&#39;exploitation ordinaire, couvert par aucune immunité de ce genre. Une compagnie qui invoquerait le secret des enquêtes pour refuser une chronologie de maintenance se tromperait de texte.</p>
+<p><strong>Une limite de temps à connaître.</strong> Le carnet doit couvrir les <strong>36 mois</strong> précédant la dernière inscription. Or vous disposez de cinq ans pour réclamer en France. Une demande tardive peut donc se heurter à des pièces légalement détruites. C&#39;est une raison de plus de réclamer tôt.</p>
+<h2>Comment s&#39;y prendre concrètement</h2>
+<p><strong>Ne contestez pas, demandez une chronologie.</strong> C&#39;est la différence entre un dossier qui aboutit et un dossier qui s&#39;enlise. Une juridiction française a validé l&#39;exonération totale d&#39;une compagnie après un foudroiement, précisément parce que les passagers n&#39;opposaient que des suppositions sur ce qui aurait été possible.</p>
+<p>Écrivez donc quelque chose de précis :</p>
 <blockquote>
-  <strong>Notre expérience :</strong> sur les dossiers Robin des Airs, 4 refus sur 5 pour "circonstances extraordinaires" sont contestés avec succès. Les compagnies savent que la plupart des passagers n'iront pas plus loin après un refus, c'est leur stratégie.
+<p>Vous invoquez une circonstance extraordinaire pour justifier un retard de X heures. Je vous demande de m&#39;indiquer l&#39;heure exacte de survenance de l&#39;événement, l&#39;heure d&#39;arrivée du personnel technique, l&#39;heure de signature du certificat de remise en service, et l&#39;heure de départ effective. Je vous demande également de préciser les mesures prises pour limiter le retard, y compris les possibilités de réacheminement examinées.</p>
 </blockquote>
+<p>Cette demande est difficile à ignorer, et son refus se plaide.</p>
+<p><strong>Ce qui ne fonctionne pas.</strong> La DGAC veille à l&#39;application du règlement et peut sanctionner une compagnie, mais son action est indépendante des demandes individuelles : elle ne vous transmettra pas les pièces techniques. Et les boîtes noires ne vous sont pas accessibles.</p>
+<p><strong>Ce qui fonctionne.</strong> Devant le juge, la production des pièces détenues par la partie adverse peut être ordonnée, au besoin sous astreinte. Mais l&#39;argument le plus solide reste plus simple : <strong>ce n&#39;est pas à vous de prouver la cause de votre retard, c&#39;est à la compagnie de la démontrer, minute par minute.</strong></p>
+<h2>Ce que Robin des Airs fait pour vous</h2>
+<p>Demander une chronologie horodatée, relancer jusqu&#39;à l&#39;obtenir, calculer la part de retard réellement imputable à l&#39;événement invoqué, et aller devant le tribunal de commerce quand la compagnie s&#39;obstine : c&#39;est notre métier.</p>
+<p>On vérifie votre éligibilité gratuitement, vous n&#39;avancez rien, et si on ne récupère rien, vous ne payez rien.</p>
+<aside class="cta-inline">
+  <p class="cta-inline-t">Un refus pour circonstances extraordinaires n'est pas une fin de non-recevoir</p>
+  <p class="cta-inline-p">Dans la plupart des cas, la compagnie n'a apporté aucune des trois preuves qu'elle doit. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
+</aside>
 
-<p>→ <a href="/autorisation.html">Votre vol a été refusé pour circonstances extraordinaires ? On analyse votre dossier</a>
-→ <a href="/blog/mediation-compagnie-aerienne-refus-indemnite.html">Que faire si la compagnie refuse de payer ?</a></p></div>
+<style>
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+#blog-body .cta-inline{margin:1.5rem 0;padding:1.15rem 1.3rem;border-radius:.75rem;background:#0B1F3A;color:#fff}
+#blog-body .cta-inline p{margin:0;color:rgba(255,255,255,.9)}
+#blog-body .cta-inline-t{font-size:1.0625rem;font-weight:800;color:#fff !important;margin-bottom:.4rem !important}
+#blog-body .cta-inline-p{font-size:.9375rem;margin-bottom:.85rem !important}
+#blog-body a.cta-inline-a{display:inline-block;background:#00C87A;color:#04372A !important;font-weight:800;font-size:.9375rem;padding:.6rem 1.1rem;border-radius:.5rem;text-decoration:none}
+#blog-body a.cta-inline-a:hover{background:#00E5A0;color:#04372A !important}
+</style>
+
+<style>
+#blog-body nav.sommaire{display:block;margin:1.4rem 0;padding:1.05rem 1.25rem;border:1px solid #E2E6EE;border-radius:.75rem;background:#fff}
+#blog-body .sommaire-t{margin:0 0 .55rem !important;font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#62718A}
+#blog-body .sommaire ol{margin:0;padding-left:1.15rem}
+#blog-body .sommaire li{margin-bottom:.3rem;font-size:.9rem}
+#blog-body .sommaire a{color:#047857;font-weight:600;text-decoration:none}
+#blog-body .sommaire a:hover{text-decoration:underline}
+#blog-body h2[id]{scroll-margin-top:1rem}
+</style>
+
+<script>
+(function(){
+  var liste=document.getElementById('sommaire-liste');
+  if(!liste) return;
+  var corps=document.getElementById('blog-body')||document;
+  // Ancres posees a la volee : le gabarit n'en genere pas. Slug simple, sans
+  // accents, avec un suffixe si deux titres tombent sur le meme.
+  var vus={};
+  [].forEach.call(corps.querySelectorAll('h2'),function(h){
+    var t=(h.textContent||'').trim();
+    if(!t) return;
+    var id=t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+            .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);
+    if(vus[id]){ vus[id]++; id=id+'-'+vus[id]; } else { vus[id]=1; }
+    h.id=id;
+    var li=document.createElement('li');
+    var a=document.createElement('a');
+    a.href='#'+id;
+    a.textContent=t;
+    li.appendChild(a); liste.appendChild(li);
+  });
+})();
+</script>
+</div>
     <section class="faq">
       <h2>Questions fréquentes</h2>
       <details>
+        <summary>Qu'est-ce qu'une circonstance extraordinaire au sens du règlement CE 261 ?</summary>
+        <div>Un événement qui, <strong>par sa nature ou son origine, n'est pas inhérent à l'exercice normal de l'activité</strong> du transporteur et <strong>échappe à sa maîtrise effective</strong>. Les deux conditions sont cumulatives. Tout ce qui relève de l'organisation de la compagnie, de son personnel ou de sa flotte y échappe par principe.</div>
+      </details>
+      <details>
         <summary>Une panne technique est-elle une circonstance extraordinaire ?</summary>
-        <div>Non, sauf exception. La CJUE (arrêt <a href="https://curia.europa.eu/juris/liste.jsf?num=C-549/07" target="_blank" rel="noopener external">Wallentin-Hermann</a>, 2008) a établi que les pannes techniques inhérentes au fonctionnement normal d'un avion ne sont pas des circonstances extraordinaires. Seules les pannes causées par un événement extérieur imprévisible (ex. : dommage causé par un oiseau, défaut caché de fabrication non détectable) peuvent l'être.</div>
+        <div>En principe non, même si elle survient à l'improviste et même si l'entretien était à jour. La Cour de justice l'a jugé dans l'arrêt van der Lans. <strong>L'exception concerne les causes extérieures</strong> : un oiseau, un débris sur la piste, la foudre, ou un vice caché de conception révélé par le constructeur.</div>
       </details>
       <details>
-        <summary>La météo est-elle toujours une circonstance extraordinaire ?</summary>
-        <div>Pas automatiquement. Une tempête soudaine et imprévisible l'est. Mais une météo hivernale prévisible (neige en décembre à Paris, brume en saison sèche en Afrique) ne l'est pas si la compagnie n'a pas pris les précautions nécessaires. La compagnie doit prouver que la météo était réellement imprévisible.</div>
+        <summary>La compagnie invoque une collision aviaire. Ai-je perdu ?</summary>
+        <div>Non, et c'est le point le plus mal connu. L'oiseau est bien une circonstance extraordinaire, mais <strong>il ne couvre que le temps qu'il a réellement causé</strong>. L'inspection dure généralement moins d'une heure. Si votre vol est parti avec quatre heures de retard, la compagnie doit justifier les trois autres, sinon elles comptent pour le seuil des 3 heures.</div>
       </details>
       <details>
-        <summary>La grève des pilotes est-elle une circonstance extraordinaire ?</summary>
-        <div>Non. La CJUE (arrêt <a href="https://curia.europa.eu/juris/liste.jsf?num=C-28/20" target="_blank" rel="noopener external">Airhelp</a>, 2018) a statué que la grève interne des salariés de la compagnie n'est pas une circonstance extraordinaire, c'est un risque inhérent à l'activité. En revanche, une grève du contrôle aérien (ATC) ou une grève sauvage spontanée peuvent l'être.</div>
+        <summary>Que doit prouver la compagnie exactement ?</summary>
+        <div>Trois choses, et pour chacune la charge repose entièrement sur elle : que l'événement était bien extraordinaire, qu'il ne pouvait pas être évité, et qu'elle a pris <strong>toutes les mesures raisonnables</strong> pour en limiter les conséquences. Si elle échoue sur un seul point, l'indemnisation est due.</div>
       </details>
       <details>
-        <summary>Comment contester un refus pour circonstances extraordinaires ?</summary>
-        <div>Demandez à la compagnie de vous fournir par écrit la nature précise des circonstances invoquées et les preuves (rapport technique, NOTAM météo, rapport ATC). En l'absence de preuves, le tribunal donnera raison au passager. 80% des refus pour circonstances extraordinaires sont infondés ou insuffisamment prouvés.</div>
+        <summary>Existe-t-il un document qui prouve la cause de mon retard ?</summary>
+        <div>Oui. Chaque appareil possède un <strong>carnet de bord technique</strong> réglementé, où sont consignés tous les défauts et toutes les interventions, de l'éclairage cabine à une porte de soute condamnée. Il doit couvrir les 36 mois précédents. Vous n'y avez pas accès de plein droit, mais il peut être demandé, et son absence se retourne contre la compagnie.</div>
+      </details>
+      <details>
+        <summary>Puis-je demander le carnet de bord à la DGAC ?</summary>
+        <div>Non. La DGAC veille à l'application du règlement et peut sanctionner une compagnie, mais son action est <strong>indépendante du traitement des demandes individuelles</strong> et elle ne vous transmettra pas les pièces techniques. La voie utile est la demande écrite à la compagnie, puis la production forcée devant le juge.</div>
+      </details>
+      <details>
+        <summary>Combien de temps la compagnie conserve-t-elle ces documents ?</summary>
+        <div>Le carnet de bord technique couvre les <strong>36 mois</strong> précédant la dernière inscription. Or vous disposez de 5 ans pour réclamer en France. Une demande faite trop tard peut donc se heurter à des pièces légalement détruites : réclamez tôt.</div>
       </details>
     </section>
     <div class="cta-box">
       <p>Prêt à récupérer votre indemnité ?</p>
       <p>
+        <a href="https://robindesairs.eu/depot-express">Déposer mon dossier en 2 min</a>
+        <span class="sep">·</span>
         <a href="https://robindesairs.eu/#funnel-box">Vérifier mon indemnité</a>
         <span class="sep">·</span>
-        <a href="https://wa.me/33756863630">WhatsApp direct</a>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%2C%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20(jusqu'%C3%A0%20600%20%E2%82%AC)%20%3F%0A(r%C3%A9f.%20article%20%3A%20circonstances-extraordinaires-ce261)">WhatsApp direct</a>
       </p>
     </div>
     <section class="related">
       <h2>Articles liés</h2>
       <ul>
-        <li><a href="/blog/jurisprudence-ce261-arrets-cjue.html">Jurisprudence CJUE complète sur le règlement CE 261</a></li>
-        <li><a href="/blog/arret-wallentin-hermann-panne-technique.html">Arrêt Wallentin-Hermann : la panne technique</a></li>
-        <li><a href="/blog/arret-krusemann-greve-cjue.html">Arrêt Krüsemann : la grève interne</a></li>
-        <li><a href="/blog/arret-peskova-bird-strike-cjue.html">Arrêt Pešková : l'impact d'oiseau</a></li>
-        <li><a href="/blog/reglementation-ce261-resume.html">Résumé complet du règlement CE 261/2004</a></li>
+        <li><a href="/blog/vol-annule-meteo-circonstances-extraordinaires-recours.html">Vol annulé pour météo : la compagnie peut-elle refuser l'indemnité ?</a></li>
+        <li><a href="/blog/pmr-handicap-mobilite-reduite-vol-retarde-droits.html">Personnes à mobilité réduite (PMR) : droits en cas de vol retardé</a></li>
+        <li><a href="/blog/pourquoi-choisir-robin-des-airs-difference.html">Pourquoi choisir Robin des Airs : ce qui nous différencie</a></li>
+        <li><a href="/blog/prescription-indemnite-vol-retarde-5-ans.html">Prescription indemnité CE 261 : 5 ans en France</a></li>
+        <li><a href="/blog/prescription-indemnite-vol-tableau-pays.html">Prescription indemnité vol : tableau par pays (CE 261)</a></li>
+        <li><a href="/blog/preuves-retard-vol-conserver-indemnite.html">Retard d'avion : 8 preuves à conserver pour obtenir votre indemnité</a></li>
       </ul>
     </section>
-    <p class="signature">Article rédigé et vérifié par <strong>l'équipe Robin des Airs</strong> (robindesairs.eu), spécialistes des indemnités aériennes CE 261 sur l'axe Europe-Afrique. <span class="disambig">À ne pas confondre avec d'autres entités utilisant un nom similaire dans le secteur environnemental.</span></p>
-    <p class="disclaimer"><strong>Information générale.</strong> Cet article présente une synthèse pédagogique de la réglementation en vigueur (<a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32004R0261" target="_blank" rel="noopener external">règlement CE 261/2004</a>, <a href="https://www.icao.int/secretariat/legal/list%20of%20parties/mtl99_fr.pdf" target="_blank" rel="noopener external">Convention de Montréal</a>, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil juridique personnalisé ni une consultation d'avocat. Pour l'évaluation de votre situation individuelle, contactez Robin des Airs (rachat de votre créance — cession, art. 1321 C. civ.) ou un avocat spécialisé en droit aérien. Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions de justice et l'actualité réglementaire.</p>
   </main>
 </body>
 </html>

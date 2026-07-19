@@ -2,7 +2,7 @@
 title: "Circonstances extraordinaires : ce qui exonère vraiment la compagnie, et ce qui ne l'exonère pas"
 meta_title: "Circonstances extraordinaires : la liste et la faille"
 meta_description: "Oiseau, orage, panne, grève : la liste de ce qui exonère la compagnie. Et la règle que personne n'utilise, qui fait tomber la moitié des refus."
-slug: circonstances-extraordinaires-ce261-ce-qui-exonere
+slug: circonstances-extraordinaires-ce261
 image_url: /og-blog.png
 faq:
   - q: "Qu'est-ce qu'une circonstance extraordinaire au sens du règlement CE 261 ?"
@@ -122,6 +122,32 @@ Pour retrancher une fraction du retard, la compagnie doit **prouver** cette frac
 Les quatre heures comptent en entier, et l'indemnisation est due.
 
 Un dernier point, tranché par la Cour : si un expert habilité a déjà conclu que l'appareil pouvait voler et que la compagnie décide de le faire réinspecter par son propre expert, le temps perdu à cette seconde inspection **n'est pas** une circonstance extraordinaire.
+
+## Météo et grève : les deux cas où tout se joue sur un détail
+
+Ces deux motifs sont les plus invoqués. Ils sont recevables sur le principe, et pourtant ils tombent souvent, parce que la question n'est jamais « y a-t-il eu du mauvais temps ou une grève », mais « était-ce prévisible, et de qui relevait-il ».
+
+### La météo
+
+Tous les aléas ne se valent pas, et sur nos lignes la distinction est très concrète.
+
+Une **tempête soudaine** un soir d'août sur Dakar peut constituer une circonstance extraordinaire, à condition que les données météo de la veille ne l'annonçaient pas.
+
+La **brume de sable**, l'harmattan qui couvre l'Afrique de l'Ouest en janvier, est un phénomène saisonnier connu de tous. Il est prévisible, et une compagnie qui dessert la région doit en tenir compte dans sa planification.
+
+Le **verglas** sur une piste européenne en novembre relève de la même logique : c'est attendu à cette saison, et son traitement au sol incombe à l'aéroport et à la compagnie.
+
+Le test le plus simple reste celui que vous pouvez faire vous-même : **les autres vols sont-ils partis ?** Si les appareils des autres compagnies ont décollé dans la même fenêtre, l'argument météo devient très difficile à tenir.
+
+### La grève
+
+La ligne de partage est nette, et elle suit celle de tout le règlement : le personnel de la compagnie relève d'elle, les tiers non.
+
+**Grève du personnel de la compagnie elle-même** : ce n'est pas une circonstance extraordinaire. La Cour l'a jugé en 2018, et confirmé depuis, y compris pour un mouvement légalement déclenché avec préavis. Les relations sociales font partie de la gestion normale d'un employeur.
+
+**Grève des contrôleurs aériens** : extraordinaire, ils sont extérieurs à la compagnie.
+
+**Grève d'un prestataire de l'aéroport**, par exemple les agents chargés du chargement des bagages : cela peut être extraordinaire, la Cour l'a admis en 2024, précisément parce que ce personnel n'est pas celui du transporteur.
 
 ## « Toutes les mesures raisonnables » : ce que ça veut dire
 

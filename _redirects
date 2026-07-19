@@ -179,7 +179,7 @@
 /blog/air-cote-divoire-vol-retarde-indemnite.html               /blog/air-cote-ivoire-vol-retarde-indemnite.html              301!
 /blog/arret-folkerts-correspondance-cjue.html                   /blog/arret-folkerts-heure-arrivee-ce261.html                 301!
 /blog/correspondance-ratee-a-qui-reclamer-ce261-folkerts.html   /blog/correspondance-manquee-indemnite-vol.html               301!
-/blog/arret-wallentin-hermann-panne-technique-cjue.html         /blog/arret-wallentin-hermann-panne-technique.html            301!
+/blog/arret-wallentin-hermann-panne-technique-cjue.html         /blog/circonstances-extraordinaires-ce261.html            301!
 /blog/reforme-ce261-2026-ce-qui-change-droits-passagers.html    /blog/reforme-ce261-2026-nouveaux-droits.html                 301!
 /blog/reforme-reglement-ce261-2026-droits-passagers-afrique.html /blog/reforme-ce261-2026-nouveaux-droits.html                301!
 /blog/lettre-mise-en-demeure-compagnie-aerienne-modele.html     /blog/mise-en-demeure-compagnie-aerienne-ce261.html           301!
@@ -247,3 +247,7 @@
 # Filet : toute autre URL DE/ES oubliee atterrit sur le blog EN plutot que sur un 404.
 /es/*                                                    /en/                                                        301
 /de/*                                                    /en/                                                        301
+
+# Fusionne dans le pilier circonstances extraordinaires (19/07/2026)
+/blog/arret-wallentin-hermann-panne-technique.html    /blog/circonstances-extraordinaires-ce261.html    301
+/blog/arret-wallentin-hermann-panne-technique         /blog/circonstances-extraordinaires-ce261.html    301
