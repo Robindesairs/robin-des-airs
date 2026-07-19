@@ -89,6 +89,7 @@ Plusieurs compagnies acheminent vers Dakar via leur hub. Aucune n'est européenn
 | Compagnie | Hub de correspondance |
 |---|---|
 | Royal Air Maroc | Casablanca |
+| Tunisair | Tunis |
 | Turkish Airlines | Istanbul |
 | Ethiopian Airlines | Addis-Abeba |
 | Emirates | Dubaï |
