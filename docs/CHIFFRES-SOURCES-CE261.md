@@ -68,15 +68,21 @@ Complément récent : **30 %** des Européens se sentent bien informés en trans
 (rail 33 %, autocar 27 %, ferry 16 %). Eurobaromètre *Passenger rights*, juillet 2024,
 26 601 personnes, EU27. https://europa.eu/eurobarometer/surveys/detail/2957
 
-### Le taux de rejet
+### Le taux de rejet : abandonné, et pourquoi
 
-**52 %** des réclamations pourtant valides sont rejetées dès la première demande.
-Source : Association of Passenger Rights Advocates (APRA), 2024.
-https://apra-eu.com/turbulent-skies-the-stealth-erosion-of-ec-261/
+Le **52 %** de réclamations valides rejetées vient d'APRA. **Ne pas l'utiliser.**
 
-**À savoir** : APRA est l'association professionnelle du secteur de l'indemnisation, donc une
-source engagée, et l'IATA a publié une réfutation de son rapport. Le chiffre reste attribué
-et vérifiable sur leur site. C'est notre meilleure réponse à « je peux le faire moi-même ».
+Vérifié le 19/07/2026 : **Tomasz Pawliszyn est simultanément président d'APRA et directeur
+général d'AirHelp**. Le rapport d'économistes publié par APRA en 2026 porte en page 2
+« commissioned for APRA by AirHelp Germany GmbH ». APRA n'est donc pas une caution neutre,
+c'est le lobby dirigé par notre principal concurrent, celui dont on s'interdit de citer le nom.
+
+Le chiffre n'est pas faux. Mais il suffit de trente secondes à une compagnie ou à un
+journaliste pour répondre « votre source, c'est AirHelp ». Et le rapport a déjà été
+publiquement attaqué par l'IATA, obligeant les auteurs à publier une réponse méthodologique.
+
+Ce qui le remplace, sans rien perdre de l'argument : **62 % des passagers éligibles ne
+perçoivent pas ce qui leur est dû** (Commission européenne, 2020, données réelles).
 
 ---
 
