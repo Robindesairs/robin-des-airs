@@ -17,11 +17,11 @@
   <text x="247" y="196" fill="#8C99AC" font-size="12.5" text-anchor="middle">demi-tour</text>
 
   <rect x="430" y="182" width="216" height="52" rx="10" fill="#EFF9F4"/>
-  <text x="538" y="203" fill="#047857" font-size="13" font-weight="800" text-anchor="middle">C'EST UNE ANNULATION</text>
-  <text x="538" y="222" fill="#0B1F3A" font-size="12.5" text-anchor="middle">le vol n'a pas été effectué</text>
+  <text x="538" y="203" fill="#047857" font-size="13" font-weight="800" text-anchor="middle">VOTRE VOL EST ABANDONNÉ ?</text>
+  <text x="538" y="222" fill="#0B1F3A" font-size="12.5" text-anchor="middle">c'est alors une annulation</text>
 
   <text x="684" y="196" fill="#0B1F3A" font-size="15" font-weight="800">Indemnité due sans condition de durée.</text>
-  <text x="684" y="220" fill="#374151" font-size="14">Même si l'avion n'est resté en l'air qu'une heure.</text>
+  <text x="684" y="220" fill="#374151" font-size="14">Mais si le MÊME vol repart, c'est plutôt un retard.</text>
   <text x="684" y="243" fill="#8C99AC" font-size="13">Le motif du demi-tour ne change pas la qualification.</text>
 
   <!-- ===== CAS 2 : deroutement ===== -->

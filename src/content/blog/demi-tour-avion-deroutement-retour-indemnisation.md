@@ -6,7 +6,7 @@ slug: demi-tour-avion-deroutement-retour-indemnisation
 image_url: /og-blog.png
 faq:
   - q: "Mon avion a décollé puis est revenu à l'aéroport de départ. C'est un retard ou une annulation ?"
-    a: "Une **annulation**. La Cour de justice l'a jugé : un vol qui décolle puis retourne à son point de départ n'a pas été effectué, même s'il a volé. Et **le motif du retour n'y change rien**. C'est très favorable, car l'indemnisation d'une annulation est due sans condition de durée, alors qu'un retard exige d'atteindre 3 heures."
+    a: "Le plus souvent une **annulation**, et c'est très favorable : l'indemnisation est alors due sans condition de durée, alors qu'un retard exige d'atteindre 3 heures. La Cour de justice a jugé qu'un vol qui décolle puis retourne à son point de départ n'a pas été effectué, même s'il a volé, et que **le motif du retour n'y change rien**. La question à se poser porte sur la suite : votre vol a-t-il été abandonné et vous a-t-on replacé sur un autre, ou le même vol est-il finalement reparti ?"
   - q: "Mon vol s'est posé dans un autre aéroport. Ai-je droit à quelque chose ?"
     a: "Oui, à deux choses. D'abord au **transfert gratuit** vers l'aéroport initialement prévu, que la compagnie doit vous proposer **d'elle-même**, sans que vous ayez à le demander. Ensuite, le cas échéant, à l'indemnisation, mais elle relève alors du régime du retard."
   - q: "Comment se calcule le retard quand l'avion s'est posé ailleurs ?"
@@ -39,7 +39,8 @@ Tout se joue sur une seule question : **le vol vous a-t-il conduit à la destina
 
 | Ce qui s'est passé | Qualification | Ce que ça ouvre |
 |---|---|---|
-| L'avion décolle puis revient à son point de départ | **Annulation** | Indemnité due **sans condition de durée** |
+| L'avion revient à son départ **et votre vol est abandonné** | **Annulation** | Indemnité due sans condition de durée |
+| L'avion revient à son départ **mais le même vol repart** | **Retard** | Indemnité si 3 h à l'arrivée |
 | L'avion se pose sur un aéroport voisin de celui prévu | **Retard** | Transfert gratuit obligatoire, indemnité si 3 h à l'arrivée |
 | L'avion se pose sur un aéroport lointain | **Annulation** en principe | Régime de l'annulation |
 | L'avion revient au parking sans décoller, et le vol part plus tard | **Retard** | Prise en charge dès 2 à 4 h selon la distance |
@@ -49,23 +50,39 @@ La distinction n'a rien de théorique. Elle change le montant, et surtout elle c
 
 <img src="/assets/images/demi-tour-deroutement-trois-regimes.svg" alt="Schéma : trois situations et trois régimes, le demi-tour vaut annulation, le déroutement vers un aéroport voisin vaut retard avec transfert gratuit, le retour au parking dépend de la suite donnée au vol" width="1200" height="630" loading="lazy" decoding="async">
 
-## Le demi-tour est une annulation, même après une heure de vol
+## Demi-tour : annulation ou retard ?
 
-C'est le point le plus important de cet article, et le plus ignoré.
+C'est la question qui décide de tout, et la réponse dépend de ce qui se passe **après** le demi-tour.
 
-Quand un avion décolle puis se pose là d'où il est parti, le vol **n'a pas été effectué**. La Cour de justice de l'Union européenne l'a jugé sans ambiguïté : un vol est une unité de transport, il doit vous amener quelque part. Vous ramener à votre point de départ, ce n'est pas un vol retardé, c'est un vol annulé.
+Le point de départ est acquis. La Cour de justice a jugé qu'un avion qui décolle puis revient sans avoir atteint sa destination n'a pas effectué le vol prévu : il ne suffit pas d'être parti, encore faut-il être arrivé. Et **le motif du demi-tour ne change pas la qualification**. Panne, météo, passager malade : le motif ne jouera qu'à l'étape suivante, quand la compagnie tentera de s'exonérer.
 
-Deux conséquences majeures.
+Mais l'arrêt a été rendu dans une affaire précise, où les passagers avaient été **replacés sur d'autres vols le lendemain**. Son dispositif vise d'ailleurs les deux éléments à la fois : le retour à l'aéroport de départ **et** le transfert des passagers sur d'autres vols. Il faut donc distinguer.
 
-**Le motif du demi-tour ne change pas la qualification.** Panne, météo à destination, passager malade : c'est une annulation dans tous les cas. Le motif ne jouera qu'à l'étape suivante, quand la compagnie tentera de s'exonérer.
+### Votre vol a été abandonné : c'est une annulation
 
-**L'indemnisation est due sans condition de durée.** C'est là que tout se joue. Pour un retard, il faut atteindre trois heures à l'arrivée. Pour une annulation, ce seuil n'existe pas. Un avion parti à 10 h, revenu à 11 h 30, et vous repartez le soir : le régime de l'annulation s'applique, avec l'indemnité, le droit au remboursement intégral du billet et la prise en charge.
+Vous avez été replacé sur un autre vol, ou vous êtes reparti le lendemain sur un créneau différent. La programmation initiale a été abandonnée.
 
-Beaucoup de passagers dans cette situation calculent leur retard, trouvent moins de trois heures, et renoncent. **Ils se trompent de règle.**
+C'est le cas jugé par la Cour, et il ouvre l'indemnisation **sans condition de durée**, le droit au remboursement intégral du billet, et la prise en charge.
+
+Si vous êtes dans cette situation, ne calculez pas votre retard pour savoir si vous avez droit à quelque chose. **Ce n'est pas la bonne règle**, et beaucoup de passagers renoncent pour cette raison.
+
+### Le même vol est reparti : c'est plutôt un retard
+
+L'avion est revenu, et quelques heures plus tard le même vol repart et vous dépose à destination.
+
+**Ce cas précis n'a jamais été tranché**, ni par la Cour de justice ni, à notre connaissance, par une juridiction nationale. Nous ne vous promettrons donc pas l'annulation. Le critère posé par la jurisprudence conduit plutôt à y voir un retard : un vol est annulé lorsque **la programmation initiale est abandonnée**, et il reste un vol retardé lorsqu'il finit par être effectué comme prévu.
+
+Deux précisions utiles. Le **changement d'appareil** au redépart n'est pas déterminant, pas plus que la remise de nouvelles cartes d'embarquement. En revanche, un redépart **le lendemain**, sur un créneau qui n'était pas celui du vol initial, se rapproche fortement de l'abandon, donc de l'annulation.
+
+### En pratique, cela change souvent moins que vous ne le craignez
+
+Que l'on retienne l'annulation ou le retard, un passager qui arrive à destination avec au moins trois heures de retard touche **la même indemnité**, jusqu'à 600 €.
+
+La qualification devient décisive dans deux cas : quand votre retard final reste **inférieur à trois heures**, et quand vous préférez le **remboursement du billet** plutôt qu'un réacheminement.
 
 <aside class="cta-inline">
   <p class="cta-inline-t">Votre avion est revenu à son point de départ ?</p>
-  <p class="cta-inline-p">C'est juridiquement une annulation, et l'indemnité ne dépend pas de la durée. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
+  <p class="cta-inline-p">Si votre vol a été abandonné, l'indemnité ne dépend même pas de la durée du retard. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
 </aside>
 
