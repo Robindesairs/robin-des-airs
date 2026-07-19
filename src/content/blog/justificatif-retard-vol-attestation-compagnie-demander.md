@@ -45,7 +45,17 @@ C'est le geste le plus important, et le moins connu.
 
 Le retard ne se mesure **pas** à l'atterrissage. Il se mesure au moment où la porte de l'avion s'ouvre et où vous pouvez descendre. La Cour de justice de l'Union européenne l'a tranché dans l'arrêt Germanwings contre Henning, et notre article sur [l'heure d'arrivée réelle](/blog/arret-folkerts-heure-arrivee-ce261.html) détaille le raisonnement.
 
-Entre les roues au sol et la porte ouverte, il se passe couramment dix à vingt minutes. Un roulage long, une passerelle occupée, un poste de stationnement éloigné, et l'écart grimpe. Sur un vol arrivé avec 2 h 50 de retard à l'atterrissage, ces minutes décident si vous touchez 600 € ou rien.
+Entre les roues au sol et la porte ouverte, il se passe couramment dix à vingt minutes. Sur un vol arrivé avec 2 h 50 de retard à l'atterrissage, ces minutes décident si vous touchez 600 € ou rien.
+
+### Pourquoi l'écart se creuse justement quand ça compte
+
+Sur un grand aéroport comme Paris-Charles de Gaulle, quinze minutes entre l'atterrissage et l'ouverture de la porte sont un minimum, et c'est souvent davantage. Le roulage entre la piste et le poste de stationnement peut être très long. Il faut ensuite accoster la passerelle, ou amener et caler l'escalier. Chaque étape mobilise une équipe au sol qui doit être là, disponible, au bon endroit.
+
+Et c'est là que se produit un effet dont peu de passagers ont conscience : **c'est précisément parce que votre vol est en retard que l'attente à la porte s'allonge.**
+
+Une équipe au sol planifie sa journée sur les horaires prévus. Un avion qui se présente avec deux ou trois heures de décalage arrive quand cette équipe est ailleurs, sur un autre appareil, ou déjà partie. La nuit, l'effet est brutal : un vol qui devait se poser en soirée et qui touche le sol vers quatre heures du matin peut attendre longtemps que quelqu'un vienne positionner la passerelle, simplement parce que plus personne n'était prévu pour lui.
+
+Le retard s'auto-alimente donc, et il le fait au pire moment : celui où vous êtes juste sous le seuil. **Ne concluez jamais « mon vol avait 2 h 40, tant pis ».** Tant que vous n'avez pas l'heure d'ouverture de la porte, vous ne savez pas si vous avez droit à 600 € ou à rien.
 
 ![Schéma : l'heure qui compte pour le calcul du retard est celle de l'ouverture de la porte, pas celle de l'atterrissage](/assets/images/heure-arrivee-ouverture-porte.svg)
 
