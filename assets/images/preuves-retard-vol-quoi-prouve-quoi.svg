@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Quelle preuve établit quoi</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Un dossier solide ne repose jamais sur une seule pièce.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <text x="56" y="128" fill="#8C99AC" font-size="13" font-weight="800" letter-spacing="1.4">CE QU'IL FAUT PROUVER</text>
+  <text x="474" y="128" fill="#8C99AC" font-size="13" font-weight="800" letter-spacing="1.4">AVEC QUOI</text>
+
+  <rect x="56" y="146" width="1088" height="92" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="56" y="146" width="6" height="92" rx="3" fill="#00C87A"/>
+  <text x="86" y="182" fill="#0B1F3A" font-size="18" font-weight="800">1 · J'étais bien sur ce vol</text>
+  <text x="86" y="212" fill="#62718A" font-size="14">le lien entre vous et l'appareil</text>
+  <text x="474" y="180" fill="#374151" font-size="15"><tspan font-weight="800" fill="#0B1F3A">Carte d'embarquement</tspan> du vol initial et du vol de remplacement</text>
+  <text x="474" y="212" fill="#374151" font-size="15">À défaut : <tspan font-weight="800" fill="#047857">l'étiquette bagage</tspan> — nom, n° de vol, date, trajet</text>
+
+  <rect x="56" y="250" width="1088" height="92" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="56" y="250" width="6" height="92" rx="3" fill="#00C87A"/>
+  <text x="86" y="286" fill="#0B1F3A" font-size="18" font-weight="800">2 · Le vol a bien été perturbé</text>
+  <text x="86" y="316" fill="#62718A" font-size="14">et ce que la compagnie a dit</text>
+  <text x="474" y="284" fill="#374151" font-size="15"><tspan font-weight="800" fill="#0B1F3A">Captures</tspan> des notifications reçues : SMS, mail, application</text>
+  <text x="474" y="316" fill="#374151" font-size="15"><tspan font-weight="800" fill="#0B1F3A">Publications</tspan> de la compagnie ou de l'aéroport, le jour même</text>
+
+  <rect x="56" y="354" width="1088" height="92" rx="12" fill="#EFF9F4" stroke="#00C87A" stroke-width="2"/>
+  <rect x="56" y="354" width="6" height="92" rx="3" fill="#047857"/>
+  <text x="86" y="390" fill="#0B1F3A" font-size="18" font-weight="800">3 · L'heure réelle d'arrivée</text>
+  <text x="86" y="420" fill="#047857" font-size="14" font-weight="700">c'est elle qui décide du seuil des 3 h</text>
+  <text x="474" y="388" fill="#374151" font-size="15"><tspan font-weight="800" fill="#0B1F3A">Historique du vol</tspan> sur les traceurs, heures réelles</text>
+  <text x="474" y="420" fill="#374151" font-size="15">Et surtout <tspan font-weight="800" fill="#047857">l'heure d'ouverture de la porte</tspan>, pas l'atterrissage</text>
+
+  <rect x="56" y="458" width="1088" height="92" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="56" y="458" width="6" height="92" rx="3" fill="#00C87A"/>
+  <text x="86" y="494" fill="#0B1F3A" font-size="18" font-weight="800">4 · La météo n'excuse pas tout</text>
+  <text x="86" y="524" fill="#62718A" font-size="14">si elle invoque les conditions</text>
+  <text x="474" y="492" fill="#374151" font-size="15"><tspan font-weight="800" fill="#0B1F3A">Relevés météo officiels</tspan> de l'aéroport, à l'heure du vol</text>
+  <text x="474" y="524" fill="#374151" font-size="15">Ils montrent si les autres vols, eux, ont décollé normalement</text>
+
+  <text x="56" y="586" fill="#8C99AC" font-size="13.5">Les témoignages d'autres passagers viennent en complément. Ils ne suffisent jamais seuls.</text>
+  <text x="56" y="610" fill="#8C99AC" font-size="13.5">Photographiez l'étiquette bagage avant de la décoller : c'est la pièce qu'on jette sans y penser.</text>
+</svg>

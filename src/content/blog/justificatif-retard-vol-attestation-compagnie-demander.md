@@ -129,14 +129,25 @@ Le retard se calcule entre l'heure d'arrivée initialement prévue et l'heure d'
 
 ## Les preuves qui ne dépendent pas de la compagnie
 
-Si elle traîne, un dossier se monte quand même :
+Si elle traîne, un dossier se monte quand même. Chaque pièce ne sert pas à la même chose, et c'est en les combinant qu'un dossier devient solide.
+
+![Schéma : quelle preuve établit quoi, de la carte d'embarquement à l'étiquette bagage en passant par l'historique du vol et les relevés météo](/assets/images/preuves-retard-vol-quoi-prouve-quoi.svg)
 
 - **cartes d'embarquement** du vol initial et du vol de remplacement
+- **étiquette bagage**, le filet de sécurité si vous avez perdu la carte d'embarquement
 - **captures** des notifications reçues, SMS, mails, application
 - **publications officielles** de la compagnie ou de l'aéroport le jour même
 - **historique du vol** sur les traceurs, avec les heures réelles
 - **relevés météo** officiels, si la compagnie invoque les conditions
 - **témoignages** d'autres passagers, utiles en complément mais jamais seuls
+
+### L'étiquette bagage, la preuve qu'on jette sans y penser
+
+C'est le petit autocollant collé sur la poignée de votre valise, ou son double collé au dos de votre carte d'embarquement. On l'arrache en sortant de l'aéroport, et c'est dommage.
+
+Elle porte en effet **votre nom, le numéro de vol, la date et le trajet complet**, escales comprises. Autrement dit, à peu près tout ce que prouve une carte d'embarquement. Quand celle-ci a été perdue, jetée ou effacée d'une application, l'étiquette prend le relais et rétablit le lien entre vous et ce vol précis.
+
+Prenez-la en photo avant de la décoller. Et si vous l'avez déjà perdue aussi, tout n'est pas joué : notre article sur la [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html) détaille les autres façons de prouver que vous étiez à bord.
 
 ## Ce que Robin des Airs fait à votre place
 
