@@ -11,6 +11,8 @@ faq:
     a: "Activer une **assurance voyage**, justifier une absence professionnelle ou scolaire, monter un dossier d'**indemnisation CE 261**, ou réclamer un préjudice professionnel au titre de la Convention de Montréal."
   - q: "Quelle heure d'arrivée compte pour les 3 heures de retard ?"
     a: "Celle de l'**ouverture de la porte** de l'avion, pas celle de l'atterrissage. La CJUE l'a tranché dans l'arrêt Germanwings contre Henning (C-452/13). Entre les roues au sol et la porte ouverte, il se passe souvent 10 à 20 minutes, parfois bien davantage. C'est exactement ce qui fait basculer un dossier au-dessus ou en dessous du seuil."
+  - q: "Comment obtenir l'heure d'arrivée réelle si la compagnie ne la donne pas ?"
+    a: "Demandez-la par écrit. Les **lignes directrices de la Commission européenne** prévoient qu'elle doit vous être communiquée **gratuitement, sur simple demande**. Et c'est à la compagnie de la prouver, pas à vous."
   - q: "La compagnie ne répond pas. Que faire ?"
     a: "Relancer par mail à J+30, puis mise en demeure en recommandé avec accusé de réception, puis saisir le médiateur. En parallèle, un dossier peut se monter sans elle, à partir de **preuves indépendantes**. Robin s'en charge à votre place."
   - q: "Je n'ai rien photographié sur le moment. C'est perdu ?"
@@ -59,9 +61,11 @@ Le retard s'auto-alimente donc, et il le fait au pire moment : celui où vous ê
 
 ![Schéma : l'heure qui compte pour le calcul du retard est celle de l'ouverture de la porte, pas celle de l'atterrissage](/assets/images/heure-arrivee-ouverture-porte.svg)
 
-**L'astuce pour repérer l'instant précis.** Sur beaucoup d'appareils, notamment l'Airbus A320 qui assure une grande partie des vols moyen-courriers, l'ouverture de la porte s'accompagne d'un signal visible depuis la cabine : **les boutons d'appel équipage s'illuminent d'un coup**, sur toute la longueur de l'appareil. Si vous voyez cette rangée de voyants s'allumer simultanément, regardez l'heure. C'est celle-là qu'il faut noter.
+**Le geste concret.** Dès que la porte s'ouvre et que les premiers passagers la franchissent, regardez l'heure et **prenez une photo**. Le couloir qui se vide, la passerelle accostée, la porte ouverte : n'importe quel cadrage fait l'affaire. Ce qui compte, c'est l'horodatage que votre téléphone inscrit automatiquement dans le fichier. C'est exactement ce que font les cabinets spécialisés dans ce contentieux.
 
-À défaut, notez l'heure à laquelle les premiers passagers franchissent réellement la porte. L'important est de ne pas confondre avec le choc des roues sur la piste, qui arrive bien plus tôt et qui ne vaut rien juridiquement.
+Ne confondez pas avec le choc des roues sur la piste. Il arrive bien plus tôt et ne vaut rien juridiquement.
+
+**Et surtout, vous n'êtes pas obligé de la deviner.** Les lignes directrices de la Commission européenne prévoient que **l'heure d'arrivée réelle doit vous être communiquée gratuitement, sur simple demande**. Vous pouvez donc l'exiger par écrit plutôt que de la reconstituer depuis votre siège. C'est d'ailleurs à la compagnie de prouver l'heure d'arrivée, pas à vous : votre photo n'est qu'un filet si elle traîne ou si elle annonce un horaire fantaisiste.
 
 ## Quand la compagnie doit vous fournir un justificatif
 
@@ -124,7 +128,7 @@ Le point 1 est le plus important, et c'est celui que les compagnies oublient le 
 
 <aside class="cta-inline">
   <p class="cta-inline-t">Pas le temps de courir après les recommandés ?</p>
-  <p class="cta-inline-p">Relance, mise en demeure, médiation : on fait ces trois étapes à votre place, et vous ne payez que si vous êtes indemnisé.</p>
+  <p class="cta-inline-p">Relance, mise en demeure, et le tribunal si elle persiste : on mène ces étapes à votre place, et vous ne payez que si vous êtes indemnisé.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Confier mon dossier, vérification gratuite</a></p>
 </aside>
 

@@ -36,10 +36,10 @@
   <text x="88" y="572" fill="#374151" font-size="15"><tspan font-weight="800" fill="#047857">3 h 11</tspan> à la porte. Le seuil des 3 h est franchi.</text>
 
   <rect x="628" y="454" width="512" height="128" rx="16" fill="#EFF9F4" stroke="#00C87A" stroke-width="2"/>
-  <text x="656" y="490" fill="#0B1F3A" font-size="18" font-weight="800">L'astuce pour repérer l'instant</text>
-  <text x="656" y="522" fill="#374151" font-size="15">Sur beaucoup d'appareils, dont l'Airbus A320,</text>
-  <text x="656" y="548" fill="#374151" font-size="15">les boutons d'appel équipage <tspan font-weight="800">s'illuminent</tspan></text>
-  <text x="656" y="572" fill="#374151" font-size="15">tous ensemble à l'ouverture. Notez l'heure.</text>
+  <text x="656" y="490" fill="#0B1F3A" font-size="18" font-weight="800">Vous n'avez pas à la deviner</text>
+  <text x="656" y="522" fill="#374151" font-size="15">Cette heure doit vous être communiquée</text>
+  <text x="656" y="548" fill="#374151" font-size="15"><tspan font-weight="800" fill="#047857">gratuitement, sur simple demande</tspan>. Et c'est à</text>
+  <text x="656" y="572" fill="#374151" font-size="15">la compagnie de la prouver, pas à vous.</text>
 
   <text x="60" y="614" fill="#8C99AC" font-size="13">Fondement : CJUE, Germanwings c/ Henning, 4 septembre 2014, affaire C-452/13. Horaires donnés à titre d'illustration.</text>
 </svg>
