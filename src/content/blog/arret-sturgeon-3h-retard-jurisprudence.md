@@ -1,59 +1,147 @@
 ---
-title: "Arrêt Sturgeon : pourquoi 3h de retard = 600€"
-meta_title: "Arrêt Sturgeon CJUE 2009 : indemnité retard 3h - jurisprudence clé"
-meta_description: "Comment l'arrêt Sturgeon de 2009 a étendu l'indemnité CE 261 aux retards de 3h+ à l'arrivée. Tout sur cette jurisprudence qui change vos droits."
+title: "Arrêt Sturgeon : la décision qui a créé votre droit en cas de retard"
+meta_title: "Arrêt Sturgeon : pourquoi 3 h de retard valent 600 €"
+meta_description: "Avant 2009, un vol retardé n'ouvrait droit à aucune indemnité. Voici la décision qui a tout changé, et pourquoi les compagnies ont tenté de la faire annuler."
 slug: arret-sturgeon-3h-retard-jurisprudence
 image_url: /og-blog.png
 faq:
-  - q: "Pourquoi le seuil est-il fixé à 3h précisément ?"
-    a: "Par l'**arrêt Sturgeon (CJUE 2009)**. La Cour a estimé que 3h+ de retard cause un préjudice **comparable à une annulation** → mêmes 250/400/600€."
-  - q: "Le retard se calcule à quel moment exactement ?"
-    a: "À l'**ouverture des portes de l'avion à destination**, comparée à l'heure prévue au billet. Pas à l'atterrissage ni au décollage. C'est la jurisprudence Sturgeon."
-  - q: "Si l'avion vole plus vite et rattrape le retard, ai-je quand même droit ?"
-    a: "Non. Si le retard à l'arrivée finale est < 3h, pas d'indemnité — même si le décollage était en retard. Seul l'arrivée compte."
+  - q: "Que dit exactement l'arrêt Sturgeon ?"
+    a: "Que les passagers d'un vol **retardé** de 3 heures ou plus à l'arrivée doivent être indemnisés comme ceux d'un vol **annulé**. Le règlement ne prévoyait l'indemnité que pour l'annulation : la Cour a jugé que traiter différemment deux passagers subissant la même perte de temps serait contraire à l'égalité de traitement."
+  - q: "Pourquoi 3 heures ? Ce seuil ne figure pas dans le règlement."
+    a: "Exact, il n'y figure pas pour le retard, et il faut le dire. La Cour l'a retenu par analogie avec les seuils que le règlement prévoit déjà pour d'autres situations. C'est une construction jurisprudentielle, et c'est précisément ce que les compagnies lui ont reproché."
+  - q: "Le retard se compte au départ ou à l'arrivée ?"
+    a: "À l'**arrivée**. Un vol parti avec 4 h de retard mais rattrapé en vol n'ouvre aucun droit ; un vol parti à l'heure et arrivé avec 3 h 10 de retard ouvre l'indemnité pleine."
+  - q: "Et à quel moment précis, à l'arrivée ?"
+    a: "À l'**ouverture de la porte** de l'avion, pas au contact des roues. Attention : ce point vient d'un arrêt ultérieur, Germanwings de 2014, et non de Sturgeon lui-même. Entre l'atterrissage et l'ouverture, il s'écoule souvent dix à vingt minutes, parfois décisives."
+  - q: "Les compagnies ont-elles contesté cette décision ?"
+    a: "Oui, frontalement, et elles ont perdu. Elles soutenaient que la Cour réécrivait le règlement et que l'indemnité était incompatible avec la convention de Montréal. La Cour a confirmé sa position en 2012 dans l'arrêt Nelson."
+  - q: "En quoi cela me concerne sur un vol vers l'Afrique ?"
+    a: "Directement. Ces liaisons dépassent 3 500 km, donc la tranche à **600 € par passager**. Sans cet arrêt, un retard de dix heures sur un Paris-Abidjan n'aurait ouvert aucune indemnité."
 ---
 
-**Grâce à l'arrêt Sturgeon, un retard de 3 h et plus ouvre droit de 250 à 600 € par passager.** On vérifie gratuitement si votre vol est concerné, 0 € d'avance.
+**Sans cette décision, un vol retardé de dix heures ne vous donnerait droit à rien.** On vérifie gratuitement votre éligibilité, 0 € d'avance, et vous ne payez rien si on ne récupère rien.
 
-Le **règlement CE 261/2004** prévoit explicitement l'indemnité en cas d'annulation. Mais pour les retards, le texte est ambigu. Sans la jurisprudence européenne, des millions de passagers retardés de 4, 6 ou 10h n'auraient jamais touché un centime. L'arrêt **Sturgeon de 2009** a tout changé.
+C'est la décision la plus importante du droit des passagers aériens, et presque personne ne la connaît. Elle explique pourquoi vous pouvez réclamer aujourd'hui, et pourquoi les compagnies s'y sont opposées jusqu'au bout.
 
-## Le contexte de l'arrêt
+<nav class="sommaire" aria-label="Sommaire de l'article">
+  <p class="sommaire-t">Dans cet article</p>
+  <ol id="sommaire-liste"></ol>
+</nav>
 
-En 2005, la famille Sturgeon a vu son vol Condor (Allemagne → Toronto) retardé de 25 heures. La compagnie a refusé l'indemnité en argumentant qu'il s'agissait d'un "retard", pas d'une "annulation" — et donc, selon elle, pas couvert par les 600€ du règlement.
 
-L'affaire est remontée jusqu'à la **Cour de justice de l'Union européenne (CJUE)**, qui a rendu son arrêt le 19 novembre 2009.
+## Le trou dans le texte
 
-## La décision : retard ≥ 3h = indemnité
+Quand le règlement européen entre en application en 2005, il prévoit une indemnité forfaitaire dans trois cas : le refus d'embarquement, l'annulation, et le déclassement.
 
-La CJUE a tranché : **un retard de 3 heures ou plus à l'arrivée doit ouvrir droit à la même indemnité forfaitaire qu'une annulation.**
+**Le retard n'y figure pas.** Un vol retardé ouvre droit à la prise en charge, repas et hôtel, mais à aucune indemnité, quelle qu'en soit la durée.
 
-Raison invoquée : sinon, les compagnies pourraient échapper systématiquement à l'indemnité en présentant les annulations comme de simples retards très longs. Cela créerait une inégalité de traitement injustifiée entre passagers placés dans des situations comparables.
+La faille est béante. Un passager dont le vol est annulé et qui repart le lendemain touche 600 €. Un passager dont le vol est seulement « retardé » de vingt-quatre heures ne touche rien. Le même préjudice, deux traitements opposés, selon le mot que choisit la compagnie.
 
-## Les seuils confirmés (et étendus depuis)
+C'est exactement ce qui arrive à une famille allemande en 2005. Son vol vers Toronto est retardé de vingt-cinq heures. La compagnie refuse toute indemnité au motif qu'il s'agit d'un retard, pas d'une annulation. L'affaire remonte jusqu'à la Cour de justice.
 
-- **Retard ≥ 3h** : 250€ / 400€ / 600€ selon distance
-- **Retard ≥ 5h** : possibilité d'abandonner le vol et d'obtenir un remboursement intégral du billet
-- L'indemnité reste due **sauf circonstances extraordinaires** (voir [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html))
+<img src="/assets/images/sturgeon-avant-apres-2009.svg" alt="Schéma : avant 2009 un vol retardé n'ouvrait aucune indemnité alors qu'une annulation en ouvrait une, l'arrêt Sturgeon a aligné les deux au-delà de trois heures" width="1200" height="630" loading="lazy" decoding="async">
 
-## Le retard se calcule à l'**arrivée**, pas au décollage
+## Ce que la Cour a jugé
 
-C'est l'arrêt Sturgeon qui a aussi clarifié ce point essentiel : ce qui compte, c'est l'heure réelle d'**ouverture des portes de l'avion à destination**, comparée à l'heure prévue au billet.
+Le 19 novembre 2009, elle tranche : les passagers d'un vol **retardé de trois heures ou plus à l'arrivée** doivent être indemnisés **comme** ceux d'un vol annulé.
 
-Exemple : départ retardé d'1h, mais l'avion vole plus vite et arrive seulement avec 30 min de retard → pas d'indemnité.
-Inversement : départ à l'heure, problème en vol ou attente piste à l'arrivée → 4h de retard à la porte → indemnité due.
+Son raisonnement tient à l'égalité de traitement. Deux passagers qui subissent une perte de temps identique se trouvent dans des situations comparables, et rien ne justifie de n'en indemniser qu'un seul. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62007CJ0402" rel="nofollow noopener" target="_blank">CJUE, Sturgeon e.a., 19 novembre 2009, affaires jointes C-402/07 et C-432/07</a>.</span>
 
-## Autres arrêts clés à connaître
+**D'où vient le chiffre de trois heures ?** Pas du texte, et il faut le dire franchement. La Cour l'a retenu par analogie avec des seuils que le règlement prévoyait déjà pour d'autres situations. C'est une construction jurisprudentielle, et c'est précisément ce que les compagnies lui ont reproché.
 
-- **Wallentin-Hermann (2008)** : un problème technique de l'avion **n'est pas** une circonstance extraordinaire
-- **Nelson c. Lufthansa (2012)** : a confirmé l'arrêt Sturgeon malgré une remise en cause par certaines compagnies
-- **TUIfly (2018)** : la grève "sauvage" du personnel n'est pas une circonstance extraordinaire
-- **Krüsemann (2018)** : confirmation que les conflits sociaux internes restent à la charge de la compagnie
+## Les compagnies ont contesté, et perdu
 
-## Robin des Airs et la jurisprudence
+L'arrêt est très mal accueilli par le secteur, qui avance deux arguments.
 
-Notre métier consiste précisément à appliquer cette jurisprudence à votre cas — la plupart des refus de compagnie sont fondés sur une mauvaise lecture (ou une dissimulation) de ces arrêts.
+Que la Cour **réécrit le règlement** au lieu de l'interpréter, en créant un droit que le législateur n'avait pas voulu.
 
-Voir : [Réglementation CE 261 résumé](/blog/reglementation-ce261-resume.html), [Compagnie refuse de payer](/blog/compagnie-refuse-payer-indemnite-que-faire.html).
+Et que cette indemnité serait **incompatible avec la convention de Montréal**, le traité international qui encadre la responsabilité des transporteurs.
 
-→ [Vérifier mon indemnité — retard à l'arrivée](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/33756863630)
+La Cour rejette les deux et confirme sa position en 2012. Elle juge notamment que l'indemnité forfaitaire européenne répare un préjudice **standardisé, identique pour tous les passagers du vol**, distinct du dommage individuel couvert par la convention de Montréal. Les deux textes ne se contredisent donc pas, ils se superposent. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62010CJ0581" rel="nofollow noopener" target="_blank">CJUE, Nelson e.a., 23 octobre 2012, affaires jointes C-581/10 et C-629/10</a>.</span>
+
+La jurisprudence est stable depuis, et elle a plus de quinze ans.
+
+<aside class="cta-inline">
+  <p class="cta-inline-t">Votre vol est arrivé avec plus de 3 heures de retard ?</p>
+  <p class="cta-inline-p">C'est exactement la situation créée par cet arrêt. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
+</aside>
+
+## Le détail qui décide de votre dossier
+
+Le seuil se mesure **à l'arrivée**, jamais au départ. Deux conséquences immédiates :
+
+**Un vol parti en retard mais rattrapé en vol** n'ouvre aucun droit, même si vous avez attendu quatre heures avant de décoller.
+
+**Un vol parti à l'heure et arrivé avec 3 h 10** ouvre l'indemnité pleine.
+
+Ne vous fiez donc jamais au retard annoncé au départ pour savoir si vous avez un dossier.
+
+**Et à quel instant précis, à l'arrivée ?** À l'**ouverture de la porte** de l'avion, pas au contact des roues. Ce point ne vient pas de Sturgeon mais d'une décision de 2014, souvent mal attribuée. Entre l'atterrissage et le moment où vous pouvez sortir, il s'écoule dix à vingt minutes, parfois davantage quand l'appareil stationne loin du terminal. Ces minutes suffisent régulièrement à franchir le seuil.
+
+## Ce que ça vaut sur nos lignes
+
+Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute : **600 € par passager**.
+
+Et l'indemnité étant due par personne, une famille de quatre sur un vol retardé de plus de trois heures peut prétendre à 2 400 €.
+
+Sans l'arrêt Sturgeon, aucune de ces sommes ne serait due, quelle que soit la durée du retard.
+
+## Ce que Robin des Airs fait pour vous
+
+Établir l'heure réelle d'ouverture de la porte, la comparer à l'horaire du billet, et démonter les arguments de la compagnie un par un : c'est notre travail. Nous rachetons votre créance, vous n'avancez rien, et si rien n'est récupéré, vous ne payez rien.
+
+<aside class="cta-inline">
+  <p class="cta-inline-t">Quelques minutes peuvent tout changer</p>
+  <p class="cta-inline-p">Le seuil se joue à l'ouverture de la porte, pas à l'atterrissage. Vérification gratuite, 0 € d'avance.</p>
+  <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
+</aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
+
+<style>
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+#blog-body .cta-inline{margin:1.5rem 0;padding:1.15rem 1.3rem;border-radius:.75rem;background:#0B1F3A;color:#fff}
+#blog-body .cta-inline p{margin:0;color:rgba(255,255,255,.9)}
+#blog-body .cta-inline-t{font-size:1.0625rem;font-weight:800;color:#fff !important;margin-bottom:.4rem !important}
+#blog-body .cta-inline-p{font-size:.9375rem;margin-bottom:.85rem !important}
+#blog-body a.cta-inline-a{display:inline-block;background:#00C87A;color:#04372A !important;font-weight:800;font-size:.9375rem;padding:.6rem 1.1rem;border-radius:.5rem;text-decoration:none}
+#blog-body a.cta-inline-a:hover{background:#00E5A0;color:#04372A !important}
+</style>
+
+<style>
+#blog-body nav.sommaire{display:block;margin:1.4rem 0;padding:1.05rem 1.25rem;border:1px solid #E2E6EE;border-radius:.75rem;background:#fff}
+#blog-body .sommaire-t{margin:0 0 .55rem !important;font-size:.75rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#62718A}
+#blog-body .sommaire ol{margin:0;padding-left:1.15rem}
+#blog-body .sommaire li{margin-bottom:.3rem;font-size:.9rem}
+#blog-body .sommaire a{color:#047857;font-weight:600;text-decoration:none}
+#blog-body .sommaire a:hover{text-decoration:underline}
+#blog-body h2[id]{scroll-margin-top:1rem}
+</style>
+
+<script>
+(function(){
+  var liste=document.getElementById('sommaire-liste');
+  if(!liste) return;
+  var corps=document.getElementById('blog-body')||document;
+  // Ancres posees a la volee : le gabarit n'en genere pas. Slug simple, sans
+  // accents, avec un suffixe si deux titres tombent sur le meme.
+  var vus={};
+  [].forEach.call(corps.querySelectorAll('h2'),function(h){
+    var t=(h.textContent||'').trim();
+    if(!t) return;
+    var id=t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+            .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,48);
+    if(vus[id]){ vus[id]++; id=id+'-'+vus[id]; } else { vus[id]=1; }
+    h.id=id;
+    var li=document.createElement('li');
+    var a=document.createElement('a');
+    a.href='#'+id;
+    a.textContent=t;
+    li.appendChild(a); liste.appendChild(li);
+  });
+})();
+</script>

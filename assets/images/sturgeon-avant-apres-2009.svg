@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Le trou que l'arrêt Sturgeon a comblé</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Même préjudice, deux traitements opposés, selon le mot choisi par la compagnie.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- AVANT -->
+  <text x="56" y="136" fill="#62718A" font-size="13" font-weight="800" letter-spacing="1.2">LE TEXTE DE 2005, TEL QU'IL ÉTAIT ÉCRIT</text>
+
+  <rect x="56" y="154" width="530" height="112" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="84" y="186" fill="#0B1F3A" font-size="17" font-weight="800">Votre vol est ANNULÉ</text>
+  <text x="84" y="214" fill="#374151" font-size="14.5">Vous repartez le lendemain.</text>
+  <rect x="84" y="228" width="180" height="28" rx="14" fill="#EFF9F4"/>
+  <text x="174" y="247" fill="#047857" font-size="14" font-weight="800" text-anchor="middle">600 €</text>
+
+  <rect x="614" y="154" width="530" height="112" rx="14" fill="#FBEBE8" stroke="#C4533F" stroke-width="2.5"/>
+  <text x="642" y="186" fill="#0B1F3A" font-size="17" font-weight="800">Votre vol est RETARDÉ de 24 h</text>
+  <text x="642" y="214" fill="#8A3A2E" font-size="14.5">Vous repartez le lendemain, exactement pareil.</text>
+  <rect x="642" y="228" width="180" height="28" rx="14" fill="#FFFFFF"/>
+  <text x="732" y="247" fill="#B04A3C" font-size="14" font-weight="800" text-anchor="middle">0 €</text>
+
+  <text x="600" y="296" fill="#B04A3C" font-size="15.5" font-weight="800" text-anchor="middle">Le retard ne figurait tout simplement pas dans la liste des cas indemnisés.</text>
+
+  <!-- fleche -->
+  <path d="M600 316 L600 344" stroke="#00C87A" stroke-width="3"/>
+  <polygon points="600,354 592,340 608,340" fill="#00C87A"/>
+  <rect x="446" y="326" width="308" height="0" fill="none"/>
+
+  <!-- APRES -->
+  <text x="56" y="392" fill="#047857" font-size="13" font-weight="800" letter-spacing="1.2">DEPUIS L'ARRÊT DU 19 NOVEMBRE 2009</text>
+
+  <rect x="56" y="410" width="1088" height="112" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+  <text x="600" y="446" fill="#0B1F3A" font-size="18" font-weight="800" text-anchor="middle">Un retard de 3 heures ou plus À L'ARRIVÉE ouvre la même indemnité qu'une annulation.</text>
+  <text x="600" y="476" fill="#374151" font-size="15" text-anchor="middle">Motif retenu par la Cour : deux passagers qui perdent le même temps sont dans des situations comparables.</text>
+  <rect x="450" y="488" width="300" height="24" rx="12" fill="#00C87A"/>
+  <text x="600" y="505" fill="#04372A" font-size="13" font-weight="800" text-anchor="middle">250 € · 400 € · 600 € SELON LA DISTANCE</text>
+
+  <rect x="56" y="536" width="1088" height="40" rx="10" fill="#0B1F3A"/>
+  <text x="600" y="562" fill="rgba(255,255,255,.94)" font-size="14.5" text-anchor="middle">Les compagnies ont contesté cet arrêt jusqu'en 2012. La Cour a confirmé sa position.</text>
+
+  <text x="56" y="606" fill="#8C99AC" font-size="11.5">CJUE, Sturgeon e.a., 19 novembre 2009, affaires jointes C-402/07 et C-432/07 · confirmé par CJUE, Nelson e.a., 23 octobre 2012, C-581/10 et C-629/10.</text>
+</svg>
