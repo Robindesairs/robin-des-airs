@@ -1,7 +1,7 @@
 ---
-title: "Indemnité de vol : 250, 400 ou 600 € ? Le calcul exact, et le piège de la réduction de moitié"
+title: "Indemnité de vol : 250, 400 ou 600 € ? Le calcul exact, et ce que la compagnie peut réduire"
 meta_title: "Indemnité vol : 250, 400 ou 600 € selon la distance (CE 261)"
-meta_description: "Les trois paliers, comment la distance se mesure vraiment, et le seul cas où la compagnie peut légalement diviser votre indemnité par deux."
+meta_description: "Les trois paliers, comment la distance se mesure vraiment, et le seul cas où la compagnie peut tenter de diviser votre indemnité par deux."
 slug: indemnite-vol-montants-250-400-600
 hreflang_en: flight-compensation-amounts-250-400-600-eur
 image_url: /og-blog.png
