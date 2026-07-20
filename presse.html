@@ -82,6 +82,8 @@ select,.note-in{background:var(--card);border:1px solid var(--border);border-rad
 <div id="gate" class="gate hidden">
   <h2>Salle de presse</h2>
   <input id="code" type="password" placeholder="Code CRM" autocomplete="off">
+  <input id="totp" class="hidden" type="text" inputmode="numeric" autocomplete="one-time-code"
+         maxlength="6" placeholder="Code de vérification, 6 chiffres">
   <button id="login">Entrer</button>
   <div id="gate-err" class="err"></div>
 </div>
@@ -207,15 +209,32 @@ document.getElementById('q').addEventListener('input',rendre);
 
 document.getElementById('login').addEventListener('click',async()=>{
   const code=document.getElementById('code').value.trim();
+  const champTotp=document.getElementById('totp');
+  const totp=champTotp.value.trim();
   const err=document.getElementById('gate-err');err.textContent='';
+  if(!code){err.textContent='Saisissez le code CRM';return;}
   try{
+    // Le CRM exige une double authentification : le serveur repond needTotp
+    // tant que le code a six chiffres n'a pas ete fourni.
+    const corps=totp?{code,totp}:{code};
     const r=await fetch('/api/crm-auth',{method:'POST',credentials:'same-origin',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({code})});
-    if(!r.ok){err.textContent='Code refusé';return;}
+      headers:{'Content-Type':'application/json'},body:JSON.stringify(corps)});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(j&&j.needTotp){
+        champTotp.classList.remove('hidden');
+        champTotp.value='';champTotp.focus();
+        err.textContent=totp?'Code de vérification incorrect':'Saisissez le code de vérification de votre application d’authentification';
+        return;
+      }
+      err.textContent=(j&&j.error)||'Code refusé';
+      return;
+    }
     document.getElementById('gate').classList.add('hidden');demarrer();
   }catch{err.textContent='Erreur réseau';}
 });
-document.getElementById('code').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login').click();});
+['code','totp'].forEach(id=>document.getElementById(id)
+  .addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login').click();}));
 
 async function demarrer(){
   try{
