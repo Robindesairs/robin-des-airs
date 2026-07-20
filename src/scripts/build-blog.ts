@@ -340,6 +340,7 @@ function renderArticlePage(
   <script type="application/ld+json">${blogPostingJson}</script>
   <script type="application/ld+json">${breadcrumbJson}</script>
   ${faqJson ? `<script type="application/ld+json">${faqJson}</script>` : ''}
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="19ef6dce-8f1d-4b9b-9a0e-12dbece0cdf7"></script>
 </head>
 <body>
   <nav>
@@ -448,6 +449,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
   <style>${indexCss}</style>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="19ef6dce-8f1d-4b9b-9a0e-12dbece0cdf7"></script>
 </head>
 <body>
   <nav>
