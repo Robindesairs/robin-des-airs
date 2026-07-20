@@ -868,5 +868,255 @@
     "type": "redaction",
     "tier": 4,
     "note": "ATTENTION : adresse service lecteurs, PAS un desk opinion. Toutes les pages nation.africa bloquees en 403, a qualifier a la main. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  },
+  {
+    "id": "m088",
+    "nom": "NewsAero",
+    "pays": "Cameroun",
+    "email": "redaction@newsaero.info",
+    "url": "https://newsaero.info",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Seul media aviation francophone d'Afrique subsaharienne. Rubrique « Tribune libre ». Bilingue FR/EN. CIBLE N.1"
+  },
+  {
+    "id": "m089",
+    "nom": "Nigeria Aviation Report",
+    "pays": "Nigeria",
+    "email": "editorial@nigeriaaviationreport.com.ng",
+    "url": "https://nigeriaaviationreport.com.ng",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Rubrique « Analysis & Opinion ». Email redaction distinct de la regie"
+  },
+  {
+    "id": "m090",
+    "nom": "NigerianFLIGHTDECK",
+    "pays": "Nigeria",
+    "email": "editor@nigerianflightdeck.com",
+    "url": "https://nigerianflightdeck.com",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Publication quasi quotidienne. Rubrique « Comfort & Crew », colle au sujet passager"
+  },
+  {
+    "id": "m091",
+    "nom": "Aviation & Allied Business Journal",
+    "pays": "Panafricain",
+    "email": "publication@landover.aero",
+    "url": "https://aviationbusinessjournal.aero",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Bimestriel institutionnel, lu par les regulateurs ouest-africains"
+  },
+  {
+    "id": "m092",
+    "nom": "African Travel Times",
+    "pays": "Nigeria",
+    "email": "editor@africantraveltimes.com",
+    "url": "https://africantraveltimes.com",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Voyage et transport aerien, Lagos"
+  },
+  {
+    "id": "m093",
+    "nom": "VoyagesAfriq",
+    "pays": "Ghana",
+    "email": "info@voyagesafriq.com",
+    "url": "https://voyagesafriq.com",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Tourisme panafricain, couvre la connectivite aerienne. Anglophone"
+  },
+  {
+    "id": "m094",
+    "nom": "Airspace Africa",
+    "pays": "Panafricain",
+    "email": "derek@airspace-africa.com",
+    "url": "https://airspace-africa.com",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Email direct du redacteur en chef"
+  },
+  {
+    "id": "m095",
+    "nom": "African Pilot Magazine",
+    "pays": "Afrique du Sud",
+    "email": "editor@africanpilot.africa",
+    "url": "https://africanpilot.africa",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Aviation australe, lectorat pilotes et professionnels"
+  },
+  {
+    "id": "m096",
+    "nom": "AeroTrail",
+    "pays": "Kenya",
+    "email": "info@aero-trail.com",
+    "url": "https://aero-trail.com",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Veille aviation Afrique de l'Est"
+  },
+  {
+    "id": "m097",
+    "nom": "AfricaPresse.Paris",
+    "pays": "France (diaspora)",
+    "email": "contact@africapresse.paris",
+    "url": "https://africapresse.paris",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Rubrique /-Tribunes- vivante, signataires nommes. Publie deja sur l'aviation africaine. Gratuit"
+  },
+  {
+    "id": "m098",
+    "nom": "Congo Independant",
+    "pays": "Belgique",
+    "email": "redaction@congoindependant.com",
+    "url": "https://congoindependant.com",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Rubrique Opinion-Debat. Axe Kinshasa-Bruxelles, un de nos corridors"
+  },
+  {
+    "id": "m099",
+    "nom": "MiGAZIN",
+    "pays": "Allemagne",
+    "email": "redaktion@migazin.de",
+    "url": "https://migazin.de",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Programme contributeurs MiGMACHEN, guide auteur publie, explicitement benevole"
+  },
+  {
+    "id": "m100",
+    "nom": "The African Courier",
+    "pays": "Allemagne",
+    "email": "info@theafricancourier.de",
+    "url": "https://theafricancourier.de",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Diaspora panafricaine en Allemagne. Angle Francfort et Munich vers l'Afrique"
+  },
+  {
+    "id": "m101",
+    "nom": "BUALA",
+    "pays": "Portugal",
+    "email": "buala@buala.org",
+    "url": "https://buala.org",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Section Mukanda, essais. Ouvre le lusophone : Cap-Vert, Bissau, Angola"
+  },
+  {
+    "id": "m102",
+    "nom": "NegroNews",
+    "pays": "France",
+    "email": "contact@negronews.fr",
+    "url": "https://negronews.fr",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Rubrique « Tribune libre » au menu"
+  },
+  {
+    "id": "m103",
+    "nom": "IvoireDiaspo",
+    "pays": "France",
+    "email": "info@ivoirediaspo.net",
+    "url": "https://ivoirediaspo.net",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Diaspora ivoirienne, rubrique Edito"
+  },
+  {
+    "id": "m104",
+    "nom": "Diasporas-News",
+    "pays": "France",
+    "email": "contact@diasporas-news.com",
+    "url": "https://diasporas-news.com",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Magazine historique de la diaspora africaine en France"
+  },
+  {
+    "id": "m105",
+    "nom": "Nigerian Watch",
+    "pays": "Royaume-Uni",
+    "email": "editor@nigerianwatch.com",
+    "url": "https://nigerianwatch.com",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Communaute nigeriane UK. Angle UK261 contre CE261 selon le pavillon"
+  },
+  {
+    "id": "m106",
+    "nom": "Continent Premier",
+    "pays": "Suisse",
+    "email": "info@continentpremier.com",
+    "url": "https://continentpremier.com",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Panafricain, Geneve"
+  },
+  {
+    "id": "m107",
+    "nom": "Nigrizia",
+    "pays": "Italie",
+    "email": "redazione@nigrizia.it",
+    "url": "https://nigrizia.it",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Mensuel Afrique, Verone. Ouverture aux externes a confirmer"
+  },
+  {
+    "id": "m108",
+    "nom": "Piuculture",
+    "pays": "Italie",
+    "email": "redazionepiuculture@gmail.com",
+    "url": "https://piuculture.it",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Section « Per collaborare », redaction benevole donc accessible"
+  },
+  {
+    "id": "m109",
+    "nom": "Mensagem de Lisboa",
+    "pays": "Portugal",
+    "email": "geral@amensagem.pt",
+    "url": "https://amensagem.pt",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Communautes afro-lusophones de Lisbonne. Rubrique tribunes incertaine"
+  },
+  {
+    "id": "m110",
+    "nom": "Agence Ecofin",
+    "pays": "Panafricain",
+    "email": "redaction@agenceecofin.com",
+    "url": "https://agenceecofin.com",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Rubrique Transports dediee. Un seul pitch couvre aussi Investir au Cameroun, meme maison"
+  },
+  {
+    "id": "m111",
+    "nom": "Investir au Cameroun",
+    "pays": "Cameroun",
+    "email": "info@investiraucameroun.com",
+    "url": "https://investiraucameroun.com",
+    "type": "tribune",
+    "tier": 2,
+    "note": "Groupe Ecofin, fil Transports"
+  },
+  {
+    "id": "m112",
+    "nom": "EcoMatin",
+    "pays": "Cameroun",
+    "email": "contact@ecomatin.net",
+    "url": "https://ecomatin.net",
+    "type": "tribune",
+    "tier": 3,
+    "note": "Transport et logistique"
   }
 ]
