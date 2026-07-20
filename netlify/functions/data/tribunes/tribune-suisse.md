@@ -31,13 +31,13 @@ Hors du champ du règlement, il reste la Convention de Montréal, que la Suisse 
 
 ### Un délai qui ne se comporte pas comme les autres
 
-C'est le point qui mérite le plus d'attention, et il est presque toujours mal compris.
+C'est le point le plus mal compris, et le plus coûteux.
 
 L'article 35 de la Convention de Montréal fixe un délai de deux ans à compter de l'arrivée. Il ne s'agit pas d'une prescription mais d'une forclusion. La distinction n'est pas académique : une prescription s'interrompt par une mise en demeure et repart à zéro, une forclusion court jusqu'à son terme quoi qu'il arrive.
 
 Un passager qui adresse au transporteur des relances successives pendant deux ans, de bonne foi, en croyant préserver ses droits, ne préserve rien. Seule une action effectivement introduite devant un juge arrête le décompte.
 
-Cela soulève une question qui dépasse le cas individuel. Lorsque le silence prolongé d'un professionnel produit mécaniquement l'extinction du droit de son client, la question de savoir si ce silence est neutre mérite au minimum d'être posée.
+Il faut le dire nettement : cette règle est mal faite. Un délai qui court alors même que le passager réclame, et que seule une procédure arrête, protège la partie la mieux outillée et pénalise l'autre. L'intention des compagnies est ici secondaire. Un dispositif qui récompense l'inertie produit ses effets sans avoir besoin de mauvaise foi. C'est un défaut de conception, et il se corrige.
 
 ### Deux créances presque jamais réclamées
 
@@ -45,11 +45,17 @@ Le déclassement d'abord. Un passager installé dans une classe inférieure à c
 
 Le surclassement offert à la suite d'un refus d'embarquement ensuite. Il ne constitue pas une compensation et n'éteint pas l'indemnité due.
 
+### La moitié que la compagnie peut tenter
+
+Si la compagnie vous réachemine et que votre retard à l'arrivée reste sous quatre heures, elle peut réduire l'indemnité de moitié au delà de 3 500 kilomètres.
+
+Le mot qui compte est peut. Le montant plein reste le principe, et c'est à elle d'invoquer la réduction. Accepter 300 euros présentés comme le tarif applicable, c'est renoncer à 300 euros probablement dus.
+
 ### Ce qu'il faut vérifier
 
-La date exacte du vol, qui déclenche le décompte. L'identité du transporteur réel, qui détermine le régime applicable. Le lieu d'achat du billet, qui peut déterminer la juridiction compétente.
+La date exacte du vol, qui déclenche le décompte. Le transporteur réel, qui détermine le régime applicable. Le lieu d'achat du billet, qui peut désigner le tribunal compétent.
 
-Et pour les vols anciens au départ d'un pays hors Union sur une compagnie non européenne, l'échéance avant toute chose. C'est souvent tout ce qui sépare une créance encore recouvrable d'un droit éteint.
+Et pour un vol ancien parti hors d'Europe sur une compagnie non européenne, l'échéance avant tout le reste. C'est souvent ce qui sépare une créance recouvrable d'un droit éteint.
 
 ---
 
