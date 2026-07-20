@@ -125,7 +125,7 @@ On étudie votre vol, on identifie ce qui vous est réellement dû, indemnité d
 - Si un passage **au tribunal** est nécessaire, vous recevez **60 %**, les frais d'avocat, d'huissier et de procédure étant avancés et pris en charge par Robin des Airs.
 - Une fois les fonds encaissés auprès de la compagnie, votre part vous est reversée sous **5 jours ouvrés**.
 
-Voir aussi : [Déclassement involontaire, indemnité article 10](/blog/downgrade-involontaire-indemnite-ce261.html), [Surbooking, guide complet](/blog/surbooking-guide-complet-droits-passager.html), [Refus d'embarquement et indemnité](/blog/surbooking-refus-embarquement-indemnite.html).
+Voir aussi : [Déclassement involontaire, indemnité article 10](/blog/downgrade-involontaire-indemnite-ce261.html), [Surbooking et refus d'embarquement](/blog/surbooking-refus-embarquement-indemnite.html).
 
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct : +33 7 56 86 36 30](https://wa.me/33756863630)
