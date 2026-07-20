@@ -99,21 +99,21 @@ Les valeurs exactes par aéroport ne sont pas publiées librement : elles font l
 
 ## Et votre valise, dans tout ça ?
 
-Une idée très répandue veut qu'un bagage ne puisse jamais voyager sans son passager. **C'est faux**, et le savoir évite bien des inquiétudes.
+Quand vous ratez une correspondance, votre bagage suit rarement le même chemin que vous. Deux cas se présentent, et aucun n'est une anomalie.
 
-Le <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX:02015R1998-20230401" rel="nofollow noopener" target="_blank">règlement européen sur la sûreté aérienne</a> ne l'interdit pas, il l'encadre. Dès lors que le passager n'est pas à bord, son bagage devient un **bagage non accompagné** : il doit être identifié comme tel, autorisé au transport et soumis à des contrôles de sûreté appropriés. Selon la raison pour laquelle il s'est retrouvé seul, il doit être retiré de l'appareil et repasser une inspection avant d'être rechargé.
+**Votre valise est partie sans vous.** Elle était déjà chargée dans l'avion que vous avez raté. Contrairement à une idée très répandue, ce n'est pas interdit : le <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX:02015R1998-20230401" rel="nofollow noopener" target="_blank">règlement européen sur la sûreté aérienne</a> ne prohibe pas le bagage non accompagné, il l'encadre. Le bagage doit être identifié comme tel et soumis à des contrôles de sûreté appropriés.
 
-Dans le langage des opérations, ce bagage porte un nom : le **rush bag**. C'est exactement ce qui arrive à votre valise quand elle rate votre correspondance : elle repart seule, sur un vol suivant, pour vous rejoindre.
+**Ou l'inverse : vous êtes parti sans elle.** Votre bagage n'a pas eu le temps d'être transféré entre les deux avions, ce qui est fréquent quand la correspondance est courte. Il vous rejoindra sur un vol suivant.
 
-Deux conséquences pratiques. Votre bagage peut arriver **avant ou après vous**, et ce n'est pas une anomalie. Et si vous ne le récupérez pas à l'arrivée, faites établir un constat d'irrégularité au comptoir bagages **avant de quitter l'aéroport** : c'est la pièce qui ouvre vos droits au titre de la Convention de Montréal, distincts de votre indemnité de retard.
+Dans le langage des opérations, ce bagage qui voyage seul porte un nom normalisé : le **rush bag**.
 
-## Pendant l'attente, vos droits continuent
+### Le réflexe à l'arrivée
 
-Rater une correspondance signifie souvent des heures d'attente, parfois une nuit sur place.
+Si votre valise n'est pas sur le tapis, **ne quittez pas l'aéroport sans être passé au comptoir bagages**. Faites établir un constat d'irrégularité, ce document au nom un peu obscur qu'on appelle aussi PIR.
 
-La [prise en charge](/blog/remboursement-frais-assistance-ce261.html) vous est alors due : repas, hébergement si nécessaire, et transport entre l'aéroport et l'hôtel. Ce droit existe **quelle que soit la cause** du retard, y compris quand la compagnie n'est responsable de rien, et il **s'ajoute** à l'indemnité.
+C'est lui qui ouvre vos droits au titre de la Convention de Montréal, lesquels sont **distincts** de votre indemnité de retard et s'y ajoutent. Sans ce constat, vous perdez l'essentiel de vos recours sur le bagage.
 
-Sur les hubs africains, les comptoirs sont parfois fermés la nuit ou débordés. Réclamez, notez l'heure, et si personne ne vous répond, avancez le strict nécessaire en conservant tous les reçus.
+Nos articles sur le [bagage retardé ou perdu](/blog/bagage-perdu-retard-vol-indemnite.html) détaillent les délais et les montants.
 
 ## Ce que la compagnie ne peut pas vous opposer
 
