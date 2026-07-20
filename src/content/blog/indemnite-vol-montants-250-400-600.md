@@ -72,9 +72,11 @@ Un trajet vers une capitale africaine via un hub peut vous faire parcourir bien 
 
 C'est contre-intuitif, c'est défavorable au passager, mais c'est la règle, et la Cour de justice l'a confirmée. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62016CJ0559" rel="nofollow noopener" target="_blank">CJUE, Bossen e.a., 7 septembre 2017, affaire C-559/16</a>.</span> Notre article sur [l'arrêt Bossen](/blog/arret-bossen-distance-vol-oiseau.html) détaille ce calcul et ses cas limites.
 
-## Le piège de la réduction de moitié
+## Réclamez 600 €, laissez-la tenter 300
 
 Voici le point le plus mal connu du règlement, et celui qui coûte le plus cher sur nos lignes. Presque aucun site n'en parle.
+
+Retenez la phrase avant d'entrer dans le détail : **le montant plein est la règle, la moitié est une faculté que la compagnie doit invoquer.** Ne vous auto-limitez jamais avant qu'elle ait ouvert la bouche.
 
 **Sur un vol de plus de 3 500 km, la compagnie peut ramener votre indemnité de 600 à 300 € si vous arrivez avec moins de 4 heures de retard.** Elle en a le droit, mais ce n'est ni automatique ni obligatoire.
 

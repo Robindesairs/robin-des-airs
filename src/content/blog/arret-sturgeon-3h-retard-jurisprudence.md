@@ -83,6 +83,8 @@ Ne vous fiez donc jamais au retard annoncé au départ pour savoir si vous avez 
 
 Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute, mais **le même arrêt Sturgeon y pose une limite que presque personne ne connaît**.
 
+La règle à retenir tient en une phrase : **réclamez 600 €, laissez-la tenter 300**.
+
 | Votre retard à l'arrivée | Ce que vous réclamez | Ce que la compagnie peut opposer |
 |---|---|---|
 | moins de 3 h | rien | — |
