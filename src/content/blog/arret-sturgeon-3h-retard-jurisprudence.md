@@ -83,15 +83,18 @@ Ne vous fiez donc jamais au retard annoncé au départ pour savoir si vous avez 
 
 Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute, mais **le même arrêt Sturgeon y pose une limite que presque personne ne connaît**.
 
-| Votre retard à l'arrivée | Ce que vous touchez |
-|---|---|
-| moins de 3 h | rien |
-| **de 3 h à moins de 4 h** | **300 €** |
-| **4 h ou plus** | **600 €** |
+| Votre retard à l'arrivée | Ce que vous réclamez | Ce que la compagnie peut opposer |
+|---|---|---|
+| moins de 3 h | rien | — |
+| **de 3 h à moins de 4 h** | **600 €** | elle **peut** réduire à 300 € |
+| **4 h ou plus** | **600 €** | rien, le montant est plein |
+
+**Retenez surtout ceci : ce n'est pas automatique.** Le règlement dit que la compagnie **peut** réduire, pas qu'elle doit. C'est une faculté qu'elle doit invoquer et justifier. Réclamez donc toujours **600 €**, et laissez-la argumenter si elle veut n'en verser que la moitié. Nous demandons systématiquement le montant plein.
+
 
 La Cour a en effet précisé, dans ce même arrêt, que la réduction de moitié prévue par le règlement s'applique aussi aux vols **retardés**, alors même que le texte ne visait que le réacheminement. Sa grande chambre l'a confirmé en 2012. <span class="src">Sources : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62007CJ0402" rel="nofollow noopener" target="_blank">CJUE, Sturgeon, 19 novembre 2009, point 63</a> · <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62010CJ0581" rel="nofollow noopener" target="_blank">CJUE, Nelson, grande chambre, 23 octobre 2012, point 78</a>.</span>
 
-**La barre des quatre heures double donc votre indemnité.** À 3 h 55, 300 €. À 4 h 05, 600 €. Pour une famille de quatre, ce sont 1 200 € qui se jouent sur dix minutes, et c'est exactement pourquoi l'heure d'ouverture de la porte doit être établie avec précision.
+**La barre des quatre heures met donc votre indemnité à l'abri.** Au-delà, la compagnie ne peut plus rien réduire. Pour une famille de quatre, ce sont 1 200 € qui peuvent se jouer sur quelques minutes, et c'est exactement pourquoi l'heure d'ouverture de la porte doit être établie avec précision.
 
 Attention toutefois : cette réduction **ne joue jamais** sur un vol de 3 500 km ou moins. Vous y touchez 250 € ou 400 € en entier dès trois heures. Notre article détaille [les trois paliers et leur calcul](/blog/indemnite-vol-montants-250-400-600.html).
 

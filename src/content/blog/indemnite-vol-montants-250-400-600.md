@@ -13,7 +13,7 @@ faq:
   - q: "Comment se mesure la distance ?"
     a: "À vol d'oiseau, entre l'aéroport de départ et la destination **finale**, et non en additionnant les segments parcourus. Sur un trajet avec escale, cela peut faire basculer un dossier de 600 à 400 €."
   - q: "La compagnie peut-elle réduire mon indemnité de moitié ?"
-    a: "Oui, et c'est le point le plus mal connu. Sur un vol de **plus de 3 500 km**, un retard compris entre **3 et 4 heures** ne vaut que **300 €**. Au-delà de 4 heures, c'est 600 € pleins. La Cour de justice l'a expressément étendu aux vols retardés. En revanche, cette réduction ne s'applique **jamais** à un vol de 3 500 km ou moins : vous y touchez 250 € ou 400 € en entier dès 3 heures."
+    a: "Elle **peut**, ce qui n'est pas la même chose qu'elle doit. Sur un vol de **plus de 3 500 km**, si vous arrivez avec moins de 4 heures de retard, elle a le droit de ramener l'indemnité de 600 à **300 €**. Réclamez toujours le montant plein et laissez-la invoquer la réduction si elle le souhaite. Au-delà de 4 heures, c'est 600 € pleins. La Cour de justice l'a expressément étendu aux vols retardés. En revanche, cette réduction ne s'applique **jamais** à un vol de 3 500 km ou moins : vous y touchez 250 € ou 400 € en entier dès 3 heures."
   - q: "Le montant change-t-il selon ma classe de voyage ?"
     a: "Non. L'indemnité est **forfaitaire** : elle est identique en économique et en affaires. Un billet payé 3 000 € donne exactement la même somme qu'un billet à 400 €."
   - q: "L'indemnité remplace-t-elle le remboursement de mon billet ?"
@@ -76,15 +76,18 @@ C'est contre-intuitif, c'est défavorable au passager, mais c'est la règle, et 
 
 Voici le point le plus mal connu du règlement, et celui qui coûte le plus cher sur nos lignes. Presque aucun site n'en parle.
 
-**Sur un vol de plus de 3 500 km, un retard compris entre 3 et 4 heures ne vaut que 300 €, pas 600 €.**
+**Sur un vol de plus de 3 500 km, la compagnie peut ramener votre indemnité de 600 à 300 € si vous arrivez avec moins de 4 heures de retard.** Elle en a le droit, mais ce n'est ni automatique ni obligatoire.
 
-| Votre retard à l'arrivée | Ce que vous touchez |
-|---|---|
-| moins de 3 h | rien |
-| **de 3 h à moins de 4 h** | **300 €** |
-| **4 h ou plus** | **600 €** |
+| Votre retard à l'arrivée | Ce que vous réclamez | Ce que la compagnie peut opposer |
+|---|---|---|
+| moins de 3 h | rien | — |
+| **de 3 h à moins de 4 h** | **600 €** | elle **peut** réduire à 300 € |
+| **4 h ou plus** | **600 €** | rien, le montant est plein |
 
-Autrement dit, **la barre des quatre heures double votre indemnité**. À 3 h 55, vous touchez 300 €. À 4 h 05, vous touchez 600 €. Sur une famille de cinq personnes, ce sont 1 500 € qui se jouent sur dix minutes.
+**Retenez surtout ceci : ce n'est pas automatique.** Le règlement dit que la compagnie **peut** réduire, pas qu'elle doit. C'est une faculté qu'elle doit invoquer et justifier. Réclamez donc toujours **600 €**, et laissez-la argumenter si elle veut n'en verser que la moitié. Nous demandons systématiquement le montant plein.
+
+
+Autrement dit, **la barre des quatre heures met votre indemnité à l'abri**. Au-delà, aucune réduction n'est possible. En deçà, elle reste discutable, mais elle n'a rien d'acquis pour la compagnie. Sur une famille de cinq personnes, ce sont 1 500 € qui se jouent sur dix minutes.
 
 C'est aussi pourquoi l'heure d'arrivée réelle, celle de **l'ouverture de la porte** et non du contact des roues, doit être établie avec précision. Ces quelques minutes valent parfois plus que tout le reste du dossier.
 
