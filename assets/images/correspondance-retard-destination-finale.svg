@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">40 minutes de retard peuvent valoir 600 €</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Le retard qui compte n'est pas celui du vol raté, c'est celui à votre arrivée finale.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- ligne du voyage -->
+  <line x1="130" y1="240" x2="1070" y2="240" stroke="#D7DDE7" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- depart -->
+  <circle cx="130" cy="240" r="13" fill="#0B1F3A"/>
+  <text x="130" y="200" fill="#0B1F3A" font-size="15" font-weight="800" text-anchor="middle">Départ</text>
+  <text x="130" y="278" fill="#62718A" font-size="13" text-anchor="middle">votre ville</text>
+
+  <!-- vol 1 retarde -->
+  <rect x="176" y="216" width="228" height="48" rx="9" fill="#FFF8EC" stroke="#E8A020" stroke-width="2.5"/>
+  <text x="290" y="238" fill="#8A6520" font-size="13.5" font-weight="800" text-anchor="middle">Premier vol</text>
+  <text x="290" y="256" fill="#B0791F" font-size="14" font-weight="800" text-anchor="middle">+ 40 min de retard</text>
+
+  <!-- hub -->
+  <circle cx="470" cy="240" r="13" fill="#E8A020"/>
+  <text x="470" y="200" fill="#0B1F3A" font-size="15" font-weight="800" text-anchor="middle">Escale</text>
+  <text x="470" y="278" fill="#B0791F" font-size="13" font-weight="700" text-anchor="middle">correspondance ratée</text>
+
+  <!-- attente -->
+  <rect x="516" y="216" width="228" height="48" rx="9" fill="#FBEBE8" stroke="#C4533F" stroke-width="2.5"/>
+  <text x="630" y="238" fill="#8A3A2E" font-size="13.5" font-weight="800" text-anchor="middle">Vol suivant</text>
+  <text x="630" y="256" fill="#B04A3C" font-size="13.5" text-anchor="middle">le lendemain matin</text>
+
+  <!-- vol 2 a l heure -->
+  <rect x="792" y="216" width="212" height="48" rx="9" fill="#FFFFFF" stroke="#9AA8BC" stroke-width="2.5" stroke-dasharray="7 5"/>
+  <text x="898" y="238" fill="#3C4A5C" font-size="13.5" font-weight="800" text-anchor="middle">Ce vol part</text>
+  <text x="898" y="256" fill="#62718A" font-size="13.5" text-anchor="middle">parfaitement à l'heure</text>
+
+  <!-- arrivee -->
+  <circle cx="1070" cy="240" r="13" fill="#047857"/>
+  <text x="1070" y="200" fill="#047857" font-size="15" font-weight="800" text-anchor="middle">Arrivée</text>
+  <text x="1070" y="278" fill="#62718A" font-size="13" text-anchor="middle">destination finale</text>
+
+  <!-- mesure -->
+  <path d="M130 330 L130 316 M1070 330 L1070 316" stroke="#00C87A" stroke-width="2.5"/>
+  <line x1="130" y1="330" x2="1070" y2="330" stroke="#00C87A" stroke-width="3"/>
+  <rect x="452" y="310" width="296" height="40" rx="20" fill="#00C87A"/>
+  <text x="600" y="336" fill="#04372A" font-size="15" font-weight="800" text-anchor="middle">C'EST CET ÉCART QUI COMPTE</text>
+
+  <!-- deux lectures -->
+  <rect x="56" y="392" width="530" height="132" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="84" y="424" fill="#8C99AC" font-size="13" font-weight="800" letter-spacing="1">CE QUE REGARDE LE PASSAGER</text>
+  <text x="84" y="456" fill="#3C4A5C" font-size="16">Le premier vol n'avait que 40 minutes</text>
+  <text x="84" y="478" fill="#3C4A5C" font-size="16">de retard, donc moins de 3 heures.</text>
+  <text x="84" y="504" fill="#B04A3C" font-size="15.5" font-weight="800">Il renonce. C'est la mauvaise règle.</text>
+
+  <rect x="614" y="392" width="530" height="132" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+  <text x="642" y="424" fill="#047857" font-size="13" font-weight="800" letter-spacing="1">CE QUE DIT LA COUR DE JUSTICE</text>
+  <text x="642" y="456" fill="#0B1F3A" font-size="16">Il est arrivé le lendemain à destination.</text>
+  <text x="642" y="478" fill="#0B1F3A" font-size="16">Peu importe que les vols suivants</text>
+  <text x="642" y="500" fill="#0B1F3A" font-size="16">aient été à l'heure.</text>
+  <text x="642" y="521" fill="#047857" font-size="15.5" font-weight="800">Indemnité pleine.</text>
+
+  <text x="56" y="566" fill="#0B1F3A" font-size="14.5" font-weight="800">Condition : les deux vols doivent figurer sur une même réservation.</text>
+  <text x="56" y="590" fill="#374151" font-size="14">Deux billets achetés séparément, et chaque vol redevient indépendant.</text>
+  <text x="56" y="614" fill="#8C99AC" font-size="11.5">Fondement : CJUE, Folkerts c/ Air France, 26 février 2013, affaire C-11/11. Durées données à titre d'illustration.</text>
+</svg>

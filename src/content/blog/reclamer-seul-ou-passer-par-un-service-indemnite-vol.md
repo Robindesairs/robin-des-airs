@@ -35,6 +35,8 @@ Si vous avez été refusé à l'embarquement alors que vous vous étiez présent
 
 C'est la situation la plus binaire de tout le règlement : soit vous avez embarqué, soit non. Il n'y a pas de cause à démontrer, pas de circonstance extraordinaire à discuter, pas de chronologie à reconstituer. La compagnie a très peu de matière pour contester, et le dossier tient en un courrier.
 
+<img src="/assets/images/reclamer-seul-ou-deleguer-arbre.svg" alt="Schéma : un refus d'embarquement est binaire et se réclame seul, tandis qu'un retard ou une annulation expose à une contestation par la compagnie" width="1200" height="630" loading="lazy" decoding="async">
+
 Vous gardez alors 100 % de l'indemnité, et c'est normal.
 
 ### Une condition à vérifier d'abord

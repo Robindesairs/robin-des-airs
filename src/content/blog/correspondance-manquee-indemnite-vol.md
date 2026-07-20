@@ -44,6 +44,8 @@ Deux conséquences pour vous :
 
 **L'argument « le second vol était à l'heure » ne vaut rien.** C'est précisément celui que la Cour a écarté.
 
+<img src="/assets/images/correspondance-retard-destination-finale.svg" alt="Schéma : un premier vol retardé de 40 minutes fait rater la correspondance et l'arrivée se fait le lendemain, c'est ce retard final qui ouvre l'indemnité" width="1200" height="630" loading="lazy" decoding="async">
+
 <aside class="cta-inline">
   <p class="cta-inline-t">Vous avez regardé le retard du mauvais vol ?</p>
   <p class="cta-inline-p">Seule compte votre heure d'arrivée finale. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
@@ -63,6 +65,10 @@ Concrètement : un billet unique Paris vers Nairobi via un hub vous protège de 
 
 C'est le piège le plus coûteux du voyage à petit prix, et il mérite d'être vérifié **avant** d'acheter, pas après.
 
+**Une précision qui élargit la protection.** Ce qui compte est la réservation unique, **pas l'identité des compagnies**. La Cour de justice a reconnu le droit à indemnisation sur un trajet dont les segments étaient opérés par des transporteurs différents, sans aucun lien juridique entre eux, dès lors qu'une agence les avait combinés en un billet unique à prix global.
+
+À l'inverse, deux billets achetés séparément le même jour sur la **même** compagnie ne forment pas une correspondance au sens du règlement.
+
 ## Quelle compagnie réclamer, et sur quelle distance
 
 **La compagnie du vol en retard**, c'est-à-dire le premier, même si la correspondance manquée était opérée par une autre. C'est le retard initial qui a causé le dommage.
@@ -78,6 +84,28 @@ Cette partie éclaire beaucoup de situations vécues comme incompréhensibles.
 **On retarde parfois le vol suivant pour vous attendre.** Si un vol d'apport arrive en retard avec un nombre significatif de passagers en correspondance, l'appareil suivant peut être retenu. C'est d'ailleurs une des raisons pour lesquelles un vol parfaitement à l'heure part avec du retard : le hub attend, et le retard se propage ensuite à toute la journée de l'appareil, comme nous l'expliquons dans notre article sur [le retard de rotation](/blog/retard-rotation-avion-vol-precedent-indemnisation.html).
 
 **Attention aux aéroports où l'on marche longtemps.** Paris-Charles-de-Gaulle, Istanbul ou Addis-Abeba imposent des transferts longs, parfois un changement de terminal et un nouveau contrôle. Un temps de correspondance qui paraît confortable sur le papier peut y devenir très juste.
+
+## Le temps de correspondance minimum, et ce qu'il ne prouve pas
+
+Quand une compagnie vous vend une correspondance d'une heure, elle s'appuie sur une donnée appelée **temps de correspondance minimum**.
+
+**Ce n'est pas une règle de droit.** C'est une donnée d'exploitation, calculée localement par le comité des compagnies présentes sur l'aéroport, validée par l'IATA, puis diffusée aux systèmes de réservation. Chaque compagnie peut ensuite déposer sa propre exception.
+
+À défaut de valeur déposée pour une plateforme, l'IATA applique des standards mondiaux : **30 minutes** d'un vol intérieur à un autre, **1 heure** d'un vol intérieur vers un international, et **1 heure 30** dès qu'un vol international est impliqué à l'arrivée.
+
+Les valeurs exactes par aéroport ne sont pas publiées librement : elles font l'objet d'un produit commercialisé sur abonnement. Les chiffres qui circulent en ligne pour tel ou tel hub sont donc à prendre comme indicatifs.
+
+**Et surtout : respecter ce délai n'exonère de rien.** Le règlement européen ne connaît qu'une seule cause d'exonération, la circonstance extraordinaire assortie de la preuve que toutes les mesures raisonnables ont été prises. Le temps de correspondance minimum n'y figure nulle part. Une compagnie qui vous répond « nous avons respecté le temps de correspondance » ne répond pas sur le terrain du droit.
+
+## Et votre valise, dans tout ça ?
+
+Une idée très répandue veut qu'un bagage ne puisse jamais voyager sans son passager. **C'est faux**, et le savoir évite bien des inquiétudes.
+
+Le règlement européen sur la sûreté ne l'interdit pas, il l'encadre. Dès lors que le passager n'est pas à bord, son bagage devient un **bagage non accompagné** : il doit être identifié comme tel, autorisé au transport et soumis à des contrôles de sûreté appropriés. Selon la raison pour laquelle il s'est retrouvé seul, il doit être retiré de l'appareil et repasser une inspection avant d'être rechargé.
+
+Dans le langage des opérations, ce bagage porte un nom : le **rush bag**. C'est exactement ce qui arrive à votre valise quand elle rate votre correspondance : elle repart seule, sur un vol suivant, pour vous rejoindre.
+
+Deux conséquences pratiques. Votre bagage peut arriver **avant ou après vous**, et ce n'est pas une anomalie. Et si vous ne le récupérez pas à l'arrivée, faites établir un constat d'irrégularité au comptoir bagages **avant de quitter l'aéroport** : c'est la pièce qui ouvre vos droits au titre de la Convention de Montréal, distincts de votre indemnité de retard.
 
 ## Pendant l'attente, vos droits continuent
 
@@ -95,7 +123,7 @@ Sur les hubs africains, les comptoirs sont parfois fermés la nuit ou débordés
 
 **« Ce n'est pas nous qui opérions le vol que vous avez raté. »** Sans objet également : c'est la compagnie du vol en retard qui répond.
 
-**« Nous avons respecté le temps de correspondance minimum. »** C'est l'argument le plus sérieux, et il mérite d'être discuté au cas par cas.
+**« Nous avons respecté le temps de correspondance minimum. »** Sans portée juridique : ce délai est une donnée commerciale de l'industrie, pas une cause d'exonération prévue par le règlement.
 
 ## Ce que Robin des Airs fait pour vous
 

@@ -44,6 +44,8 @@ Une précision qui change tout pour la diaspora : **les liaisons entre l'Europe 
 
 Seul le Maghreb reste en dessous. Un Paris-Casablanca ou un Paris-Alger relève des 400 €.
 
+<img src="/assets/images/indemnite-paliers-reduction-moitie.svg" alt="Schéma : les trois paliers d'indemnité selon la distance, et les deux conditions cumulatives permettant à la compagnie de n'en verser que la moitié" width="1200" height="630" loading="lazy" decoding="async">
+
 ## Le montant est le même pour tout le monde à bord
 
 C'est un forfait, et il ne dépend ni du prix payé, ni de la classe.

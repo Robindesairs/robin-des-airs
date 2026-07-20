@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">250, 400 ou 600 € : et le cas où la moitié suffit</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Par passager, quelle que soit la classe, et jamais par réservation.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- trois paliers -->
+  <text x="56" y="132" fill="#62718A" font-size="13" font-weight="800" letter-spacing="1.2">LES TROIS PALIERS, SELON LA DISTANCE À VOL D'OISEAU</text>
+
+  <rect x="56" y="150" width="342" height="132" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="227" y="192" fill="#0B1F3A" font-size="30" font-weight="900" text-anchor="middle">250 €</text>
+  <text x="227" y="218" fill="#62718A" font-size="14" text-anchor="middle">1 500 km ou moins</text>
+  <text x="227" y="248" fill="#8C99AC" font-size="13.5" text-anchor="middle">Paris-Marseille</text>
+  <text x="227" y="267" fill="#8C99AC" font-size="13.5" text-anchor="middle">Paris-Barcelone</text>
+
+  <rect x="429" y="150" width="342" height="132" rx="14" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="600" y="192" fill="#0B1F3A" font-size="30" font-weight="900" text-anchor="middle">400 €</text>
+  <text x="600" y="218" fill="#62718A" font-size="14" text-anchor="middle">1 500 à 3 500 km</text>
+  <text x="600" y="248" fill="#8C99AC" font-size="13.5" text-anchor="middle">Paris-Casablanca</text>
+  <text x="600" y="267" fill="#8C99AC" font-size="13.5" text-anchor="middle">Paris-Alger</text>
+
+  <rect x="802" y="150" width="342" height="132" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+  <text x="973" y="192" fill="#047857" font-size="30" font-weight="900" text-anchor="middle">600 €</text>
+  <text x="973" y="218" fill="#047857" font-size="14" font-weight="700" text-anchor="middle">plus de 3 500 km</text>
+  <text x="973" y="248" fill="#0B1F3A" font-size="13.5" font-weight="700" text-anchor="middle">Dakar · Abidjan · Bamako</text>
+  <text x="973" y="267" fill="#0B1F3A" font-size="13.5" font-weight="700" text-anchor="middle">Douala · Kinshasa · Nairobi</text>
+
+  <rect x="802" y="292" width="342" height="30" rx="15" fill="#00C87A"/>
+  <text x="973" y="312" fill="#04372A" font-size="13" font-weight="800" text-anchor="middle">PRESQUE TOUTES NOS LIGNES</text>
+
+  <!-- par passager -->
+  <rect x="56" y="292" width="715" height="30" rx="15" fill="#0B1F3A"/>
+  <text x="76" y="312" fill="#FFFFFF" font-size="13.5" font-weight="700">Une famille de quatre sur un vol Europe-Afrique : 4 × 600 € = 2 400 €</text>
+
+  <!-- reduction de moitie -->
+  <text x="56" y="368" fill="#62718A" font-size="13" font-weight="800" letter-spacing="1.2">LE SEUL CAS OÙ LA COMPAGNIE PEUT NE VERSER QUE LA MOITIÉ</text>
+
+  <rect x="56" y="386" width="1088" height="112" rx="14" fill="#FFF8EC" stroke="#E8A020" stroke-width="3"/>
+
+  <text x="84" y="416" fill="#0B1F3A" font-size="15.5" font-weight="800">Il faut DEUX conditions réunies :</text>
+  <circle cx="96" cy="446" r="11" fill="#E8A020"/>
+  <text x="96" y="451" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">1</text>
+  <text x="118" y="451" fill="#374151" font-size="14.5">elle vous a réellement <tspan font-weight="800">proposé un réacheminement</tspan></text>
+  <circle cx="96" cy="476" r="11" fill="#E8A020"/>
+  <text x="96" y="481" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">2</text>
+  <text x="118" y="481" fill="#374151" font-size="14.5">et vous arrivez avec moins de <tspan font-weight="800">2 h, 3 h ou 4 h</tspan> de retard selon la distance</text>
+
+  <rect x="676" y="404" width="440" height="76" rx="10" fill="#FFFFFF"/>
+  <text x="896" y="430" fill="#B0791F" font-size="14" font-weight="800" text-anchor="middle">Sur un vol Europe-Afrique</text>
+  <text x="896" y="454" fill="#0B1F3A" font-size="15" text-anchor="middle">arrivée à moins de 4 h de retard</text>
+  <text x="896" y="474" fill="#0B1F3A" font-size="15" font-weight="800" text-anchor="middle">600 € peuvent devenir 300 €</text>
+
+  <rect x="56" y="512" width="1088" height="60" rx="12" fill="#0B1F3A"/>
+  <text x="88" y="538" fill="#F0645A" font-size="15.5" font-weight="800">En dehors de ces deux conditions, aucune réduction n'est fondée.</text>
+  <text x="88" y="560" fill="rgba(255,255,255,.92)" font-size="14.5">Une compagnie qui propose spontanément la moitié, sans vous avoir réacheminé, ne fait que négocier.</text>
+
+  <text x="56" y="600" fill="#8C99AC" font-size="11.5">Règlement CE 261/2004, article 7. La distance se mesure à vol d'oiseau entre le départ et la destination finale, escales ignorées.</text>
+</svg>
