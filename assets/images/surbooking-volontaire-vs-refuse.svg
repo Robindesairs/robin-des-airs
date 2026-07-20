@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Surbooking : lever la main ou se faire désigner</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Même vol, même siège perdu, deux régimes juridiques différents.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <text x="56" y="132" fill="#62718A" font-size="13" font-weight="800" letter-spacing="1.2">CE QUE VOUS RECEVEZ, SELON LA CASE DANS LAQUELLE VOUS TOMBEZ</text>
+
+  <!-- VOLONTAIRE -->
+  <rect x="56" y="150" width="530" height="290" rx="14" fill="#FFF8EC" stroke="#E8A020" stroke-width="3"/>
+  <text x="84" y="186" fill="#0B1F3A" font-size="19" font-weight="900">VOUS VOUS PORTEZ VOLONTAIRE</text>
+  <text x="84" y="210" fill="#8A6416" font-size="14">Vous acceptez de céder votre place.</text>
+
+  <rect x="84" y="228" width="474" height="46" rx="10" fill="#FFFFFF"/>
+  <text x="104" y="248" fill="#8A6416" font-size="13" font-weight="700">Indemnité forfaitaire 250 / 400 / 600 €</text>
+  <text x="104" y="266" fill="#B04A3C" font-size="14" font-weight="800">Non due automatiquement</text>
+
+  <rect x="84" y="284" width="474" height="46" rx="10" fill="#FFFFFF"/>
+  <text x="104" y="304" fill="#8A6416" font-size="13" font-weight="700">Ce que vous obtenez à la place</text>
+  <text x="104" y="322" fill="#0B1F3A" font-size="14" font-weight="800">Uniquement ce que vous avez négocié</text>
+
+  <rect x="84" y="340" width="474" height="46" rx="10" fill="#FFFFFF"/>
+  <text x="104" y="360" fill="#8A6416" font-size="13" font-weight="700">Remboursement ou réacheminement</text>
+  <text x="104" y="378" fill="#0B1F3A" font-size="14" font-weight="800">Oui, à votre choix</text>
+
+  <rect x="84" y="396" width="474" height="28" rx="14" fill="#E8A020"/>
+  <text x="321" y="415" fill="#3D2A05" font-size="13" font-weight="800" text-anchor="middle">BON DE 400 € ACCEPTÉ = 200 € LAISSÉS SUR PLACE</text>
+
+  <!-- REFUSE -->
+  <rect x="614" y="150" width="530" height="290" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+  <text x="642" y="186" fill="#0B1F3A" font-size="19" font-weight="900">ON VOUS REFUSE CONTRE VOTRE GRÉ</text>
+  <text x="642" y="210" fill="#047857" font-size="14">Vous n'avez rien accepté, la compagnie désigne.</text>
+
+  <rect x="642" y="228" width="474" height="46" rx="10" fill="#FFFFFF"/>
+  <text x="662" y="248" fill="#047857" font-size="13" font-weight="700">Indemnité forfaitaire 250 / 400 / 600 €</text>
+  <text x="662" y="266" fill="#047857" font-size="14" font-weight="800">Due de plein droit, dès le refus</text>
+
+  <rect x="642" y="284" width="474" height="46" rx="10" fill="#FFFFFF"/>
+  <text x="662" y="304" fill="#047857" font-size="13" font-weight="700">Prise en charge repas, hôtel, transferts</text>
+  <text x="662" y="322" fill="#0B1F3A" font-size="14" font-weight="800">Oui, sur place</text>
+
+  <rect x="642" y="340" width="474" height="46" rx="10" fill="#FFFFFF"/>
+  <text x="662" y="360" fill="#047857" font-size="13" font-weight="700">Remboursement ou réacheminement</text>
+  <text x="662" y="378" fill="#0B1F3A" font-size="14" font-weight="800">Oui, à votre choix</text>
+
+  <rect x="642" y="396" width="474" height="28" rx="14" fill="#00C87A"/>
+  <text x="879" y="415" fill="#04372A" font-size="13" font-weight="800" text-anchor="middle">AUCUN DÉLAI D'ATTENTE À RESPECTER</text>
+
+  <!-- bas -->
+  <rect x="56" y="460" width="1088" height="58" rx="12" fill="#0B1F3A"/>
+  <text x="88" y="484" fill="#00E5A0" font-size="15.5" font-weight="800">Se porter volontaire n'est intéressant que si l'offre dépasse ce que vous toucheriez en étant refusé.</text>
+  <text x="88" y="506" fill="rgba(255,255,255,.9)" font-size="14">Demandez le montant applicable à votre vol avant d'accepter quoi que ce soit. Rien ne vous oblige à lever la main.</text>
+
+  <rect x="56" y="530" width="1088" height="42" rx="10" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="88" y="557" fill="#3C4A5C" font-size="14">Le surbooking n'est <tspan font-weight="800" fill="#0B1F3A">jamais</tspan> une circonstance extraordinaire : c'est une décision commerciale de la compagnie.</text>
+
+  <text x="56" y="600" fill="#8C99AC" font-size="11.5">Règlement CE 261/2004, article 4 (volontaires et refus involontaire), article 7 (montants), articles 8 et 9 (réacheminement et prise en charge).</text>
+</svg>
