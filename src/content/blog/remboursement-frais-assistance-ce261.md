@@ -118,6 +118,8 @@ C'est la confusion la plus coûteuse, et les compagnies en profitent.
 
 Ces trois droits **s'additionnent**. Une compagnie qui vous a remis un bon repas de 12 € ne s'est acquittée ni de votre indemnité, ni de son obligation de vous ramener à destination.
 
+<img src="/assets/images/trois-droits-ce261-cumul.svg" alt="Schéma : les articles 9, 7 et 8 du règlement CE 261 se cumulent, seul l'article 9 reste dû quelle que soit la cause du retard" width="1200" height="630" loading="lazy" decoding="async">
+
 ## Si personne ne vous propose rien
 
 C'est la situation la plus fréquente, en particulier dans les escales où les comptoirs sont vite débordés.
@@ -132,11 +134,67 @@ C'est la situation la plus fréquente, en particulier dans les escales où les c
 
 ### Le cas des escales africaines
 
-Sur les hubs de correspondance comme Casablanca, Lomé, Addis-Abeba ou Nairobi, deux difficultés s'ajoutent.
+Sur les hubs de correspondance comme Casablanca, Lomé, Addis-Abeba ou Nairobi, deux difficultés s'ajoutent, et elles sont concrètes.
 
-Les comptoirs sont parfois débordés ou fermés la nuit, et il n'y a personne à qui réclamer. Et l'offre hôtelière autour de l'aéroport peut être saturée quand plusieurs vols décrochent le même soir.
+**Il n'y a parfois personne à qui réclamer.** Les comptoirs de la compagnie ferment la nuit, ou sont submergés quand plusieurs vols décrochent en même temps. Vous ne trouverez pas toujours d'interlocuteur, et ce n'est pas une raison pour renoncer.
 
-Cela ne diminue en rien vos droits, mais cela change votre méthode : documentez davantage, parce que vous aurez plus souvent à avancer les frais et à les réclamer après coup.
+**L'hôtel peut être saturé.** Quand une perturbation touche plusieurs vols le même soir, les hôtels proches de l'aéroport se remplissent en une heure.
+
+Cela ne diminue en rien vos droits, mais cela change votre méthode. Quatre gestes, dans cet ordre :
+
+**Photographiez le tableau d'affichage** avec l'annonce du retard ou de l'annulation, en cadrant l'horloge. C'est votre point de départ horaire.
+
+**Filmez ou photographiez le comptoir fermé ou la file**, avec l'heure visible. Si vous n'avez trouvé personne, c'est cette image qui le prouvera. Une compagnie a beau jeu de répondre plus tard qu'il suffisait de demander.
+
+**Cherchez un hôtel rapidement**, sans attendre qu'on vous en propose un. Si vous attendez, il n'y aura plus de chambre, et vous passerez la nuit dans le terminal pour rien.
+
+**Payez et conservez tout.** Y compris le taxi jusqu'à l'hôtel et le retour le lendemain.
+
+## Le modèle de demande de remboursement
+
+Envoyez-le au service client de la compagnie, **séparément de votre demande d'indemnité**. C'est important : une compagnie qui reçoit une seule demande a tendance à ne régler qu'une chose et à considérer le dossier clos.
+
+<div class="copy-modele">
+  <button type="button" id="btn-copie-modele" class="copy-btn">Copier le modèle</button>
+  <span id="copie-etat" class="copy-etat" role="status" aria-live="polite"></span>
+</div>
+
+---
+
+**Objet** : Demande de remboursement des frais d'assistance, article 9 du règlement CE 261/2004, vol [numéro] du [date]
+
+Madame, Monsieur,
+
+Je voyageais à bord du vol [numéro] du [date], reliant [ville de départ] à [ville d'arrivée], dont le départ a été retardé de [durée] par rapport à l'heure prévue.
+
+Ce retard ayant dépassé le seuil applicable à ce vol, votre compagnie était tenue de me fournir gratuitement les prestations prévues à l'article 9 du règlement : repas et rafraîchissements, deux communications, et le cas échéant hébergement et transport entre l'aéroport et l'hôtel.
+
+Aucune de ces prestations ne m'ayant été proposée, j'ai dû les avancer moi-même. Je vous demande donc le remboursement des frais suivants, dont vous trouverez les justificatifs en pièces jointes :
+
+- repas : [montant]
+- hébergement : [montant]
+- transport : [montant]
+
+Total : [montant]
+
+Je vous rappelle que cette obligation d'assistance est due indépendamment de la cause du retard, y compris en cas de circonstance extraordinaire, la Cour de justice de l'Union européenne ayant jugé qu'elle ne connaît ni limite de durée ni plafond financier.
+
+Cette demande est **distincte** de ma demande d'indemnisation au titre de l'article 7, que je formule par ailleurs.
+
+Je vous remercie de m'indiquer sous quinze jours la suite réservée à cette demande.
+
+[Prénom NOM]
+[Référence de réservation]
+
+---
+
+Trois précisions pour que ce courrier fonctionne.
+
+**Joignez vos reçus dès le premier envoi.** Une demande sans justificatif se solde presque toujours par un refus, ou par une relance qui vous fait perdre un mois.
+
+**Ne mélangez pas avec l'indemnité.** La phrase qui précise que les deux demandes sont distinctes n'est pas décorative, elle empêche la compagnie de solder l'une en croyant régler l'autre.
+
+**Gardez une trace de l'envoi.** Un courriel avec accusé de réception, ou le numéro de ticket que le formulaire vous attribue.
 
 ## Ce que Robin des Airs fait pour vous
 
@@ -149,6 +207,49 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">Ces frais vous sont dus même si la compagnie n'est responsable de rien, et ils s'ajoutent à l'indemnité. Vérification gratuite, 0 € d'avance.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+<style>
+#blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}
+#blog-body .copy-btn{font:inherit;font-size:.875rem;font-weight:700;color:#047857;background:#EFF9F4;border:1px solid #00C87A;border-radius:.5rem;padding:.5rem .95rem;cursor:pointer}
+#blog-body .copy-btn:hover{background:#DFF3EA}
+#blog-body .copy-btn:focus-visible{outline:2px solid #047857;outline-offset:2px}
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+</style>
+
+<script>
+(function(){
+  var btn=document.getElementById('btn-copie-modele');
+  if(!btn) return;
+  var etat=document.getElementById('copie-etat');
+  // Le modele est le contenu situe entre les deux traits horizontaux qui suivent
+  // le bouton. On le lit dans le DOM plutot que de le dupliquer ici : une seule
+  // source de verite, le texte reste juste meme si l'article est reecrit.
+  function texteModele(){
+    var n=btn.closest('.copy-modele'), out=[], started=false;
+    while((n=n.nextElementSibling)){
+      if(n.tagName==='HR'){ if(started) break; started=true; continue; }
+      if(started && n.innerText) out.push(n.innerText.trim());
+    }
+    return out.join('\n\n');
+  }
+  btn.addEventListener('click',function(){
+    var t=texteModele();
+    if(!t) return;
+    function ok(){ etat.textContent='Modèle copié'; setTimeout(function(){etat.textContent='';},2600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(ok).catch(fallback);
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=t; ta.setAttribute('readonly',''); ta.style.position='absolute'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); ok(); }
+      catch(e){ etat.textContent='Copie impossible, sélectionnez le texte'; }
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
