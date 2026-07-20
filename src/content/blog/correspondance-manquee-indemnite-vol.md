@@ -1,6 +1,6 @@
 ---
 title: "Correspondance manquée : le retard qui compte est celui à l'arrivée finale"
-meta_title: "Correspondance manquée : qui paie l'indemnité ? Jusqu'à 600 €"
+meta_title: "Correspondance manquée : qui paie l'indemnité ?"
 meta_description: "Un premier vol en retard de 40 minutes peut valoir 600 €, parce que l'indemnité se calcule sur votre retard à destination finale, pas sur le vol raté."
 slug: correspondance-manquee-indemnite-vol
 hreflang_en: missed-connection-flight-compensation
@@ -36,7 +36,7 @@ Le retard qui détermine votre indemnité n'est **pas** celui du vol que vous av
 
 La Cour de justice de l'Union européenne l'a tranché dans l'arrêt Folkerts. Une passagère voyageait vers l'Amérique du Sud via deux escales. Son premier vol, un court trajet intérieur, avait pris du retard. Elle a manqué sa correspondance et est arrivée à destination avec plus de onze heures de retard, **alors même que les vols suivants étaient à l'heure**.
 
-La Cour a jugé que le retard s'apprécie à l'arrivée à la destination finale, et non à chaque escale. La compagnie a été condamnée.
+La Cour a jugé que le retard s'apprécie à l'arrivée à la destination finale, et non à chaque escale. La compagnie a été condamnée. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/ALL/?uri=CELEX%3A62011CJ0011" rel="nofollow noopener" target="_blank">CJUE, Folkerts, 26 février 2013, affaire C-11/11</a>.</span>
 
 Deux conséquences pour vous :
 
@@ -65,7 +65,7 @@ Concrètement : un billet unique Paris vers Nairobi via un hub vous protège de 
 
 C'est le piège le plus coûteux du voyage à petit prix, et il mérite d'être vérifié **avant** d'acheter, pas après.
 
-**Une précision qui élargit la protection.** Ce qui compte est la réservation unique, **pas l'identité des compagnies**. La Cour de justice a reconnu le droit à indemnisation sur un trajet dont les segments étaient opérés par des transporteurs différents, sans aucun lien juridique entre eux, dès lors qu'une agence les avait combinés en un billet unique à prix global.
+**Une précision qui élargit la protection.** Ce qui compte est la réservation unique, **pas l'identité des compagnies**. La Cour de justice a reconnu le droit à indemnisation sur un trajet dont les segments étaient opérés par des transporteurs différents, sans aucun lien juridique entre eux, dès lors qu'une agence les avait combinés en un billet unique à prix global. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=celex%3A62021CJ0436" rel="nofollow noopener" target="_blank">CJUE, 6 octobre 2022, affaire C-436/21</a>.</span>
 
 À l'inverse, deux billets achetés séparément le même jour sur la **même** compagnie ne forment pas une correspondance au sens du règlement.
 
@@ -101,7 +101,7 @@ Les valeurs exactes par aéroport ne sont pas publiées librement : elles font l
 
 Une idée très répandue veut qu'un bagage ne puisse jamais voyager sans son passager. **C'est faux**, et le savoir évite bien des inquiétudes.
 
-Le règlement européen sur la sûreté ne l'interdit pas, il l'encadre. Dès lors que le passager n'est pas à bord, son bagage devient un **bagage non accompagné** : il doit être identifié comme tel, autorisé au transport et soumis à des contrôles de sûreté appropriés. Selon la raison pour laquelle il s'est retrouvé seul, il doit être retiré de l'appareil et repasser une inspection avant d'être rechargé.
+Le <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX:02015R1998-20230401" rel="nofollow noopener" target="_blank">règlement européen sur la sûreté aérienne</a> ne l'interdit pas, il l'encadre. Dès lors que le passager n'est pas à bord, son bagage devient un **bagage non accompagné** : il doit être identifié comme tel, autorisé au transport et soumis à des contrôles de sûreté appropriés. Selon la raison pour laquelle il s'est retrouvé seul, il doit être retiré de l'appareil et repasser une inspection avant d'être rechargé.
 
 Dans le langage des opérations, ce bagage porte un nom : le **rush bag**. C'est exactement ce qui arrive à votre valise quand elle rate votre correspondance : elle repart seule, sur un vol suivant, pour vous rejoindre.
 
@@ -136,6 +136,12 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">C'est l'un des dossiers les plus solides du règlement, et le plus souvent abandonné. Vérification gratuite, 0 € d'avance.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
