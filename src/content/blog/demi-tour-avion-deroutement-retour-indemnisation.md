@@ -54,7 +54,7 @@ La distinction n'a rien de théorique. Elle change le montant, et surtout elle c
 
 C'est la question qui décide de tout, et la réponse dépend de ce qui se passe **après** le demi-tour.
 
-Le point de départ est acquis. La Cour de justice a jugé qu'un avion qui décolle puis revient sans avoir atteint sa destination n'a pas effectué le vol prévu : il ne suffit pas d'être parti, encore faut-il être arrivé. Et **le motif du demi-tour ne change pas la qualification**. Panne, météo, passager malade : le motif ne jouera qu'à l'étape suivante, quand la compagnie tentera de s'exonérer.
+Le point de départ est acquis. La Cour de justice a jugé qu'un avion qui décolle puis revient sans avoir atteint sa destination n'a pas effectué le vol prévu : il ne suffit pas d'être parti, encore faut-il être arrivé. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62010CJ0083" rel="nofollow noopener" target="_blank">CJUE, Sousa Rodríguez c/ Air France, 13 octobre 2011, affaire C-83/10</a>.</span> Et **le motif du demi-tour ne change pas la qualification**. Panne, météo, passager malade : le motif ne jouera qu'à l'étape suivante, quand la compagnie tentera de s'exonérer.
 
 Mais l'arrêt a été rendu dans une affaire précise, où les passagers avaient été **replacés sur d'autres vols le lendemain**. Son dispositif vise d'ailleurs les deux éléments à la fois : le retour à l'aéroport de départ **et** le transfert des passagers sur d'autres vols. Il faut donc distinguer.
 
@@ -171,6 +171,11 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">La compagnie a peut-être appliqué le régime du retard à ce qui est juridiquement une annulation. Vérification gratuite, 0 € d'avance.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}

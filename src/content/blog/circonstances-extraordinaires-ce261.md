@@ -93,7 +93,7 @@ Concrètement, la compagnie doit établir trois choses, et elle échoue si une s
 
 Voici le cœur de cet article, et l'argument qui fait basculer les dossiers les plus mal engagés.
 
-Quand un retard résulte **à la fois** d'une circonstance extraordinaire et d'une cause ordinaire, le retard imputable à la circonstance extraordinaire doit être **retranché** du retard total. On regarde ensuite ce qui reste, et on le compare au seuil de trois heures.
+Quand un retard résulte **à la fois** d'une circonstance extraordinaire et d'une cause ordinaire, le retard imputable à la circonstance extraordinaire doit être **retranché** du retard total. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62015CJ0315" rel="nofollow noopener" target="_blank">CJUE, Peškova et Peška, 4 mai 2017, affaire C-315/15</a>.</span> On regarde ensuite ce qui reste, et on le compare au seuil de trois heures.
 
 C'est le dispositif d'un arrêt de la Cour de justice, et il change tout, parce que dans la vraie vie l'événement extraordinaire n'explique presque jamais la totalité du retard.
 
@@ -220,6 +220,11 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">Dans la plupart des cas, la compagnie n'a apporté aucune des trois preuves qu'elle doit. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}

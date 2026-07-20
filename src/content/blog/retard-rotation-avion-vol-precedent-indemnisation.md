@@ -277,7 +277,7 @@ Voici le cœur du sujet, et l'endroit où les compagnies perdent le plus souvent
 
 Commençons par ce qui est acquis : **un retard de rotation n'est pas, en lui-même, une circonstance extraordinaire.** Ce n'est pas une cause, c'est un effet. Dire « l'avion est arrivé en retard » ne répond pas à la question, cela la déplace d'un cran : retard causé par quoi ?
 
-Soyons précis, parce que c'est ici que beaucoup d'articles se trompent et promettent 600 € automatiquement. **La Cour de justice de l'Union européenne admet depuis 2020 qu'une compagnie invoque une circonstance extraordinaire ayant frappé un vol précédent du même appareil.** L'exonération peut donc remonter la chaîne des rotations.
+Soyons précis, parce que c'est ici que beaucoup d'articles se trompent et promettent 600 € automatiquement. **La Cour de justice de l'Union européenne admet depuis 2020 qu'une compagnie invoque une circonstance extraordinaire ayant frappé un vol précédent du même appareil.** <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62019CJ0074" rel="nofollow noopener" target="_blank">CJUE, LE c/ TAP, 11 juin 2020, affaire C-74/19</a>.</span> L'exonération peut donc remonter la chaîne des rotations.
 
 Mais elle a posé trois verrous, et ils sont exigeants. Pour ne rien vous verser, la compagnie doit établir **les trois à la fois** :
 
@@ -310,6 +310,11 @@ On vérifie votre éligibilité gratuitement, on demande à la compagnie ce qu'e
   <p class="cta-inline-p">C'est l'un des motifs les plus favorables au passager, et la compagnie compte sur le fait que vous l'ignoriez. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}

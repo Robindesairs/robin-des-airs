@@ -11,7 +11,7 @@ faq:
   - q: "À quoi sert l'attestation de retard ?"
     a: "Activer une **assurance voyage**, justifier une absence professionnelle ou scolaire, monter un dossier d'**indemnisation CE 261**, ou réclamer un préjudice professionnel au titre de la Convention de Montréal."
   - q: "Quelle heure d'arrivée compte pour les 3 heures de retard ?"
-    a: "Celle de l'**ouverture de la porte** de l'avion, pas celle de l'atterrissage. La CJUE l'a tranché dans l'arrêt Germanwings contre Henning (C-452/13). Entre les roues au sol et la porte ouverte, il se passe souvent 10 à 20 minutes, parfois bien davantage. C'est exactement ce qui fait basculer un dossier au-dessus ou en dessous du seuil."
+    a: "Celle de l'**ouverture de la porte** de l'avion, pas celle de l'atterrissage. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62013CJ0452" rel="nofollow noopener" target="_blank">CJUE, Germanwings c/ Henning, 4 septembre 2014, affaire C-452/13</a>.</span> La CJUE l'a tranché dans l'arrêt Germanwings contre Henning (C-452/13). Entre les roues au sol et la porte ouverte, il se passe souvent 10 à 20 minutes, parfois bien davantage. C'est exactement ce qui fait basculer un dossier au-dessus ou en dessous du seuil."
   - q: "Comment obtenir l'heure d'arrivée réelle si la compagnie ne la donne pas ?"
     a: "Demandez-la par écrit. Les **lignes directrices de la Commission européenne** prévoient qu'elle doit vous être communiquée **gratuitement, sur simple demande**. Et c'est à la compagnie de la prouver, pas à vous."
   - q: "La compagnie ne répond pas. Que faire ?"
@@ -246,6 +246,11 @@ Voir aussi : [les preuves à conserver](/blog/preuves-retard-vol-conserver-indem
 
 → [Vérifier mon dossier](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}

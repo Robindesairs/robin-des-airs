@@ -1,6 +1,6 @@
 ---
 title: "Arrêt Sturgeon : la décision qui a créé votre droit en cas de retard"
-meta_title: "Arrêt Sturgeon : pourquoi 3 h de retard valent 600 €"
+meta_title: "Arrêt Sturgeon : 3 h de retard, et ce que ça vaut"
 meta_description: "Avant 2009, un vol retardé n'ouvrait droit à aucune indemnité. Voici la décision qui a tout changé, et pourquoi les compagnies ont tenté de la faire annuler."
 slug: arret-sturgeon-3h-retard-jurisprudence
 image_url: /og-blog.png
@@ -16,7 +16,7 @@ faq:
   - q: "Les compagnies ont-elles contesté cette décision ?"
     a: "Oui, frontalement, et elles ont perdu. Elles soutenaient que la Cour réécrivait le règlement et que l'indemnité était incompatible avec la convention de Montréal. La Cour a confirmé sa position en 2012 dans l'arrêt Nelson."
   - q: "En quoi cela me concerne sur un vol vers l'Afrique ?"
-    a: "Directement. Ces liaisons dépassent 3 500 km, donc la tranche à **600 € par passager**. Sans cet arrêt, un retard de dix heures sur un Paris-Abidjan n'aurait ouvert aucune indemnité."
+    a: "Directement, mais avec une nuance décisive. Ces liaisons dépassent 3 500 km, donc la tranche haute. Un retard de **3 à 4 heures** y vaut cependant **300 €**, et non 600 € : la Cour a étendu aux vols retardés la réduction de moitié prévue par le règlement. Il faut **4 heures ou plus** pour toucher 600 €."
 ---
 
 **Sans cette décision, un vol retardé de dix heures ne vous donnerait droit à rien.** On vérifie gratuitement votre éligibilité, 0 € d'avance, et vous ne payez rien si on ne récupère rien.
@@ -81,9 +81,19 @@ Ne vous fiez donc jamais au retard annoncé au départ pour savoir si vous avez 
 
 ## Ce que ça vaut sur nos lignes
 
-Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute : **600 € par passager**. Notre article détaille [les trois paliers et leur calcul exact](/blog/indemnite-vol-montants-250-400-600.html), y compris le cas, peu connu, où la compagnie peut légalement n'en verser que la moitié.
+Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute, mais **le même arrêt Sturgeon y pose une limite que presque personne ne connaît**.
 
-Et l'indemnité étant due par personne, une famille de quatre sur un vol retardé de plus de trois heures peut prétendre à 2 400 €.
+| Votre retard à l'arrivée | Ce que vous touchez |
+|---|---|
+| moins de 3 h | rien |
+| **de 3 h à moins de 4 h** | **300 €** |
+| **4 h ou plus** | **600 €** |
+
+La Cour a en effet précisé, dans ce même arrêt, que la réduction de moitié prévue par le règlement s'applique aussi aux vols **retardés**, alors même que le texte ne visait que le réacheminement. Sa grande chambre l'a confirmé en 2012. <span class="src">Sources : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62007CJ0402" rel="nofollow noopener" target="_blank">CJUE, Sturgeon, 19 novembre 2009, point 63</a> · <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62010CJ0581" rel="nofollow noopener" target="_blank">CJUE, Nelson, grande chambre, 23 octobre 2012, point 78</a>.</span>
+
+**La barre des quatre heures double donc votre indemnité.** À 3 h 55, 300 €. À 4 h 05, 600 €. Pour une famille de quatre, ce sont 1 200 € qui se jouent sur dix minutes, et c'est exactement pourquoi l'heure d'ouverture de la porte doit être établie avec précision.
+
+Attention toutefois : cette réduction **ne joue jamais** sur un vol de 3 500 km ou moins. Vous y touchez 250 € ou 400 € en entier dès trois heures. Notre article détaille [les trois paliers et leur calcul](/blog/indemnite-vol-montants-250-400-600.html).
 
 Sans l'arrêt Sturgeon, aucune de ces sommes ne serait due, quelle que soit la durée du retard.
 

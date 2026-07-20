@@ -84,7 +84,7 @@ Or c'est exactement l'inverse. **La chambre d'hôtel leur était due**, et le re
 
 L'indemnité forfaitaire tombe si la compagnie prouve une circonstance extraordinaire. **La prise en charge, elle, ne tombe jamais.** Météo, grève des contrôleurs, fermeture d'espace aérien, nuage de cendres : peu importe la cause, vous devez être nourri et logé.
 
-La Cour de justice l'a tranché dans l'arrêt McDonagh, né de l'éruption du volcan islandais qui avait paralysé le ciel européen en 2010. Sa réponse est sans ambiguïté : l'obligation d'assistance ne connaît **ni limite de durée, ni plafond financier**. Même une passagère bloquée une semaine devait être prise en charge une semaine.
+La Cour de justice l'a tranché dans l'arrêt McDonagh, né de l'éruption du volcan islandais qui avait paralysé le ciel européen en 2010. Sa réponse est sans ambiguïté : l'obligation d'assistance ne connaît **ni limite de durée, ni plafond financier**. Même une passagère bloquée une semaine devait être prise en charge une semaine. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62011CJ0012" rel="nofollow noopener" target="_blank">CJUE, McDonagh c/ Ryanair, 31 janvier 2013, affaire C-12/11</a>.</span>
 
 Autrement dit, la phrase « ce n'est pas de notre faute » ne dispense de rien. Elle peut faire tomber vos 600 €, jamais votre dîner ni votre chambre.
 
@@ -209,6 +209,11 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">Ces frais vous sont dus même si la compagnie n'est responsable de rien, et ils s'ajoutent à l'indemnité. Vérification gratuite, 0 € d'avance.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}

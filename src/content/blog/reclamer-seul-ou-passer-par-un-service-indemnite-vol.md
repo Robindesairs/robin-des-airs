@@ -99,7 +99,7 @@ C'est le chiffre le plus utile de cette page, et il vient d'une institution publ
 
 Selon la **Cour des comptes européenne**, parmi les refus fondés sur des circonstances extraordinaires que des passagers ont pris la peine de contester, les organismes nationaux de contrôle estiment qu'**environ 60 % ne relevaient en réalité pas de circonstances extraordinaires**.
 
-Autrement dit, la majorité de ces refus ne tiennent pas quand on les conteste. Encore faut-il les contester.
+Autrement dit, la majorité de ces refus ne tiennent pas quand on les conteste. Encore faut-il les contester. <span class="src">Source : <a href="https://op.europa.eu/webpub/eca/special-reports/passenger-rights-30-2018/fr/" rel="nofollow noopener" target="_blank">Cour des comptes européenne, rapport spécial n° 30/2018</a>.</span>
 
 ### Et la plupart des gens ne contestent pas
 
@@ -198,6 +198,11 @@ Si la réponse est non, un dossier délégué à 60 ou 75 % vaut mieux qu'un dos
   <p class="cta-inline-p">La vérification est gratuite et sans engagement. Si votre cas est simple, on vous le dira et vous le ferez vous-même.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}

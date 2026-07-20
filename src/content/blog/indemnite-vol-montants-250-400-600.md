@@ -13,7 +13,7 @@ faq:
   - q: "Comment se mesure la distance ?"
     a: "À vol d'oiseau, entre l'aéroport de départ et la destination **finale**, et non en additionnant les segments parcourus. Sur un trajet avec escale, cela peut faire basculer un dossier de 600 à 400 €."
   - q: "La compagnie peut-elle réduire mon indemnité de moitié ?"
-    a: "Oui, mais dans un cas précis seulement : si elle vous a **proposé un réacheminement** et que vous arrivez à destination avec un retard limité, 2 heures pour les vols courts, 3 heures pour les moyens, 4 heures pour les longs. En dehors de ce cas, une réduction est infondée."
+    a: "Oui, et c'est le point le plus mal connu. Sur un vol de **plus de 3 500 km**, un retard compris entre **3 et 4 heures** ne vaut que **300 €**. Au-delà de 4 heures, c'est 600 € pleins. La Cour de justice l'a expressément étendu aux vols retardés. En revanche, cette réduction ne s'applique **jamais** à un vol de 3 500 km ou moins : vous y touchez 250 € ou 400 € en entier dès 3 heures."
   - q: "Le montant change-t-il selon ma classe de voyage ?"
     a: "Non. L'indemnité est **forfaitaire** : elle est identique en économique et en affaires. Un billet payé 3 000 € donne exactement la même somme qu'un billet à 400 €."
   - q: "L'indemnité remplace-t-elle le remboursement de mon billet ?"
@@ -70,29 +70,37 @@ La distance ne s'obtient **pas** en additionnant les kilomètres réellement par
 
 Un trajet vers une capitale africaine via un hub peut vous faire parcourir bien plus de kilomètres que la ligne droite. C'est pourtant cette ligne droite qui compte, et elle peut faire basculer un dossier de la tranche haute vers la tranche moyenne.
 
-C'est contre-intuitif, c'est défavorable au passager, mais c'est la règle, et la Cour de justice l'a confirmée. Notre article sur [l'arrêt Bossen](/blog/arret-bossen-distance-vol-oiseau.html) détaille ce calcul et ses cas limites.
+C'est contre-intuitif, c'est défavorable au passager, mais c'est la règle, et la Cour de justice l'a confirmée. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62016CJ0559" rel="nofollow noopener" target="_blank">CJUE, Bossen e.a., 7 septembre 2017, affaire C-559/16</a>.</span> Notre article sur [l'arrêt Bossen](/blog/arret-bossen-distance-vol-oiseau.html) détaille ce calcul et ses cas limites.
 
 ## Le piège de la réduction de moitié
 
-Voici le second, et il est bien moins connu. Le règlement autorise la compagnie à **ne verser que la moitié** de l'indemnité, dans un cas précis.
+Voici le point le plus mal connu du règlement, et celui qui coûte le plus cher sur nos lignes. Presque aucun site n'en parle.
 
-Cette réduction ne s'applique **que** si elle vous a proposé un **réacheminement**, et que grâce à celui-ci vous arrivez à destination avec un retard contenu dans les limites suivantes :
+**Sur un vol de plus de 3 500 km, un retard compris entre 3 et 4 heures ne vaut que 300 €, pas 600 €.**
 
-| Distance du vol | Retard à l'arrivée en dessous duquel l'indemnité est réduite de moitié |
+| Votre retard à l'arrivée | Ce que vous touchez |
 |---|---|
-| 1 500 km ou moins | 2 heures |
-| 1 500 à 3 500 km | 3 heures |
-| Plus de 3 500 km | 4 heures |
+| moins de 3 h | rien |
+| **de 3 h à moins de 4 h** | **300 €** |
+| **4 h ou plus** | **600 €** |
 
-Sur un vol Europe-Afrique, cela signifie qu'une compagnie qui vous replace sur un autre vol et vous fait arriver avec **moins de quatre heures** de retard peut ne verser que 300 € au lieu de 600 €.
+Autrement dit, **la barre des quatre heures double votre indemnité**. À 3 h 55, vous touchez 300 €. À 4 h 05, vous touchez 600 €. Sur une famille de cinq personnes, ce sont 1 500 € qui se jouent sur dix minutes.
 
-**Trois points à retenir, parce que c'est là que les compagnies abusent.**
+C'est aussi pourquoi l'heure d'arrivée réelle, celle de **l'ouverture de la porte** et non du contact des roues, doit être établie avec précision. Ces quelques minutes valent parfois plus que tout le reste du dossier.
 
-La réduction suppose un **réacheminement réellement proposé**. Si vous avez simplement attendu le vol suivant sans qu'on vous propose quoi que ce soit, elle n'a pas lieu d'être.
+### Ce n'est pas une manœuvre de la compagnie
 
-Elle se calcule sur l'heure d'**arrivée effective**, porte ouverte, et non sur l'horaire théorique du vol de remplacement.
+Beaucoup de passagers croient à un abus quand on leur propose la moitié. C'est pourtant prévu, et la Cour de justice l'a expressément étendu aux vols retardés, alors même que le texte ne visait que le réacheminement. La grande chambre l'a confirmé, et la Commission européenne le rappelle dans ses orientations. <span class="src">Sources : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62007CJ0402" rel="nofollow noopener" target="_blank">CJUE, Sturgeon, 19 novembre 2009, point 63</a> · <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62010CJ0581" rel="nofollow noopener" target="_blank">CJUE, Nelson, grande chambre, 23 octobre 2012, point 78</a> · orientations interprétatives de la Commission, section 4.4.10.</span>
 
-En dehors de ce cas, **aucune réduction n'est fondée**. Une compagnie qui vous propose spontanément la moitié, sans réacheminement, ne fait que négocier.
+### Mais elle ne s'applique jamais dans ces trois cas
+
+**Sur un vol de 3 500 km ou moins, ou entièrement dans l'Union.** Vous touchez 250 € ou 400 € **en entier** dès trois heures de retard. Une compagnie qui vous propose 125 € ou 200 € est dans l'illégalité.
+
+**Au-delà de 4 heures de retard.** C'est 600 € pleins, sans discussion.
+
+**Quand votre vol a été avancé** plutôt que retardé. Le montant reste intégral.
+
+Vérifiez donc toujours **deux choses** avant d'accepter une proposition à moitié : la distance de votre vol, et votre heure d'arrivée réelle.
 
 ## Ce que l'indemnité n'est pas
 
@@ -123,6 +131,11 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">Dans la plupart des cas, cette réduction n'a aucun fondement. Vérification gratuite, 0 € d'avance, jusqu'à 600 € par passager.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
