@@ -61,13 +61,15 @@ Cette protection ne joue que si vos vols figurent sur **une même réservation**
 | **Un seul billet**, une seule référence | Le retard se mesure à la destination finale, sur la distance totale |
 | **Deux billets** achetés séparément | Chaque vol est indépendant, et le retard du premier ne vous ouvre presque rien |
 
-Concrètement : un billet unique Paris vers Nairobi via un hub vous protège de bout en bout. Deux billets achetés sur deux sites différents, même le même jour, vous laissent sans recours si le premier retard vous fait rater le second vol.
+Concrètement : un billet unique Paris vers Nairobi via un hub vous protège de bout en bout.
+
+**Et voici le piège, parce qu'il est contre-intuitif : deux billets séparés ne vous protègent pas, même achetés sur la même compagnie, le même jour, pour deux vols qui s'enchaînent.** Si le premier retard vous fait rater le second, vous n'êtes pas un passager retardé : vous êtes juridiquement un passager qui ne s'est pas présenté. Le critère n'est pas le transporteur, c'est la réservation.
 
 C'est le piège le plus coûteux du voyage à petit prix, et il mérite d'être vérifié **avant** d'acheter, pas après.
 
 **Une précision qui élargit la protection.** Ce qui compte est la réservation unique, **pas l'identité des compagnies**. La Cour de justice a reconnu le droit à indemnisation sur un trajet dont les segments étaient opérés par des transporteurs différents, sans aucun lien juridique entre eux, dès lors qu'une agence les avait combinés en un billet unique à prix global. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=celex%3A62021CJ0436" rel="nofollow noopener" target="_blank">CJUE, 6 octobre 2022, affaire C-436/21</a>.</span>
 
-À l'inverse, deux billets achetés séparément le même jour sur la **même** compagnie ne forment pas une correspondance au sens du règlement.
+Autrement dit, le règlement regarde votre **billet**, jamais le logo sur l'avion.
 
 ## Quelle compagnie réclamer, et sur quelle distance
 
