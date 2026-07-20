@@ -18,9 +18,9 @@
   <text x="214" y="285" fill="#3C4A5C" font-size="13.5">hôtel si départ le lendemain.</text>
 
   <text x="84" y="336" fill="#8A6416" font-size="13" font-weight="800" letter-spacing="1">SEUILS, SELON LA DISTANCE</text>
-  <text x="84" y="362" fill="#3C4A5C" font-size="13.5">2 h &nbsp;·&nbsp; vols de 1 500 km ou moins</text>
-  <text x="84" y="384" fill="#3C4A5C" font-size="13.5">3 h &nbsp;·&nbsp; vols de 1 500 à 3 500 km</text>
-  <text x="84" y="406" fill="#0B1F3A" font-size="13.5" font-weight="700">4 h &nbsp;·&nbsp; au-delà, dont l'Europe-Afrique</text>
+  <text x="84" y="362" fill="#3C4A5C" font-size="13.5">2 h  ·  vols de 1 500 km ou moins</text>
+  <text x="84" y="384" fill="#3C4A5C" font-size="13.5">3 h  ·  vols de 1 500 à 3 500 km</text>
+  <text x="84" y="406" fill="#0B1F3A" font-size="13.5" font-weight="700">4 h  ·  au-delà, dont l'Europe-Afrique</text>
 
   <rect x="84" y="418" width="474" height="14" rx="7" fill="#E8A020"/>
   <text x="321" y="429" fill="#3D2A05" font-size="10.5" font-weight="800" text-anchor="middle">AUCUNE INDEMNITÉ DANS CET ARTICLE</text>
