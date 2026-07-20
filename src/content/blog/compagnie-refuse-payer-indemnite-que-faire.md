@@ -116,7 +116,11 @@ Agissez tôt malgré tout : les données que détient la compagnie ont des duré
 
 ## Ce que Robin des Airs fait pour vous
 
-Nous reprenons les dossiers déjà refusés. Concrètement : nous exigeons par écrit les trois preuves, nous recoupons la version de la compagnie avec les données météo et les autres vols du jour, nous relançons, puis nous assignons devant le tribunal de commerce.
+Nous reprenons les dossiers déjà refusés, et notre méthode tient en une phrase : **on démonte les arguments de la compagnie un par un, puis on assigne si nécessaire.**
+
+Concrètement : nous exigeons par écrit les trois preuves qu'elle doit apporter, nous recoupons sa version avec les relevés météo et les autres vols du jour, nous relançons. Si elle persiste, nous assignons devant le tribunal de commerce, avec un avocat.
+
+**Nous ne passons pas par la médiation.** Elle est facultative, son avis ne s'impose pas, et elle coûte plusieurs mois. Notre montage nous permet de nous en dispenser.
 
 Une particularité de notre montage mérite d'être expliquée : nous **rachetons votre créance** plutôt que de vous représenter. Cela nous permet d'agir en notre nom et d'aller directement au contentieux, sans passer par la médiation. Vous n'avancez rien, et si rien n'est récupéré, vous ne payez rien.
 

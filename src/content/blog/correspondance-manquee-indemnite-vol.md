@@ -103,7 +103,11 @@ Les valeurs exactes par aéroport ne sont pas publiées librement : elles font l
 
 Quand vous ratez une correspondance, votre bagage suit rarement le même chemin que vous. Deux cas se présentent, et aucun n'est une anomalie.
 
-**Votre valise est partie sans vous.** Elle était déjà chargée dans l'avion que vous avez raté. Contrairement à une idée très répandue, ce n'est pas interdit : le <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX:02015R1998-20230401" rel="nofollow noopener" target="_blank">règlement européen sur la sûreté aérienne</a> ne prohibe pas le bagage non accompagné, il l'encadre. Le bagage doit être identifié comme tel et soumis à des contrôles de sûreté appropriés.
+**Votre valise est partie sans vous.** Elle était déjà chargée dans l'avion que vous avez raté.
+
+C'est possible, et le <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/HTML/?uri=CELEX:02015R1998-20230401" rel="nofollow noopener" target="_blank">règlement européen sur la sûreté aérienne</a> le prévoit expressément. Dès lors que vous n'êtes pas à bord, votre bagage est « considéré comme non accompagné ». **La suite dépend alors de la raison.** Quand la séparation tient à une cause indépendante de votre volonté, ce qui est précisément le cas d'une correspondance ratée, le bagage peut poursuivre sa route, le motif étant consigné avant le chargement. Dans les autres cas, notamment lorsqu'un passager enregistré ne se présente pas à la porte, le règlement impose de **retirer le bagage de l'appareil** et de le soumettre à une nouvelle inspection avant tout rechargement. <span class="src">Règlement d'exécution (UE) 2015/1998, annexe, points 5.3.1.3, 5.3.2 et 5.3.3.2.</span>
+
+C'est pourquoi un passager absent au dernier appel fait souvent retarder le départ : il faut retrouver et sortir sa valise de la soute.
 
 **Ou l'inverse : vous êtes parti sans elle.** Votre bagage n'a pas eu le temps d'être transféré entre les deux avions, ce qui est fréquent quand la correspondance est courte. Il vous rejoindra sur un vol suivant.
 
