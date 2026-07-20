@@ -48,16 +48,15 @@ Pour un UM, la compagnie a en plus :
 
 Si l'enfant est laissé seul dans la zone d'attente, vous pouvez réclamer en plus un **préjudice moral** au titre de la Convention de Montréal.
 
-## Cas vécu — Paris-Bamako en UM, retard 6h
+## Comment vérifier une excuse météo
 
-Vol Paris-Bamako en UM, retard de 6h. Compagnie a invoqué "circonstances extraordinaires" (harmattan).
+Quand une compagnie invoque la météo pour un vol vers l'Afrique de l'Ouest, en particulier l'harmattan, deux vérifications sont à votre portée et se font depuis chez vous.
 
-Notre analyse :
-- METAR Bamako : visibilité 8 km — opérationnelle
-- 4 autres vols ont atterri sur la même journée
-- L'enfant a été laissé 4h dans la zone embarquement sans surveillance constante
+**Le relevé météo de l'aéroport.** Les observations horaires des aéroports, appelées METAR, sont publiques et archivées. Elles donnent la visibilité réelle à l'heure du vol. Une visibilité largement supérieure aux minima opérationnels affaiblit considérablement l'argument.
 
-Résultat : **600€** d'indemnité CE 261 + **1 200€** au titre de la Convention de Montréal pour préjudice moral et défaut de surveillance.
+**Les autres vols du même jour.** C'est le test le plus parlant. Si d'autres appareils se sont posés sur le même aéroport dans la même tranche horaire, la compagnie devra expliquer pourquoi le vôtre ne le pouvait pas.
+
+Rappelez-vous surtout que l'harmattan est un phénomène **saisonnier et connu**, pas un imprévu. Une compagnie qui dessert la région en janvier doit l'avoir anticipé dans sa planification.
 
 ## Communication parents-compagnie en cas de retard
 
