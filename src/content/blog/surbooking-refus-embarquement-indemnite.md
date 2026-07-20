@@ -117,7 +117,11 @@ Voilà le point que presque aucun passager ne connaît, et qui laisse chaque ann
 
 La Cour de justice a jugé que la notion de refus d'embarquement **ne vise pas seulement la surréservation**, et qu'elle couvre aussi les refus opposés pour des motifs opérationnels. <span class="src">Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A62011CJ0022" rel="nofollow noopener" target="_blank">CJUE, Finnair c/ Lassooy, 4 octobre 2012, affaire C-22/11</a>.</span>
 
-Traduit en situations réelles : un changement d'appareil de dernière minute pour un modèle comptant moins de sièges, une limitation de masse au décollage qui impose de laisser des passagers au sol, une réorganisation des vols après une perturbation. Dans tous ces cas, le passager laissé à terre relève du même régime que la victime d'un surbooking, avec les mêmes 250 à 600 €.
+Traduit en situations réelles : un changement d'appareil de dernière minute pour un modèle comptant moins de sièges, une réorganisation des vols après une perturbation, ou le cas le plus méconnu, la limitation de masse au décollage.
+
+Ce dernier mérite un mot, parce qu'il déroute complètement le passager. Un avion ne décolle pas toujours à pleine charge. Selon la longueur de la piste, la température ce jour-là ou le carburant emporté pour la distance, l'appareil peut être **trop lourd**. Il faut alors alléger, et l'on débarque des bagages, parfois des passagers, **alors même que les sièges sont libres à bord**. Le voyageur ne comprend pas : il avait sa place, elle est vide, et on le laisse au sol. C'est pourtant un refus d'embarquement, avec les mêmes 250 à 600 €.
+
+Une compagnie pourrait être tentée d'objecter que le poids touche à la sécurité, donc à un motif qui l'exonère. L'argument ne tient pas. La Cour de justice a jugé qu'un motif qui n'est **aucunement imputable au passager** n'est pas comparable aux motifs qui, eux, permettent de refuser sans indemniser, comme un problème de santé ou des papiers non conformes. Le poids de l'avion est une contrainte de la compagnie, pas la faute du passager. Elle doit donc payer.
 
 Or presque personne ne réclame dans ces situations, parce que l'explication donnée à la porte ne ressemble pas à du surbooking. Elle a pourtant exactement les mêmes conséquences juridiques.
 
