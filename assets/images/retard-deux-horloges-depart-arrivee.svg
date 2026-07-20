@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Retard : deux horloges, une seule paie l'indemnité</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Le départ ouvre les repas. L'arrivée ouvre les 600 €. Ne regardez jamais le mauvais chiffre.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- DEPART -->
+  <rect x="56" y="128" width="530" height="316" rx="14" fill="#FFF8EC" stroke="#E8A020" stroke-width="3"/>
+  <text x="84" y="164" fill="#0B1F3A" font-size="19" font-weight="900">RETARD AU DÉPART</text>
+  <text x="84" y="188" fill="#8A6416" font-size="14">Article 6 : la prise en charge</text>
+
+  <circle cx="150" cy="258" r="42" fill="#FFFFFF" stroke="#E8A020" stroke-width="3"/>
+  <line x1="150" y1="258" x2="150" y2="228" stroke="#B0791F" stroke-width="3" stroke-linecap="round"/>
+  <line x1="150" y1="258" x2="172" y2="270" stroke="#B0791F" stroke-width="3" stroke-linecap="round"/>
+  <text x="214" y="242" fill="#0B1F3A" font-size="15" font-weight="800">Ce qui se déclenche</text>
+  <text x="214" y="266" fill="#3C4A5C" font-size="13.5">Repas, boissons, communications,</text>
+  <text x="214" y="285" fill="#3C4A5C" font-size="13.5">hôtel si départ le lendemain.</text>
+
+  <text x="84" y="336" fill="#8A6416" font-size="13" font-weight="800" letter-spacing="1">SEUILS, SELON LA DISTANCE</text>
+  <text x="84" y="362" fill="#3C4A5C" font-size="13.5">2 h &nbsp;·&nbsp; vols de 1 500 km ou moins</text>
+  <text x="84" y="384" fill="#3C4A5C" font-size="13.5">3 h &nbsp;·&nbsp; vols de 1 500 à 3 500 km</text>
+  <text x="84" y="406" fill="#0B1F3A" font-size="13.5" font-weight="700">4 h &nbsp;·&nbsp; au-delà, dont l'Europe-Afrique</text>
+
+  <rect x="84" y="418" width="474" height="14" rx="7" fill="#E8A020"/>
+  <text x="321" y="429" fill="#3D2A05" font-size="10.5" font-weight="800" text-anchor="middle">AUCUNE INDEMNITÉ DANS CET ARTICLE</text>
+
+  <!-- ARRIVEE -->
+  <rect x="614" y="128" width="530" height="316" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+  <text x="642" y="164" fill="#0B1F3A" font-size="19" font-weight="900">RETARD À L'ARRIVÉE</text>
+  <text x="642" y="188" fill="#047857" font-size="14">Arrêt Sturgeon : l'indemnité</text>
+
+  <circle cx="708" cy="258" r="42" fill="#FFFFFF" stroke="#00C87A" stroke-width="3"/>
+  <line x1="708" y1="258" x2="708" y2="226" stroke="#047857" stroke-width="3" stroke-linecap="round"/>
+  <line x1="708" y1="258" x2="734" y2="258" stroke="#047857" stroke-width="3" stroke-linecap="round"/>
+  <text x="772" y="242" fill="#0B1F3A" font-size="15" font-weight="800">Ce qui se déclenche</text>
+  <text x="772" y="266" fill="#3C4A5C" font-size="13.5">L'indemnité forfaitaire,</text>
+  <text x="772" y="285" fill="#0B1F3A" font-size="13.5" font-weight="700">250, 400 ou 600 € par passager.</text>
+
+  <text x="642" y="336" fill="#047857" font-size="13" font-weight="800" letter-spacing="1">UN SEUL SEUIL</text>
+  <text x="642" y="364" fill="#0B1F3A" font-size="14" font-weight="700">3 heures de retard à la destination finale.</text>
+  <text x="642" y="390" fill="#3C4A5C" font-size="13.5">Mesuré à l'arrivée, jamais au décollage.</text>
+
+  <rect x="642" y="418" width="474" height="14" rx="7" fill="#00C87A"/>
+  <text x="879" y="429" fill="#04372A" font-size="10.5" font-weight="800" text-anchor="middle">C'EST CETTE HORLOGE QUI PAIE</text>
+
+  <!-- bas -->
+  <rect x="56" y="460" width="1088" height="58" rx="12" fill="#0B1F3A"/>
+  <text x="88" y="484" fill="#00E5A0" font-size="15.5" font-weight="800">Un vol parti avec 3 h de retard mais arrivé avec 1 h 30 : repas dus, indemnité non due.</text>
+  <text x="88" y="506" fill="rgba(255,255,255,.9)" font-size="14">Parti à l'heure mais dérouté et arrivé avec 3 h 30 : indemnité pleinement due. Regardez toujours l'arrivée.</text>
+
+  <rect x="56" y="530" width="1088" height="42" rx="10" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <text x="88" y="557" fill="#3C4A5C" font-size="14">Les deux droits <tspan font-weight="800" fill="#0B1F3A">se cumulent</tspan> : la prise en charge pendant l'attente ne se déduit jamais de l'indemnité.</text>
+
+  <text x="56" y="600" fill="#8C99AC" font-size="11.5">Règlement CE 261/2004, articles 6 et 9 (départ) · CJUE, Sturgeon, 19 novembre 2009, C-402/07, pour le seuil de 3 h à l'arrivée.</text>
+</svg>

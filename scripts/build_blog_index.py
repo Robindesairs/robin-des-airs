@@ -45,7 +45,7 @@ ESSENTIEL_SET = {
     "ce261-nationalite-residence-qui-peut-reclamer",
     "operating-vs-marketing-carrier-ce261",
     "uk261-vs-ce261-guide-brexit",
-    "classe-business-economique-indemnite-ce261",
+    "downgrade-involontaire-indemnite-ce261",
     "vol-direct-vs-correspondance-droits-ce261",
     "correspondance-manquee-indemnite-vol",
     "mediation-aerienne-obligatoire-2026",
