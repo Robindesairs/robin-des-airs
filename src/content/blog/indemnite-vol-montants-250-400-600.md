@@ -78,6 +78,8 @@ Voici le point le plus mal connu du règlement, et celui qui coûte le plus cher
 
 Retenez la phrase avant d'entrer dans le détail : **le montant plein est la règle, la moitié est une faculté que la compagnie doit invoquer.** Ne vous auto-limitez jamais avant qu'elle ait ouvert la bouche.
 
+**Pourquoi vous dire cela, alors que c'est moins vendeur qu'un simple « 600 € » ?** Parce qu'un passager qui découvre la réduction au moment du virement se sent trompé, et qu'il a raison de l'être. Nous préférons l'annoncer maintenant : vous saurez exactement quoi faire si la compagnie la tente, au lieu de l'apprendre trop tard.
+
 **Sur un vol de plus de 3 500 km, la compagnie peut ramener votre indemnité de 600 à 300 € si vous arrivez avec moins de 4 heures de retard.** Elle en a le droit, mais ce n'est ni automatique ni obligatoire.
 
 | Votre retard à l'arrivée | Ce que vous réclamez | Ce que la compagnie peut opposer |
