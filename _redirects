@@ -261,3 +261,7 @@
 /blog/remboursement-frais-annexes-retard         /blog/remboursement-frais-assistance-ce261.html    301
 /blog/vol-retarde-nuit-hebergement-repas-droits.html    /blog/remboursement-frais-assistance-ce261.html    301
 /blog/vol-retarde-nuit-hebergement-repas-droits         /blog/remboursement-frais-assistance-ce261.html    301
+
+# Fusionne dans le pilier correspondance manquee (20/07/2026)
+/blog/connexion-manquee-correspondance-droits-ce261.html    /blog/correspondance-manquee-indemnite-vol.html    301
+/blog/connexion-manquee-correspondance-droits-ce261         /blog/correspondance-manquee-indemnite-vol.html    301
