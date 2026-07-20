@@ -16,7 +16,7 @@ faq:
   - q: "Combien puis-je dépenser ?"
     a: "Le règlement ne fixe aucun montant. Le critère est le caractère **nécessaire, approprié et raisonnable** de la dépense au regard de la situation. Un repas de cafétéria d'aéroport et un hôtel proche à tarif normal passent sans difficulté. Un restaurant gastronomique ou un palace seront ramenés à un montant raisonnable."
   - q: "J'ai droit à la prise en charge même sans droit à l'indemnité ?"
-    a: "Oui, et beaucoup de passagers l'ignorent. Ces frais vous sont dus même lorsque l'indemnité n'est pas ouverte, par exemple sur un vol au départ d'Afrique opéré par une compagnie non européenne."
+    a: "Oui, dès lors que le règlement s'applique à votre vol. C'est le cas typique de la **circonstance extraordinaire** : elle fait tomber vos 600 €, mais pas votre repas ni votre chambre. Attention en revanche : si le règlement ne s'applique pas du tout à votre vol, par exemple un départ d'Afrique sur une compagnie non européenne, vous n'avez ni l'un ni l'autre."
   - q: "Et si l'attente a lieu en escale, loin de chez moi ?"
     a: "Le droit est le même. À Casablanca, Lomé, Addis-Abeba ou Nairobi, la compagnie qui opère le vol doit vous nourrir, vous loger si une nuit s'impose, et payer le transport entre l'aéroport et l'hôtel."
 ---
@@ -38,6 +38,8 @@ Retenez cette phrase avant de lire la suite, parce qu'elle vaut de l'argent : ch
 ## À partir de quand ce droit s'ouvre
 
 Les seuils dépendent de la distance du vol, et se comptent sur le **retard au départ**.
+
+Notez bien ce point, car c'est une exception : partout ailleurs dans le règlement, le retard se mesure **à l'arrivée**, à l'ouverture de la porte. L'article 9 est le seul endroit où l'on regarde l'heure de départ. C'est logique, puisqu'il s'agit de vous nourrir pendant que vous attendez.
 
 | Distance du vol | Attente à partir de |
 |---|---|
@@ -86,7 +88,23 @@ La Cour de justice l'a tranché dans l'arrêt McDonagh, né de l'éruption du vo
 
 Autrement dit, la phrase « ce n'est pas de notre faute » ne dispense de rien. Elle peut faire tomber vos 600 €, jamais votre dîner ni votre chambre.
 
-**Et cela vaut même quand l'indemnité ne vous est pas due.** Sur un vol au départ d'Afrique opéré par une compagnie non européenne, vous n'aurez pas les 600 €, mais la prise en charge reste exigible dès lors que le règlement s'applique à votre voyage. Beaucoup de voyageurs de la diaspora paient de leur poche ce qui leur est dû.
+### Encore faut-il que le règlement s'applique à votre vol
+
+Soyons précis, car c'est le point où beaucoup de voyageurs de la diaspora se trompent, et où certains sites entretiennent la confusion.
+
+L'article 9 obéit aux **mêmes conditions d'application** que l'indemnité. Il ne s'agit pas d'un droit universel qui suivrait le passager partout.
+
+| Votre vol | Le règlement s'applique ? |
+|---|---|
+| Départ d'un aéroport de l'Union, quelle que soit la compagnie | **Oui** |
+| Départ d'Afrique vers l'Union, sur une **compagnie européenne** | **Oui** |
+| Départ d'Afrique vers l'Union, sur une **compagnie non européenne** | **Non** |
+
+Concrètement : un Paris vers Abidjan est couvert quelle que soit la compagnie, parce qu'il part de l'Union. Un Abidjan vers Paris n'est couvert que si le vol est opéré par une compagnie européenne.
+
+Toutes les compagnies ne se valent donc pas, et le sens du trajet compte autant que le transporteur. Si votre vol n'entre pas dans ce cadre, d'autres textes peuvent jouer, mais ce n'est plus le règlement européen.
+
+**En revanche, quand le règlement s'applique, la prise en charge vous est due même si l'indemnité, elle, ne l'est pas.** C'est le cas chaque fois qu'une circonstance extraordinaire fait tomber les 600 € : vous perdez l'indemnité, vous gardez le repas et la chambre.
 
 ## Trois droits qui se cumulent, et qu'on confond
 
