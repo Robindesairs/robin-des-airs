@@ -196,6 +196,8 @@ Trois précisions pour que ce courrier fonctionne.
 
 **Gardez une trace de l'envoi.** Un courriel avec accusé de réception, ou le numéro de ticket que le formulaire vous attribue.
 
+**Les quinze jours sont un délai de courtoisie, pas une obligation légale.** Le règlement européen n'impose à la compagnie aucun délai de réponse chiffré, contrairement à ce que certains sites laissent entendre. Fixer une date sert simplement à dater votre relance et à montrer que vous suivez votre dossier. Ne concluez donc pas qu'un silence de seize jours vous ouvre un droit nouveau : il vous ouvre surtout le moment de relancer, puis de saisir l'autorité nationale compétente.
+
 ## Ce que Robin des Airs fait pour vous
 
 Réclamer une prise en charge après coup, reçu par reçu, en la distinguant de la demande d'indemnité pour que la compagnie ne règle pas l'une en croyant solder l'autre : c'est fastidieux, et c'est notre travail.
