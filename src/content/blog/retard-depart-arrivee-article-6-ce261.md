@@ -5,8 +5,8 @@ meta_description: "Le retard au départ ouvre repas et hôtel. Le retard à l'ar
 slug: retard-depart-arrivee-article-6-ce261
 image_url: /og-blog.png
 faq:
-  - q: "Mon vol est parti avec 3 heures de retard mais arrivé avec 1 h 30. Ai-je droit à l'indemnité ?"
-    a: "Non, l'indemnité forfaitaire se calcule sur le **retard à l'arrivée**, pas au départ. Si vous arrivez avec 1 h 30, vous êtes sous le seuil de 3 heures, et les 600 € ne sont pas dus. En revanche, le retard au départ vous ouvrait droit à la prise en charge, repas et boissons, pendant l'attente : ça, c'est acquis et ça ne se rend pas."
+  - q: "Mon vol est parti avec 3 heures de retard mais arrivé avec 2 h 40. Ai-je droit à l'indemnité ?"
+    a: "Non, l'indemnité forfaitaire se calcule sur le **retard à l'arrivée**, pas au départ. Si vous arrivez avec 2 h 40, vous êtes juste sous le seuil de 3 heures, et les 600 € ne sont pas dus, à vingt minutes près. En revanche, le retard au départ vous ouvrait droit à la prise en charge, repas et boissons, pendant l'attente : ça, c'est acquis et ça ne se rend pas. C'est aussi pourquoi il faut faire vérifier l'heure d'arrivée exacte, une minute peut tout changer."
   - q: "L'inverse : parti à l'heure, mais arrivé avec 3 h 30. Suis-je indemnisé ?"
     a: "Oui. Seul le retard à l'arrivée compte pour l'indemnité. Un vol parti à l'heure peut être placé en circuit d'attente au-dessus de l'aéroport, ou dérouté, et arriver largement au-delà de trois heures. Dans ce cas l'indemnité est due, même si le départ n'avait rien d'anormal."
   - q: "Pourquoi mon retard au départ a-t-il presque disparu à l'arrivée ?"
@@ -46,7 +46,7 @@ Le **retard à l'arrivée** déclenche l'indemnité forfaitaire, 250, 400 ou 600
 
 <img src="/assets/images/retard-deux-horloges-depart-arrivee.svg" alt="Schéma des deux horloges du retard : le retard au départ ouvre la prise en charge de l'article 6, le retard à l'arrivée ouvre l'indemnité forfaitaire de 250 à 600 euros" width="1200" height="630" loading="lazy" decoding="async">
 
-Un même vol peut donc franchir une horloge et pas l'autre. Parti avec 3 heures de retard mais arrivé avec 1 h 30, vous avez eu droit aux repas, mais pas à l'indemnité. Parti à l'heure et arrivé avec 3 h 30, c'est l'inverse. **La seule question qui décide de votre indemnité est l'heure à laquelle vous avez posé le pied à destination.**
+Un même vol peut donc franchir une horloge et pas l'autre. Parti avec 3 heures de retard mais arrivé avec 2 h 40, un rattrapage d'une vingtaine de minutes suffit à vous faire passer sous le seuil : repas dus, mais indemnité non due. Parti à l'heure et arrivé avec 3 h 30 après un déroutement, c'est l'inverse. **La seule question qui décide de votre indemnité est l'heure à laquelle vous avez posé le pied à destination.**
 
 ## Pourquoi le retard au départ fond souvent avant l'arrivée
 

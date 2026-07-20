@@ -46,7 +46,7 @@
 
   <!-- bas -->
   <rect x="56" y="460" width="1088" height="58" rx="12" fill="#0B1F3A"/>
-  <text x="88" y="484" fill="#00E5A0" font-size="15.5" font-weight="800">Un vol parti avec 3 h de retard mais arrivé avec 1 h 30 : repas dus, indemnité non due.</text>
+  <text x="88" y="484" fill="#00E5A0" font-size="15.5" font-weight="800">Parti avec 3 h de retard, 20 min rattrapées en vol, arrivé avec 2 h 40 : repas dus, indemnité non due.</text>
   <text x="88" y="506" fill="rgba(255,255,255,.9)" font-size="14">Parti à l'heure mais dérouté et arrivé avec 3 h 30 : indemnité pleinement due. Regardez toujours l'arrivée.</text>
 
   <rect x="56" y="530" width="1088" height="42" rx="10" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
