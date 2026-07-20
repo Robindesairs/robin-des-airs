@@ -59,6 +59,16 @@ const RISQUES = [
    "omet que meme une circonstance extraordinaire exige des mesures raisonnables"],
 ];
 
+/** Resultats clients affirmes. Un resultat invente = pratique commerciale trompeuse. */
+const TEMOIGNAGES = [
+  [/(un de nos clients|notre client|un client nous)[^.]{0,150}(r[ée]sultat|obtenu|vir[ée]|touch[ée])/i,
+   "temoignage client avec resultat chiffre : verifier que le dossier existe"],
+  [/Cas v[ée]cu\s*[-—:][^.]{0,80}(retard|annul)/i,
+   "« cas vecu » suivi d'un dossier : reel, ou a reformuler en exemple illustratif ?"],
+  [/R[ée]sultat\s*:\s*\*{0,2}\d[\d\s]*\s*(€|EUR)[^.]{0,60}(vir|obtenu|per[çc]u|sur son compte)/i,
+   "somme presentee comme obtenue pour un client"],
+];
+
 const pages = corpus();
 const arg = process.argv[2];
 
@@ -117,6 +127,17 @@ for (const [re, why] of RISQUES) {
 }
 if (!n) console.log('  aucune');
 
+console.log(`\n=== TEMOIGNAGES CLIENTS A VERIFIER ===`);
+let temoins = 0;
+for (const [re, why] of TEMOIGNAGES) {
+  const hits = pages.filter((p) => re.test(p.text));
+  if (!hits.length) continue;
+  temoins += hits.length;
+  console.log(`\n  ${hits.length} page(s) : ${why}`);
+  for (const p of hits.slice(0, 6)) console.log(`      ${p.lang}  ${p.slug.slice(0, 58)}`);
+}
+if (!temoins) console.log('  aucun');
+
 console.log(`\n=== DOUBLONS DE TITRE ===`);
 const byTitle = new Map();
 for (const p of pages.filter((x) => x.lang === 'fr')) {
@@ -132,11 +153,11 @@ console.log(`\n=== LIENS INTERNES MORTS ===`);
 let dead = 0;
 for (const p of pages) {
   for (const m of p.html.matchAll(/href=["'](\/(?:en\/)?blog\/[^"'#?]+)["']/g)) {
-    let t = m[1].replace(/^\//, '');
-    if (!t.endsWith('.html')) t += '.html';
-    if (!existsSync(t)) { console.log(`      ${p.slug.slice(0, 40)} -> ${m[1]}`); dead++; }
+    let target = m[1].replace(/^\//, '');
+    if (!target.endsWith('.html')) target += '.html';
+    if (!existsSync(target)) { console.log(`      ${p.slug.slice(0, 40)} -> ${m[1]}`); dead++; }
   }
 }
 console.log(`  ${dead} lien(s) mort(s)`);
 console.log();
-process.exit(n > 0 || dead > 0 ? 1 : 0);
+process.exit(n > 0 || temoins > 0 || dead > 0 ? 1 : 0);
