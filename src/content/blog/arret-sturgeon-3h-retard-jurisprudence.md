@@ -81,7 +81,7 @@ Ne vous fiez donc jamais au retard annoncé au départ pour savoir si vous avez 
 
 ## Ce que ça vaut sur nos lignes
 
-Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute : **600 € par passager**.
+Les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 km. Vous êtes donc dans la tranche haute : **600 € par passager**. Notre article détaille [les trois paliers et leur calcul exact](/blog/indemnite-vol-montants-250-400-600.html), y compris le cas, peu connu, où la compagnie peut légalement n'en verser que la moitié.
 
 Et l'indemnité étant due par personne, une famille de quatre sur un vol retardé de plus de trois heures peut prétendre à 2 400 €.
 
