@@ -76,7 +76,7 @@ Vous ne savez pas dans quelle situation vous êtes ? Envoyez-nous simplement vot
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou **sur WhatsApp**, avec rappel possible dans votre langue.
 
-Sur le même thème : [Quels documents garder pour être indemnisé](/blog/quels-documents-garder-pour-etre-indemnise-vol.html), [Vol annulé moins de 14 jours avant](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html), [Bloqué en escale : vos droits](/blog/bloque-en-escale-repas-hotel-reacheminement-droits.html), [Indemnité par famille](/blog/indemnite-vol-retarde-famille-enfants.html).
+Sur le même thème : [Quels documents garder pour être indemnisé](/blog/quels-documents-garder-pour-etre-indemnise-vol.html), [Vol annulé moins de 14 jours avant](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html), [Bloqué en escale : vos droits](/blog/remboursement-frais-assistance-ce261.html), [Indemnité par famille](/blog/indemnite-vol-retarde-famille-enfants.html).
 
 → [Déposer mon dossier en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)

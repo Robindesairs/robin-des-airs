@@ -112,7 +112,7 @@ Vous ne savez pas si vos documents suffisent ? Envoyez-nous simplement votre **n
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou **sur WhatsApp**, avec rappel possible dans votre langue.
 
-Sur le même thème : [Preuves de retard à conserver](/blog/preuves-retard-vol-conserver-indemnite.html), [Demander une attestation de retard](/blog/justificatif-retard-vol-attestation-compagnie-demander.html), [Vol annulé moins de 14 jours](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html), [Bloqué en escale : vos droits](/blog/bloque-en-escale-repas-hotel-reacheminement-droits.html).
+Sur le même thème : [Preuves de retard à conserver](/blog/preuves-retard-vol-conserver-indemnite.html), [Demander une attestation de retard](/blog/justificatif-retard-vol-attestation-compagnie-demander.html), [Vol annulé moins de 14 jours](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html), [Bloqué en escale : vos droits](/blog/remboursement-frais-assistance-ce261.html).
 
 → [Déposer mon dossier en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
