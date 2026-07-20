@@ -37,6 +37,56 @@ C'est la situation la plus binaire de tout le règlement : soit vous avez embarq
 
 Vous gardez alors 100 % de l'indemnité, et c'est normal.
 
+### Une condition à vérifier d'abord
+
+L'indemnité est due si l'embarquement vous a été refusé **contre votre volonté**. Elle ne l'est pas si vous vous êtes porté **volontaire** pour céder votre place en échange d'une contrepartie négociée, bon d'achat, surclassement ou billet gratuit.
+
+C'est la première question que posera la compagnie. Si vous avez signé quelque chose au comptoir en échange d'un avantage, relisez-le avant d'écrire.
+
+Un détail utile : un passager refusé à l'embarquement possède presque toujours une **carte d'embarquement**, parfois délivrée à la porte. Conservez-la, avec votre réservation. C'est la preuve que vous vous étiez bien présenté.
+
+### La lettre à envoyer
+
+Adressez-la au service client de la compagnie, en conservant une trace de l'envoi.
+
+<div class="copy-modele">
+  <button type="button" id="btn-copie-modele" class="copy-btn">Copier la lettre</button>
+  <span id="copie-etat" class="copy-etat" role="status" aria-live="polite"></span>
+</div>
+
+---
+
+**Objet** : Refus d'embarquement, demande d'indemnisation, vol [numéro] du [date]
+
+Madame, Monsieur,
+
+Je devais voyager sur le vol [numéro] du [date], reliant [ville de départ] à [ville d'arrivée], au titre de la réservation [référence].
+
+Je me suis présenté à l'enregistrement dans les délais requis, muni d'un titre de transport valide et des documents de voyage nécessaires. L'embarquement m'a néanmoins été refusé, **contre ma volonté**, et je ne me suis porté volontaire pour céder ma place en échange d'aucune contrepartie.
+
+Ce refus ouvre droit à l'indemnisation forfaitaire prévue à l'article 7 du règlement (CE) n° 261/2004. Compte tenu de la distance de ce vol, le montant applicable est de **[250 / 400 / 600] € par passager**, pour [nombre] passager(s) concerné(s), soit **[total] €**.
+
+Je vous rappelle que cette indemnité est distincte du remboursement ou du réacheminement prévu à l'article 8, ainsi que de la prise en charge prévue à l'article 9, dont j'ai également bénéficié ou que je réclame par ailleurs.
+
+Je vous demande le versement de cette somme **par virement bancaire**. Je ne souhaite pas de bon d'achat ni d'avoir, qui ne peuvent se substituer à l'indemnité qu'avec mon accord écrit, lequel n'est pas donné.
+
+Vous trouverez ci-joint ma réservation ainsi que ma carte d'embarquement.
+
+À défaut de réponse sous quinze jours, je saisirai les autorités compétentes et engagerai les démarches nécessaires au recouvrement.
+
+[Prénom NOM]
+[Coordonnées bancaires ou mention « IBAN communiqué sur demande »]
+
+---
+
+Trois précisions pour que cette lettre fonctionne.
+
+**Calculez le bon montant.** 250 € jusqu'à 1 500 km, 400 € entre 1 500 et 3 500 km, 600 € au-delà. Toutes les destinations subsahariennes depuis l'Europe relèvent de la tranche haute.
+
+**Multipliez par le nombre de passagers refusés.** L'indemnité est individuelle, y compris pour les enfants disposant d'un siège payé.
+
+**Les quinze jours sont un délai de courtoisie.** Aucun texte n'impose de délai de réponse à la compagnie. Fixer une date sert à dater votre relance, pas à créer une obligation.
+
 ## Pourquoi les autres cas sont plus difficiles
 
 Dans toutes les autres situations, retard, annulation, correspondance manquée, la compagnie a un argument à sa disposition : la circonstance extraordinaire. Et c'est là que tout se joue.
@@ -146,6 +196,49 @@ Si la réponse est non, un dossier délégué à 60 ou 75 % vaut mieux qu'un dos
   <p class="cta-inline-p">La vérification est gratuite et sans engagement. Si votre cas est simple, on vous le dira et vous le ferez vous-même.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
 </aside>
+
+<style>
+#blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}
+#blog-body .copy-btn{font:inherit;font-size:.875rem;font-weight:700;color:#047857;background:#EFF9F4;border:1px solid #00C87A;border-radius:.5rem;padding:.5rem .95rem;cursor:pointer}
+#blog-body .copy-btn:hover{background:#DFF3EA}
+#blog-body .copy-btn:focus-visible{outline:2px solid #047857;outline-offset:2px}
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+</style>
+
+<script>
+(function(){
+  var btn=document.getElementById('btn-copie-modele');
+  if(!btn) return;
+  var etat=document.getElementById('copie-etat');
+  // Le modele est le contenu situe entre les deux traits horizontaux qui suivent
+  // le bouton. On le lit dans le DOM plutot que de le dupliquer ici : une seule
+  // source de verite, le texte reste juste meme si l'article est reecrit.
+  function texteModele(){
+    var n=btn.closest('.copy-modele'), out=[], started=false;
+    while((n=n.nextElementSibling)){
+      if(n.tagName==='HR'){ if(started) break; started=true; continue; }
+      if(started && n.innerText) out.push(n.innerText.trim());
+    }
+    return out.join('\n\n');
+  }
+  btn.addEventListener('click',function(){
+    var t=texteModele();
+    if(!t) return;
+    function ok(){ etat.textContent='Modèle copié'; setTimeout(function(){etat.textContent='';},2600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(ok).catch(fallback);
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=t; ta.setAttribute('readonly',''); ta.style.position='absolute'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); ok(); }
+      catch(e){ etat.textContent='Copie impossible, sélectionnez le texte'; }
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}

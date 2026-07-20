@@ -102,6 +102,34 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 <p>Si vous avez été refusé à l&#39;embarquement alors que vous vous étiez présenté à l&#39;heure, avec un billet valide, <strong>faites-le vous-même</strong>.</p>
 <p>C&#39;est la situation la plus binaire de tout le règlement : soit vous avez embarqué, soit non. Il n&#39;y a pas de cause à démontrer, pas de circonstance extraordinaire à discuter, pas de chronologie à reconstituer. La compagnie a très peu de matière pour contester, et le dossier tient en un courrier.</p>
 <p>Vous gardez alors 100 % de l&#39;indemnité, et c&#39;est normal.</p>
+<h3>Une condition à vérifier d&#39;abord</h3>
+<p>L&#39;indemnité est due si l&#39;embarquement vous a été refusé <strong>contre votre volonté</strong>. Elle ne l&#39;est pas si vous vous êtes porté <strong>volontaire</strong> pour céder votre place en échange d&#39;une contrepartie négociée, bon d&#39;achat, surclassement ou billet gratuit.</p>
+<p>C&#39;est la première question que posera la compagnie. Si vous avez signé quelque chose au comptoir en échange d&#39;un avantage, relisez-le avant d&#39;écrire.</p>
+<p>Un détail utile : un passager refusé à l&#39;embarquement possède presque toujours une <strong>carte d&#39;embarquement</strong>, parfois délivrée à la porte. Conservez-la, avec votre réservation. C&#39;est la preuve que vous vous étiez bien présenté.</p>
+<h3>La lettre à envoyer</h3>
+<p>Adressez-la au service client de la compagnie, en conservant une trace de l&#39;envoi.</p>
+<div class="copy-modele">
+  <button type="button" id="btn-copie-modele" class="copy-btn">Copier la lettre</button>
+  <span id="copie-etat" class="copy-etat" role="status" aria-live="polite"></span>
+</div>
+
+<hr>
+<p><strong>Objet</strong> : Refus d&#39;embarquement, demande d&#39;indemnisation, vol [numéro] du [date]</p>
+<p>Madame, Monsieur,</p>
+<p>Je devais voyager sur le vol [numéro] du [date], reliant [ville de départ] à [ville d&#39;arrivée], au titre de la réservation [référence].</p>
+<p>Je me suis présenté à l&#39;enregistrement dans les délais requis, muni d&#39;un titre de transport valide et des documents de voyage nécessaires. L&#39;embarquement m&#39;a néanmoins été refusé, <strong>contre ma volonté</strong>, et je ne me suis porté volontaire pour céder ma place en échange d&#39;aucune contrepartie.</p>
+<p>Ce refus ouvre droit à l&#39;indemnisation forfaitaire prévue à l&#39;article 7 du règlement (CE) n° 261/2004. Compte tenu de la distance de ce vol, le montant applicable est de <strong>[250 / 400 / 600] € par passager</strong>, pour [nombre] passager(s) concerné(s), soit <strong>[total] €</strong>.</p>
+<p>Je vous rappelle que cette indemnité est distincte du remboursement ou du réacheminement prévu à l&#39;article 8, ainsi que de la prise en charge prévue à l&#39;article 9, dont j&#39;ai également bénéficié ou que je réclame par ailleurs.</p>
+<p>Je vous demande le versement de cette somme <strong>par virement bancaire</strong>. Je ne souhaite pas de bon d&#39;achat ni d&#39;avoir, qui ne peuvent se substituer à l&#39;indemnité qu&#39;avec mon accord écrit, lequel n&#39;est pas donné.</p>
+<p>Vous trouverez ci-joint ma réservation ainsi que ma carte d&#39;embarquement.</p>
+<p>À défaut de réponse sous quinze jours, je saisirai les autorités compétentes et engagerai les démarches nécessaires au recouvrement.</p>
+<p>[Prénom NOM]
+[Coordonnées bancaires ou mention « IBAN communiqué sur demande »]</p>
+<hr>
+<p>Trois précisions pour que cette lettre fonctionne.</p>
+<p><strong>Calculez le bon montant.</strong> 250 € jusqu&#39;à 1 500 km, 400 € entre 1 500 et 3 500 km, 600 € au-delà. Toutes les destinations subsahariennes depuis l&#39;Europe relèvent de la tranche haute.</p>
+<p><strong>Multipliez par le nombre de passagers refusés.</strong> L&#39;indemnité est individuelle, y compris pour les enfants disposant d&#39;un siège payé.</p>
+<p><strong>Les quinze jours sont un délai de courtoisie.</strong> Aucun texte n&#39;impose de délai de réponse à la compagnie. Fixer une date sert à dater votre relance, pas à créer une obligation.</p>
 <h2>Pourquoi les autres cas sont plus difficiles</h2>
 <p>Dans toutes les autres situations, retard, annulation, correspondance manquée, la compagnie a un argument à sa disposition : la circonstance extraordinaire. Et c&#39;est là que tout se joue.</p>
 <h3>Le premier refus n&#39;est pas une conclusion</h3>
@@ -162,6 +190,49 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
   <p class="cta-inline-p">La vérification est gratuite et sans engagement. Si votre cas est simple, on vous le dira et vous le ferez vous-même.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Faire vérifier mon vol</a></p>
 </aside>
+
+<style>
+#blog-body .copy-modele{display:flex;align-items:center;gap:.7rem;margin:.9rem 0 .2rem;flex-wrap:wrap}
+#blog-body .copy-btn{font:inherit;font-size:.875rem;font-weight:700;color:#047857;background:#EFF9F4;border:1px solid #00C87A;border-radius:.5rem;padding:.5rem .95rem;cursor:pointer}
+#blog-body .copy-btn:hover{background:#DFF3EA}
+#blog-body .copy-btn:focus-visible{outline:2px solid #047857;outline-offset:2px}
+#blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
+</style>
+
+<script>
+(function(){
+  var btn=document.getElementById('btn-copie-modele');
+  if(!btn) return;
+  var etat=document.getElementById('copie-etat');
+  // Le modele est le contenu situe entre les deux traits horizontaux qui suivent
+  // le bouton. On le lit dans le DOM plutot que de le dupliquer ici : une seule
+  // source de verite, le texte reste juste meme si l'article est reecrit.
+  function texteModele(){
+    var n=btn.closest('.copy-modele'), out=[], started=false;
+    while((n=n.nextElementSibling)){
+      if(n.tagName==='HR'){ if(started) break; started=true; continue; }
+      if(started && n.innerText) out.push(n.innerText.trim());
+    }
+    return out.join('\n\n');
+  }
+  btn.addEventListener('click',function(){
+    var t=texteModele();
+    if(!t) return;
+    function ok(){ etat.textContent='Modèle copié'; setTimeout(function(){etat.textContent='';},2600); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(ok).catch(fallback);
+    } else { fallback(); }
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=t; ta.setAttribute('readonly',''); ta.style.position='absolute'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); ok(); }
+      catch(e){ etat.textContent='Copie impossible, sélectionnez le texte'; }
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}
