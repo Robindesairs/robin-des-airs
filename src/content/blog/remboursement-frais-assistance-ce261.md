@@ -27,6 +27,8 @@ Tout le monde connaît l'indemnité de 250, 400 ou 600 €. Presque personne ne 
 
 C'est aussi celui que les compagnies passent le plus volontiers sous silence, parce qu'il a une particularité redoutable pour elles : **il reste dû même quand elles ne sont responsables de rien.**
 
+Retenez cette phrase avant de lire la suite, parce qu'elle vaut de l'argent : chaque nuit de grosse perturbation, des passagers dorment dans un terminal en croyant n'avoir droit à rien, alors qu'une chambre leur était due.
+
 <nav class="sommaire" aria-label="Sommaire de l'article">
   <p class="sommaire-t">Dans cet article</p>
   <ol id="sommaire-liste"></ol>
@@ -72,7 +74,11 @@ En pratique, un repas de cafétéria d'aéroport et un hôtel proche à tarif no
 
 ## Le point décisif : ce droit survit aux circonstances extraordinaires
 
-Voici ce qui distingue l'article 9 de tout le reste du règlement, et ce que les compagnies omettent de vous dire.
+Voici ce qui distingue l'article 9 de tout le reste du règlement, et l'erreur la plus coûteuse que commettent les passagers.
+
+**Beaucoup croient que si la compagnie n'est responsable de rien, ils n'ont droit à rien.** Alors ils s'installent dans le terminal, ils dorment sur les sièges, ils achètent un sandwich de leur poche. C'est une scène banale dans tous les aéroports lors des grosses perturbations.
+
+Or c'est exactement l'inverse. **La chambre d'hôtel leur était due**, et le repas aussi.
 
 L'indemnité forfaitaire tombe si la compagnie prouve une circonstance extraordinaire. **La prise en charge, elle, ne tombe jamais.** Météo, grève des contrôleurs, fermeture d'espace aérien, nuage de cendres : peu importe la cause, vous devez être nourri et logé.
 
