@@ -83,6 +83,24 @@ Rien de scandaleux là-dedans : une entreprise cherche à limiter ses coûts, c'
 
 Toutes les compagnies ne se valent pas, d'ailleurs. Certaines paient sans discuter quand le dossier est solide. D'autres ne cèdent qu'à la dernière extrémité.
 
+## Trois choses propres à l'axe Europe-Afrique
+
+Si vous voyagez entre l'Europe et l'Afrique, votre situation n'est pas celle d'un passager sur un vol intérieur. Trois différences comptent.
+
+**Vous êtes presque toujours dans la tranche haute.** Dakar, Abidjan, Bamako, Conakry, Douala, Yaoundé, Kinshasa, Libreville, Lomé, Cotonou, Nairobi : toutes ces destinations dépassent 3 500 km depuis l'Europe. L'indemnité est donc de **600 € par personne**, le montant maximal. Seul le Maghreb reste à 400 €.
+
+**Vous voyagez rarement seul.** C'est la particularité de nos lignes : on part en famille, on rentre au pays à plusieurs. Quatre personnes sur un même vol retardé, ce sont **2 400 €**, et non 600. L'indemnité se compte par passager, jamais par réservation. C'est le point que les familles ignorent le plus souvent, et c'est celui qui change tout dans le calcul.
+
+**Le sens du trajet décide de votre éligibilité.** C'est le piège le plus coûteux, et il est spécifique à nos routes. Un vol au départ d'Europe est couvert quelle que soit la compagnie. Un vol vers l'Europe depuis l'Afrique n'est couvert **que si le transporteur est européen**. Autrement dit, un Paris vers Abidjan est protégé dans tous les cas, mais un Abidjan vers Paris ne l'est que sur une compagnie européenne.
+
+Vérifiez donc **quelle compagnie opère réellement** votre vol, et non celle qui figure sur votre billet : sur ces lignes, les partages de code sont fréquents, et c'est le transporteur effectif qui compte.
+
+### Et une difficulté de terrain
+
+Quand la perturbation vous surprend en escale africaine, à Casablanca, Lomé, Addis-Abeba ou Nairobi, le comptoir de la compagnie est parfois fermé la nuit ou débordé. Vous n'aurez pas toujours d'interlocuteur à qui réclamer, et vous devrez souvent avancer vos frais avant de les récupérer.
+
+Cela ne change rien à vos droits, mais cela change votre méthode : photographiez le tableau d'affichage avec l'heure, photographiez le comptoir fermé, et gardez chaque reçu.
+
 ## Si vous décidez d'aller jusqu'au bout seul
 
 C'est possible, et il faut le dire. Voici ce qui vous attend réellement.
