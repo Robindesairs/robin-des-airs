@@ -22,7 +22,7 @@
  *   relance2 → classé sans_suite, on n'insiste pas au-delà de deux relances.
  */
 
-const { getStore } = require('@netlify/blobs');
+const { getStore, connectLambda } = require('@netlify/blobs');
 const { checkCrmAccess } = require('./lib/crm-access');
 const MEDIAS = require('./data/presse-medias.json');
 
@@ -64,6 +64,9 @@ exports.handler = async (event) => {
   const access = checkCrmAccess(event);
   if (!access.ok) return json(access.configured === false ? 500 : 401, { error: access.error || 'Non autorisé' });
 
+  // Blobs v7+ : hors runtime auto-configuré, getStore() échoue sans connectLambda(event).
+  // Son absence renvoyait un 500 sur le GET → le front rebasculait sur le login (faux « bug de connexion »).
+  try { if (connectLambda) connectLambda(event); } catch (_) {}
   const store = getStore(STORE);
 
   try {
