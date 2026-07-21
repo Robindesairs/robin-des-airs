@@ -3,6 +3,7 @@ title: "Retard au départ ou à l'arrivée : ce sont deux horloges, et une seule
 meta_title: "Retard de vol : départ ou arrivée, l'article 6 et les 600 €"
 meta_description: "Le retard au départ ouvre repas et hôtel. Le retard à l'arrivée ouvre les 600 €. L'article 6 ne parle jamais d'argent : voici où est vraiment votre indemnité."
 slug: retard-depart-arrivee-article-6-ce261
+hreflang_en: flight-delay-departure-vs-arrival-ce261
 image_url: /og-blog.png
 faq:
   - q: "Mon vol est parti avec 3 heures de retard mais arrivé avec 2 h 40. Ai-je droit à l'indemnité ?"

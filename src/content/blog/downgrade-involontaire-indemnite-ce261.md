@@ -3,6 +3,7 @@ title: "Déclassé en classe éco : la compagnie vous doit 75 % du vol, pas un b
 meta_title: "Déclassement en avion : indemnité de l'article 10, jusqu'à 75 %"
 meta_description: "Placé en classe inférieure à celle payée ? La compagnie vous rembourse 30 à 75 % du prix du vol concerné, sous 7 jours, en argent, jamais en bon d'achat imposé."
 slug: downgrade-involontaire-indemnite-ce261
+hreflang_en: involuntary-downgrade-compensation-ce261
 image_url: /og-blog.png
 faq:
   - q: "On m'a placé en classe économique alors que j'avais payé une classe affaires. Ai-je droit à quelque chose ?"
