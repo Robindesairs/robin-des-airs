@@ -40,7 +40,7 @@ Cela pose une question de fond : le silence prolongé d'un professionnel face à
 
 ### Deux créances presque jamais réclamées
 
-Le déclassement est la plus méconnue. Lorsqu'un passager est placé dans une classe inférieure à celle qu'il a payée, l'article 10 du règlement européen impose le remboursement de **75 % du prix du billet** sur tout vol de plus de 3 500 kilomètres, donc sur toutes les liaisons entre l'Europe et l'Afrique centrale. Un billet affaires à 2 400 euros déclassé à l'embarquement représente environ **1,18 million de FCFA** à restituer, sous sept jours, sans preuve de préjudice.
+Le déclassement est la plus méconnue. Lorsqu'un passager est placé dans une classe inférieure à celle qu'il a payée, l'article 10 du règlement européen impose le remboursement de **75 % du prix du vol concerné** sur tout vol de plus de 3 500 kilomètres, donc sur toutes les liaisons entre l'Europe et l'Afrique centrale. La Cour de justice a précisé que ce pourcentage se calcule sur le seul vol déclassé, taxes exclues, et non sur le billet entier. Sur un aller en classe affaires facturé plusieurs centaines de milliers de francs CFA, la somme à restituer, sous sept jours et sans preuve de préjudice, n'a rien de symbolique.
 
 Deuxième point : ce remboursement est dû en argent. Une compagnie ne peut pas l'imposer sous forme de bon d'achat sans l'accord du passager, qui reste libre de refuser.
 

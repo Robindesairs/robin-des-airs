@@ -41,7 +41,7 @@ Il faut le dire nettement : cette règle est mal faite. Un délai qui court alor
 
 ### Deux créances presque jamais réclamées
 
-Le déclassement d'abord. Un passager installé dans une classe inférieure à celle qu'il a payée a droit au remboursement de 75 % du prix de son billet au delà de 3 500 kilomètres, dû sous sept jours et sans preuve de préjudice. Sur les tarifs pratiqués au départ de Genève, la somme n'a rien de symbolique. Elle est due en argent, et un bon d'achat ne peut être imposé sans accord.
+Le déclassement d'abord. Placé dans une classe inférieure à celle qu'il a payée, un passager a droit, sur un vol de plus de 3 500 kilomètres, au remboursement de 75 % du prix du vol concerné, taxes exclues. La Cour a précisé que ce pourcentage porte sur le seul vol déclassé, pas sur le billet entier. Elle est due sous sept jours, en argent, et un bon d'achat ne peut être imposé sans accord.
 
 Le surclassement offert à la suite d'un refus d'embarquement ensuite. Il ne constitue pas une compensation et n'éteint pas l'indemnité due.
 
