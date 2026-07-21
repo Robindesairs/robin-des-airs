@@ -73,6 +73,7 @@ select,.note-in{background:var(--card);border:1px solid var(--border);border-rad
 .gate input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:3px;color:var(--ink);padding:9px 11px;font:inherit;margin-bottom:10px}
 .gate button{width:100%;background:var(--gold);color:#0A1628;border:none;border-radius:3px;padding:9px;font:inherit;font-weight:700;cursor:pointer}
 .gate .err{color:var(--bad);font-size:12.5px;margin-top:9px;min-height:16px}
+.gate .err.info{color:var(--ok)}
 .hidden{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -211,7 +212,7 @@ document.getElementById('login').addEventListener('click',async()=>{
   const code=document.getElementById('code').value.trim();
   const champTotp=document.getElementById('totp');
   const totp=champTotp.value.trim();
-  const err=document.getElementById('gate-err');err.textContent='';
+  const err=document.getElementById('gate-err');err.textContent='';err.classList.remove('info');
   if(!code){err.textContent='Saisissez le code CRM';return;}
   try{
     // Le CRM exige une double authentification : le serveur repond needTotp
@@ -224,7 +225,10 @@ document.getElementById('login').addEventListener('click',async()=>{
       if(j&&j.needTotp){
         champTotp.classList.remove('hidden');
         champTotp.value='';champTotp.focus();
-        err.textContent=totp?'Code de vérification incorrect':'Saisissez le code de vérification de votre application d’authentification';
+        // 1re fois (pas encore de code 6 chiffres saisi) = instruction, pas une erreur → vert.
+        // Code effectivement refusé = rouge.
+        err.classList.toggle('info',!totp);
+        err.textContent=totp?'Code de vérification incorrect, réessayez avec le code actuel.':'✅ Code accepté. Entrez le code à 6 chiffres de votre application, puis cliquez sur Entrer.';
         return;
       }
       err.textContent=(j&&j.error)||'Code refusé';
