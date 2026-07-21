@@ -20,6 +20,10 @@ faq:
     a: "Oui, et automatiquement. L'article 10 §2 du règlement CE 261/2004 impose le remboursement d'une part du billet sous 7 jours : **75 % sur tout vol de plus de 3 500 km**, ce qui couvre l'ensemble des liaisons Europe-Afrique. Vous n'avez aucun préjudice à prouver."
   - q: "On m'a surclassé après un refus d'embarquement. Est-ce que je perds mon indemnité ?"
     a: "Non. Un surclassement proposé à la suite d'un surbooking n'est pas un cadeau, c'est une obligation légale. Vous conservez votre droit à l'indemnité CE 261 de 250 à 600 € par passager. Beaucoup de compagnies omettent de le préciser."
+  - q: "Est-ce qu'arriver en dernier augmente mes chances de surclassement ?"
+    a: "En règle générale non : au comptoir, vous passez en fin de liste. Il existe une seule exception, purement opérationnelle. Si, à la fermeture, aucun siège ne reste pour vous en économie, une rangée hors service ou une cabine survendue, et qu'une place est libre en affaires, c'est le dernier passager sans siège qu'on déplace vers l'avant. Vous ne pouvez pas le provoquer, mais c'est ainsi que certains retardataires finissent en classe affaires."
+  - q: "Le surclassement payant proposé à la dernière minute vaut-il le coup ?"
+    a: "Souvent oui. Le supplément proposé par courriel la veille ou à la porte est en général bien inférieur au prix d'un billet affaires acheté à l'avance, et c'est un vrai surclassement. Vérifiez la remise réelle en la comparant au tarif affaires du vol. Sachez simplement qu'un surclassement acheté volontairement n'ouvre aucun droit particulier : c'est un achat, pas une compensation."
 ---
 
 **Le surclassement gratuit existe, mais il est rare, et pour une famille qui rentre au pays il est presque hors d'atteinte.** En revanche, le déclassement, lui, vous doit de l'argent : jusqu'à 75 % du billet sur toute liaison Europe-Afrique. On vérifie gratuitement, 0 € d'avance.
@@ -31,6 +35,12 @@ Tout le monde rêve d'un surclassement en classe affaires. La plupart des voyage
 Le surclassement opérationnel existe pour une raison technique, pas par générosité. La classe économique est surréservée, la cabine affaires a des sièges vides. Plutôt que de refuser l'embarquement à des passagers, ce qui déclenche une indemnité obligatoire au titre du CE 261, la compagnie déplace quelques passagers vers l'avant. Cela lui coûte moins cher.
 
 Sur un moyen-courrier européen, cela concerne environ 2 à 3 % des passagers. Sur un long-courrier, entre 0,5 et 1 %. C'est rare, mais ce n'est pas aléatoire : la compagnie choisit.
+
+## Qui décide vraiment, et le seul cas où arriver en dernier aide
+
+Le surclassement gratuit ne se décide pas à un guichet anonyme. C'est le chef de cabine qui tranche, et dans certaines compagnies le commandant a son mot à dire. Pendant l'embarquement, c'est une partie de chaises musicales : on remplit, on déplace, on ajuste jusqu'à la fermeture des portes. Et une fois les portes closes, le chef de cabine peut encore surclasser de sa propre initiative, pour recaser un passager dont le siège est défaillant ou installer plus confortablement un passager fragile.
+
+C'est ce qui explique la seule exception à la règle « arriver en dernier ne sert à rien ». En temps normal, se présenter tard vous place en fin de liste. Mais si, à la fermeture, il ne reste aucun siège pour vous en économie, une rangée hors service ou une cabine survendue, et qu'une place est libre en affaires, c'est justement vous, le dernier sans siège, qu'on déplace vers l'avant. Vous n'y êtes pour rien et vous ne pouvez pas le provoquer, mais c'est ainsi que certains retardataires finissent en classe affaires. Une exception, notez-le, purement opérationnelle : encore une fois, rien à voir avec le charme ou la belle histoire.
 
 ## Facteur 1 : votre statut de fidélité, de très loin le plus décisif
 
@@ -78,7 +88,13 @@ Un mardi matin sur une ligne européenne classique en janvier, la cabine affaire
 
 ## Les 5 mythes à oublier définitivement
 
-Dire que vous partez en lune de miel ne fonctionne plus depuis les années 90. Porter un costume pour impressionner n'a aucun effet, les agents en voient des centaines par jour. Arriver en dernier au comptoir vous place en fin de liste, et non l'inverse. Glisser un billet à un agent est illégal et peut vous coûter votre embarquement. Et détenir une carte bancaire haut de gamme, sans statut de fidélité associé, ne change rien.
+Dire que vous partez en lune de miel ne fonctionne plus depuis les années 90. Porter un costume pour impressionner n'a aucun effet, les agents en voient des centaines par jour. Arriver en dernier au comptoir vous place en fin de liste pour la sélection classique, à la seule exception opérationnelle expliquée plus haut. Glisser un billet à un agent est illégal et peut vous coûter votre embarquement. Et détenir une carte bancaire haut de gamme, sans statut de fidélité associé, ne change rien.
+
+## Le surclassement payant de dernière minute, la vraie bonne affaire
+
+Il existe une autre voie, et celle-là, vous la maîtrisez. Dans les heures qui précèdent le vol, par courriel ou à la porte, la compagnie propose parfois de monter en classe affaires pour un supplément, souvent bien inférieur au prix d'un billet affaires acheté d'emblée. C'est un vrai surclassement, pas une illusion, et c'est fréquemment une excellente affaire.
+
+Deux réflexes avant de dire oui. Comparez le supplément au tarif affaires normal du même vol, pour mesurer la remise réelle. Et gardez en tête qu'un surclassement payé volontairement n'ouvre aucun droit particulier : c'est un achat, pas une réparation. Si le vol tourne mal ensuite, retard ou annulation, vos droits se calculent comme pour tout le monde, sur la distance et le trajet.
 
 ## Le déclassement, lui, vous doit de l'argent
 
