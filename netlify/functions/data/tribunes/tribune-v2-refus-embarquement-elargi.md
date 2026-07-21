@@ -54,4 +54,4 @@ Le jour où l'on vous écarte d'un vol, ne vous contentez pas de l'explication o
 
 Cela ne coûte rien sur le moment. Cela fait toute la différence quand il s'agit, des semaines plus tard, de démontrer que vous vous étiez bien présenté et que ce n'est pas vous qui avez renoncé.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.

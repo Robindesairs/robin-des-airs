@@ -52,4 +52,4 @@ Enfin, les traceurs de bagages sont autorisés. Le guide passagers de l'IATA ind
 
 Une valise se perd rarement. Un droit, en revanche, se perd en sept jours.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.

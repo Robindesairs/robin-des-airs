@@ -72,4 +72,4 @@ Le troisième, lorsqu'il faut porter l'affaire devant une juridiction étrangèr
 
 En dehors de ces trois hypothèses, un refus d'embarquement pour surréservation se réclame très bien soi-même. La règle est claire, les faits sont établis, et la compagnie le sait.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.

@@ -56,4 +56,4 @@ Le règlement raisonne aussi par passager, pas par réservation. Chaque personne
 
 Ce que j'ai vu le plus souvent en vingt ans, ce n'est pas de la mauvaise foi caractérisée. C'est un silence. L'information existe, elle est parfois affichée, mais elle est présentée comme un geste commercial plutôt que comme une obligation. Un passager qui connaît l'article 9 pose la question autrement, et obtient souvent une autre réponse.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.

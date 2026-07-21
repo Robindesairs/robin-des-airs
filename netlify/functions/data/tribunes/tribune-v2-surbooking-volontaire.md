@@ -54,4 +54,4 @@ Sur des liaisons où les clientèles voyagent massivement en groupe familial, ce
 
 Le volontariat n'est pas un piège. C'est simplement une transaction, et une transaction se négocie avec les deux chiffres sous les yeux.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.

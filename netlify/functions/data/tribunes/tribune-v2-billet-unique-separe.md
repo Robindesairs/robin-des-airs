@@ -50,4 +50,4 @@ En partage de code, le nom imprimé sur le billet n'est fréquemment pas celui i
 
 Avant de partir, prenez donc trois minutes. Regardez si vos vols figurent sur une seule réservation. Vérifiez le nom du transporteur effectif sur chaque segment. Ces deux vérifications valent plus que tout ce que vous ferez après le retard.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.

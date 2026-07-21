@@ -56,4 +56,4 @@ Le second : l'heure d'arrivée prévue au moment où vous avez acheté le billet
 
 L'écart entre les deux, c'est votre dossier. Tout le reste, montant plein ou montant réduit, se déduit de cette soustraction. Sur un vol long courrier, franchir la barre des quatre heures fait exactement doubler ce que vous êtes en droit de percevoir.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, ancien chef de cabine, quinze ans en vol et vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.
