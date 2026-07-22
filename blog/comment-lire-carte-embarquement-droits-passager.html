@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <!-- Traceurs publicitaires : chargés UNIQUEMENT après consentement, cf. /assets/consent.js -->
+  <script defer src="/assets/consent.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <title>Comment lire sa carte d'embarquement : transporteur, vol, porte, siège</title>
+  <meta name="description" content="Décryptez chaque ligne de votre carte d'embarquement : transporteur effectif, numéro de vol, porte, heure limite, siège. Et découvrez qui vous doit jusqu'à 600 € si votre vol est retardé ou annulé.">
+  <link rel="canonical" href="https://robindesairs.eu/blog/comment-lire-carte-embarquement-droits-passager.html">
+  <meta property="og:title" content="Comment lire sa carte d'embarquement : transporteur, vol, porte, siège">
+  <meta property="og:description" content="Décryptez chaque ligne de votre carte d'embarquement : transporteur effectif, numéro de vol, porte, heure limite, siège. Et découvrez qui vous doit jusqu'à 600 € si votre vol est retardé ou annulé.">
+  <meta property="og:url" content="https://robindesairs.eu/blog/comment-lire-carte-embarquement-droits-passager.html">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://robindesairs.eu/og-blog.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Comment lire sa carte d'embarquement : transporteur, vol, porte, siège">
+  <meta name="twitter:description" content="Décryptez chaque ligne de votre carte d'embarquement : transporteur effectif, numéro de vol, porte, heure limite, siège. Et découvrez qui vous doit jusqu'à 600 € si votre vol est retardé ou annulé.">
+  <meta name="twitter:image" content="https://robindesairs.eu/og-blog.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
+  <style>*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
+nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
+nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
+.wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
+h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
+.cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
+.cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
+.cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
+.cta-box span.sep{color:rgba(255,255,255,.5)}
+.cta-top{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1rem;margin:0 0 1.5rem;padding:.9rem 1.1rem;background:#EFF9F4;border:1px solid #00C87A;border-radius:.75rem;color:#0B1F3A;font-size:.95rem}
+.cta-top strong{color:#0B1F3A}
+.cta-top .btn{background:#00C87A;color:#0B1F3A;font-weight:800;text-decoration:none;padding:.6rem 1.05rem;border-radius:.6rem;white-space:nowrap}
+.cta-top .muted{color:#4B5563;font-size:.82rem}
+.related{margin-top:1.5rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem}
+.related h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem}
+.related ul{list-style:disc;padding-left:1.25rem;margin:0;font-size:.875rem;color:#374151}
+.related li{margin-bottom:.25rem}
+.related a{color:#009960;font-weight:600;text-decoration:none}
+.related a:hover{color:#00C87A;text-decoration:underline}
+#blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
+#blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #00C87A}
+#blog-body h3{font-size:1rem;font-weight:700;color:#0B1F3A;margin:1.25rem 0 .4rem}
+#blog-body p{margin-bottom:.875rem;font-size:14px;color:#374151}
+#blog-body ul,#blog-body ol{margin:.5rem 0 .875rem 1.25rem}
+#blog-body li{margin-bottom:.25rem;font-size:14px}
+#blog-body li::marker{color:#00C87A}
+#blog-body strong{color:#0B1F3A}
+#blog-body a{color:#009960;font-weight:600}
+#blog-body a:hover{color:#00C87A;text-decoration:underline}
+#blog-body img{display:block;max-width:100%;height:auto;margin:1.25rem 0;border-radius:.5rem;border:1px solid #E2E6EE}
+/* Tableaux : 92 articles en contiennent, certains à 4 colonnes. Sans overflow, la
+   dernière colonne était purement coupée sur mobile (vérifié à 375px : la colonne
+   « Délai pour agir » disparaissait hors écran, sans scroll possible). Le trafic
+   étant majoritairement mobile, on rend le tableau scrollable horizontalement. */
+#blog-body table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;margin:1rem 0;font-size:14px}
+#blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
+#blog-body th{background:#0B1F3A;color:white;font-weight:700}
+#blog-body tr:nth-child(even){background:#F7F8FA}
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+.faq{margin-top:2rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem 1.5rem}
+.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #00C87A}
+.faq details{border-top:1px solid #F1F2F4;padding:.75rem 0}
+.faq details:first-of-type{border-top:none}
+.faq summary{font-size:.95rem;font-weight:600;color:#0B1F3A;cursor:pointer;padding:.25rem 0;list-style:none;position:relative;padding-right:1.5rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#00C87A;font-weight:700;line-height:1}
+.faq details[open] summary::after{content:'−'}
+.faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
+.faq details>div a{color:#009960;font-weight:600}
+.faq details>div strong{color:#0B1F3A}</style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Comment lire sa carte d'embarquement : transporteur, vol, porte, siège","description":"Décryptez chaque ligne de votre carte d'embarquement : transporteur effectif, numéro de vol, porte, heure limite, siège. Et découvrez qui vous doit jusqu'à 600 € si votre vol est retardé ou annulé.","url":"https://robindesairs.eu/blog/comment-lire-carte-embarquement-droits-passager.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-07-22","dateModified":"2026-07-22","mainEntityOfPage":{"@type":"WebPage","@id":"https://robindesairs.eu/blog/comment-lire-carte-embarquement-droits-passager.html"},"author":{"@type":"Person","@id":"https://robindesairs.eu/a-propos.html#climbie","name":"Saint-Yves","url":"https://robindesairs.eu/a-propos.html"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"Comment lire sa carte d'embarquement : transporteur, vol, porte, siège","item":"https://robindesairs.eu/blog/comment-lire-carte-embarquement-droits-passager.html"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment savoir quelle compagnie opère réellement mon vol ?","acceptedAnswer":{"@type":"Answer","text":"Regardez la mention **« opéré par »** (operated by) sur la carte d'embarquement ou la réservation : c'est le **transporteur effectif**. C'est lui qui vous doit l'indemnité CE 261, pas la compagnie qui a vendu le billet. Un numéro de vol Air France peut cacher un vol opéré par une autre compagnie (code-share)."}},{"@type":"Question","name":"Le numéro de vol change-t-il ?","acceptedAnswer":{"@type":"Answer","text":"Non, il reste **unique** pour un même vol. Il ne change que si le vol est **annulé puis reprogrammé** sous un autre numéro. Gardez-le : c'est votre preuve pour retrouver l'heure réelle d'arrivée et le retard."}},{"@type":"Question","name":"Pourquoi la porte d'embarquement change-t-elle à la dernière minute ?","acceptedAnswer":{"@type":"Answer","text":"Parce qu'un aéroport est un système vivant : un avion précédent encore à quai, un aléa technique, un passager débarqué… Ne vous fiez pas uniquement à la carte : **vérifiez les écrans du terminal**, mis à jour automatiquement."}},{"@type":"Question","name":"« Fin d'embarquement 20 minutes avant le départ », ça veut dire quoi ?","acceptedAnswer":{"@type":"Answer","text":"Que les portes de la passerelle **ferment** à ce moment-là, pas que l'avion décolle. Passé ce délai, on ne peut plus vous embarquer. Soyez à la porte **au moins 30 minutes avant** le départ."}},{"@type":"Question","name":"En quoi ma carte d'embarquement décide-t-elle de mon indemnité ?","acceptedAnswer":{"@type":"Answer","text":"Deux lignes comptent : le **transporteur effectif** (qui vous doit l'argent) et, au départ d'un pays hors UE, son **pavillon** (vous n'êtes couvert que si l'opérateur est européen). Robin des Airs lit ces informations pour vous et vérifie gratuitement votre éligibilité."}}]}</script>
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="19ef6dce-8f1d-4b9b-9a0e-12dbece0cdf7"></script>
+</head>
+<body>
+  <nav>
+    <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
+    <a href="/" class="back">← Retour</a>
+  </nav>
+  <main class="wrap">
+    <h1 class="title">Comment lire votre carte d'embarquement (et savoir qui vous doit une indemnité)</h1>
+    <div class="cta-top">
+      <span>💰 <strong>Vol retardé, annulé ou surbooké ?</strong> Jusqu'à 600 € par passager, 0 € d'avance.</span>
+      <a class="btn" href="https://robindesairs.eu/depot-express">Vérifier mon vol en 2 min</a>
+      <span class="muted">ou lisez le guide ci-dessous 👇</span>
+    </div>
+    <div id="blog-body"><p><strong>Votre carte d&#39;embarquement contient l&#39;information qui décide si une compagnie vous doit jusqu&#39;à 600 €</strong> en cas de retard, d&#39;annulation ou de surbooking. Presque personne ne sait la lire en entier. On vous décrypte chaque ligne, et on vérifie gratuitement votre éligibilité, 0 € d&#39;avance.</p>
+<p>Une carte d&#39;embarquement, ce n&#39;est pas qu&#39;un billet pour passer la porte. C&#39;est un document qui vous dit <strong>qui</strong> opère votre vol, <strong>comment</strong> prouver un retard, et <strong>quand</strong> vous devez être à l&#39;aéroport. Voici comment la lire, ligne par ligne.</p>
+<h2>Qui opère vraiment votre vol ? Le transporteur effectif</h2>
+<p>C&#39;est <strong>la ligne la plus importante</strong>, et la plus ignorée. Vous achetez parfois un billet sur une compagnie… qui n&#39;est pas celle qui vous transporte.</p>
+<p>C&#39;est ce qu&#39;on appelle un <strong>vol en partage de code (code-share)</strong> : Air France et Delta, par exemple, passent un accord. Certains sièges d&#39;un avion Air France sont vendus sous un numéro Delta, et inversement. Vous pouvez très bien être sur le « vol Air France 3527 » qui est en réalité le <strong>vol Delta 21</strong>.</p>
+<p>Cherchez la mention <strong>« opéré par »</strong> (<em>operated by</em>) : c&#39;est le <strong>transporteur effectif</strong>, la compagnie qui vole vraiment.</p>
+<p>Pourquoi c&#39;est décisif ? Parce qu&#39;en droit européen, <strong>c&#39;est la compagnie qui opère le vol qui vous doit l&#39;indemnité</strong>, pas celle qui a vendu le billet (article 2(b) du règlement CE 261/2004). Si votre vol Air France est opéré par une autre compagnie et qu&#39;il est retardé, c&#39;est <strong>l&#39;opérateur</strong> que vous réclamez.</p>
+<p>Pour aller plus loin sur ce point : <a href="/blog/code-share-air-france-klm-quelle-compagnie-recours.html">quelle compagnie vous indemnise en code-share</a> et <a href="/blog/arret-wirth-qui-doit-payer-wet-lease.html">qui doit payer quand le vol est sous-traité (wet lease)</a>.</p>
+<h2>Le numéro de vol : votre preuve, à garder</h2>
+<p>Le numéro de vol est <strong>unique</strong> et <strong>ne change pas</strong>, sauf si votre vol est annulé puis reprogrammé sous un autre numéro. C&#39;est votre repère : il permet de retrouver l&#39;<strong>heure réelle d&#39;arrivée</strong> et donc de prouver un retard.</p>
+<p>Attention au piège du code-share : sur votre carte, vous verrez souvent le numéro du <strong>transporteur effectif</strong> (le vrai opérateur), pas celui du billet que vous avez acheté. Notez les deux si les deux apparaissent.</p>
+<p><strong>Conseil</strong> : gardez votre carte d&#39;embarquement après le vol. Même une carte d&#39;embarquement perdue ne bloque pas forcément un dossier (<a href="/blog/carte-embarquement-perdue-recuperer-indemnite.html">voici comment récupérer votre indemnité sans elle</a>), mais elle simplifie tout.</p>
+<h2>Pourquoi la porte d&#39;embarquement change-t-elle ?</h2>
+<p>Sur une carte imprimée longtemps à l&#39;avance, la porte n&#39;est parfois <strong>pas encore attribuée</strong> — ou elle change. Ce n&#39;est pas de la désorganisation : un aéroport est un système vivant.</p>
+<p>Un exemple concret : vous devez partir à midi de la porte 24, mais l&#39;avion d&#39;une autre compagnie qui devait la libérer est toujours là — un aléa technique, un passager qu&#39;on débarque pour raison médicale ou de sûreté… En attendant, on vous réaffecte une autre porte.</p>
+<p><strong>La bonne habitude</strong> : ne vous fiez pas seulement à la carte. <strong>Regardez les écrans du terminal</strong>, qui sont mis à jour automatiquement.</p>
+<h2>« Fin d&#39;embarquement 20 minutes avant le départ » : ce que ça veut dire</h2>
+<p>C&#39;est l&#39;information qui fait rater le plus d&#39;avions. Une heure de fin d&#39;embarquement « 20 minutes avant le départ » <strong>ne signifie pas</strong> que vous montez à ce moment-là : cela signifie que <strong>les portes de la passerelle ferment</strong>. Passé ce délai, on ne peut plus vous embarquer.</p>
+<p>Monter dans un avion, ce n&#39;est pas monter dans un bus. Il faut le temps de s&#39;installer, et une fois tous les passagers à bord, l&#39;équipage prépare des documents essentiels — notamment le <strong>devis de masse et centrage</strong> (la répartition des passagers et du fret en cabine), indispensable pour l&#39;équilibrage au décollage et à l&#39;atterrissage. C&#39;est pour ça que la porte ferme bien avant l&#39;heure de départ (et encore plus tôt sur certains long-courriers).</p>
+<p><strong>Notre conseil</strong> : soyez à la porte <strong>au moins 30 minutes avant</strong> le départ. Vous éviterez aussi de vous retrouver parmi les derniers, quand il n&#39;y a plus de place dans les coffres et que votre bagage cabine part en soute (sans surcoût, mais à récupérer au tapis à l&#39;arrivée).</p>
+<h2>Siège, séquence et contrôles : les autres lignes</h2>
+<ul>
+<li><strong>Le siège</strong> : un chiffre (la rangée) + une lettre (la position). « 25A » = rangée 25, place A. Les rangées peuvent « sauter » d&#39;une classe à l&#39;autre. La lettre suit l&#39;ordre des sièges (A côté hublot à gauche, etc.) — la configuration exacte dépend de l&#39;avion, visible dans la sélection de sièges de la compagnie.</li>
+<li><strong>Le numéro de séquence</strong> : l&#39;ordre dans lequel vous vous êtes enregistré. Un petit indice, sans impact sur vos droits.</li>
+<li><strong>Groupes / zones d&#39;embarquement</strong> : de plus en plus de compagnies embarquent par groupe (statut, puis tarif payé) pour éviter la cohue à la porte.</li>
+<li><strong>SSSS</strong> : sur un vol vers les États-Unis, ces quatre lettres signifient un <strong>contrôle de sûreté supplémentaire</strong>, tiré au sort — questions et inspection du bagage cabine. C&#39;est aléatoire, pas une sanction.</li>
+</ul>
+<h2>En quoi votre carte d&#39;embarquement décide-t-elle de votre indemnité ?</h2>
+<p>Récapitulons ce qui compte pour vos droits. En cas de retard de plus de 3 heures, d&#39;annulation ou de refus d&#39;embarquement, deux lignes de votre carte tranchent :</p>
+<ol>
+<li><strong>Le transporteur effectif</strong> : c&#39;est <strong>lui</strong> qui vous doit l&#39;indemnité (jusqu&#39;à 600 € par passager, selon la distance).</li>
+<li><strong>Le pavillon de cet opérateur</strong> — décisif au départ d&#39;un pays hors Union européenne. Un vol au départ de l&#39;UE est couvert quelle que soit la compagnie ; un vol au départ, par exemple, de Dakar ou d&#39;Abidjan n&#39;est couvert <strong>que si la compagnie qui opère réellement est européenne</strong> (Air France, Brussels Airlines…). Au retour depuis l&#39;Europe, vous êtes couvert dans tous les cas.</li>
+</ol>
+<p>Autrement dit : une même carte d&#39;embarquement peut vouloir dire <strong>600 € dus… ou rien</strong>, selon la compagnie qui opère et son pavillon. C&#39;est exactement ce que nous lisons pour vous.</p>
+<h2>En résumé</h2>
+<ul>
+<li>La ligne <strong>« opéré par »</strong> vous dit qui vole vraiment : c&#39;est <strong>l&#39;opérateur</strong> qui paie, pas le vendeur du billet.</li>
+<li>Le <strong>numéro de vol</strong> est votre preuve : gardez-le.</li>
+<li>La <strong>porte</strong> peut changer : fiez-vous aux <strong>écrans</strong> du terminal.</li>
+<li>L&#39;<strong>heure de fin d&#39;embarquement</strong> = fermeture des portes : soyez là <strong>30 minutes avant</strong>.</li>
+<li>Sur l&#39;axe <strong>Afrique–Europe</strong>, le <strong>pavillon de l&#39;opérateur</strong> décide de votre couverture au départ.</li>
+</ul>
+<p>Vol retardé, annulé ou surbooké ? <strong>On vérifie gratuitement qui vous doit de l&#39;argent</strong>, sans avance de frais. On prend aux compagnies, on rend aux familles. <a href="/#funnel-box">Vérifier mon éligibilité en 2 minutes</a>.</p>
+</div>
+    <section class="faq">
+      <h2>Questions fréquentes</h2>
+      <details>
+        <summary>Comment savoir quelle compagnie opère réellement mon vol ?</summary>
+        <div>Regardez la mention <strong>« opéré par »</strong> (operated by) sur la carte d'embarquement ou la réservation : c'est le <strong>transporteur effectif</strong>. C'est lui qui vous doit l'indemnité CE 261, pas la compagnie qui a vendu le billet. Un numéro de vol Air France peut cacher un vol opéré par une autre compagnie (code-share).</div>
+      </details>
+      <details>
+        <summary>Le numéro de vol change-t-il ?</summary>
+        <div>Non, il reste <strong>unique</strong> pour un même vol. Il ne change que si le vol est <strong>annulé puis reprogrammé</strong> sous un autre numéro. Gardez-le : c'est votre preuve pour retrouver l'heure réelle d'arrivée et le retard.</div>
+      </details>
+      <details>
+        <summary>Pourquoi la porte d'embarquement change-t-elle à la dernière minute ?</summary>
+        <div>Parce qu'un aéroport est un système vivant : un avion précédent encore à quai, un aléa technique, un passager débarqué… Ne vous fiez pas uniquement à la carte : <strong>vérifiez les écrans du terminal</strong>, mis à jour automatiquement.</div>
+      </details>
+      <details>
+        <summary>« Fin d'embarquement 20 minutes avant le départ », ça veut dire quoi ?</summary>
+        <div>Que les portes de la passerelle <strong>ferment</strong> à ce moment-là, pas que l'avion décolle. Passé ce délai, on ne peut plus vous embarquer. Soyez à la porte <strong>au moins 30 minutes avant</strong> le départ.</div>
+      </details>
+      <details>
+        <summary>En quoi ma carte d'embarquement décide-t-elle de mon indemnité ?</summary>
+        <div>Deux lignes comptent : le <strong>transporteur effectif</strong> (qui vous doit l'argent) et, au départ d'un pays hors UE, son <strong>pavillon</strong> (vous n'êtes couvert que si l'opérateur est européen). Robin des Airs lit ces informations pour vous et vérifie gratuitement votre éligibilité.</div>
+      </details>
+    </section>
+    <div class="cta-box">
+      <p>Prêt à récupérer votre indemnité ?</p>
+      <p>
+        <a href="https://robindesairs.eu/depot-express">Déposer mon dossier en 2 min</a>
+        <span class="sep">·</span>
+        <a href="https://robindesairs.eu/#funnel-box">Vérifier mon indemnité</a>
+        <span class="sep">·</span>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%2C%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20(jusqu'%C3%A0%20600%20%E2%82%AC)%20%3F%0A(r%C3%A9f.%20article%20%3A%20comment-lire-carte-embarquement-droits-passager)">WhatsApp direct</a>
+      </p>
+    </div>
+    <section class="related">
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/carte-embarquement-perdue-recuperer-indemnite.html">Carte d'embarquement perdue : récupérer son indemnité quand même</a></li>
+        <li><a href="/blog/attente-piste-avion-immobilise-tarmac-droits-passager.html">Bloqué dans l'avion sur le tarmac : quels sont vos droits ?</a></li>
+        <li><a href="/blog/droits-passager-vol-au-depart-allemagne-francfort-ce261.html">Vol au départ d'Allemagne (Francfort) : vos droits CE 261</a></li>
+        <li><a href="/blog/droits-passager-vol-au-depart-espagne-madrid-barcelone-ce261.html">Vol au départ d'Espagne (Madrid, Barcelone) : indemnisation</a></li>
+        <li><a href="/blog/droits-passager-vol-au-depart-italie-milan-rome-ce261.html">Vol au départ d'Italie (Milan, Rome) : réclamer son indemnité</a></li>
+        <li><a href="/blog/refus-embarquement-document-passeport-visa-a-tort-recours.html">Refusé à l'embarquement pour un document jugé invalide à tort : vos recours</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
