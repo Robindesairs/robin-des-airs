@@ -48,11 +48,10 @@ Un décret publié le 5 août 2025 a rendu la **médiation de la consommation ob
 
 En clair : entre l'attente de la compagnie, la recevabilité et l'instruction, un passager qui agit seul en a souvent pour **6 mois ou plus**, sans garantie de paiement au bout.
 
-> ⚠️ **Attention aux délais : trois horloges à ne pas confondre.**
+> ⚠️ **Attention aux délais : deux horloges à ne pas confondre.**
 >
 > - **Pour saisir le MTV :** seulement **1 an après votre première réclamation écrite**. Passé ce délai, votre dossier est **irrecevable**, même si vous avez relancé la compagnie entre-temps. C'est une cause d'échec fréquente.
-> - **Pour agir en justice :** **5 ans** après le vol (droit français actuel).
-> - **Bientôt :** une réforme européenne (accord provisoire de 2026, **pas encore en vigueur**, attendue vers 2027) prévoit de réduire ce délai de réclamation à **9 mois**. Raison de plus pour ne pas laisser traîner.
+> - **Pour agir en justice :** **5 ans** après le vol.
 >
 > Voir [combien de temps pour réclamer](/blog/combien-temps-reclamer-indemnite-vol.html).
 
