@@ -1,7 +1,7 @@
 ---
 title: "Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi"
 meta_title: "Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi 2026"
-meta_description: "Vol retardé ou annulé ? Saisir le MTV gratuitement, étape par étape : conditions, délais, taux de succès, et l'alternative plus rapide pour être indemnisé."
+meta_description: "Vol retardé ou annulé ? Saisir le MTV gratuitement, étape par étape : conditions, délais, et l'alternative plus rapide pour être indemnisé."
 slug: saisir-mediateur-mtv-tourisme-voyage
 image_url: /og-blog.png
 faq:
@@ -17,6 +17,10 @@ faq:
     a: "Non. Le médiateur propose une solution mais n'a **aucun pouvoir de contrainte** : la compagnie reste libre de refuser ou de faire traîner. Seule une **assignation** au tribunal crée un vrai risque pour elle. C'est pourquoi passer par un service qui assigne directement fait souvent la différence."
   - q: "Ma compagnie n'est pas membre du MTV, que faire ?"
     a: "Vérifiez d'abord quel médiateur elle a désigné (bas de ses CGV ou e-mail de refus) et saisissez celui-là. Si elle n'en a aucun, la médiation ne peut pas vous être opposée (motif légitime) et vous pouvez **assigner directement**. Avec la cession de créance, la question ne se pose même pas : on assigne la compagnie, membre ou non."
+  - q: "Un vol annulé pour grève est-il indemnisable ?"
+    a: "Ça dépend de la grève. Une **grève des contrôleurs aériens** est une circonstance extraordinaire : la compagnie n'a en général rien à payer. Mais une **grève du personnel de la compagnie** (pilotes, hôtesses) n'en est pas une (jurisprudence CJUE) : vous restez indemnisable. Voir [grève des contrôleurs](/blog/greve-controleurs-aeriens-ete-2026-retards.html) et [grève des pilotes](/blog/greve-pilotes-compagnie-indemnite-ce261.html)."
+  - q: "Vol en partage de code : quel médiateur faut-il saisir ?"
+    a: "Celui du **transporteur effectif**, c'est-à-dire la compagnie qui opérait réellement le vol, pas forcément celle qui a vendu le billet. C'est elle qui est responsable de l'indemnité CE 261. Voir [code-share : quelle compagnie](/blog/code-share-air-france-klm-quelle-compagnie-recours.html)."
 ---
 
 **De 250 à 600 € par passager** peuvent être obtenus après un vol retardé, annulé ou surbooké. La médiation MTV est une voie gratuite pour y parvenir ; il en existe une plus rapide, expliquée plus bas. Vérification gratuite, 0 € d'avance, au succès.
@@ -27,22 +31,26 @@ Depuis le **7 février 2026**, la **médiation est obligatoire** avant tout reco
 >
 > → [**Vérifier mon vol en 2 minutes**](https://robindesairs.eu/depot-express) · [WhatsApp, mon vol est refusé](https://wa.me/33756863630)
 
+<img src="/assets/images/mediateur-mtv-deux-voies.svg" alt="Comparaison des deux voies pour être indemnisé après un vol : la médiation MTV seul prend 3 à 6 mois avec un avis non contraignant, tandis que la cession de créance à Robin des Airs supprime la médiation (litige B2B, CJUE C-551/24) pour une assignation directe, 0 euro d'avance" width="1200" height="630" loading="lazy" decoding="async">
+
 ## Qu'est-ce que le Médiateur Tourisme et Voyage (MTV) ?
 
 Le **Médiateur Tourisme et Voyage (MTV)** est l'organisme officiel de médiation de la consommation pour le secteur du voyage en France. Il règle à l'amiable, et **gratuitement pour le voyageur**, les litiges entre les passagers et les compagnies aériennes ou agences qui y adhèrent : retard, annulation, surbooking, bagages. Son rôle est de proposer une solution, mais son avis **n'a aucune force obligatoire** : la compagnie reste libre de le suivre ou non.
 
-## Comment ça marche depuis le 7 février 2026
+## Comment fonctionne la médiation obligatoire depuis le 7 février 2026 ?
 
 Un décret publié le 5 août 2025 a rendu la **médiation de la consommation obligatoire** avant de pouvoir attaquer une compagnie en justice. Sans cette étape, votre recours est **irrecevable** : le juge le rejette sans examiner le fond. Pour un passager qui agit seul, l'ordre est imposé :
 
 1. **Réclamation écrite préalable** à la compagnie (votre mise en demeure). Comptez environ **2 mois** pour lui laisser le temps de répondre.
 2. En cas de refus ou de silence, **saisine du médiateur** de la consommation (le plus souvent le MTV), dans un délai d'**un an** après votre réclamation écrite.
 3. La médiation peut s'étirer **jusqu'à 6 mois**. Le médiateur propose une solution, mais **ne peut forcer personne** à payer.
-4. Toujours rien ? Il faut alors **assigner** la compagnie au tribunal, par commissaire de justice (50 à 150 € de frais), et non plus par simple requête.
+4. Toujours rien ? Il faut alors **assigner** la compagnie, c'est-à-dire la faire **convoquer devant le tribunal** par un commissaire de justice (50 à 150 € de frais), et non plus par simple requête.
 
 Vous avez **5 ans** après le vol pour agir. Mais bout à bout, ces étapes prennent facilement de longs mois, sans garantie de paiement à la fin.
 
-## Avant de saisir le MTV : 2 conditions
+> ⚠️ **Le piège du délai d'un an.** Ne confondez pas les deux horloges. Vous avez **5 ans** après le vol pour aller en justice, mais seulement **un an après votre première réclamation écrite** pour saisir le MTV. Passé ce délai, le médiateur déclare votre dossier **irrecevable**, même si vous avez relancé la compagnie trois fois entre-temps. C'est l'une des causes d'échec les plus fréquentes. Voir [combien de temps pour réclamer](/blog/combien-temps-reclamer-indemnite-vol.html).
+
+## Quelles sont les 2 conditions avant de saisir le MTV ?
 
 1. Vous avez **déjà réclamé directement** à la compagnie (par mail ou courrier), au moins une fois.
 2. La compagnie a **refusé** ou n'a **pas répondu sous 60 jours**.
@@ -65,7 +73,7 @@ Liste à jour sur **mtv.travel**.
 C'est fréquent, notamment pour les compagnies non européennes. Trois cas de figure :
 
 1. **Elle a désigné un autre médiateur.** Depuis 2016, toute compagnie qui opère en France doit adhérer à un médiateur de la consommation, mais pas forcément le MTV. Le médiateur compétent est indiqué en bas de ses conditions générales de vente, ou dans son e-mail de refus. Saisissez **celui-là** : la démarche est la même.
-2. **Elle n'a désigné aucun médiateur.** Certaines compagnies étrangères ignorent cette obligation. Dans ce cas, la médiation obligatoire ne peut pas vous être opposée : la loi prévoit un **motif légitime** quand aucun médiateur n'est disponible (art. 750-1 du Code de procédure civile). Vous pouvez alors **assigner directement**.
+2. **Elle n'a désigné aucun médiateur.** Certaines compagnies étrangères ignorent cette obligation. Dans ce cas, la médiation obligatoire ne peut pas vous être opposée : la loi prévoit un **motif légitime** quand aucun médiateur n'est disponible (art. 750-1 du Code de procédure civile). Vous pouvez alors **assigner directement**. Pensez à **garder une trace de cette absence de médiateur** (capture de ses conditions générales) : elle justifie votre saisine directe du tribunal.
 3. **Signalez la compagnie à la DGAC** (Direction générale de l'aviation civile), l'organisme de contrôle du règlement CE 261. Attention : la DGAC peut sanctionner la compagnie, mais elle **n'obtient pas votre indemnité** à votre place. Ce n'est pas un recours pour être payé.
 
 > 💡 **C'est là que la cession de créance simplifie tout.** Quand vous nous confiez le dossier, le litige devient un litige entre professionnels : la question « membre du MTV ou non » ne se pose même plus. On assigne directement la compagnie, qu'elle soit adhérente ou non, européenne ou non.
@@ -77,6 +85,8 @@ C'est fréquent, notamment pour les compagnies non européennes. Trois cas de fi
 - Carte(s) d'embarquement
 - Échange avec la compagnie (mail + réponse refus)
 - Preuves météo si la compagnie invoque des [circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html)
+
+**Pas de carte d'embarquement ?** Avec les cartes dématérialisées, beaucoup de passagers perdent leur coupon après le vol. Ce n'est pas rédhibitoire : un e-mail d'enregistrement, une étiquette bagage ou un justificatif d'achat à bord peuvent aussi prouver votre présence. Voir [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html).
 
 ### 2. Aller sur mtv.travel
 Cliquez sur **"Déposer un dossier en ligne"**. Pas de compte à créer, formulaire direct.
@@ -95,6 +105,8 @@ Le MTV examine d'abord la **recevabilité** : compagnie adhérente, demande pré
 ### 5. Médiation proprement dite
 Une fois recevable, le médiateur contacte la compagnie qui a **un mois** pour répondre. Si accord : versement de l'indemnité. Si désaccord : proposition de solution par le médiateur, à accepter ou refuser. Délai total moyen : **3 à 5 mois**.
 
+**Attention au bon d'achat.** En médiation, les compagnies proposent souvent un **avoir** (par exemple 300 € en bon) plutôt que le cash. Vous avez le droit d'**exiger un virement** : l'indemnité CE 261 est due en argent, un avoir ne s'impose jamais à vous (article 7.3 du règlement). Précisez-le, sinon certaines compagnies le proposent par défaut. Voir [le piège du bon d'achat](/blog/bon-achat-compagnie-aerienne-piege.html).
+
 ## Combien coûte la saisine du MTV ?
 
 **Gratuit pour vous.** C'est la compagnie qui paie le médiateur (via les cotisations annuelles).
@@ -103,7 +115,7 @@ Une fois recevable, le médiateur contacte la compagnie qui a **un mois** pour r
 
 Données 2025 : **~60 %** des dossiers MTV se concluent par un versement total ou partiel à l'usager. Pour les cas où la compagnie est clairement en faute (retard > 3h, pas de circonstance extraordinaire), le taux est plus élevé.
 
-## Pourquoi la médiation ne suffit pas toujours
+## Pourquoi la médiation ne suffit-elle pas toujours ?
 
 Voici ce que peu de passagers réalisent : **la médiation n'a aucune force contraignante.** Le médiateur peut inviter la compagnie à payer, elle reste libre de refuser ou de faire traîner. Or une indemnité de 600 € pèse lourd quand on la multiplie par des milliers de dossiers : beaucoup de compagnies jouent la montre, enchaînent les refus et misent sur l'abandon du passager.
 
@@ -129,7 +141,7 @@ Résultat : le service peut **sauter l'étape de médiation** et aller directeme
 <div style="text-align:center;color:#9CA3AF;font-size:15px">↓</div>
 <div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">4. Médiation jusqu'à 6 mois, sans garantie de paiement</div>
 <div style="text-align:center;color:#9CA3AF;font-size:15px">↓</div>
-<div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">5. Toujours rien ? Assignation, à vos frais</div>
+<div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">5. Toujours rien ? Assignation au tribunal, à vos frais</div>
 <div style="margin-top:11px;font-size:12px;color:#6B7280;font-weight:700">⏳ De longs mois, incertain, tout repose sur vous</div>
 </div>
 </div>
