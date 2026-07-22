@@ -18,6 +18,11 @@
 /feedmock/*    /404.html    404!
 # --- brief partenaire interne (commissions, stratégie) déplacé vers docs/ (2026-07-22) ---
 /brief-aziz-seyman.html    /404.html    404!
+# --- pages agence gelées le 22/07/2026 (maquette + page partenaire) — priment sur les rewrites plus bas ---
+/espace-agence-maquette.html    /404.html    404!
+/espace-agence.html    /404.html    404!
+/espace-agence    /404.html    404!
+/espace-agence/*    /404.html    404!
 # --- manifestes de build : exposent dépendances+versions (CVE) et scripts internes (2026-07-22) ---
 /package.json    /404.html    404!
 /package-lock.json    /404.html    404!
