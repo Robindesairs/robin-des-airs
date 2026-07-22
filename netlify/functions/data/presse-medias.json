@@ -547,7 +547,7 @@
     "url": "https://www.letemps.ch/opinions/publie-pages-debats-temps",
     "type": "tribune",
     "tier": 1,
-    "note": "Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes."
+    "note": "Rubrique Débats & Opinions (C. Frammery). Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes. Exclusivité exigée, non rémunéré. Angle : la Suisse applique le CE 261 par accord bilatéral."
   },
   {
     "id": "m056",
@@ -1118,15 +1118,5 @@
     "type": "tribune",
     "tier": 3,
     "note": "Transport et logistique"
-  },
-  {
-    "id": "m113",
-    "nom": "Le Temps",
-    "pays": "Suisse",
-    "email": "opinions@letemps.ch",
-    "url": "https://www.letemps.ch/opinions",
-    "type": "tribune",
-    "tier": 1,
-    "note": "Rubrique Débats & Opinions (C. Frammery). Exclusivité exigée, non rémunéré. Angle : la Suisse applique le CE 261 par accord bilatéral."
   }
 ]
