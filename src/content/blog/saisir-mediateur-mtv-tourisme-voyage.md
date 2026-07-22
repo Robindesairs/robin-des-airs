@@ -31,7 +31,7 @@ Depuis le **7 février 2026**, la **médiation est obligatoire** avant tout reco
 >
 > → [**Vérifier mon vol en 2 minutes**](https://robindesairs.eu/depot-express) · [WhatsApp, mon vol est refusé](https://wa.me/33756863630)
 
-<img src="/assets/images/mediateur-mtv-deux-voies.svg" alt="Comparaison des deux voies pour être indemnisé après un vol : la médiation MTV seul prend 3 à 6 mois avec un avis non contraignant, tandis que la cession de créance à Robin des Airs supprime la médiation (litige B2B, CJUE C-551/24) pour une assignation directe, 0 euro d'avance" width="1200" height="630" loading="lazy" decoding="async">
+<img src="/assets/images/mediateur-mtv-deux-voies.svg" alt="Comparaison des deux voies pour être indemnisé après un vol : la médiation MTV seul prend 3 à 5 mois avec un avis non contraignant, tandis que la cession de créance à Robin des Airs supprime la médiation (litige B2B, CJUE C-551/24) pour une assignation directe, 0 euro d'avance" width="1200" height="630" loading="lazy" decoding="async">
 
 ## Qu'est-ce que le Médiateur Tourisme et Voyage (MTV) ?
 
@@ -43,17 +43,23 @@ Un décret publié le 5 août 2025 a rendu la **médiation de la consommation ob
 
 1. **Réclamation écrite préalable** à la compagnie (votre mise en demeure). Comptez environ **2 mois** pour lui laisser le temps de répondre.
 2. En cas de refus ou de silence, **saisine du médiateur** de la consommation (le plus souvent le MTV), dans un délai d'**un an** après votre réclamation écrite.
-3. La médiation peut s'étirer **jusqu'à 6 mois**. Le médiateur propose une solution, mais **ne peut forcer personne** à payer.
-4. Toujours rien ? Il faut alors **assigner** la compagnie, c'est-à-dire la faire **convoquer devant le tribunal** par un commissaire de justice (50 à 150 € de frais), et non plus par simple requête.
+3. **L'instruction du dossier.** Le MTV vérifie d'abord la recevabilité (environ 3 semaines), puis dispose d'un délai légal de **90 jours** pour rendre un avis. En pratique, le MTV est engorgé : le délai réel moyen était de **137 jours en 2024** (contre 116 en 2023), et il peut être prolongé pour les dossiers complexes. Le médiateur propose une solution, mais **ne peut forcer personne** à payer.
+4. Toujours rien ? Il faut alors **assigner** la compagnie, c'est-à-dire la faire **convoquer devant le tribunal** par un commissaire de justice (comptez environ **50 à 150 €** pour la délivrance de l'acte). Bonne nouvelle : pour une indemnité (moins de 10 000 €), **l'avocat n'est pas obligatoire**, vous pouvez vous représenter seul. Avec un avocat, ajoutez ses honoraires.
 
-Vous avez **5 ans** après le vol pour agir. Mais bout à bout, ces étapes prennent facilement de longs mois, sans garantie de paiement à la fin.
+En clair : entre l'attente de la compagnie, la recevabilité et l'instruction, un passager qui agit seul en a souvent pour **6 mois ou plus**, sans garantie de paiement au bout.
 
-> ⚠️ **Le piège du délai d'un an.** Ne confondez pas les deux horloges. Vous avez **5 ans** après le vol pour aller en justice, mais seulement **un an après votre première réclamation écrite** pour saisir le MTV. Passé ce délai, le médiateur déclare votre dossier **irrecevable**, même si vous avez relancé la compagnie trois fois entre-temps. C'est l'une des causes d'échec les plus fréquentes. Voir [combien de temps pour réclamer](/blog/combien-temps-reclamer-indemnite-vol.html).
+> ⚠️ **Attention aux délais : trois horloges à ne pas confondre.**
+>
+> - **Pour saisir le MTV :** seulement **1 an après votre première réclamation écrite**. Passé ce délai, votre dossier est **irrecevable**, même si vous avez relancé la compagnie entre-temps. C'est une cause d'échec fréquente.
+> - **Pour agir en justice :** **5 ans** après le vol (droit français actuel).
+> - **Bientôt :** une réforme européenne (accord provisoire de 2026, **pas encore en vigueur**, attendue vers 2027) prévoit de réduire ce délai de réclamation à **9 mois**. Raison de plus pour ne pas laisser traîner.
+>
+> Voir [combien de temps pour réclamer](/blog/combien-temps-reclamer-indemnite-vol.html).
 
 ## Quelles sont les 2 conditions avant de saisir le MTV ?
 
-1. Vous avez **déjà réclamé directement** à la compagnie (par mail ou courrier), au moins une fois.
-2. La compagnie a **refusé** ou n'a **pas répondu sous 60 jours**.
+1. Vous avez **envoyé une réclamation écrite** à la compagnie (mail ou courrier) et vous en gardez la preuve.
+2. La compagnie a **refusé**, ou bien **60 jours se sont écoulés** sans réponse satisfaisante. Tant que ce délai de 60 jours n'est pas révolu (et sans refus explicite), le MTV n'examinera pas votre dossier : il faut d'abord laisser à la compagnie le temps de répondre.
 
 Si vous saisissez le MTV avant d'avoir tenté la résolution amiable, votre dossier sera rejeté.
 
@@ -84,7 +90,9 @@ C'est fréquent, notamment pour les compagnies non européennes. Trois cas de fi
 - Confirmation de réservation
 - Carte(s) d'embarquement
 - Échange avec la compagnie (mail + réponse refus)
-- Preuves météo si la compagnie invoque des [circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html)
+- Toute autre preuve utile à votre dossier : attestation ou capture du retard, photo du tableau d'affichage, e-mails, et preuves météo si la compagnie invoque des [circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html)
+
+Plus votre dossier est documenté, mieux c'est : le MTV instruit sur pièces, un dossier complet part avec une longueur d'avance.
 
 **Pas de carte d'embarquement ?** Avec les cartes dématérialisées, beaucoup de passagers perdent leur coupon après le vol. Ce n'est pas rédhibitoire : un e-mail d'enregistrement, une étiquette bagage ou un justificatif d'achat à bord peuvent aussi prouver votre présence. Voir [carte d'embarquement perdue](/blog/carte-embarquement-perdue-recuperer-indemnite.html).
 
@@ -113,7 +121,9 @@ Une fois recevable, le médiateur contacte la compagnie qui a **un mois** pour r
 
 ## Quel est le taux de succès du MTV ?
 
-Données 2025 : **~60 %** des dossiers MTV se concluent par un versement total ou partiel à l'usager. Pour les cas où la compagnie est clairement en faute (retard > 3h, pas de circonstance extraordinaire), le taux est plus élevé.
+Données 2025 : **~60 %** des dossiers MTV se concluent par un versement **total ou partiel** à l'usager. Pour les cas où la compagnie est clairement en faute (retard > 3h, pas de circonstance extraordinaire), le taux est plus élevé.
+
+Deux nuances à garder en tête. D'abord, ce chiffre inclut les versements **partiels** et les **bons d'achat** : un dossier « réussi » ne signifie pas toujours l'indemnité complète en cash. Ensuite, pour les 40 % restants, l'avis du médiateur **ne contraint pas** la compagnie : sans passer au contentieux, ces dossiers restent souvent impayés.
 
 ## Pourquoi la médiation ne suffit-elle pas toujours ?
 
@@ -139,7 +149,7 @@ Résultat : le service peut **sauter l'étape de médiation** et aller directeme
 <div style="text-align:center;color:#9CA3AF;font-size:15px">↓</div>
 <div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">3. Saisine du médiateur (obligatoire)</div>
 <div style="text-align:center;color:#9CA3AF;font-size:15px">↓</div>
-<div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">4. Médiation jusqu'à 6 mois, sans garantie de paiement</div>
+<div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">4. Médiation 3 à 5 mois en moyenne, sans garantie de paiement</div>
 <div style="text-align:center;color:#9CA3AF;font-size:15px">↓</div>
 <div style="background:#F3F4F6;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#374151">5. Toujours rien ? Assignation au tribunal, à vos frais</div>
 <div style="margin-top:11px;font-size:12px;color:#6B7280;font-weight:700">⏳ De longs mois, incertain, tout repose sur vous</div>
