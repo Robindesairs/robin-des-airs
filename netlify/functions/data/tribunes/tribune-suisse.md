@@ -25,7 +25,7 @@ Là où le raisonnement se complique, c'est au retour.
 
 Le règlement couvre tout départ depuis un aéroport suisse ou européen, quelle que soit la compagnie. Il ne couvre un départ depuis un pays tiers que si le transporteur est européen. La question n'est donc jamais celle de la destination, mais toujours celle du point de départ combiné au pavillon.
 
-Genève et Zurich sont des plateformes de départ importantes vers l'Afrique de l'Ouest et centrale, et une part significative de ces voyages se fait en famille, une à deux fois par an. À l'aller, la protection est complète. Au retour, elle dépend entièrement de la compagnie qui opère effectivement le vol, et non de celle dont le code figure sur la réservation.
+Genève et Zurich desservent de nombreuses destinations long-courrier, notamment vers l'Afrique de l'Ouest et centrale. À l'aller, la protection est complète. Au retour, elle dépend entièrement de la compagnie qui opère effectivement le vol, et non de celle dont le code figure sur la réservation.
 
 Hors du champ du règlement, il reste la Convention de Montréal, que la Suisse a ratifiée comme la quasi totalité des États concernés. Elle permet de réclamer les frais réellement engagés, sur justificatifs, mais ne verse aucun forfait.
 
@@ -37,7 +37,7 @@ L'article 35 de la Convention de Montréal fixe un délai de deux ans à compter
 
 Un passager qui adresse au transporteur des relances successives pendant deux ans, de bonne foi, en croyant préserver ses droits, ne préserve rien. Seule une action effectivement introduite devant un juge arrête le décompte.
 
-Il faut le dire nettement : cette règle est mal faite. Un délai qui court alors même que le passager réclame, et que seule une procédure arrête, protège la partie la mieux outillée et pénalise l'autre. L'intention des compagnies est ici secondaire. Un dispositif qui récompense l'inertie produit ses effets sans avoir besoin de mauvaise foi. C'est un défaut de conception, et il se corrige.
+Il faut le dire nettement : cette règle est mal faite. Un délai qui court alors même que le passager réclame, et que seule une procédure arrête, protège la partie la mieux outillée et pénalise l'autre. Un dispositif qui récompense l'inertie produit ses effets sans avoir besoin de mauvaise foi. C'est un défaut de conception, et il se corrige.
 
 ### Deux créances presque jamais réclamées
 
@@ -62,6 +62,5 @@ Et pour un vol ancien parti hors d'Europe sur une compagnie non européenne, l'�
 **Bio**
 
 Saint-Yves Kodjo est fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique.
-Spécialiste du secteur aérien, il a passé quinze ans en vol comme steward puis chef de cabine, et vingt ans dans le transport aérien.
-Il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
-robindesairs.eu · +33 7 56 86 36 30
+Spécialiste du secteur aérien fort de vingt ans d'expérience, au contact direct de l'exploitation des vols, il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
+robindesairs.eu
