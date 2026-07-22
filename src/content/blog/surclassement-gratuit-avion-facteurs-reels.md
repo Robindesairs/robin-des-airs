@@ -112,6 +112,8 @@ Relisez la dernière ligne. Une classe affaires Paris-Abidjan à 2 400 €, déc
 
 Deux précisions que les compagnies donnent rarement d'elles-mêmes. Ce remboursement est de l'argent, pas un bon d'achat : elles ne peuvent pas vous payer en avoir sans votre accord, et vous êtes libre de refuser. Et ce droit est indépendant de l'indemnité de 250 à 600 € pour retard ou annulation : un vol déclassé qui atterrit aussi avec trois heures de retard ouvre les deux.
 
+Ces sommes se jouent surtout sur les liaisons Europe-Afrique : selon votre trajet et votre compagnie, voyez par exemple [un vol Abidjan-Paris retardé ou déclassé](/blog/vol-retarde-abidjan-paris-indemnite.html) ou [un vol Air Sénégal](/blog/air-senegal-vol-retarde-indemnite.html), puis vérifiez votre éligibilité en deux minutes.
+
 ## Le cas du surbooking
 
 Si la compagnie vous refuse l'embarquement en économie pour cause de surréservation et vous propose un siège en classe affaires, ce n'est pas un cadeau. C'est une obligation légale.
