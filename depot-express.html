@@ -28,6 +28,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/portail-premium.css">
   <style>
+    /* ── Calibrage mobile (safe-area) : la topbar devient collante pour que le contenu ne passe plus
+         sous la barre d'état quand un écran long est scrollé, + marge basse pour le « home indicator ». ── */
+    .topbar{position:sticky; top:0; z-index:50}
+    .shell{padding-bottom:calc(56px + env(safe-area-inset-bottom))}
+    .wa-alt{margin-bottom:env(safe-area-inset-bottom)}
+
     /* ── Tunnel « un écran = une question » aux couleurs du site.
          Un clic sur une option = réponse enregistrée + écran suivant (aucun bouton Valider).
          Les réponses restent visibles en chips sous la barre de progression : un tap = correction. ── */

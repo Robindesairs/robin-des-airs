@@ -10,7 +10,7 @@
   html,body{height:100%}
   body{font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#0B1F3A;color:#0B1F3A;display:flex;flex-direction:column;min-height:100vh}
   /* ── En-tête marque, fine : le client reste visiblement sur robindesairs.eu ── */
-  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#0B1F3A;color:#fff}
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;padding-top:max(10px,env(safe-area-inset-top));background:#0B1F3A;color:#fff}
   .bar .logo{font-weight:900;letter-spacing:.5px;font-size:13.5px}
   .bar .logo span{color:#00C87A}
   .bar .lvl{font-size:11px;color:rgba(255,255,255,.8);font-weight:700}
@@ -30,7 +30,7 @@
   /* ── Zone iframe de signature ── */
   .frame{flex:1;display:none;flex-direction:column;background:#fff}
   .frame iframe{flex:1;width:100%;border:0;display:block;background:#fff;min-height:60vh}
-  .fallback{padding:9px 16px;background:#F7F8FA;border-top:1px solid #E2E6EE;font-size:12.5px;color:#51607A;text-align:center}
+  .fallback{padding:9px 16px;padding-bottom:max(9px,env(safe-area-inset-bottom));background:#F7F8FA;border-top:1px solid #E2E6EE;font-size:12.5px;color:#51607A;text-align:center}
   .fallback a{color:#047857;font-weight:700;text-decoration:none}
   .fallback a:hover{text-decoration:underline}
 </style>
