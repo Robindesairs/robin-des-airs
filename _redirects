@@ -16,6 +16,14 @@
 /proofs/*    /404.html    404!
 /robin-dossiers/*    /404.html    404!
 /feedmock/*    /404.html    404!
+# --- brief partenaire interne (commissions, stratégie) déplacé vers docs/ (2026-07-22) ---
+/brief-aziz-seyman.html    /404.html    404!
+# --- manifestes de build : exposent dépendances+versions (CVE) et scripts internes (2026-07-22) ---
+/package.json    /404.html    404!
+/package-lock.json    /404.html    404!
+/tsconfig.json    /404.html    404!
+/vitest.config.ts    /404.html    404!
+/vitest.config.js    /404.html    404!
 # --- guides/docs internes .md à la racine ---
 /AMADEUS-API.md    /404.html    404!
 /CRM-guide-operateur.md    /404.html    404!
