@@ -27,7 +27,7 @@ Distance CDG-DLA : environ 4,850 km, soit un vol long-courrier de plus de 3 500 
 
 ![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
-Le règlement CE 261/2004 s'applique dans deux cas :
+Le règlement [CE 261/2004](https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:32004R0261) s'applique dans deux cas :
 
 - **Le vol part d'un aéroport de l'UE** (Paris) : couvert quelle que soit la compagnie, même non européenne.
 - **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Douala.
@@ -40,20 +40,29 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-## Les compagnies sur la ligne
+## Ce que voit un ancien chef de cabine sur la ligne Douala-Paris
+
+Avant de fonder Robin des Airs, j'ai passé vingt ans dans le transport aérien, dont quinze comme navigant puis chef de cabine sur des lignes Afrique-Europe. De l'intérieur, on voit comment un retard est « classé » à bord et au sol, et deux réalités que les passagers de Douala-Paris ignorent presque toujours :
+
+- Un retard annoncé comme « problème technique » à l'embarquement n'est, en principe, **pas** une circonstance extraordinaire au sens du règlement (arrêt Wallentin-Hermann). La compagnie le sait, et mise surtout sur le fait que vous ne réclamerez pas.
+- Sur le retour Douala vers Paris, c'est le **pavillon** de la compagnie qui décide, pas la qualité du service. Le même retard de 4 heures ouvre 600 € sur Air France et rien sur une compagnie non européenne. Personne ne vous l'explique au comptoir.
+
+C'est précisément ce décalage entre ce qu'on vous dit à l'aéroport et ce que prévoit le droit que nous utilisons pour récupérer votre argent.
+
+## Quelles compagnies assurent la ligne Douala-Paris ?
 
 - **Compagnies européennes** (couvertes dans les deux sens) : Air France et Brussels Airlines (via Bruxelles)
 - **Compagnies non européennes** (couvertes uniquement au départ de Paris) : Camair-Co
 
-## Vol avec correspondance
+## Et si mon vol Douala-Paris a une correspondance ?
 
 Si votre billet est une **réservation unique** avec correspondance, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013). Une correspondance manquée qui vous fait arriver avec 3h+ de retard ouvre droit à l'indemnité, calculée sur la distance totale du trajet, même si l'une des étapes est opérée par une autre compagnie.
 
-## Vol annulé Douala-Paris : vos droits
+## Mon vol Douala-Paris est annulé : quels sont mes droits ?
 
-Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
+Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **en plus** du remboursement du billet **ou** d'un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8), sauf réacheminement compatible ou circonstance extraordinaire prouvée. Détail complet dans nos guides : [vol annulé à moins de 14 jours](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html) et [remboursement ou indemnité, la différence](/blog/remboursement-billet-vs-indemnite-ce261.html). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
-## Les excuses des compagnies : valables ou non
+## Panne, météo, grève : quelles excuses de la compagnie tiennent ?
 
 La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
 
@@ -72,7 +81,7 @@ Robin des Airs conteste systématiquement les refus fondés sur de fausses circo
 
 **5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Douala-Paris retardé il y a deux ou trois ans reste indemnisable aujourd'hui.
 
-## Famille : chaque passager compte
+## Je voyageais en famille : l'indemnité est-elle par passager ?
 
 L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Douala-Paris arrivé avec 4h de retard : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable.
 
@@ -84,4 +93,4 @@ Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilit
 
 → [Déposer mon dossier Douala-Paris en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/33756863630)
+→ [WhatsApp direct](https://wa.me/33756863630?text=Bonjour%2C%20mon%20vol%20Douala-Paris%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20(via%20l%27article))
