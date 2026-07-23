@@ -56,7 +56,20 @@ Si votre billet est une **réservation unique** avec correspondance, le retard s
 
 ## Vol Air Mauritius annulé : vos droits
 
-Si Air Mauritius annule votre vol et vous prévient **moins de 14 jours** avant le départ, et que le vol part de l'UE, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
+Une annulation n'est pas un simple retard : elle ouvre des droits distincts, qui dépendent du sens du vol et du délai de prévenance.
+
+**Au départ de Paris (vol annulé).** Si Air Mauritius vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **en plus** du remboursement du billet **ou** d'un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8 du CE 261). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
+
+**La porte de sortie de la compagnie : le réacheminement compatible.** Même prévenu tard, vous pouvez perdre l'indemnité si le vol de remplacement respecte des marges horaires précises. C'est là que se jouent la plupart des dossiers :
+
+- annulation notifiée **entre 7 et 14 jours** avant : pas d'indemnité si le réacheminement vous fait partir moins de 2 h avant et arriver moins de 4 h après l'horaire prévu ;
+- annulation notifiée **moins de 7 jours** avant : la marge tombe à 1 h avant le départ et 2 h après l'arrivée.
+
+Hors de ces fenêtres, l'indemnité redevient due. Détail complet et tableau de décision : [vol annulé à moins de 14 jours](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
+**Au départ de Maurice (vol annulé).** Le forfait de 600 € ne s'applique pas (compagnie et aéroport hors UE), mais l'annulation vous donne droit au **remboursement du billet** et à vos **frais réels** (repas, hôtel, transport) au titre de la Convention de Montréal, sur justificatifs.
+
+À ne pas confondre : le remboursement répare le billet, l'indemnité répare le désagrément. [Les deux se cumulent, mais pas dans tous les cas](/blog/remboursement-billet-vs-indemnite-ce261.html).
 
 ## Les excuses des compagnies : valables ou non
 
