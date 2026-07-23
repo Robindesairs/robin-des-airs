@@ -4041,6 +4041,37 @@ app.get('/api/recent-conversations', (req, res) => {
   res.json({ ok: true, updatedAt: new Date().toISOString(), total: conversations.length, conversations });
 });
 
+// Fil complet d'une conversation (messagerie interne). Même secret que recent-conversations.
+app.get('/api/conversation', (req, res) => {
+  const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
+  const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+  if (!expected) return res.status(503).json({ ok: false, error: 'service indisponible' });
+  if (!safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  const phone = String(req.query.phone || '').replace(/\D/g, '');
+  if (!phone) return res.status(400).json({ ok: false, error: 'phone requis' });
+  const c = CONVOS.get(phone);
+  const msgs = (c && c.msgs) ? c.msgs : [];
+  const messages = msgs.map(m => ({ role: m.role, text: m.text, at: new Date(m.at).toISOString() }));
+  let lastUserAt = 0;
+  for (let i = msgs.length - 1; i >= 0; i--) { if (msgs[i].role === 'user') { lastUserAt = msgs[i].at; break; } }
+  const within24h = !!(lastUserAt && Date.now() - lastUserAt < 24 * 60 * 60 * 1000);
+  res.json({ ok: true, phone, messages, count: messages.length, within24h, lastUserAt: lastUserAt ? new Date(lastUserAt).toISOString() : null });
+});
+
+// Enregistre une réponse d'agent (envoyée depuis le CRM) dans le fil, pour l'afficher côté messagerie.
+app.post('/api/record-agent', (req, res) => {
+  const b = req.body || {};
+  const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || b.s || '').toString().trim();
+  const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+  if (!expected) return res.status(503).json({ ok: false, error: 'service indisponible' });
+  if (!safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  const phone = String(b.phone || req.query.phone || '').replace(/\D/g, '');
+  const text = String(b.text || '').trim();
+  if (!phone || !text) return res.status(400).json({ ok: false, error: 'phone et text requis' });
+  recordConvo(phone, 'out', text);
+  res.json({ ok: true });
+});
+
 app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, convos: CONVOS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
 // Commit déployé (injecté par Railway) — pour vérifier un déploiement d'un coup d'œil.
 // [auto-deploy-test] modif neutre pour vérifier qu'un push GitHub redéploie le bot — à retirer après validation.

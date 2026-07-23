@@ -21,6 +21,41 @@ faq:
 
 Une carte d'embarquement, ce n'est pas qu'un billet pour passer la porte. C'est un document qui vous dit **qui** opère votre vol, **comment** prouver un retard, et **quand** vous devez être à l'aéroport. Voici comment la lire, ligne par ligne.
 
+<figure style="margin:1.5rem 0;text-align:center">
+<svg viewBox="0 0 600 300" role="img" xmlns="http://www.w3.org/2000/svg" aria-label="Carte d'embarquement annotée : la mention « opéré par » (transporteur effectif) et le numéro de vol déterminent qui vous doit l'indemnité CE 261." style="width:100%;max-width:580px;height:auto;font-family:Arial,sans-serif">
+<text x="18" y="18" fill="#B45309" font-size="12" font-weight="700">Les 2 lignes qui disent qui vous doit l'indemnité 👇</text>
+<rect x="8" y="30" width="420" height="250" rx="12" fill="#ffffff" stroke="#0B1F3A" stroke-width="2"/>
+<rect x="440" y="30" width="152" height="250" rx="12" fill="#F0F4F8" stroke="#0B1F3A" stroke-width="2"/>
+<line x1="434" y1="40" x2="434" y2="270" stroke="#0B1F3A" stroke-width="1.5" stroke-dasharray="4 4"/>
+<path d="M8 46 a12 12 0 0 1 12 -16 h396 a12 12 0 0 1 12 16 v18 h-420 z" fill="#0B1F3A"/>
+<text x="24" y="53" fill="#ffffff" font-size="13" font-weight="700">CARTE D'EMBARQUEMENT</text>
+<text x="406" y="54" fill="#00C87A" font-size="17" text-anchor="end">✈</text>
+<text x="24" y="86" fill="#6B7280" font-size="10">PASSAGER</text>
+<text x="24" y="102" fill="#0B1F3A" font-size="14" font-weight="700">DUPONT / MARIE</text>
+<text x="24" y="126" fill="#6B7280" font-size="10">TRAJET</text>
+<text x="24" y="142" fill="#0B1F3A" font-size="14" font-weight="700">PARIS (CDG) → ATLANTA (ATL)</text>
+<rect x="18" y="158" width="196" height="42" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2.5"/>
+<text x="28" y="175" fill="#B45309" font-size="10" font-weight="700">OPÉRÉ PAR / OPERATED BY</text>
+<text x="28" y="193" fill="#0B1F3A" font-size="15" font-weight="800">DELTA AIR LINES</text>
+<rect x="226" y="158" width="128" height="42" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2.5"/>
+<text x="236" y="175" fill="#B45309" font-size="10" font-weight="700">VOL / FLIGHT</text>
+<text x="236" y="193" fill="#0B1F3A" font-size="15" font-weight="800">AF 3527</text>
+<text x="24" y="230" fill="#6B7280" font-size="10">PORTE</text>
+<text x="24" y="247" fill="#0B1F3A" font-size="14" font-weight="700">24</text>
+<text x="120" y="230" fill="#6B7280" font-size="10">EMBARQUEMENT</text>
+<text x="120" y="247" fill="#0B1F3A" font-size="14" font-weight="700">14:40</text>
+<text x="270" y="230" fill="#6B7280" font-size="10">SIÈGE</text>
+<text x="270" y="247" fill="#0B1F3A" font-size="14" font-weight="700">25A</text>
+<text x="516" y="92" fill="#6B7280" font-size="9" text-anchor="middle">VOL</text>
+<text x="516" y="108" fill="#0B1F3A" font-size="13" font-weight="700" text-anchor="middle">AF 3527</text>
+<text x="516" y="150" fill="#6B7280" font-size="9" text-anchor="middle">SIÈGE</text>
+<text x="516" y="166" fill="#0B1F3A" font-size="13" font-weight="700" text-anchor="middle">25A</text>
+<text x="516" y="208" fill="#6B7280" font-size="9" text-anchor="middle">PORTE</text>
+<text x="516" y="224" fill="#0B1F3A" font-size="13" font-weight="700" text-anchor="middle">24</text>
+</svg>
+<figcaption style="font-size:.8rem;color:#6B7280;margin-top:.4rem;line-height:1.5">Vous achetez un vol Air France (AF 3527), mais c'est Delta qui opère : c'est la ligne « opéré par » qui dit à qui réclamer.</figcaption>
+</figure>
+
 ## Qui opère vraiment votre vol ? Le transporteur effectif
 
 C'est **la ligne la plus importante**, et la plus ignorée. Vous achetez parfois un billet sur une compagnie… qui n'est pas celle qui vous transporte.

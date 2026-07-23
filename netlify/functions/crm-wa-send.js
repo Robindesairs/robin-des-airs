@@ -97,6 +97,19 @@ exports.handler = async (event) => {
     by: agent,
   });
 
+  // Best-effort : enregistre la réponse dans le fil du bot (source primaire de la messagerie interne).
+  try {
+    const botBase = (process.env.RAILWAY_BOT_URL || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
+    const botSecret = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+    if (botSecret) {
+      await fetch(`${botBase}/api/record-agent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-secret': botSecret },
+        body: JSON.stringify({ phone, text: prefix + text }),
+      }).catch(() => {});
+    }
+  } catch (_) { /* non bloquant */ }
+
   return {
     statusCode: 200,
     headers: HEADERS,

@@ -150,6 +150,7 @@
 /api/crm-airtable-sync      /.netlify/functions/crm-airtable-sync 200
 /api/wa-messages            /.netlify/functions/wa-messages            200
 /api/wa-recent              /.netlify/functions/wa-recent              200
+/api/wa-thread              /.netlify/functions/wa-thread              200
 /api/crm-wa-send            /.netlify/functions/crm-wa-send            200
 /api/crm-pieces             /.netlify/functions/crm-pieces             200
 /api/crm-piece-delete       /.netlify/functions/crm-piece-delete       200

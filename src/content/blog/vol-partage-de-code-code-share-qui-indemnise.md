@@ -36,6 +36,11 @@ C'est le point qui coûte cher aux passagers. Le droit européen distingue deux 
 
 L'**article 2(b) du règlement CE 261/2004** est clair : l'obligation d'indemniser pèse sur le **transporteur effectif**. Autrement dit, en cas de retard ou d'annulation, **c'est la compagnie qui opère l'avion qui vous doit l'argent**, pas celle dont le nom figure sur votre billet.
 
+| Type de transporteur | Son rôle sur votre vol | Doit-il l'indemnité CE 261 ? |
+|---|---|---|
+| **Transporteur contractuel** | Vend le billet, envoie la confirmation | **Non** |
+| **Transporteur effectif** | Opère l'avion : pilotes, équipage, service | **Oui** |
+
 Réclamer à la mauvaise compagnie, c'est le meilleur moyen de voir son dossier renvoyé, ignoré, ou de perdre du temps jusqu'à la [prescription](/blog/combien-temps-reclamer-indemnite-vol.html).
 
 ## Comment savoir qui opère réellement votre vol ?

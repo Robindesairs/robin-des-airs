@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="/favicon.png" type="image/png">
+<title>Messagerie client · Robin des Airs</title>
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{--navy:#0B1F3A;--green:#12866B;--neon:#00C87A;--ink:#047857;--bg:#EDF1F5;--border:#D8DEE7;--muted:#6B7280}
+html,body{height:100%}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:#111827;-webkit-font-smoothing:antialiased}
+header.top{background:var(--navy);color:#fff;padding:.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+header.top .brand{font-weight:800;font-size:1rem;display:flex;align-items:center;gap:.5rem}
+header.top .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--neon);display:inline-block}
+header.top a.back{color:rgba(255,255,255,.8);text-decoration:none;font-size:.8rem;font-weight:600}
+header.top .right{display:flex;align-items:center;gap:.8rem;font-size:.8rem}
+#crmBtn{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);padding:.35rem .7rem;border-radius:.5rem;cursor:pointer;font-size:.78rem;font-weight:600}
+#crmBtn:hover{background:rgba(255,255,255,.2)}
+.wrap{display:grid;grid-template-columns:320px 1fr;height:calc(100vh - 52px)}
+/* LISTE */
+.list{border-right:1px solid var(--border);background:#fff;overflow-y:auto}
+.list-h{padding:.7rem 1rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1}
+.conv{padding:.7rem 1rem;border-bottom:1px solid #F1F3F6;cursor:pointer;display:flex;flex-direction:column;gap:.2rem}
+.conv:hover{background:#F7F9FB}
+.conv.active{background:#EAF6F0;border-left:3px solid var(--neon);padding-left:calc(1rem - 3px)}
+.conv .r1{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem}
+.conv .name{font-weight:700;color:var(--navy);font-size:.9rem}
+.conv .time{font-size:.68rem;color:var(--muted);white-space:nowrap}
+.conv .prev{font-size:.8rem;color:#4B5563;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.conv .prev.out::before{content:'Vous : ';color:var(--muted)}
+.empty{padding:2rem 1rem;text-align:center;color:var(--muted);font-size:.85rem;line-height:1.5}
+/* FIL */
+.thread-wrap{display:flex;flex-direction:column;height:100%;background:#EFEAE2;background-image:linear-gradient(rgba(255,255,255,.55),rgba(255,255,255,.55))}
+.thread-h{padding:.7rem 1.1rem;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.thread-h .who{font-weight:700;color:var(--navy)}
+.thread-h .sub{font-size:.72rem;color:var(--muted)}
+.msgs{flex:1;overflow-y:auto;padding:1.1rem;display:flex;flex-direction:column;gap:.5rem}
+.bubble{max-width:74%;padding:.5rem .75rem;border-radius:.75rem;font-size:.9rem;line-height:1.4;white-space:pre-wrap;word-wrap:break-word;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.bubble .t{display:block;font-size:.62rem;color:var(--muted);margin-top:.25rem;text-align:right}
+.bubble.in{align-self:flex-start;background:#fff;border-top-left-radius:.2rem}
+.bubble.out{align-self:flex-end;background:#D9FDD3;border-top-right-radius:.2rem}
+.reply{padding:.7rem 1rem;background:#fff;border-top:1px solid var(--border)}
+.reply.locked{background:#FEF9E7}
+.reply .warn{font-size:.75rem;color:#92400E;margin-bottom:.5rem;line-height:1.4}
+.reply-row{display:flex;gap:.6rem;align-items:flex-end}
+#replyInput{flex:1;min-height:44px;max-height:140px;padding:.6rem .8rem;border:1px solid var(--border);border-radius:.6rem;font-family:inherit;font-size:.9rem;resize:vertical}
+#sendBtn{background:var(--neon);color:var(--navy);font-weight:800;border:none;padding:.6rem 1.1rem;border-radius:.6rem;cursor:pointer;white-space:nowrap}
+#sendBtn:disabled{opacity:.45;cursor:not-allowed}
+.placeholder{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.9rem;text-align:center;padding:2rem}
+.pill{font-size:.66rem;padding:.1rem .45rem;border-radius:.3rem;font-weight:700}
+.pill.bot{background:#EAF6F0;color:var(--ink)}
+.pill.blobs{background:#FEF3C7;color:#92400E}
+@media(max-width:780px){.wrap{grid-template-columns:1fr}.list{display:block}.thread-wrap{display:none}body.viewing .list{display:none}body.viewing .thread-wrap{display:flex}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="dot"></span> Messagerie client <a class="back" href="/bureau.html" style="margin-left:.6rem">← Bureau</a></div>
+  <div class="right">
+    <span id="srcTag"></span>
+    <button id="crmBtn" onclick="crmLogin()">🔓 Connexion CRM</button>
+  </div>
+</header>
+<div class="wrap">
+  <aside class="list">
+    <div class="list-h"><span>Conversations</span><span id="convCount"></span></div>
+    <div id="convList"><div class="empty">Chargement…</div></div>
+  </aside>
+  <section class="thread-wrap" id="threadWrap">
+    <div class="placeholder" id="placeholder">← Choisissez une conversation à gauche pour voir les messages et répondre.</div>
+    <div class="thread-h" id="threadH" style="display:none">
+      <div><div class="who" id="threadWho"></div><div class="sub" id="threadSub"></div></div>
+      <button id="closeBtn" onclick="closeThread()" style="display:none;background:none;border:1px solid var(--border);border-radius:.5rem;padding:.3rem .6rem;cursor:pointer">Retour</button>
+    </div>
+    <div class="msgs" id="msgs" style="display:none"></div>
+    <div class="reply" id="reply" style="display:none">
+      <div class="warn" id="replyWarn" style="display:none"></div>
+      <div class="reply-row">
+        <textarea id="replyInput" placeholder="Votre réponse…" maxlength="4096" oninput="autoGrow(this)"></textarea>
+        <button id="sendBtn" onclick="sendReply()">Envoyer</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+var CUR = null;            // numéro ouvert
+var CONVOS = [];
+var pollList = null, pollThread = null;
+
+function _crmCode(){ try{ return sessionStorage.getItem('rda_crm_code')||''; }catch(_e){ return ''; } }
+function H(){ var h={'Content-Type':'application/json'}; var c=_crmCode(); if(c) h['X-CRM-Code']=c; return h; }
+async function jget(path){
+  try{ var r=await fetch(path,{credentials:'same-origin',headers:H()}); var j=await r.json().catch(function(){return{};}); return {ok:r.ok, status:r.status, j:j}; }
+  catch(e){ return {ok:false, status:0, j:{error:String(e&&e.message||e)}}; }
+}
+function setCrmBtn(on){ var b=document.getElementById('crmBtn'); if(!b)return; b.textContent=on?'✅ CRM connecté':'🔓 Connexion CRM'; b.style.opacity=on?'.7':'1'; }
+
+async function crmLogin(){
+  var code=prompt('Code d’accès CRM :'); if(!code||!code.trim())return;
+  try{
+    var r=await fetch('/api/crm-auth',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code.trim()})});
+    var j=await r.json().catch(function(){return{};});
+    if(!r.ok && j && j.needTotp){
+      var totp=prompt('Code de vérification (6 chiffres) :'); if(!totp||!totp.trim())return;
+      r=await fetch('/api/crm-auth',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:code.trim(),totp:totp.trim()})});
+      j=await r.json().catch(function(){return{};});
+    }
+    if(r.ok && j && j.ok){ try{sessionStorage.setItem('rda_crm_code',code.trim());}catch(_e){} setCrmBtn(true); loadConvos(); }
+    else { alert((j&&j.error)||'Code CRM incorrect ou refusé.'); }
+  }catch(e){ alert('Connexion impossible : '+(e&&e.message||e)); }
+}
+
+function fmtPhone(p){ var d=String(p||'').replace(/\D/g,''); if(d.indexOf('33')===0 && d.length===11){ return '+33 '+d.slice(2).replace(/(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/,'$1 $2 $3 $4 $5'); } return '+'+d; }
+function fmtTime(iso){ if(!iso)return''; var dt=new Date(iso); if(isNaN(dt))return''; var now=new Date(); var sameDay=dt.toDateString()===now.toDateString(); return sameDay? dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : dt.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'})+' '+dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function autoGrow(t){ t.style.height='auto'; t.style.height=Math.min(140,t.scrollHeight)+'px'; }
+
+async function loadConvos(){
+  var res=await jget('/api/wa-recent?limit=40');
+  var box=document.getElementById('convList');
+  if(res.status===401){ setCrmBtn(false); box.innerHTML='<div class="empty">🔒 Connectez-vous au CRM pour voir les conversations.<br><br><button onclick="crmLogin()" style="padding:.5rem 1rem;border-radius:.5rem;border:1px solid var(--border);background:#fff;cursor:pointer">Connexion CRM</button></div>'; return; }
+  setCrmBtn(true);
+  var d=res.j||{};
+  var tag=document.getElementById('srcTag'); if(tag) tag.textContent = d.source==='bot'?'live':(d.source==='blobs'?'archive':'');
+  CONVOS = (d.conversations||[]);
+  document.getElementById('convCount').textContent = CONVOS.length? CONVOS.length : '';
+  if(!CONVOS.length){ box.innerHTML='<div class="empty">Aucune conversation récente.<br><br>Les messages apparaissent ici dès qu’un client écrit sur le WhatsApp Robin des Airs.'+(d.ok===false&&d.error?'<br><br><small style="color:#B91C1C">'+esc(d.error)+'</small>':'')+'</div>'; return; }
+  box.innerHTML = CONVOS.map(function(c){
+    var out = c.lastRole==='assistant';
+    return '<div class="conv'+(c.phone===CUR?' active':'')+'" onclick="openConvo(\''+esc(c.phone)+'\')">'
+      + '<div class="r1"><span class="name">'+esc(fmtPhone(c.phone))+'</span><span class="time">'+esc(fmtTime(c.lastAt))+'</span></div>'
+      + '<div class="prev'+(out?' out':'')+'">'+esc(c.lastText||'')+'</div></div>';
+  }).join('');
+}
+
+async function openConvo(phone){
+  CUR=phone;
+  document.body.classList.add('viewing');
+  document.getElementById('placeholder').style.display='none';
+  document.getElementById('threadH').style.display='flex';
+  document.getElementById('msgs').style.display='flex';
+  document.getElementById('reply').style.display='block';
+  document.getElementById('closeBtn').style.display=(window.innerWidth<=780)?'block':'none';
+  document.getElementById('threadWho').textContent=fmtPhone(phone);
+  // marque l'actif dans la liste
+  Array.prototype.forEach.call(document.querySelectorAll('.conv'),function(el){ el.classList.remove('active'); });
+  await loadThread();
+  if(pollThread) clearInterval(pollThread);
+  pollThread=setInterval(function(){ if(CUR) loadThread(true); },6000);
+}
+function closeThread(){ CUR=null; document.body.classList.remove('viewing'); if(pollThread){clearInterval(pollThread);pollThread=null;} }
+
+async function loadThread(silent){
+  if(!CUR) return;
+  var res=await jget('/api/wa-thread?phone='+encodeURIComponent(CUR));
+  if(res.status===401){ setCrmBtn(false); return; }
+  var d=res.j||{};
+  var msgs=d.messages||[];
+  var box=document.getElementById('msgs');
+  var atBottom = box.scrollHeight-box.scrollTop-box.clientHeight < 60;
+  box.innerHTML = msgs.map(function(m){
+    var out = m.role==='assistant';
+    return '<div class="bubble '+(out?'out':'in')+'">'+esc(m.text)+'<span class="t">'+esc(fmtTime(m.at))+'</span></div>';
+  }).join('') || '<div class="empty">Pas encore de message dans ce fil.</div>';
+  if(!silent || atBottom) box.scrollTop=box.scrollHeight;
+  // sous-titre + fenêtre 24h
+  var sub=document.getElementById('threadSub');
+  var win24 = d.within24h===true || (d.count===0);
+  sub.innerHTML = (d.source==='bot'?'<span class="pill bot">live</span> ':'<span class="pill blobs">archive</span> ')+(win24?'fenêtre 24 h ouverte':'fenêtre 24 h fermée');
+  var reply=document.getElementById('reply'), warn=document.getElementById('replyWarn'), btn=document.getElementById('sendBtn');
+  if(win24){ reply.classList.remove('locked'); warn.style.display='none'; btn.disabled=false; }
+  else { reply.classList.add('locked'); warn.style.display='block'; warn.textContent='⏳ Le client n’a pas écrit depuis plus de 24 h. WhatsApp interdit le texte libre : il faut un modèle approuvé, ou attendre qu’il réponde.'; btn.disabled=false; /* on laisse tenter, le serveur tranchera */ }
+}
+
+async function sendReply(){
+  if(!CUR) return;
+  var input=document.getElementById('replyInput'); var text=(input.value||'').trim(); if(!text)return;
+  var btn=document.getElementById('sendBtn'); btn.disabled=true; var old=btn.textContent; btn.textContent='…';
+  try{
+    var r=await fetch('/api/crm-wa-send',{method:'POST',credentials:'same-origin',headers:H(),body:JSON.stringify({phone:CUR,text:text})});
+    var j=await r.json().catch(function(){return{};});
+    if(r.ok && j && j.ok){ input.value=''; autoGrow(input); await loadThread(); loadConvos(); }
+    else { alert((j&&j.error)||'Échec de l’envoi.'); }
+  }catch(e){ alert('Envoi impossible : '+(e&&e.message||e)); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+document.getElementById('replyInput').addEventListener('keydown',function(e){ if(e.key==='Enter' && (e.metaKey||e.ctrlKey)){ e.preventDefault(); sendReply(); } });
+
+loadConvos();
+pollList=setInterval(loadConvos,12000);
+</script>
+</body>
+</html>
