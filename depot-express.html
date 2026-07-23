@@ -441,7 +441,17 @@
     var sc = document.createElement('div'); sc.className = 'screen' + (backwards ? ' backwards' : '');
     backwards = false;
     stage.appendChild(sc);
-    SCREENS[FLOW[idx]](sc);
+    // Garde-fou : un écran ne doit JAMAIS laisser un cul-de-sac silencieux (parcours = revenu).
+    // Si le rendu plante, on affiche un message clair + le recours WhatsApp au lieu d'un demi-écran figé.
+    try {
+      SCREENS[FLOW[idx]](sc);
+    } catch (err) {
+      try { console.error('depot-express: erreur écran ' + FLOW[idx], err); } catch (_) {}
+      sc.innerHTML = '<h2>😕 Un souci technique</h2>'
+        + '<p class="sub">Cette étape n\'a pas pu s\'afficher correctement. Ce n\'est pas de votre faute et votre dossier n\'est pas perdu.</p>'
+        + '<p style="margin-top:12px;font-size:14.5px;line-height:1.6">Reprenez en 1 minute sur WhatsApp, on finalise votre dossier avec vous : '
+        + '<a href="https://wa.me/33756863630" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800">ouvrir WhatsApp →</a></p>';
+    }
     window.scrollTo({ top: 0 });
   }
   // Un clic d'option : petit flash visuel (90 ms) puis écran suivant, RIEN d'autre à confirmer.
@@ -1159,6 +1169,13 @@
       acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance, rempli avec vos informations</summary><div class="acc-body"><div class="acc-link" style="padding:18px 14px;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6"></div></div>';
       sc.appendChild(acc);
       var _accBox = acc.querySelector('.acc-link');
+      // Prénom/nom pour l'aperçu du contrat : même dérivation que submit() (pièce OCR d'abord,
+      // sinon les cases saisies à la main). Défini ICI car submit() ne l'expose pas à ce scope —
+      // sans ça, JSON.stringify() plantait et coupait le rendu (pas de bouton « Signer »).
+      var _full = (S.names[0] || '').trim();
+      var _parts = _full.split(/\s+/).filter(Boolean);
+      var firstName = (S.piece && S.piece.prenom) || S.manualPrenom || (_parts[0] || '');
+      var lastName  = (S.piece && S.piece.nom) || S.manualNom || _parts.slice(1).join(' ');
       // PRÉ-GÉNÉRATION en arrière-plan dès que l'écran s'affiche : plus d'attente au dépliage.
       var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
       var _accUrl = null, _accErr = false;

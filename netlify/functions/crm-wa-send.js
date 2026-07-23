@@ -15,6 +15,47 @@ const HEADERS = {
   'Cache-Control': 'no-store',
 };
 
+/**
+ * Fenêtre 24 h vue par le bot Railway (source PRIMAIRE, identique à l'affichage
+ * de la messagerie). Sans ça, le blocage se base sur les Netlify Blobs qui, en
+ * prod, ne reçoivent pas l'entrant (le webhook WhatsApp arrive sur le bot) →
+ * l'écran affiche « fenêtre ouverte » mais l'envoi est refusé. On aligne les deux.
+ * @returns {Promise<{within24h:boolean, lastUserAt:string|null}|null>}
+ */
+async function botWindow(phone) {
+  const base = (process.env.RAILWAY_BOT_URL || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
+  const secret = (process.env.WATI_WEBHOOK_SECRET || process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+  if (!secret) return null;
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 7000);
+  try {
+    const r = await fetch(`${base}/api/conversation?phone=${encodeURIComponent(phone)}`, {
+      headers: { 'x-secret': secret, Accept: 'application/json' },
+      signal: ctrl.signal,
+    });
+    clearTimeout(t);
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (!d || d.ok !== true) return null;
+    // within24h fourni par le bot ; sinon on le recalcule depuis le dernier message client.
+    let within24h = d.within24h === true;
+    let lastUserAt = d.lastUserAt || null;
+    if (d.within24h == null && Array.isArray(d.messages)) {
+      for (let i = d.messages.length - 1; i >= 0; i--) {
+        if (d.messages[i].role === 'user' && d.messages[i].at) {
+          const ts = Date.parse(d.messages[i].at);
+          if (ts) { within24h = Date.now() - ts < 24 * 60 * 60 * 1000; lastUserAt = d.messages[i].at; }
+          break;
+        }
+      }
+    }
+    return { within24h, lastUserAt };
+  } catch (_) {
+    clearTimeout(t);
+    return null;
+  }
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: HEADERS, body: '' };
@@ -67,7 +108,20 @@ exports.handler = async (event) => {
     };
   }
 
-  if (!convoInfo.canSendFreeText && convoInfo.count > 0) {
+  // Décision fenêtre 24 h : on aligne le blocage sur la MÊME source que l'affichage.
+  // Les Blobs peuvent être « en retard » sur l'entrant (webhook reçu par le bot en prod) ;
+  // on interroge donc le bot avant de refuser. On ne bloque que si les DEUX sources sont fermées.
+  let canSend = convoInfo.canSendFreeText;
+  let lastUserAt = convoInfo.lastUserAt;
+  if (!canSend && convoInfo.count > 0) {
+    const bot = await botWindow(phone);
+    if (bot && bot.within24h) {
+      canSend = true;
+      lastUserAt = bot.lastUserAt || lastUserAt;
+    }
+  }
+
+  if (!canSend && convoInfo.count > 0) {
     return {
       statusCode: 400,
       headers: HEADERS,
@@ -75,7 +129,7 @@ exports.handler = async (event) => {
         error:
           'Fenêtre 24 h expirée : le client doit avoir écrit récemment, ou utilisez un modèle WhatsApp approuvé (Wati / Make).',
         within24h: false,
-        lastUserAt: convoInfo.lastUserAt,
+        lastUserAt,
       }),
     };
   }
