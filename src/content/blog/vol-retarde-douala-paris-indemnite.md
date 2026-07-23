@@ -1,7 +1,7 @@
 ---
 title: "Vol retardé Paris-Douala ou Douala-Paris : indemnité jusqu'à 600 €"
-meta_title: "Douala-Paris retardé : 600 € par passager selon la compagnie"
-meta_description: "Vol Paris-Douala ou Douala-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager. Air France et Brussels Airlines paient au retour, Camair-Co non."
+meta_title: "Vol Douala-Paris retardé : qui vous doit 600 € (et qui non)"
+meta_description: "Vol Douala-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager, 0 € d'avance. Selon votre compagnie, on vous dit qui paie et comment réclamer."
 slug: vol-retarde-douala-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
