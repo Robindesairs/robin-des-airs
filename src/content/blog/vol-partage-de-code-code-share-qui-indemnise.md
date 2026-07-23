@@ -1,7 +1,7 @@
 ---
 title: "Vol en partage de code (code-share) : qui vous doit l'indemnité ?"
-meta_title: "Vol en partage de code (code-share) : c'est quoi, qui paie l'indemnité ?"
-meta_description: "Vous achetez un billet sur une compagnie, mais une autre opère le vol : c'est le code-share. En cas de retard ou d'annulation, c'est le transporteur qui opère qui vous doit jusqu'à 600 €. On vous explique comment le repérer."
+meta_title: "Vol code-share retardé : qui doit payer ? (jusqu'à 600 €)"
+meta_description: "Vol en partage de code retardé ou annulé ? C'est le transporteur qui opère (pas celui du billet) qui vous doit jusqu'à 600 €. Diagnostic gratuit en 2 min."
 slug: vol-partage-de-code-code-share-qui-indemnise
 image_url: /og-blog.png
 faq:
