@@ -1,7 +1,7 @@
 ---
 title: "Vol annulé moins de 14 jours avant le départ : indemnité due"
-meta_title: "Vol annulé à moins de 14 jours : jusqu'à 600€ en plus du remboursement (CE 261)"
-meta_description: "Votre vol a été annulé moins de 14 jours avant le départ ? Une annulation notifiée tardivement peut ouvrir droit à une indemnité forfaitaire — jusqu'à 600€ par passager selon éligibilité — en plus du remboursement. 0€ d'avance."
+meta_title: "Vol annulé moins de 14 jours : indemnité CE 261 jusqu'à 600€"
+meta_description: "Vol annulé moins de 14 jours avant le départ ? Une notification tardive peut ouvrir droit à une indemnité jusqu'à 600€, en plus du remboursement. 0€ d'avance."
 slug: vol-annule-moins-14-jours-avant-depart-indemnite-ce261
 image_url: /og-blog.png
 ---
@@ -24,11 +24,33 @@ Autrement dit, une annulation de dernière minute n'est pas un simple contretemp
 La compagnie dispose d'une porte de sortie : si elle vous propose un **réacheminement** (un autre vol) dont les horaires restent proches de ceux prévus, l'indemnité peut ne pas être due, même en cas de notification tardive. C'est là que se joue l'essentiel du dossier. Le règlement encadre précisément ce qu'est un réacheminement « compatible » :
 
 - **Annulation notifiée entre 7 et 14 jours avant le départ** : le réacheminement échappe à l'indemnité s'il vous fait partir **moins de 2 heures avant** l'heure prévue et arriver **moins de 4 heures après** l'heure d'arrivée initiale.
-- **Annulation notifiée moins de 7 jours avant le départ** : la marge se réduit — départ **moins d'1 heure avant** et arrivée **moins de 2 heures après** l'horaire prévu.
+- **Annulation notifiée moins de 7 jours avant le départ** : la marge se réduit, avec un départ **moins d'1 heure avant** et une arrivée **moins de 2 heures après** l'horaire prévu.
+
+Pour visualiser d'un coup d'oeil quand l'indemnité reste due, voici le tableau complet. C'est précisément ce que la plupart des sites résument en une phrase vague, alors que tout se joue ici :
+
+| Préavis d'annulation | Réacheminement proposé | Indemnité forfaitaire |
+| --- | --- | --- |
+| 14 jours ou plus | peu importe les horaires | Non due (remboursement seul) |
+| 7 à 14 jours | départ moins de 2 h avant **et** arrivée moins de 4 h après | Non due |
+| 7 à 14 jours | en dehors de cette fenêtre, même de quelques minutes | **Due** |
+| Moins de 7 jours | départ moins d'1 h avant **et** arrivée moins de 2 h après | Non due |
+| Moins de 7 jours | en dehors de cette fenêtre | **Due** |
+| Peu importe le préavis | aucun réacheminement proposé | **Due** |
 
 Si le vol de remplacement dépasse ces marges — vous partez bien plus tôt, ou vous arrivez avec un gros retard — le réacheminement n'est **pas** compatible, et l'indemnité peut redevenir due. C'est un point que les compagnies « oublient » régulièrement : elles présentent un vol de report très décalé comme un simple aménagement, alors qu'il peut ouvrir droit à indemnisation.
 
-Enfin, l'indemnité peut tomber si la compagnie prouve que l'annulation est due à des **circonstances extraordinaires** (certaines conditions météo, une instruction du contrôle aérien, etc.). Ce motif est souvent invoqué à tort : un simple problème technique ou une réorganisation de planning n'en fait, en principe, pas partie.
+> **L'erreur qui vous coûte 600 €.** Annulation notifiée 5 jours avant le départ. La compagnie vous reloge sur un vol qui arrive **4 h 30 après** l'horaire prévu et vous présente cela comme réglé. Ce n'est pas réglé : à moins de 7 jours, le plafond d'arrivée est de **2 heures**. Vous êtes **2 h 30 au-dessus** de la limite, donc le réacheminement n'est pas compatible et l'indemnité, jusqu'à 600 € par passager, reste pleinement due. Vérifiez toujours les horaires exacts du vol de remplacement : c'est souvent là que se cache l'indemnité.
+
+## Circonstances extraordinaires : l'excuse n'est pas automatique
+
+C'est l'autre porte de sortie de la compagnie, et la plus mal comprise. L'indemnité peut tomber si la compagnie **prouve** que l'annulation résulte de **circonstances extraordinaires** qui n'auraient pas pu être évitées même en prenant toutes les mesures raisonnables. Le mot important est *prouve* : le motif est très souvent invoqué par réflexe, sans jamais être démontré. La jurisprudence européenne est stricte sur ce qui compte, ou non :
+
+- **Grève du propre personnel de la compagnie** : en principe **pas** une circonstance extraordinaire ([arrêt Krusemann](/blog/arret-krusemann-greve-cjue.html)).
+- **Panne technique**, y compris un défaut caché : en principe **pas** extraordinaire non plus ([arrêt van der Lans](/blog/arret-van-der-lans-defaut-cache-cjue.html)).
+- **Collision avec un oiseau** : extraordinaire, mais la compagnie doit encore prouver qu'aucune mesure raisonnable n'aurait évité les conséquences ([arrêt Pešková](/blog/arret-peskova-bird-strike-cjue.html)).
+- **Météo majeure ou fermeture de l'espace aérien** (nuage de cendres, par exemple) : peuvent être extraordinaires ([arrêt McDonagh](/blog/arret-mcdonagh-cendres-volcaniques-cjue.html)).
+
+Et même lorsque la circonstance est réelle, la compagnie doit démontrer qu'elle a pris toutes les **mesures raisonnables** pour en limiter les effets ([arrêt Eglītis](/blog/arret-eglititis-mesures-raisonnables-cjue.html)). Pour creuser le sujet : [circonstances extraordinaires, le guide complet](/blog/circonstances-extraordinaires-ce261.html).
 
 ## Remboursement ET indemnité : ne confondez pas les deux
 
