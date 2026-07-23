@@ -511,6 +511,20 @@ body.game-mode #gameView { display:block; }
     <div id="dock"></div>
   </div>
 
+  <!-- MESSAGERIE CLIENT (intégrée : le fil WhatsApp répondable, directement dans le Bureau) -->
+  <div class="dock" id="msgSection">
+    <div class="section-h">
+      <h2>💬 Messagerie client</h2>
+      <span class="tag" id="msgUnread" style="display:none;background:#e0533d;border-color:#e0533d;color:#fff;font-weight:800" title="Nouveaux messages non lus">0</span>
+      <span class="line"></span>
+      <a class="sound-btn" href="/messages.html" target="_blank" rel="noopener" title="Ouvrir la messagerie en plein écran">⤢ Plein écran</a>
+    </div>
+    <div class="panel" style="overflow:hidden;padding:0">
+      <iframe id="msgFrame" src="/messages.html" title="Messagerie client Robin des Airs" loading="lazy"
+              style="width:100%;height:640px;border:0;display:block;background:#EFEAE2"></iframe>
+    </div>
+  </div>
+
   <div class="grid">
     <!-- LEFT : agents -->
     <div>
@@ -830,6 +844,76 @@ function winSound(){
     o.start(t); o.stop(t+0.4);
   });
 }
+// Bip "nouveau message" (deux notes courtes), distinct du ka-ching victoire. Respecte le bouton Son.
+function msgSound(){
+  if(!SOUND_ON || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  [880, 1174.66].forEach((f,i)=>{
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type='sine'; o.frequency.value=f;
+    const t = now + i*0.13;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.18, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t+0.28);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t+0.32);
+  });
+}
+
+/* ============ NOTIFICATION NOUVEAU MESSAGE CLIENT 💬 ============ */
+// Détecte l'arrivée d'un message ENTRANT (client) plus récent que le dernier vu, et alerte :
+// badge rouge sur le panneau Messagerie + bip + clignotement du titre d'onglet. Le seuil "vu"
+// est mémorisé (localStorage) pour ne pas re-sonner à chaque rechargement de page.
+const MSG_SEEN_KEY = 'rda_msg_seen_ts';
+let MSG_SEEN_TS = (function(){ try { return parseInt(localStorage.getItem(MSG_SEEN_KEY)||'0',10)||0; } catch(_){ return 0; } })();
+let MSG_INIT = false;          // 1er passage : on cale le seuil sans alerter (évite une fausse alerte au chargement)
+let _titleFlip = null, _baseTitle = document.title;
+function _newestInboundTs(convos){
+  let mx = 0;
+  (convos||[]).forEach(function(c){
+    // message entrant = dernier tour côté CLIENT (lastRole !== 'assistant')
+    if(c && c.lastRole !== 'assistant' && c.lastAt){ const t = Date.parse(c.lastAt); if(t && t>mx) mx = t; }
+  });
+  return mx;
+}
+function _countUnread(convos){
+  return (convos||[]).filter(function(c){ return c && c.lastRole!=='assistant' && c.lastAt && Date.parse(c.lastAt) > MSG_SEEN_TS; }).length;
+}
+function _setMsgBadge(n){
+  const b = document.getElementById('msgUnread'); if(!b) return;
+  if(n>0){ b.style.display=''; b.textContent = n>9 ? '9+' : String(n); }
+  else { b.style.display='none'; }
+}
+function _startTitleFlash(n){
+  if(_titleFlip) return;
+  let on = true;
+  _titleFlip = setInterval(function(){ document.title = on ? ('💬 '+n+' nouveau'+(n>1?'x':'')+' message'+(n>1?'s':'')) : _baseTitle; on = !on; }, 1100);
+}
+function _stopTitleFlash(){ if(_titleFlip){ clearInterval(_titleFlip); _titleFlip=null; document.title=_baseTitle; } }
+function markMessagesSeen(){
+  MSG_SEEN_TS = Date.now();
+  try { localStorage.setItem(MSG_SEEN_KEY, String(MSG_SEEN_TS)); } catch(_){}
+  _setMsgBadge(0); _stopTitleFlash();
+}
+function notifyInbound(convos){
+  const newest = _newestInboundTs(convos);
+  if(!MSG_INIT){ MSG_INIT = true; if(newest > MSG_SEEN_TS) MSG_SEEN_TS = newest; return; } // calage silencieux au 1er tour
+  const unread = _countUnread(convos);
+  _setMsgBadge(unread);
+  if(newest > MSG_SEEN_TS){        // au moins un entrant plus récent que le seuil "vu"
+    msgSound();
+    _startTitleFlash(unread);
+    try{ if(window.Notification && Notification.permission==='granted'){ new Notification('💬 Nouveau message client', { body:'Un client vient d\'écrire sur WhatsApp.', tag:'rda-wa' }); } }catch(_){}
+  }
+}
+// Clic dans la messagerie (ou son survol) = "lu" : on éteint badge + titre.
+(function(){
+  const sec = document.getElementById('msgSection');
+  if(sec){ sec.addEventListener('mouseenter', markMessagesSeen); sec.addEventListener('click', markMessagesSeen); }
+  // Demande discrète d'autorisation de notification quand l'utilisateur active le son (geste utilisateur).
+  const sb = document.getElementById('soundBtn');
+  if(sb){ sb.addEventListener('click', function(){ try{ if(window.Notification && Notification.permission==='default') Notification.requestPermission(); }catch(_){}}); }
+})();
 
 /* ============ CONFETTIS 🎉 ============ */
 const confCanvas = document.getElementById('confetti');
@@ -1447,6 +1531,7 @@ async function loadWaConversations(){
   if(d && d.ok){
     REAL.sources.waConvos = true;
     renderWaConversations(d.conversations);
+    notifyInbound(d.conversations);   // alerte si un client vient d'écrire (badge + bip + titre)
   }
   setSrcBadge();
 }
@@ -2182,7 +2267,7 @@ loadRealData();
 window.addEventListener('bureau-crm-unlocked', loadProtected);
 setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3 min
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
-setInterval(loadWaConversations, 120000); // vraies conversations WhatsApp toutes les 2 min
+setInterval(loadWaConversations, 30000); // conversations + détection nouveau message toutes les 30 s
 setInterval(loadRappels, 120000);    // dossiers à rappeler toutes les 2 min
 setInterval(loadTplStatus, 180000);  // relances & notifs WhatsApp toutes les 3 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
