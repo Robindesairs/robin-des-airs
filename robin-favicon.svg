@@ -4,10 +4,10 @@
   <ellipse cx="256" cy="466" rx="104" ry="116" fill="#3ECF8E"/>
   <circle cx="188" cy="238" r="64" fill="#FFFFFF"/>
   <circle cx="324" cy="238" r="64" fill="#FFFFFF"/>
-  <circle cx="196" cy="250" r="31" fill="#0B2138"/>
-  <circle cx="316" cy="250" r="31" fill="#0B2138"/>
-  <circle cx="186" cy="230" r="11" fill="#FFFFFF"/>
-  <circle cx="306" cy="230" r="11" fill="#FFFFFF"/>
+  <circle cx="190" cy="256" r="41" fill="#0B2138"/>
+  <circle cx="322" cy="256" r="41" fill="#0B2138"/>
+  <circle cx="202" cy="245" r="14" fill="#FFFFFF"/>
+  <circle cx="334" cy="245" r="14" fill="#FFFFFF"/>
   <polygon points="222,300 290,300 256,360" fill="#F6B93B"/>
   <polygon points="222,300 290,300 256,332" fill="#E89A2E"/>
 </svg>
