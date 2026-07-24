@@ -1,7 +1,7 @@
 ---
 title: "Vol Air Côte d'Ivoire retardé ou annulé : indemnité jusqu'à 600 €"
-meta_title: "Vol Air Côte d'Ivoire retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
-meta_description: "Vol Air Côte d'Ivoire retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
+meta_title: "Air Côte d'Ivoire vol retardé : jusqu'à 600 € d'indemnité"
+meta_description: "Vol Air Côte d'Ivoire retardé de 3h, annulé ou surbooké au départ de Paris ? Jusqu'à 600 € par passager (CE 261). Vérifiez votre droit en 2 min, 0 € d'avance."
 slug: air-cote-ivoire-vol-retarde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
@@ -74,6 +74,13 @@ L'indemnité est due **par passager**, sans distinction d'âge. Famille de 4 sur
 Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, opérateur réel, distance, cause), monte le dossier, envoie la réclamation à Air Côte d'Ivoire et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en dioula ou baoulé.
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Une question, un doute en dioula ou baoulé ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
 
 → [Déposer mon dossier Air Côte d'Ivoire en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)

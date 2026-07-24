@@ -1,9 +1,9 @@
 ---
 title: "Air Sénégal retard, annulation, bagage : indemnité et droits complets"
-meta_title: "Air Sénégal retardé : 600 € par passager au départ de Paris"
-meta_description: "Vol Air Sénégal retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Paris, même si la compagnie n'est pas européenne. Au départ de Dakar, c'est différent."
+meta_title: "Air Sénégal vol retardé ou annulé : jusqu'à 600 €"
+meta_description: "Vol Air Sénégal retardé de 3h, annulé ou surbooké au départ de Paris ? Jusqu'à 600 € par passager, même si la compagnie n'est pas européenne. 0 € d'avance."
 slug: air-senegal-vol-retarde-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Vol Paris-Dakar sur Air Sénégal retardé de 4h. Combien je touche ?"
     a: "Distance CDG-DSS ≈ 4 200 km → **600€ par passager**. Couvert car départ de Paris (UE), même si Air Sénégal n'est pas européenne."
@@ -21,21 +21,23 @@ faq:
 
 **Votre vol Air Sénégal a été retardé de 3h ou plus, ou annulé ? Selon votre trajet, vous pouvez réclamer jusqu'à 600 € par passager.** Au départ d'Europe (ex. Paris → Dakar), c'est couvert ; au départ du Sénégal, Air Sénégal n'étant pas européenne, l'indemnité n'est en principe pas due. On vérifie gratuitement votre cas, 0 € d'avance.
 
-Air Sénégal (HC) est la compagnie nationale sénégalaise, relancée en 2018 sous le label « Sénégal Airlines ». Elle opère principalement la liaison Dakar (DSS) ↔ Paris Charles-de-Gaulle (CDG) et dessert plusieurs destinations africaines. Pour la diaspora sénégalaise en France, c'est souvent le choix par préférence nationale — mais les droits varient fortement selon le sens du vol.
+Air Sénégal (HC) est la compagnie nationale sénégalaise, relancée en 2018 sous le label « Sénégal Airlines ». Elle opère principalement la liaison Dakar (DSS) ↔ Paris Charles-de-Gaulle (CDG) et dessert plusieurs destinations africaines. Pour la diaspora sénégalaise en France, c'est souvent le choix par préférence nationale, mais les droits varient fortement selon le sens du vol.
 
 ## Quelle loi s'applique sur un vol Air Sénégal ?
+
+![Schéma CE 261 : un vol au départ de l'UE (Paris) est couvert quelle que soit la compagnie ; au départ hors UE (Dakar), seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Il existe deux régimes d'indemnisation distincts :
 
 **Le CE 261/2004 (règlement européen)** : forfait fixe de 250€, 400€ ou 600€ selon la distance. S'applique uniquement si :
-- Le vol départ d'un aéroport de l'UE (Paris, Bruxelles, etc.) **— quelle que soit la compagnie**
+- Le vol départ d'un aéroport de l'UE (Paris, Bruxelles, etc.) **quelle que soit la compagnie**
 - OU la compagnie est enregistrée dans l'UE (Air France, Corsair, Brussels Airlines…)
 
 **La Convention de Montréal** : remboursement des frais réels (plafonné). S'applique sur tous les vols internationaux, indépendamment du pays de départ.
 
 | Trajet | CE261 applicable ? | Convention de Montréal ? |
 |---|---|---|
-| Paris CDG → Dakar DSS (Air Sénégal) | ✅ Oui — départ UE | ✅ Oui |
+| Paris CDG → Dakar DSS (Air Sénégal) | ✅ Oui, départ UE | ✅ Oui |
 | Dakar DSS → Paris CDG (Air Sénégal retour) | ❌ Non | ✅ Oui |
 
 **Différence clé avec Air France ou Corsair :** ces compagnies françaises couvrent les deux sens. Air Sénégal n'est couverte par le CE261 que sur le vol aller depuis Paris.
@@ -46,7 +48,7 @@ Il existe deux régimes d'indemnisation distincts :
 
 ### Depuis Paris (aller) : jusqu'à 600€
 
-Le CE261 s'applique sur les vols Paris → Dakar au départ de CDG ou ORY. Seuil : **retard de 3h ou plus à l'heure d'arrivée** (heure d'ouverture des portes à Dakar — arrêt Folkerts, CJUE 2013).
+Le CE261 s'applique sur les vols Paris → Dakar au départ de CDG ou ORY. Seuil : **retard de 3h ou plus à l'heure d'arrivée** (heure d'ouverture des portes à Dakar, arrêt Folkerts, CJUE 2013).
 
 | Route | Distance | Indemnité si retard ≥ 3h |
 |---|---|---|
@@ -82,7 +84,7 @@ Air Sénégal peut être exonérée si elle prouve une circonstance extraordinai
 - Grève externe (contrôleurs aériens, personnel aéroport)
 
 **Ce qui n'est PAS une circonstance extraordinaire :**
-- Panne technique (sauf défaut constructeur récemment découvert) — arrêt Wallentin-Hermann, CJUE
+- Panne technique (sauf défaut constructeur récemment découvert), arrêt Wallentin-Hermann, CJUE
 - Sous-effectif ou problème de planification
 - [Retard de rotation (avion précédent en retard)](/blog/retard-rotation-avion-vol-precedent-indemnisation.html)
 
@@ -103,7 +105,7 @@ La **Convention de Montréal** s'applique sur tous les vols Air Sénégal, quel 
 
 ### Bagage retardé
 
-Si votre bagage arrive 24h ou plus après vous : conservez les reçus de tous les achats de première nécessité (vêtements, médicaments, hygiène) — vous pouvez les faire rembourser.
+Si votre bagage arrive 24h ou plus après vous : conservez les reçus de tous les achats de première nécessité (vêtements, médicaments, hygiène), vous pouvez les faire rembourser.
 
 ---
 
@@ -165,9 +167,16 @@ Robin des Airs spécialisé sur les corridors Afrique-Europe :
 - Vérifie automatiquement l'éligibilité de votre vol (aller/retour, compagnie, distance)
 - Rédige et envoie la réclamation à Air Sénégal
 - Conteste les refus basés sur des "circonstances extraordinaires"
-- Pas de frais si on ne gagne pas — 25% seulement sur l'indemnité obtenue
+- Pas de frais si on ne gagne pas, 25% seulement sur l'indemnité obtenue
 
-**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp** — dans les deux cas on vous pose les questions, vous n'avez rien à rédiger.
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp** : dans les deux cas on vous pose les questions, vous n'avez rien à rédiger.
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Une question, un doute en wolof ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
 
 Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Corsair vol retardé](/blog/corsair-vol-retarde-indemnite.html), [Circonstances extraordinaires : ce qui exonère vraiment](/blog/circonstances-extraordinaires-ce261.html).
 
