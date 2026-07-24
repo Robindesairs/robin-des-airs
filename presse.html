@@ -30,6 +30,12 @@ a{color:var(--gold)}
 .stat span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .stat.due b{color:var(--warn)} .stat.pub b{color:var(--ok)}
 
+/* onglets presse / associations */
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+.tabs button{background:none;color:var(--muted);border:none;border-bottom:2px solid transparent;padding:9px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:-1px}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-pressed="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+
 /* alerte relances */
 .due-box{border:1px solid rgba(240,179,87,.35);background:rgba(240,179,87,.08);border-radius:4px;padding:13px 15px;margin-bottom:18px}
 .due-box h2{font-size:14px;color:var(--warn);margin-bottom:7px}
@@ -91,10 +97,15 @@ select,.note-in{background:var(--card);border:1px solid var(--border);border-rad
 
 <div id="app" class="wrap hidden">
   <header>
-    <h1>Salle de presse</h1>
-    <span class="sub">Suivi des tribunes et relances</span>
+    <h1>Suivi presse &amp; associations</h1>
+    <span class="sub" id="sub">Tribunes, backlinks et relances</span>
     <a class="back" href="/bureau.html">← Le Bureau</a>
   </header>
+
+  <div class="tabs" id="tabs">
+    <button data-ds="presse" aria-pressed="true">Presse</button>
+    <button data-ds="assos" aria-pressed="false">Associations</button>
+  </div>
 
   <div class="stats" id="stats"></div>
 
@@ -105,6 +116,7 @@ select,.note-in{background:var(--card);border:1px solid var(--border);border-rad
 
   <div class="filters">
     <button data-f="tous" aria-pressed="true">Tous</button>
+    <button data-f="a_relever" aria-pressed="false" class="only-assos hidden">À relever</button>
     <button data-f="a_envoyer" aria-pressed="false">À envoyer</button>
     <button data-f="envoye" aria-pressed="false">Envoyés</button>
     <button data-f="relance" aria-pressed="false">Relancés</button>
@@ -130,25 +142,35 @@ select,.note-in{background:var(--card);border:1px solid var(--border);border-rad
 <div id="msg" class="msg"></div>
 
 <script>
-const STATUTS=[["a_envoyer","À envoyer"],["envoye","Envoyé"],["relance1","Relance 1"],["relance2","Relance 2"],
+const STATUTS=[["a_relever","À relever"],["a_envoyer","À envoyer"],["envoye","Envoyé"],["relance1","Relance 1"],["relance2","Relance 2"],
   ["reponse","Réponse reçue"],["accepte","Accepté"],["publie","Publié"],["refus","Refus"],["sans_suite","Sans suite"]];
-let MEDIAS=[], ETAT={}, FILTRE='tous', TODAY='';
+let MEDIAS=[], ETAT={}, FILTRE='tous', TODAY='', DATASET='presse';
 
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function toast(t){const m=document.getElementById('msg');m.textContent=t;m.classList.add('on');setTimeout(()=>m.classList.remove('on'),1900);}
 
 async function api(method,body,qs){
-  const r=await fetch('/api/presse-crm'+(qs||''),{method,credentials:'same-origin',
+  const r=await fetch('/api/presse-crm?dataset='+DATASET+(qs||''),{method,credentials:'same-origin',
     headers:body?{'Content-Type':'application/json'}:undefined,body:body?JSON.stringify(body):undefined});
   if(r.status===401){document.getElementById('app').classList.add('hidden');document.getElementById('gate').classList.remove('hidden');throw new Error('auth');}
   if(!r.ok)throw new Error('HTTP '+r.status);
   return r.json();
 }
 
+/** Relance due, calculée côté client pour les entrées « ensemencées » par le catalogue
+ *  (statut_initial=envoye) tant qu'aucune écriture ne les a fait entrer dans le store. */
+function relanceDue(statut,date){
+  const d={envoye:10,relance1:11}[statut]; if(!d||!date)return '';
+  const t=new Date(date+'T00:00:00Z'); if(isNaN(t))return '';
+  t.setUTCDate(t.getUTCDate()+d); return t.toISOString().slice(0,10);
+}
 function fusion(){
   return MEDIAS.map(m=>{
     const e=ETAT[m.id]||{};
-    return {...m, note:m.note||'', statut:e.statut||'a_envoyer', date_contact:e.date_contact||'', relance_due:e.relance_due||'',
+    const statut=e.statut||m.statut_initial||'a_envoyer';
+    const date_contact=e.date_contact||m.date_envoi||'';
+    return {...m, note:m.note||'', statut, date_contact,
+            relance_due:e.relance_due||relanceDue(statut,date_contact),
             url_publication:e.url_publication||'', notes:e.notes||''};
   });
 }
@@ -167,11 +189,14 @@ function rendre(){
   const all=fusion();
   const n=s=>all.filter(x=>x.statut===s).length;
   const dues=all.filter(x=>x.relance_due && x.relance_due<=TODAY);
-  document.getElementById('stats').innerHTML=[
-    ['Médias',all.length,''],['À envoyer',n('a_envoyer'),''],['Envoyés',n('envoye'),''],
+  const cartes=[[DATASET==='assos'?'Associations':'Médias',all.length,'']];
+  if(DATASET==='assos') cartes.push(['À relever',n('a_relever'),'']);
+  cartes.push(
+    ['À envoyer',n('a_envoyer'),''],['Envoyés',n('envoye'),''],
     ['Relancés',n('relance1')+n('relance2'),''],['Réponses',n('reponse')+n('accepte'),''],
-    ['Publiés',n('publie'),'pub'],['Relances dues',dues.length,'due']
-  ].map(([l,v,c])=>`<div class="stat ${c}"><b>${v}</b><span>${esc(l)}</span></div>`).join('');
+    ['Publiés',n('publie'),'pub'],['Relances dues',dues.length,'due']);
+  document.getElementById('stats').innerHTML=cartes
+    .map(([l,v,c])=>`<div class="stat ${c}"><b>${v}</b><span>${esc(l)}</span></div>`).join('');
 
   document.getElementById('due').innerHTML = dues.length
     ? '<ul>'+dues.map(x=>`<li><b>${esc(x.nom)}</b> · ${esc(x.pays)} · <span class="mail">${esc(x.email)}</span></li>`).join('')+'</ul>'
@@ -181,7 +206,7 @@ function rendre(){
     const due=x.relance_due&&x.relance_due<=TODAY;
     return `<tr data-id="${esc(x.id)}">
       <td class="nom">${esc(x.nom)} <span class="tier t${x.tier}">T${x.tier}</span><small>${esc(x.pays)}${x.url?` · <a href="${esc(x.url)}" target="_blank" rel="noopener">rubrique</a>`:''}</small>${x.note?`<em class="hint">${esc(x.note)}</em>`:''}</td>
-      <td><span class="mail">${esc(x.email)}</span><br><button class="copy" data-copy="${esc(x.email)}">copier</button></td>
+      <td>${x.email?`<span class="mail">${esc(x.email)}</span><br><button class="copy" data-copy="${esc(x.email)}">copier</button>`:'<span class="mail" style="color:var(--muted)">e-mail à relever</span>'}</td>
       <td><select class="st st-${esc(x.statut)}">${STATUTS.map(([v,l])=>`<option value="${v}"${v===x.statut?' selected':''}>${l}</option>`).join('')}</select></td>
       <td class="date">${esc(x.date_contact)||'—'}</td>
       <td class="date${due?' due':''}">${esc(x.relance_due)||'—'}</td>
@@ -207,6 +232,22 @@ document.addEventListener('click',e=>{
   if(f){FILTRE=f.dataset.f;document.querySelectorAll('.filters button').forEach(b=>b.setAttribute('aria-pressed',String(b===f)));rendre();}
 });
 document.getElementById('q').addEventListener('input',rendre);
+
+function changerDataset(ds){
+  if(ds===DATASET)return;
+  DATASET=ds; FILTRE='tous';
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ds===ds)));
+  document.querySelectorAll('.filters button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.f==='tous')));
+  document.querySelectorAll('.only-assos').forEach(b=>b.classList.toggle('hidden',ds!=='assos'));
+  document.getElementById('sub').textContent = ds==='assos'
+    ? 'Associations de la diaspora · backlinks et relances'
+    : 'Tribunes presse · relances et publications';
+  document.getElementById('q').value=''; MEDIAS=[]; ETAT={};
+  demarrer();
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('button[data-ds]'); if(b)changerDataset(b.dataset.ds);
+});
 
 document.getElementById('login').addEventListener('click',async()=>{
   const code=document.getElementById('code').value.trim();

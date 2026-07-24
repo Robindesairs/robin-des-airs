@@ -24,10 +24,21 @@
 
 const { getStore, connectLambda } = require('@netlify/blobs');
 const { checkCrmAccess } = require('./lib/crm-access');
-const MEDIAS = require('./data/presse-medias.json');
 
-const STORE = 'presse-suivi';
-const STATUTS = ['a_envoyer', 'envoye', 'relance1', 'relance2', 'reponse', 'accepte', 'publie', 'refus', 'sans_suite'];
+/**
+ * Deux jeux de prospection partagent exactement le même moteur (catalogue versionné servi par la
+ * fonction + état par entrée dans un store Blobs) : la presse et les associations de la diaspora.
+ * Le paramètre ?dataset=presse|assos choisit lequel. Chaque jeu a son préfixe d'id (m### / a###)
+ * pour que jamais une écriture presse ne tombe dans le store assos et inversement.
+ */
+const DATASETS = {
+  presse: { medias: require('./data/presse-medias.json'), store: 'presse-suivi', prefixe: 'm' },
+  assos:  { medias: require('./data/assos-medias.json'),  store: 'assos-suivi',  prefixe: 'a' },
+};
+const choisirDataset = (event) => DATASETS[event.queryStringParameters?.dataset] || DATASETS.presse;
+
+// 'a_relever' = association dont l'e-mail reste à trouver (propre au jeu assos, inoffensif pour la presse).
+const STATUTS = ['a_relever', 'a_envoyer', 'envoye', 'relance1', 'relance2', 'reponse', 'accepte', 'publie', 'refus', 'sans_suite'];
 
 /** Délais de relance, en jours, depuis la date du dernier contact. */
 const DELAI_RELANCE = { envoye: 10, relance1: 11 };
@@ -67,7 +78,9 @@ exports.handler = async (event) => {
   // Blobs v7+ : hors runtime auto-configuré, getStore() échoue sans connectLambda(event).
   // Son absence renvoyait un 500 sur le GET → le front rebasculait sur le login (faux « bug de connexion »).
   try { if (connectLambda) connectLambda(event); } catch (_) {}
-  const store = getStore(STORE);
+  const ds = choisirDataset(event);
+  const store = getStore(ds.store);
+  const idRegex = new RegExp(`^${ds.prefixe}\\d{3}$`);
 
   try {
     if (event.httpMethod === 'GET') {
@@ -77,7 +90,7 @@ exports.handler = async (event) => {
         const it = await store.get(b.key, { type: 'json' }).catch(() => null);
         if (it) items.push({ ...it, relance_due: prochaineRelance(it) });
       }
-      return json(200, { medias: MEDIAS, items, today: aujourdhui() });
+      return json(200, { medias: ds.medias, items, today: aujourdhui() });
     }
 
     if (event.httpMethod === 'POST') {
@@ -89,7 +102,7 @@ exports.handler = async (event) => {
       }
 
       const id = String(body.id || '').trim();
-      if (!/^m\d{3}$/.test(id)) return json(400, { error: 'id de média invalide' });
+      if (!idRegex.test(id)) return json(400, { error: 'id invalide' });
 
       const statut = String(body.statut || '').trim();
       if (!STATUTS.includes(statut)) return json(400, { error: `statut inconnu : ${statut}` });
@@ -118,7 +131,7 @@ exports.handler = async (event) => {
 
     if (event.httpMethod === 'DELETE') {
       const id = String(event.queryStringParameters?.id || '').trim();
-      if (!/^m\d{3}$/.test(id)) return json(400, { error: 'id de média invalide' });
+      if (!idRegex.test(id)) return json(400, { error: 'id invalide' });
       await store.delete(id);
       return json(200, { ok: true });
     }
