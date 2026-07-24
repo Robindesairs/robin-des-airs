@@ -267,7 +267,7 @@ function buildMessage({ today, yesterday, plausible, mandates, whatsapp, radar }
 
   // ── Visiteurs (Umami — plan gratuit : pas d'API, on renvoie vers le tableau de bord) ──
   lines.push(`🌐 SITE WEB`);
-  lines.push(`• Voir mes visites : ${process.env.UMAMI_DASHBOARD_URL || 'https://cloud.umami.is/websites/19ef6dce-8f1d-4b9b-9a0e-12dbece0cdf7'}`);
+  lines.push(`• Voir mes visites : ${process.env.UMAMI_DASHBOARD_URL || 'https://cloud.umami.is/websites/2309ca47-51e3-4bfd-8192-5b2343213e4b'}`);
   lines.push('');
 
   // ── WhatsApp ──
