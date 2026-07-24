@@ -1,6 +1,6 @@
 ---
 title: "Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi"
-meta_title: "Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi 2026"
+meta_title: "Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi"
 meta_description: "Vol retardé ou annulé ? Saisir le MTV gratuitement, étape par étape : conditions, délais, et l'alternative plus rapide pour être indemnisé."
 slug: saisir-mediateur-mtv-tourisme-voyage
 image_url: /og-blog.png
