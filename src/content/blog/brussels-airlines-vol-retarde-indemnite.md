@@ -8,7 +8,7 @@ faq:
   - q: "Mon vol Brussels Airlines Bruxelles-Kinshasa a eu 4h de retard. Combien je touche ?"
     a: "Distance BRU-FIH ~6 800 km > 3 500 km, retard ≥ 3h → **600€ par passager**. Brussels Airlines étant compagnie UE, c'est éligible aller comme retour."
   - q: "Je rentre de Kinshasa à Bruxelles sur Brussels Airlines avec 5h de retard. Je peux réclamer ?"
-    a: "Oui. Brussels Airlines est une compagnie belge (UE), donc **éligible dans les deux sens** — y compris les vols au départ de l'Afrique."
+    a: "Oui. Brussels Airlines est une compagnie belge (UE), donc **éligible dans les deux sens**, y compris les vols au départ de l'Afrique."
   - q: "Brussels Airlines a invoqué une 'circonstance extraordinaire'. C'est vrai ?"
     a: "Les compagnies invoquent souvent cet argument pour éviter de payer. Mais pannes techniques récurrentes, sous-effectifs ou [retards de rotation](/blog/retard-rotation-avion-vol-precedent-indemnisation.html) ne sont **pas**, en eux-mêmes, des circonstances extraordinaires selon la CJUE. Robin des Airs conteste systématiquement."
 ---
@@ -19,21 +19,23 @@ Brussels Airlines est la compagnie nationale belge, membre du groupe Lufthansa (
 
 ## Brussels Airlines annule beaucoup de vols
 
-Brussels Airlines affiche l'un des taux d'annulation les plus élevés d'Europe : **plus de 7% de ses vols internationaux sont annulés** sur une journée type. La ligne Dakar-Bruxelles (SN206) est régulièrement touchée, tout comme les routes vers Kinshasa et Lagos. Ces annulations génèrent des droits à indemnité — souvent ignorés parce que la compagnie ne les communique pas spontanément.
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
+
+Brussels Airlines affiche l'un des taux d'annulation les plus élevés d'Europe : **plus de 7% de ses vols internationaux sont annulés** sur une journée type. La ligne Dakar-Bruxelles (SN206) est régulièrement touchée, tout comme les routes vers Kinshasa et Lagos. Ces annulations génèrent des droits à indemnité, souvent ignorés parce que la compagnie ne les communique pas spontanément.
 
 ## Compagnie belge = UE = toujours éligible dans les deux sens
 
-Brussels Airlines étant enregistrée en Belgique, **tous ses vols sont couverts** par le CE 261/2004 — aller comme retour :
+Brussels Airlines étant enregistrée en Belgique, **tous ses vols sont couverts** par le CE 261/2004, aller comme retour :
 
 - Vol Bruxelles → Kinshasa retardé → éligible ✅
 - Vol Kinshasa → Bruxelles retardé → éligible ✅ (avantage clé vs Ethiopian ou Kenya Airways)
 
-C'est l'une des rares compagnies africaines de fait — par ses destinations — qui offre cette double protection.
+C'est l'une des rares compagnies africaines de fait, par ses destinations, qui offre cette double protection.
 
 ## Montants d'indemnité selon la distance
 
 - < 1 500 km : 250€ par passager
-- 1 500 – 3 500 km : 400€ par passager
+- 1 500, 3 500 km : 400€ par passager
 - > 3 500 km : **600€ par passager**
 
 Toutes les routes africaines de Brussels Airlines dépassent les 3 500 km → palier maximum **600€**.
@@ -59,20 +61,28 @@ Famille de 4 sur Bruxelles-Kinshasa retardée de 4h : 4 × 600€ = **2 400€ r
 
 ## Pourquoi ne pas utiliser le formulaire Brussels Airlines directement
 
-Brussels Airlines propose un formulaire de réclamation sur son site. Problème : il vous demande de choisir votre "relation avec le passager" parmi Agent de voyage, Avocat ou Membre de la famille — aucune option pour un particulier qui réclame seul. Et pour cause : ce formulaire est conçu pour être facile à ignorer.
+Brussels Airlines propose un formulaire de réclamation sur son site. Problème : il vous demande de choisir votre "relation avec le passager" parmi Agent de voyage, Avocat ou Membre de la famille, aucune option pour un particulier qui réclame seul. Et pour cause : ce formulaire est conçu pour être facile à ignorer.
 
 **Ce que Robin des Airs fait à la place :**
 - Envoi d'une réclamation formelle par courrier avec le contrat de cession signé
 - Brussels Airlines ne peut pas balayer une lettre recommandée sous le tapis
 - Si refus : escalade vers le médiateur belge ou les juridictions françaises
 
-Les compagnies paient beaucoup plus facilement quand elles reçoivent une demande structurée d'un cessionnaire de la créance — pas un formulaire web qu'un stagiaire peut archiver sans répondre.
+Les compagnies paient beaucoup plus facilement quand elles reçoivent une demande structurée d'un cessionnaire de la créance, pas un formulaire web qu'un stagiaire peut archiver sans répondre.
 
 ## Délais de réclamation
 
-Le délai de prescription dépend du droit applicable : **1 an en droit belge** (prescription courte applicable aux actions en responsabilité aérienne), jusqu'à **5 ans en droit français** (art. 2224 du Code civil) si le contrat a des liens suffisants avec la France. N'attendez pas — les preuves disparaissent.
+Le délai de prescription dépend du droit applicable : **1 an en droit belge** (prescription courte applicable aux actions en responsabilité aérienne), jusqu'à **5 ans en droit français** (art. 2224 du Code civil) si le contrat a des liens suffisants avec la France. N'attendez pas, les preuves disparaissent.
 
 Voir aussi : [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Kinshasa-Bruxelles retard](/blog/vol-retarde-kinshasa-bruxelles-indemnite.html), [Réglementation CE 261](/blog/reglementation-ce261-resume.html).
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question en lingala ou en français ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Vérifier mon vol Brussels Airlines](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

@@ -12,6 +12,8 @@ Corsair International est une compagnie française qui dessert principalement le
 
 ## Pourquoi Corsair est souvent en retard
 
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
+
 Corsair opère avec une flotte réduite d'Airbus A330. Avec peu d'avions de réserve, le moindre problème technique sur un appareil crée un effet domino sur tout le programme de la journée. Les retards de 3-6h ne sont pas rares, surtout en haute saison.
 
 ## Compagnie UE = toujours éligible
@@ -37,6 +39,14 @@ Retenez la règle simple : vous restez dans l'UE (DOM) c'est 400 €, vous sorte
 - ORY → ABJ (Abidjan) : 4 714 km, pays tiers hors UE → 600€
 
 Toutes ces routes dépassent 3 500 km, mais la distance ne suffit pas : les vols vers les DOM restent plafonnés à 400 € car ils sont intracommunautaires, tandis que les vols vers l'Afrique hors UE atteignent 600 €.
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question en créole antillais, réunionnais, wolof ou bambara ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Vérifier mon vol Corsair](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

@@ -11,7 +11,7 @@ faq:
   - q: "J'ai un billet Air France opéré par KLM. Qui paie l'indemnité ?"
     a: "C'est la compagnie qui **opère réellement** le vol (KLM) qui doit payer, pas celle qui a vendu le billet (Air France). Voir [Code-share Air France/KLM](/blog/code-share-air-france-klm-quelle-compagnie-recours.html)."
   - q: "Vol Nairobi-Amsterdam sur KLM, retour avec retard : éligible ?"
-    a: "Oui. KLM est compagnie européenne, donc **éligible dans les deux sens** — contrairement à Kenya Airways qui ne couvre que les vols départ UE."
+    a: "Oui. KLM est compagnie européenne, donc **éligible dans les deux sens**, contrairement à Kenya Airways qui ne couvre que les vols départ UE."
 ---
 
 **Vol KLM retardé de 3h ou plus, annulé ou surbooké ? Vous pouvez réclamer jusqu'à 600 € par passager.** Compagnie européenne : vos vols vers et depuis l'Afrique sont couverts. 0 € d'avance, 0 € si rien n'est récupéré.
@@ -20,7 +20,9 @@ KLM Royal Dutch Airlines opère un large réseau Afrique depuis Amsterdam (AMS) 
 
 ## KLM = compagnie européenne, donc toujours éligible
 
-KLM étant néerlandaise, **tous ses vols sont couverts** par le CE 261/2004 — dans les deux sens :
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
+
+KLM étant néerlandaise, **tous ses vols sont couverts** par le CE 261/2004, dans les deux sens :
 
 - Vols au départ d'Amsterdam (ou de Paris en correspondance KLM) → éligibles automatiquement
 - Vols **vers Amsterdam** au départ d'Afrique → éligibles aussi, parce que KLM est UE
@@ -30,7 +32,7 @@ C'est un avantage par rapport aux compagnies non-européennes (Kenya Airways, Et
 ## Montants par distance
 
 - < 1 500 km : 250€ par passager
-- 1 500 – 3 500 km : 400€ par passager
+- 1 500, 3 500 km : 400€ par passager
 - > 3 500 km : 600€ par passager
 
 Toutes les routes KLM Europe → Afrique subsaharienne dépassent les 3 500 km → palier maximum **600€**.
@@ -46,13 +48,21 @@ Toutes les routes KLM Europe → Afrique subsaharienne dépassent les 3 500 km �
 
 ## Correspondances Air France-KLM
 
-Les billets achetés sur Air France peuvent être opérés en code-share par KLM. Dans ce cas, **la compagnie qui opère réellement le vol** est responsable. Robin des Airs identifie le bon interlocuteur — vous n'avez pas à le faire.
+Les billets achetés sur Air France peuvent être opérés en code-share par KLM. Dans ce cas, **la compagnie qui opère réellement le vol** est responsable. Robin des Airs identifie le bon interlocuteur, vous n'avez pas à le faire.
 
 ## Famille / groupe
 
 Famille de 4 retardée 4h sur Amsterdam-Lagos : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html), [Réglementation CE 261](/blog/reglementation-ce261-resume.html).
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question en lingala, twi, yoruba ou une autre langue ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Vérifier mon vol KLM](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

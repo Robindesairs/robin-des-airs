@@ -25,6 +25,8 @@ EgyptAir relie l'Afrique subsaharienne à l'Europe via Le Caire, un hub emprunt�
 
 ## La règle clé : tout dépend du sens et du départ
 
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
+
 Le règlement CE 261/2004 (le forfait 250/400/600 €) s'applique dans deux cas seulement :
 
 - **le vol part d'un aéroport de l'UE**, quelle que soit la compagnie (même non européenne) ;
@@ -91,6 +93,14 @@ L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famill
 Spécialiste des corridors Afrique-Europe et de leurs hubs (Le Caire, Casablanca, Addis-Abeba, Nairobi, Istanbul), Robin des Airs détermine d'abord le **bon fondement** (forfait CE 261 ou frais réels Montréal) selon votre sens et votre compagnie, puis monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en arabe.
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question en arabe ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Déposer mon dossier EgyptAir en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)

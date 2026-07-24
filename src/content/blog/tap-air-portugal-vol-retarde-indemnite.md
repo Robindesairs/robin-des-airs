@@ -8,7 +8,7 @@ faq:
   - q: "Vol TAP Paris-Lisbonne-Dakar retardé, j'arrive à Dakar avec 4h de retard. Combien ?"
     a: "Distance totale CDG-LIS-DKR ≈ 4 100 km → **600€ par passager** si sur billet unique TAP. TAP est UE = couvert depuis Paris et depuis Dakar sur le retour."
   - q: "Je rentre de Luanda à Paris sur TAP via Lisbonne avec 5h de retard. Couvert ?"
-    a: "Oui. TAP est portugaise (UE) → **éligible dans les deux sens** — y compris depuis Luanda (Angola) ou n'importe quelle destination africaine en retour."
+    a: "Oui. TAP est portugaise (UE) → **éligible dans les deux sens**, y compris depuis Luanda (Angola) ou n'importe quelle destination africaine en retour."
   - q: "TAP a annulé mon vol Lisbonne-Abidjan. J'ai droit à quoi ?"
     a: "Si annulation < 14 jours avant : **600€ par passager** (distance > 3 500 km) + remboursement ou réacheminement. TAP = UE = eligible depuis Lisbonne et depuis Abidjan au retour."
 ---
@@ -19,7 +19,9 @@ TAP Air Portugal est la compagnie nationale du Portugal, membre de Star Alliance
 
 ## Compagnie portugaise = UE = toujours éligible dans les deux sens
 
-TAP étant enregistrée au Portugal (UE), **tous ses vols sont couverts** par le CE261/2004 — aller comme retour :
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
+
+TAP étant enregistrée au Portugal (UE), **tous ses vols sont couverts** par le CE261/2004, aller comme retour :
 
 - Vol Lisbonne → Dakar retardé → éligible ✅
 - Vol Dakar → Lisbonne retardé → éligible ✅ (avantage vs Ethiopian, Turkish)
@@ -52,6 +54,14 @@ Si vous volez Paris CDG → Lisbonne LIS → [destination africaine] sur un seul
 Famille de 4 Paris-Abidjan via Lisbonne sur TAP, retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html).
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question en portugais ou créole ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Vérifier mon vol TAP Air Portugal](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

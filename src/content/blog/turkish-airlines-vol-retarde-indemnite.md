@@ -16,9 +16,11 @@ faq:
 
 **Au départ d'Europe avec Turkish Airlines, vous pouvez réclamer jusqu'à 600 € par passager** en cas de retard de 3 h et plus. Au départ de la Turquie, compagnie non européenne = en principe pas d'indemnité ; on vérifie votre éligibilité gratuitement, 0 € d'avance.
 
-Turkish Airlines (TK) est l'une des compagnies les plus utilisées par la diaspora africaine en France pour les connexions via Istanbul (IST). Dakar, Abidjan, Lagos, Douala, Kinshasa, Nairobi — beaucoup de ces destinations sont accessibles en un seul transit par IST. Mais les règles CE 261 ne s'appliquent pas de la même façon qu'avec Air France ou Brussels Airlines.
+Turkish Airlines (TK) est l'une des compagnies les plus utilisées par la diaspora africaine en France pour les connexions via Istanbul (IST). Dakar, Abidjan, Lagos, Douala, Kinshasa, Nairobi, beaucoup de ces destinations sont accessibles en un seul transit par IST. Mais les règles CE 261 ne s'appliquent pas de la même façon qu'avec Air France ou Brussels Airlines.
 
 ## La règle décisive : Turkish Airlines n'est pas UE
+
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
 Turkish Airlines est une compagnie **turque (non-UE)**. Pour qu'un vol soit couvert par le CE 261, il faut l'une des deux conditions :
 
@@ -36,7 +38,7 @@ Turkish Airlines ne remplit que la première condition. Donc :
 
 ## Connexions depuis Paris : la bonne nouvelle
 
-Si vous partez de Paris sur un **billet unique** Turkish Airlines vers une destination africaine via Istanbul, vous êtes couvert pour l'ensemble du voyage. Le retard peut survenir sur n'importe quel tronçon — c'est l'heure d'arrivée à votre destination **finale** qui compte.
+Si vous partez de Paris sur un **billet unique** Turkish Airlines vers une destination africaine via Istanbul, vous êtes couvert pour l'ensemble du voyage. Le retard peut survenir sur n'importe quel tronçon, c'est l'heure d'arrivée à votre destination **finale** qui compte.
 
 ## Montants selon la distance totale
 
@@ -49,13 +51,21 @@ Si vous partez de Paris sur un **billet unique** Turkish Airlines vers une desti
 
 ## Conditions de retard
 
-Le retard doit être d'au moins **3h à l'heure d'arrivée à destination finale** (ouverture des portes de l'avion — arrêt Folkerts, CJUE 2013).
+Le retard doit être d'au moins **3h à l'heure d'arrivée à destination finale** (ouverture des portes de l'avion, arrêt Folkerts, CJUE 2013).
 
 ## Famille
 
 Famille de 4 Paris → Nairobi via IST, retardée de 4h : 4 × 600€ = **2 400€ récupérés**, dont **1 800€ pour vous** (75 %) en phase amiable.
 
 Voir aussi : [Ethiopian Airlines vol retardé](/blog/ethiopian-airlines-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [CE261 billet unique non-UE](/blog/arret-wegener-billet-unique-non-ue-cjue.html).
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Vérifier mon vol Turkish Airlines](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

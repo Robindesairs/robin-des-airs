@@ -25,6 +25,8 @@ Air Austral (UU) est la compagnie de la Réunion. Elle relie la Réunion et Mayo
 
 ## Pourquoi vous êtes couvert dans les deux sens
 
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
+
 Le CE 261/2004 s'applique dès que **l'une** de ces conditions est remplie :
 
 - le vol part d'un aéroport de l'UE, **ou**
@@ -79,6 +81,14 @@ Robin des Airs vérifie l'éligibilité de votre vol, monte le dossier, envoie l
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible dans votre langue.
 
 Sur le même thème : [Vol retardé Réunion-Paris](/blog/vol-retarde-reunion-paris-indemnite.html), [Bébé sur les genoux : indemnité](/blog/bebe-enfant-sur-les-genoux-indemnite-vol.html), [Indemnité famille et enfants](/blog/indemnite-vol-retarde-famille-enfants.html).
+
+## Pourquoi Robin des Airs ?
+
+- **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
+- **Dans votre langue, au téléphone.** Un doute, une question en créole réunionnais ou shimaoré ? On vous rappelle et on vous explique de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
 
 → [Déposer mon dossier Air Austral en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
