@@ -14,6 +14,8 @@
  * (la pièce n'est conservée qu'au dépôt final via /api/depot-upload, une fois la réf créée).
  */
 
+const { parseMrz } = require('./lib/mrz');
+
 const SITE_ORIGINS = ['https://robindesairs.eu', 'https://www.robindesairs.eu'];
 const corsFor = (event) => {
   const o = String((event && event.headers && (event.headers.origin || event.headers.Origin)) || '').trim();
@@ -26,8 +28,9 @@ const OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nat
 ⚠️ PRIORITÉ ABSOLUE À LA MRZ. La MRZ (les 2 ou 3 lignes de caractères majuscules remplis de « < » en bas du document) est la source la PLUS FIABLE : lecture machine, format ICAO normalisé, aucune police stylisée. Lis-la EN PRIORITÉ pour : NOM, PRÉNOM(S), DATE DE NAISSANCE, SEXE, DATE D'EXPIRATION, nationalité. La zone visuelle (photo, texte imprimé) sert à COMPLÉTER, pas à contredire la MRZ.
 - Format du nom dans la MRZ : « NOM<<PRENOM<PRENOM2 » : le « << » sépare le nom de famille des prénoms, un « < » sépare deux mots. Remplace les « < » par des espaces et retire les « < » de fin de ligne.
 - ⚠️ ACCENTS : la MRZ n'a NI accents NI caractères spéciaux (É→E, È→E, Ç→C, Ñ→N, Ü→UE ou U, ß→SS). Donc : prends les LETTRES et la STRUCTURE dans la MRZ, mais RESTAURE les accents/caractères d'origine depuis la zone visuelle imprimée (ex. MRZ « NGUEMA » + visuel « N'GUÉMA » → garde « N'GUÉMA »). En cas de DÉSACCORD sur les lettres entre visuel et MRZ, la MRZ fait foi. La pièce peut être rédigée UNIQUEMENT EN ANGLAIS (ex. passeports nigérian, ghanéen, gambien, sierra-léonais, libérien) ou bilingue français/anglais (ex. cartes CEDEAO/ECOWAS) : les libellés anglais ci-dessous sont donc à traiter EXACTEMENT comme leurs équivalents français, pas comme un repli en cas d'échec. Réponds UNIQUEMENT en JSON :
-{"nom":"","prenom":"","date_naissance":"","lieu_naissance":"","date_expiration":"","adresse":"","pays_adresse":"","sexe":"","type_piece":"","face":""}
+{"nom":"","prenom":"","date_naissance":"","lieu_naissance":"","date_expiration":"","adresse":"","pays_adresse":"","sexe":"","type_piece":"","face":"","mrz":""}
 Règles (libellé FR / EN équivalent) :
+- mrz : RECOPIE EXACTEMENT la MRZ (la zone de lecture machine : les 2 lignes du passeport, ou les 3 lignes de la CNI/titre de séjour, remplies de « < »), caractère par caractère, EN GARDANT tous les « < » et SANS ajouter d'espaces. Sépare chaque ligne par un retour à la ligne. C'est une transcription brute, pas une interprétation : n'y touche pas, ne corrige rien. Si aucune MRZ n'est visible, "".
 - nom : nom de famille en MAJUSCULES, LU EN PRIORITÉ DANS LA MRZ (partie AVANT « << »). ⚠️ TRANSCRIS EXACTEMENT chaque lettre telle qu'elle est écrite. Ne "corrige" JAMAIS un nom vers une orthographe plus courante, plus connue ou qui te semble "plus juste", même s'il te paraît inhabituel, rare, mal orthographié ou étranger. Les noms de la diaspora africaine (ex. DIALLO, N'GUÉMA, KODJO, TRAORÉ, SOW, NDIAYE, OUÉDRAOGO, TCHOUAMENI…) se transcrivent TELS QUELS, lettre par lettre — jamais normalisés. Un nom rare EXACT vaut infiniment mieux qu'un nom courant FAUX. Champ "Nom" / "Surname" / "Name" / "Last name".
 - prenom : prénom(s), LUS EN PRIORITÉ DANS LA MRZ (partie APRÈS « << »). MÊME RÈGLE ABSOLUE : transcription EXACTE, lettre par lettre, AUCUNE "correction" ni normalisation vers un prénom plus familier. Champ "Prénom(s)" / "Given name(s)" / "First name(s)" / "Forename(s)".
 - date_naissance : la DATE DE NAISSANCE du titulaire, format JJ/MM/AAAA. Champ "Né(e) le" / "Date de naissance" / "Date of birth" / "DOB".
@@ -70,18 +73,38 @@ function normalizePassportOcr(p) {
   const docType = ['passeport', 'cni', 'titre_sejour'].includes((p.type_piece || '').trim().toLowerCase()) ? (p.type_piece || '').trim().toLowerCase() : '';
   const face = ['recto', 'verso', 'deux'].includes((p.face || '').trim().toLowerCase()) ? (p.face || '').trim().toLowerCase() : '';
   const pays = (p.pays_adresse || '').trim();
-  return { name, prenom, nom, dob, expiry, adresse, pays, sexe, lieuNaissance, docType, face };
+
+  // ── Vérification MRZ déterministe (ICAO 9303) ──
+  // La MRZ porte des chiffres de contrôle : quand ils passent, la valeur est CERTAINE
+  // et prime sur la lecture visuelle (date de naissance, expiration, sexe, n° de pièce).
+  // Les NOMS restent ceux de la zone visuelle (la MRZ n'a ni accents ni caractères spéciaux).
+  const mrz = parseMrz(p.mrz);
+  let dobF = dob, expiryF = expiry, sexeF = sexe;
+  const verified = { dob: false, expiry: false, docNumber: false };
+  if (mrz.fields.dob && mrz.dob) { dobF = mrz.dob; verified.dob = true; }
+  if (mrz.fields.expiry && mrz.expiry) { expiryF = mrz.expiry; verified.expiry = true; }
+  if (mrz.sexe) sexeF = mrz.sexe;
+  if (mrz.fields.docNumber) verified.docNumber = true;
+
+  return {
+    name, prenom, nom, dob: dobF, expiry: expiryF, adresse, pays, sexe: sexeF, lieuNaissance, docType, face,
+    docNumber: mrz.docNumber || '', nationality: mrz.nationality || '',
+    mrzVerified: !!(verified.dob || verified.expiry || verified.docNumber),
+    mrzFields: verified,
+  };
 }
 
 async function ocrClaude(b64, mime) {
   const key = (process.env.ANTHROPIC_API_KEY || '').trim(); if (!key) return null;
   try {
-    const model = process.env.PASSPORT_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
+    // Opus 4.8 / Sonnet 5 = vision haute résolution (2576 px) → MRZ + noms diaspora lus nets.
+    // ⚠️ Ces modèles REJETTENT « temperature » (400) : ne pas le renvoyer (l'extraction reste déterministe).
+    const model = process.env.PASSPORT_CLAUDE_MODEL || 'claude-opus-4-8';
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST', signal: AbortSignal.timeout(20000),
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
       body: JSON.stringify({
-        model, max_tokens: 400, temperature: 0,
+        model, max_tokens: 500,
         messages: [{ role: 'user', content: [
           { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } },
           { type: 'text', text: OCR_PASSPORT_PROMPT },
@@ -103,7 +126,7 @@ async function ocrGpt(b64, mime) {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(20000),
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 320, temperature: 0, response_format: { type: 'json_object' },
         messages: [{ role: 'user', content: [
           { type: 'text', text: OCR_PASSPORT_PROMPT },
           { type: 'image_url', image_url: { url: `data:${mime};base64,${b64}` } },

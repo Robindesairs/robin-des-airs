@@ -12,6 +12,8 @@
  * Sécurité/coûts : CORS site uniquement, image ≤ ~4 Mo, aucun stockage ici.
  */
 
+const { parseBcbp } = require('./lib/bcbp');
+
 const SITE_ORIGINS = ['https://robindesairs.eu', 'https://www.robindesairs.eu'];
 const corsFor = (event) => {
   const o = String((event && event.headers && (event.headers.origin || event.headers.Origin)) || '').trim();
@@ -24,8 +26,9 @@ const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (s
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
 {"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","numero_billet":"","aller_retour":false,
  "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","ville_depart":"","ville_arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","ville_depart":"","ville_arrivee":"","date":"","heure":"","operateur":""}]}],
- "passagers":[{"nom":"","prenom":"","date_naissance":"","type":"","gratuit":false}]}
+ "passagers":[{"nom":"","prenom":"","date_naissance":"","type":"","gratuit":false}],"bcbp":""}
 Règles STRICTES :
+- bcbp : sur une CARTE D'EMBARQUEMENT, la chaîne de données codée (celle qui est aussi encodée dans le code-barres, parfois imprimée en petit à côté) commence par « M1 » ou « M2 » suivi du NOM/Prénom, du trajet et du vol. Si tu la vois, RECOPIE-LA EXACTEMENT, caractère par caractère, en gardant les espaces internes. Transcription brute, ne l'interprète pas. Absente (e-billet classique sans carte d'embarquement) → "".
 - lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
 - compagnie : nom complet de la compagnie (déduis du code IATA du vol, ex. AF → Air France).
 - pnr : le RECORD LOCATOR de la COMPAGNIE (6 caractères alphanumériques, contient des LETTRES, souvent près du code-barres ou des segments). Libellés possibles : PNR, Booking ref, Réf, Confirmation, Dossier, Record locator, Airline ref, Réf. transporteur, Localizador, Buchungscode, Filekey. PRÉFÈRE-le à la référence de l'AGENCE/OTA (eDreams, Opodo, Gotogate, Wakanow…). IGNORE une référence PUREMENT NUMÉRIQUE (c'est une réf agence, pas un PNR). Si vraiment absent, "".
@@ -174,7 +177,9 @@ function normalize(raw) {
 }
 
 async function visionClaude(b64, mime) {
-  const model = process.env.ETICKET_CLAUDE_MODEL || process.env.PASSPORT_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
+  // Opus 4.8 / Sonnet 5 = vision haute résolution → petits caractères + code-barres BCBP lus nets.
+  // ⚠️ Ces modèles REJETTENT « temperature » (400) : ne pas le renvoyer.
+  const model = process.env.ETICKET_CLAUDE_MODEL || process.env.PASSPORT_CLAUDE_MODEL || 'claude-opus-4-8';
   const key = (process.env.ANTHROPIC_API_KEY || '').trim(); if (!key) return null;
   try {
     // Claude lit les PDF NATIVEMENT (bloc « document ») : un e-billet PDF est désormais extrait comme une photo.
@@ -184,7 +189,7 @@ async function visionClaude(b64, mime) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST', signal: AbortSignal.timeout(24000),
       headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model, max_tokens: 1500, temperature: 0, messages: [{ role: 'user', content: [
+      body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: 'user', content: [
         media, { type: 'text', text: PROMPT },
       ] }] }),
     });
@@ -221,6 +226,29 @@ exports.handler = async (event) => {
   // GPT-4o (repli) ne lit pas le PDF de la même façon → réservé aux images ; le PDF passe par Claude (bloc document).
   const raw = (await visionClaude(data, mime)) || (/^image\//.test(mime) ? await visionGpt(data, mime) : null);
   const n = raw ? normalize(raw) : null;
+
+  // ── Décodage BCBP déterministe (carte d'embarquement) ──
+  // La chaîne « M1… » encode nom, PNR, trajet, vol SANS ambiguïté : on complète/valide
+  // la lecture visuelle, et on RATTRAPE un scan que le LLM jugeait illisible.
+  if (n) {
+    const bc = parseBcbp(raw && raw.bcbp);
+    if (bc.valid) {
+      n.bcbpVerified = true;
+      n.lisible = true;
+      n.confidence = Math.max(n.confidence || 0, 0.9); // code-barres décodé = lecture certaine
+      if (!n.vol && bc.flightNum) n.vol = bc.flightNum;
+      if (!n.pnr && bc.pnr) n.pnr = bc.pnr;
+      if (!n.depart && bc.from) n.depart = bc.from;
+      if (!n.arrivee && bc.to) n.arrivee = bc.to;
+      if (!n.route && bc.from && bc.to) n.route = `${bc.from} → ${bc.to}`;
+      if (!n.date && bc.dateFr) n.date = bc.dateFr; // « JJ/MM » — année inférée plus bas
+      if ((!n.passengers || !n.passengers.length) && bc.nom) {
+        n.passengers = [{ name: [bc.prenom, bc.nom].filter(Boolean).join(' ').trim(), dob: '' }];
+        n.pax = 1;
+      }
+    }
+  }
+
   if (!n || !n.lisible || n.confidence < 0.4 || (!n.vol && !n.route)) return { statusCode: 200, headers: H, body: JSON.stringify({ ok: false }) };
   const segs = n.segments || [];
   const legs = segs.length > 1 ? segs.map((s) => ({ num: s.vol || '', dep: s.ville_depart || s.depart || '', arr: s.ville_arrivee || s.arrivee || '' })) : [];
@@ -244,5 +272,6 @@ exports.handler = async (event) => {
     dep: firstSeg.ville_depart || n.depart || '', arr: lastSeg.ville_arrivee || n.arrivee || '',
     dateFr: n.date, dateIso, yearUnsure, pnr: n.pnr, escale: n.escale && legs.length > 1, legs,
     passengers: n.passengers, pax: n.pax, allerRetour: n.allerRetour, multiPNR: n.multiPNR,
+    bcbpVerified: !!n.bcbpVerified,
   } }) };
 };
