@@ -1,7 +1,7 @@
 ---
 title: "Vol Air Côte d'Ivoire retardé ou annulé : indemnité jusqu'à 600 €"
 meta_title: "Air Côte d'Ivoire vol retardé : jusqu'à 600 € d'indemnité"
-meta_description: "Vol Air Côte d'Ivoire retardé de 3h, annulé ou surbooké au départ de Paris ? Jusqu'à 600 € par passager (CE 261). Vérifiez votre droit en 2 min, 0 € d'avance."
+meta_description: "Vol Air Côte d'Ivoire Paris-Abidjan retardé de 3h ou annulé ? Jusqu'à 600 € par passager, soit 4 x 600 € pour une famille. Vérifié en 2 min, 0 € d'avance."
 slug: air-cote-ivoire-vol-retarde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
@@ -81,6 +81,8 @@ Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilit
 - **Dans votre langue, au téléphone.** Une question, un doute en dioula ou baoulé ? On vous rappelle et on vous explique de vive voix.
 - **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
 - **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
+
+Voir aussi : [Guide CE 261 : vos droits sur les vols Afrique-Europe](/blog/guide-ce261-droits-passagers-afrique.html), [Vol retardé Abidjan-Paris](/blog/vol-retarde-abidjan-paris-indemnite.html), [Air Sénégal vol retardé](/blog/air-senegal-vol-retarde-indemnite.html), [Air Mauritius vol retardé](/blog/air-mauritius-vol-retarde-indemnite.html).
 
 → [Déposer mon dossier Air Côte d'Ivoire en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)

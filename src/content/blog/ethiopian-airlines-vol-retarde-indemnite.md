@@ -1,7 +1,7 @@
 ---
 title: "Vol Ethiopian Airlines retardé ou annulé : indemnité jusqu'à 600 €"
 meta_title: "Ethiopian Airlines vol retardé ou annulé : jusqu'à 600 €"
-meta_description: "Vol Ethiopian Airlines retardé de 3h ou annulé ? Jusqu'à 600 € par passager au départ de Paris, Bruxelles ou Francfort. Au départ d'Addis-Abeba, c'est différent."
+meta_description: "Vol Ethiopian Airlines Paris-Addis-Abeba retardé de 3h ou annulé ? Jusqu'à 600 € par passager, 2 400 € pour une famille de 4. 0 € d'avance."
 slug: ethiopian-airlines-vol-retarde-indemnite
 hreflang_en: ethiopian-airlines-delayed-flight-compensation
 image_url: /assets/images/schema-ce261-sens-compagnie.png
@@ -81,6 +81,7 @@ Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilit
 - **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
 - **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
 
+Voir aussi : [Guide CE 261 : vos droits sur les vols Afrique-Europe](/blog/guide-ce261-droits-passagers-afrique.html), [Air Côte d'Ivoire vol retardé](/blog/air-cote-ivoire-vol-retarde-indemnite.html), [Air Sénégal vol retardé](/blog/air-senegal-vol-retarde-indemnite.html).
 
 → [Déposer mon dossier Ethiopian Airlines en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)

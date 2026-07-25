@@ -81,6 +81,9 @@ Point de départ (24/07/2026) : ~4 clics/semaine, position domaine ~9, ~1 backli
 | 6 mois (fin 2026) | Domaines référents | 15-20 |
 | 6 mois | Position domaine | < 7 |
 | 6 mois | Dossiers payants | flux régulier (bouche-à-oreille amorcé) |
+| **1 an (juil. 2027)** | Domaines référents | **25-30** |
+| **1 an** | Position domaine | **< 5** ; clics organiques ~50-100/sem |
+| **1 an** | 🎯 **Le vrai** | **flux régulier de dossiers payés** (ex. 10-20/mois) et **business qui se paie** (couvre le prêt Adie + dégage un revenu) |
 
 Le bilan mensuel compare la réalité à ces cibles (monte-t-on assez vite ?).
 

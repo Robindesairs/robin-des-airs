@@ -79,6 +79,8 @@
 /en     /index-en.html    200
 /en/    /index-en.html    200
 
+# SEO : /index.html est un doublon de la racine -> 301 vers / (canonical = racine)
+/index.html    /    301!
 # Netlify : forcer la racine à servir index.html
 /    /index.html    200
 

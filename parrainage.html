@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://robindesairs.eu/parrainage">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://robindesairs.eu/og-blog.png">
-<link rel="canonical" href="https://robindesairs.eu/parrainage">
+<link rel="canonical" href="https://robindesairs.eu/parrainage.html">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
 <script defer data-domain="robindesairs.eu" src="https://plausible.io/js/script.js"></script>
 <style>
@@ -615,8 +615,8 @@ function submitParrainage() {
     date: new Date().toISOString(),
   };
 
-  // Envoi Make.com → Airtable avec fallback WhatsApp si le webhook échoue
-  var webhookUrl = 'https://hook.eu1.make.com/XXXXXXX'; // ← remplacer par votre vrai webhook
+  // Envoi direct → Airtable (fonction parrainage-submit), fallback WhatsApp si échec
+  var webhookUrl = '/api/parrainage-submit';
   fetch(webhookUrl, {
     method: 'POST',
     headers: {'Content-Type':'application/json'},

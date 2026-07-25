@@ -1,7 +1,7 @@
 ---
 title: "Vol Royal Air Maroc retardé ou annulé : indemnité jusqu'à 600 €"
-meta_title: "Vol Royal Air Maroc retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
-meta_description: "Vol Royal Air Maroc retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
+meta_title: "Royal Air Maroc vol retardé ou annulé : votre indemnité"
+meta_description: "Vol Royal Air Maroc Paris-Casablanca retardé de 3h ou annulé ? 400 € par passager au départ d'Europe (jusqu'à 600 € en longue correspondance). 0 € d'avance."
 slug: royal-air-maroc-vol-retarde-indemnite
 hreflang_en: royal-air-maroc-delayed-flight-compensation
 image_url: /assets/images/schema-ce261-sens-compagnie.png
@@ -81,6 +81,7 @@ Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilit
 - **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
 - **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
 
+Voir aussi : [Guide CE 261 : vos droits sur les vols Afrique-Europe](/blog/guide-ce261-droits-passagers-afrique.html), [Air Sénégal vol retardé](/blog/air-senegal-vol-retarde-indemnite.html), [Air Côte d'Ivoire vol retardé](/blog/air-cote-ivoire-vol-retarde-indemnite.html).
 
 → [Déposer mon dossier Royal Air Maroc en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)

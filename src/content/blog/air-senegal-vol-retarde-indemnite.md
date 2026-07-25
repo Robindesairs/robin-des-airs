@@ -1,7 +1,7 @@
 ---
 title: "Air Sénégal retard, annulation, bagage : indemnité et droits complets"
 meta_title: "Air Sénégal vol retardé ou annulé : jusqu'à 600 €"
-meta_description: "Vol Air Sénégal retardé de 3h, annulé ou surbooké au départ de Paris ? Jusqu'à 600 € par passager, même si la compagnie n'est pas européenne. 0 € d'avance."
+meta_description: "Vol Air Sénégal Paris-Dakar retardé de 3h ou annulé ? Jusqu'à 600 € par passager, 3 000 € pour une famille de 5. 0 € d'avance, même hors UE."
 slug: air-senegal-vol-retarde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
@@ -178,7 +178,7 @@ Robin des Airs spécialisé sur les corridors Afrique-Europe :
 - **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
 - **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
 
-Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Corsair vol retardé](/blog/corsair-vol-retarde-indemnite.html), [Circonstances extraordinaires : ce qui exonère vraiment](/blog/circonstances-extraordinaires-ce261.html).
+Voir aussi : [Guide CE 261 : vos droits sur les vols Afrique-Europe](/blog/guide-ce261-droits-passagers-afrique.html), [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Air Côte d'Ivoire vol retardé](/blog/air-cote-ivoire-vol-retarde-indemnite.html), [Air Mauritius vol retardé](/blog/air-mauritius-vol-retarde-indemnite.html).
 
 → [Déposer mon dossier Air Sénégal en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol Air Sénégal](https://robindesairs.eu/#funnel-box)
