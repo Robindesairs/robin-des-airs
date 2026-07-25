@@ -50,7 +50,7 @@ Un refus qui invoque une circonstance extraordinaire n'a aucune valeur tant qu'i
 
 **Quelles mesures elle a prises** pour en limiter les conséquences, y compris les possibilités de réacheminement examinées, sur ses vols comme sur ceux d'autres compagnies.
 
-La charge de la preuve pèse **entièrement sur elle**. Vous n'avez à prouver que votre retard. Une compagnie qui ne répond qu'au premier point, de façon vague, n'a pas fait le tiers de sa démonstration.
+La charge de la preuve pèse **entièrement sur elle**. Vous n'avez à prouver que votre retard, encore faut-il l'avoir documenté : voici [ce qu'il faut conserver comme preuves de retard](/blog/preuves-retard-vol-conserver-indemnite.html) et [comment obtenir l'attestation officielle de la compagnie](/blog/justificatif-retard-vol-attestation-compagnie-demander.html). Une compagnie qui ne répond qu'au premier point, de façon vague, n'a pas fait le tiers de sa démonstration.
 
 <aside class="cta-inline">
   <p class="cta-inline-t">Vous avez reçu un refus vague ?</p>
@@ -70,7 +70,7 @@ Un rappel utile pour notre clientèle : la brume de sable en Afrique de l'Ouest 
 
 ## Étape 3 : la relance formelle
 
-Un courrier recommandé au siège, reprenant les éléments du dossier, les trois preuves manquantes, et votre demande chiffrée.
+Un [courrier de mise en demeure](/blog/mise-en-demeure-compagnie-aerienne-ce261.html) en recommandé au siège, reprenant les éléments du dossier, les trois preuves manquantes, et votre demande chiffrée.
 
 **Une précision qui évite une déception.** Aucun texte n'impose de délai de réponse à une compagnie aérienne. La Commission européenne recommande deux mois, elle ne les impose pas. Fixer une date dans votre courrier sert donc à **dater votre relance**, pas à créer une obligation. Un silence n'est pas une infraction, mais il ne vous fait rien perdre non plus.
 
@@ -80,7 +80,7 @@ En France, le Médiateur du tourisme et du voyage. La saisine est gratuite pour 
 
 **Deux réalités à connaître avant de vous lancer.** L'avis rendu **ne s'impose pas** juridiquement à la compagnie. Et le délai réel est long : en 2024, la médiation a mis **137 jours** en moyenne, alors que la réglementation lui en accorde 90.
 
-Comptez donc quatre à cinq mois, pour un avis qui fait pression sans contraindre.
+Comptez donc quatre à cinq mois, pour un avis qui fait pression sans contraindre. Le détail pratique : [saisir le Médiateur Tourisme et Voyage, mode d'emploi](/blog/saisir-mediateur-mtv-tourisme-voyage.html), et [ce que change la médiation dite « obligatoire » en 2026](/blog/mediation-aerienne-obligatoire-2026.html).
 
 ## Étape 5 : signaler à l'autorité, sans illusion
 
@@ -92,19 +92,19 @@ La DGAC est l'organisme chargé de veiller à l'application du règlement en Fra
 
 C'est la seule voie qui aboutit à une décision exécutoire. Trois choses à savoir avant de vous y engager.
 
-**L'avocat n'est pas obligatoire** en dessous de 10 000 €. Vous pouvez y aller seul.
+**L'avocat n'est pas obligatoire** en dessous de 10 000 €. Vous pouvez y aller seul, et la voie la plus accessible pour un montant de ce type est la [procédure européenne de petite créance](/blog/formulaire-petite-creance-europeenne-vol-retarde.html).
 
 **Mais une tentative de règlement amiable est obligatoire** en dessous de 5 000 €, sous peine de voir votre demande déclarée irrecevable d'office.
 
 **Et c'est long.** Une procédure au fond dure en moyenne **8,4 mois** devant le tribunal judiciaire, tous contentieux confondus.
 
-Mettez ces trois éléments bout à bout et vous comprendrez pourquoi peu de passagers vont au terme pour 600 €. Ce n'est pas une question de courage, c'est une question de proportion.
+Mettez ces trois éléments bout à bout et vous comprendrez pourquoi peu de passagers vont au terme pour 600 €. Ce n'est pas une question de courage, c'est une question de proportion. Nous avons détaillé ce calcul ailleurs : [réclamer seul ou passer par un service, la réponse honnête cas par cas](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html).
 
 ## Le cas des compagnies non européennes
 
 Vérifiez d'abord que le règlement s'applique. Un vol au départ de l'Union est couvert quelle que soit la compagnie. Un vol vers l'Union depuis un pays tiers ne l'est **que si le transporteur est européen**.
 
-Si votre vol n'entre pas dans ce cadre, ni l'indemnité ni la prise en charge ne sont dues au titre du règlement européen, et les recours décrits ici n'ont pas d'objet. D'autres textes peuvent jouer, mais ce n'est plus le même terrain.
+Si votre vol n'entre pas dans ce cadre, ni l'indemnité ni la prise en charge ne sont dues au titre du règlement européen, et les recours décrits ici n'ont pas d'objet. [D'autres textes peuvent jouer](/blog/convention-montreal-retard-frais-prouver-prejudice.html), comme la Convention de Montréal pour vos frais réels sur justificatifs, mais ce n'est plus le même terrain.
 
 ## Combien de temps vous reste-t-il
 

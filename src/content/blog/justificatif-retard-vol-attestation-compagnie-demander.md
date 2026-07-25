@@ -188,6 +188,8 @@ Le point 1 est le plus important, et c'est celui que les compagnies oublient le 
 2. **Mettez en demeure** par recommandé avec accusé de réception, voir notre [modèle de mise en demeure](/blog/mise-en-demeure-compagnie-aerienne-ce261.html)
 3. **Saisissez le médiateur**, voir [comment saisir le MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html)
 
+Ces étapes forment une escalade complète, que nous avons détaillée dans [la compagnie refuse de payer : les recours étape par étape](/blog/compagnie-refuse-payer-indemnite-que-faire.html).
+
 <aside class="cta-inline">
   <p class="cta-inline-t">Pas le temps de courir après les recommandés ?</p>
   <p class="cta-inline-p">Relance, mise en demeure, et le tribunal si elle persiste : on mène ces étapes à votre place, et vous ne payez que si vous êtes indemnisé.</p>

@@ -37,7 +37,7 @@ C'est la situation la plus binaire de tout le règlement : soit vous avez embarq
 
 <img src="/assets/images/reclamer-seul-ou-deleguer-arbre.svg" alt="Schéma : un refus d'embarquement est binaire et se réclame seul, tandis qu'un retard ou une annulation expose à une contestation par la compagnie" width="1200" height="630" loading="lazy" decoding="async">
 
-Vous gardez alors 100 % de l'indemnité, et c'est normal.
+Vous gardez alors 100 % de l'indemnité, et c'est normal. Pour le détail de cette situation, voir [refus d'embarquement et surbooking : vos droits](/blog/surbooking-refus-embarquement-indemnite.html).
 
 ### Une condition à vérifier d'abord
 
@@ -99,7 +99,7 @@ C'est le chiffre le plus utile de cette page, et il vient d'une institution publ
 
 Selon la **Cour des comptes européenne**, parmi les refus fondés sur des circonstances extraordinaires que des passagers ont pris la peine de contester, les organismes nationaux de contrôle estiment qu'**environ 60 % ne relevaient en réalité pas de circonstances extraordinaires**.
 
-Autrement dit, la majorité de ces refus ne tiennent pas quand on les conteste. Encore faut-il les contester. <span class="src">Source : <a href="https://op.europa.eu/webpub/eca/special-reports/passenger-rights-30-2018/fr/" rel="nofollow noopener" target="_blank">Cour des comptes européenne, rapport spécial n° 30/2018</a>.</span>
+Autrement dit, la majorité de ces refus ne tiennent pas quand on les conteste. Encore faut-il les contester, et nous détaillons [quoi exiger, dans quel ordre, quand la compagnie refuse](/blog/compagnie-refuse-payer-indemnite-que-faire.html). <span class="src">Source : <a href="https://op.europa.eu/webpub/eca/special-reports/passenger-rights-30-2018/fr/" rel="nofollow noopener" target="_blank">Cour des comptes européenne, rapport spécial n° 30/2018</a>.</span>
 
 ### Et la plupart des gens ne contestent pas
 
