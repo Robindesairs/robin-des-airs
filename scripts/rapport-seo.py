@@ -44,6 +44,18 @@ def arrow(cur, prev, higher_better=True):
 def short(u):
     return u.replace("https://robindesairs.eu", "").replace("/blog/", "").replace(".html", "") or "/ (accueil)"
 
+def bing_links():
+    """Autorité : nb de pages/domaines référents vus par Bing. None si indispo."""
+    try:
+        cfg = json.load(open(f"{CFG}/backlinks-api.json"))
+        key = cfg["bing_api_key"]; site = (cfg.get("bing_verified_sites") or ["https://robindesairs.eu/"])[0]
+        u = f"https://ssl.bing.com/webmaster/api.svc/json/GetLinkCounts?apikey={key}&siteUrl={urllib.parse.quote(site, safe='')}"
+        d = json.load(urllib.request.urlopen(u, context=_CTX, timeout=20)).get("d", {}) or {}
+        links = d.get("Links", []) if isinstance(d, dict) else []
+        return len(links), int(d.get("TotalPages", 0) or 0)
+    except Exception:
+        return None
+
 def bing_stats(days=7):
     """Clics/impressions Bing (Webmaster Tools) sur les N derniers jours. None si indispo."""
     import re
@@ -113,6 +125,23 @@ def main():
             L.append(f"  {int(r['impressions']):>3} impr | pos {r['position']:.1f} | CTR {r['ctr']*100:.1f}% | {short(r['keys'][0])[:34]}")
     else:
         L.append("  aucune sur le seuil aujourd'hui.")
+
+    # top requêtes Google (proxy mots-clés : ce que les gens tapent vraiment)
+    try:
+        qrows = q(at, prop, start.isoformat(), end.isoformat(), ["query"])
+        qrows.sort(key=lambda r: r["impressions"], reverse=True)
+        if qrows:
+            L.append(f"\n-- TOP REQUETES GOOGLE ({a.days} j) --")
+            for r in qrows[:6]:
+                L.append(f"  {int(r['impressions']):>3} impr | pos {r['position']:.1f} | {int(r['clicks'])} clic | {r['keys'][0][:38]}")
+    except Exception:
+        pass
+
+    # autorité / backlinks (Bing)
+    bl = bing_links()
+    if bl is not None:
+        L.append(f"\n-- AUTORITE / BACKLINKS (Bing) --")
+        L.append(f"  Pages référentes vues par Bing : {bl[0]}  (le nerf de la guerre : objectif 15-20 domaines a 6 mois)")
 
     # pistes heuristiques
     L.append("\n-- PISTES D'AMELIORATION --")

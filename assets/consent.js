@@ -198,3 +198,24 @@
     init();
   }
 })();
+
+/* ── Suivi de conversion (Umami, sans cookie) ──────────────────────────────────
+   Trace, sur TOUTES les pages (blog, compagnies, accueil), les clics qui mènent à
+   l'action : WhatsApp et parcours de dépôt/mandat. Umami est cookieless : pas de
+   consentement requis. Permet de mesurer quelle page transforme le trafic en contact. */
+(function () {
+  function track(name, href) {
+    try {
+      if (window.umami && window.umami.track) {
+        window.umami.track(name, { page: location.pathname, cible: (href || '').slice(0, 120) });
+      }
+    } catch (e) {}
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var h = a.getAttribute('href') || '';
+    if (/wa\.me|api\.whatsapp\.com|whatsapp/i.test(h)) track('whatsapp-click', h);
+    else if (/\/depot|autorisation|mandat|#funnel-box|signer|choix-reclamation/i.test(h)) track('depot-click', h);
+  }, true);
+})();

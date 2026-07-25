@@ -68,6 +68,24 @@ Ordre : Cluster 1 (compagnies) → Cluster 2 (recours) → 4 en support → 3/5/
 
 ---
 
+## E. Objectifs chiffrés (KPI targets) — mesurés dans le bilan mensuel
+
+Point de départ (24/07/2026) : ~4 clics/semaine, position domaine ~9, ~1 backlink, 0 dossier payé, 574 citations IA/sem (Bing).
+
+| Horizon | Objectif | Cible |
+|---|---|---|
+| Fin août 2026 | Clics organiques | ~15 / semaine (via titres + passage page 1) |
+| Fin août 2026 | Domaines référents | 5 (presse + assos qui confirment) |
+| Fin août 2026 | Position domaine | < 8 |
+| Fin août 2026 | 🎯 Le vrai | 1re famille payée de bout en bout |
+| 6 mois (fin 2026) | Domaines référents | 15-20 |
+| 6 mois | Position domaine | < 7 |
+| 6 mois | Dossiers payants | flux régulier (bouche-à-oreille amorcé) |
+
+Le bilan mensuel compare la réalité à ces cibles (monte-t-on assez vite ?).
+
+---
+
 ## D. Cadence (façon agence)
 
 - Quotidien 08h30 : rapport SEO (KPIs Google + Bing, tendance, pages à améliorer, tâches).
