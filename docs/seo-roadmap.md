@@ -36,10 +36,11 @@ Là où les impressions arrivent déjà (air-senegal, air-cote-ivoire, ethiopian
 - ~25 satellites présents. Manque : tableau « quelle compagnie indemnise le mieux / délais ».
 - Maillage : chaque page compagnie lie le hub + 2-3 compagnies sœurs + sa route-phare.
 
-### Cluster 2 — Recours & preuve du retard (bas de funnel, fort ROI)
-- Hub à CRÉER : « Se faire indemniser quand la compagnie refuse : preuves, médiateur, mise en demeure, petite créance ».
-- Satellites : saisir-mediateur-mtv (42 impr), justificatif-retard (29), preuves-retard (18), mise-en-demeure, petite-creance, mediation-2026…
-- Maillage : toutes pointent vers `/mandat` (conversion directe).
+### Cluster 2 — Recours & preuve du retard (bas de funnel, fort ROI) — ✅ CÂBLÉ 25/07
+- Hub : pas créé (corpus saturé). `compagnie-refuse-payer-indemnite-que-faire` PROMU en hub (il EST « la compagnie refuse, que faire », déjà sourcé Cour des comptes, 6 étapes).
+- Maillage fait : hub → 8 satellites en liens CONTEXTUELS ancrés dans chaque étape (preuves-retard, justificatif-retard, mise-en-demeure, saisir-mediateur, mediation-2026, petite-creance, convention-montreal, reclamer-seul). Retour satellites → hub complété (justificatif, reclamer-seul ex-orphelin, preuves, mediation-2026 ; les autres liaient déjà).
+- Conversion : CTA `/#funnel-box` + `/depot-express` conservés (convention du corpus), pas `/mandat` (redirection).
+- Reste : mesurer dans 3-4 semaines si le hub monte en position sur « compagnie refuse indemnité / circonstances extraordinaires » et si les satellites (saisir-mediateur 42 impr, justificatif 29, preuves 18) passent page 1.
 
 ### Cluster 3 — Par route Europe↔Afrique
 - Hubs : `aller-a-dakar-depuis-europe-compagnies-ce261`, `guide-ce261-droits-passagers-afrique`.
