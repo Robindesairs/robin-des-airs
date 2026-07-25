@@ -119,9 +119,13 @@ const REDIRECTED_SLUGS = new Set<string>([
 
 // Pages-villes à faible ROI diaspora passées en noindex (X-Robots-Tag via _headers) :
 // sorties du sitemap pour concentrer le budget de crawl sur les routes fortes.
-// Pilote 25/07/2026 : 4 routes « départs diaspora hors France » RÉ-INDEXÉES (retirées ici
-// ET du _headers) : madrid-dakar, milan-lagos, lisbonne-dakar, frankfurt-abidjan. Mesurer à 3-4 sem.
+// Pilote 25/07/2026 ANNULÉ : ces pages-villes auto-générées contiennent des ROUTES FABRIQUÉES
+// (vérifié web : Air Côte d'Ivoire ne dessert PAS Frankfurt ; ITA Airways ne vole PAS vers Lagos).
+// Le noindex était donc PROTECTEUR (contenu non fiable), pas juste du budget de crawl. On garde
+// les 4 en noindex tant que les tableaux compagnies ne sont pas vérifiés/corrigés route par route.
 const NOINDEX_SLUGS = new Set<string>([
+  'vol-retarde-frankfurt-abidjan-indemnite', 'vol-retarde-lisbonne-dakar-indemnite',
+  'vol-retarde-madrid-dakar-indemnite', 'vol-retarde-milan-lagos-indemnite',
   'vol-retarde-addis-abeba-paris-indemnite', 'vol-retarde-alger-paris-indemnite',
   'vol-retarde-amsterdam-accra-indemnite', 'vol-retarde-amsterdam-lagos-indemnite',
   'vol-retarde-amsterdam-nairobi-indemnite', 'vol-retarde-bujumbura-paris-indemnite',
