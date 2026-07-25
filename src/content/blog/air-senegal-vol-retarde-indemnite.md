@@ -8,11 +8,11 @@ faq:
   - q: "Vol Paris-Dakar sur Air Sénégal retardé de 4h. Combien je touche ?"
     a: "Distance CDG-DSS ≈ 4 200 km → **600€ par passager**. Couvert car départ de Paris (UE), même si Air Sénégal n'est pas européenne."
   - q: "Mon vol retour Dakar-Paris sur Air Sénégal a 5h de retard. Je peux réclamer ?"
-    a: "Non, pas au titre du CE261. Air Sénégal est sénégalaise (non-UE), départ de Dakar (hors-UE) → pas couvert. La **Convention de Montréal** peut s'appliquer pour les frais réels, mais pas l'indemnité forfaitaire 600€."
+    a: "Pas au titre du CE261 (départ hors UE, compagnie non européenne). Si vous avez un aller-retour Paris ⇄ Dakar, la **Convention de Montréal** s'applique au trajet et vous pouvez réclamer vos frais réels sur justificatifs. Si c'est un aller simple Dakar-Paris, c'est la **Convention de Varsovie** (le Sénégal n'a pas ratifié Montréal), avec une protection plus limitée. Jamais l'indemnité forfaitaire de 600€."
   - q: "Air Sénégal a annulé mon vol Paris-Dakar 3 jours avant. J'ai droit à quoi ?"
     a: "Annulation depuis Paris (UE) < 14 jours : **600€ d'indemnité** + remboursement du billet OU réacheminement au choix. Si moins de 7 jours et réacheminement proposé, montant réduit selon conditions."
   - q: "Air Sénégal a perdu mes bagages. Combien puis-je réclamer ?"
-    a: "Bagages perdus ou endommagés : jusqu'à **environ 1 800 €** (1 519 DTS) par passager selon la Convention de Montréal. Il faut remplir un PIR à l'aéroport et réclamer dans les 21 jours (retard bagage) ou 7 jours (dommage)."
+    a: "Bagages perdus ou endommagés : jusqu'à **environ 1 800 €** (1 519 DTS) par passager sous la Convention de Montréal (aller-retour depuis Paris). En aller simple au départ de Dakar, c'est la Convention de Varsovie, avec un plafond plus bas. Il faut remplir un PIR à l'aéroport et réclamer dans les 21 jours (retard bagage) ou 7 jours (dommage)."
   - q: "Combien de temps j'ai pour réclamer à Air Sénégal ?"
     a: "Pour le CE261 : **2 à 5 ans** selon le droit applicable (loi française généralement). Pour la Convention de Montréal (bagages) : 2 ans maximum. Gardez tous vos documents."
   - q: "Air Sénégal a invoqué une circonstance extraordinaire. C'est valable ?"
@@ -35,12 +35,13 @@ Il existe deux régimes d'indemnisation distincts :
 - Le vol départ d'un aéroport de l'UE (Paris, Bruxelles, etc.) **quelle que soit la compagnie**
 - OU la compagnie est enregistrée dans l'UE (Air France, Corsair, Brussels Airlines…)
 
-**La Convention de Montréal** : remboursement des frais réels (plafonné). S'applique sur tous les vols internationaux, indépendamment du pays de départ.
+**La Convention de Montréal (ou, à défaut, la Convention de Varsovie)** : remboursement des frais réels (plafonné), sur justificatifs. C'est Montréal quand votre voyage part de France (ex. aller-retour depuis Paris), et Varsovie quand vous partez du Sénégal, qui **n'a pas ratifié Montréal**.
 
-| Trajet | CE261 applicable ? | Convention de Montréal ? |
+| Trajet | CE261 (forfait 600€) ? | Frais réels sur justificatifs ? |
 |---|---|---|
-| Paris CDG → Dakar DSS (Air Sénégal) | ✅ Oui, départ UE | ✅ Oui |
-| Dakar DSS → Paris CDG (Air Sénégal retour) | ❌ Non | ✅ Oui |
+| Paris CDG → Dakar DSS (Air Sénégal) | ✅ Oui, départ UE | ✅ Oui (Montréal) |
+| Dakar DSS → Paris CDG, aller-retour depuis Paris | ❌ Non | ✅ Oui (Montréal, voyage parti de France) |
+| Dakar DSS → Paris CDG, aller simple | ❌ Non | ✅ Oui, mais sous Varsovie (protection réduite) |
 
 **Différence clé avec Air France ou Corsair :** ces compagnies françaises couvrent les deux sens. Air Sénégal n'est couverte par le CE261 que sur le vol aller depuis Paris.
 
@@ -50,17 +51,23 @@ Il existe deux régimes d'indemnisation distincts :
 
 ### Depuis Paris (aller) : jusqu'à 600€
 
-Le CE261 s'applique sur les vols Paris → Dakar au départ de CDG ou ORY. Seuil : **retard de 3h ou plus à l'heure d'arrivée** (heure d'ouverture des portes à Dakar, arrêt Folkerts, CJUE 2013).
+Air Sénégal opère la liaison **Paris CDG → Dakar (DSS)**. Le CE261 s'applique sur ce vol au départ de Paris. Seuil : **retard de 3h ou plus à l'heure d'arrivée** (heure d'ouverture des portes à Dakar, arrêt Folkerts, CJUE 2013).
 
 | Route | Distance | Indemnité si retard ≥ 3h |
 |---|---|---|
 | Paris CDG → Dakar DSS | ~4 200 km | **600€ par passager** |
-| Paris CDG → Ziguinchor ZIG | ~4 200 km | **600€ par passager** |
-| Paris CDG → Saint-Louis XLS | ~4 200 km | **600€ par passager** |
+| Paris CDG → Dakar → Ziguinchor ou Saint-Louis (même billet) | > 3 500 km | **600€ par passager** (destination finale) |
 
-### Retard de vol retour Dakar-Paris : Convention de Montréal
+Les vols intérieurs vers Ziguinchor (ZIG) ou Saint-Louis (XLS) partent de Dakar, pas de Paris. Mais si vous les avez réservés **sur le même billet** que le Paris-Dakar, tout le trajet compte comme un seul voyage au départ de l'UE : l'indemnité se calcule sur la distance jusqu'à votre destination finale (arrêt Wegener, CJUE C-537/17).
 
-Le CE261 ne s'applique pas. Mais la Convention de Montréal permet de réclamer les **frais réels** causés par le retard : repas, hôtel, transport, appels téléphoniques. Maximum ~5 430€ par passager (4 694 DTS au taux actuel), mais remboursement sur justificatifs uniquement.
+### Retard de vol retour Dakar-Paris : Montréal ou Varsovie ?
+
+Le CE261 ne s'applique pas (départ hors UE, compagnie non européenne). La convention qui vous protège dépend alors de votre billet, car **le Sénégal n'a pas ratifié la Convention de Montréal** : il relève de l'ancienne **Convention de Varsovie**.
+
+- **Aller-retour Paris ⇄ Dakar (même billet) :** le départ ET la destination du voyage sont à Paris, en France. C'est donc la **Convention de Montréal** qui s'applique à tout le trajet, retour compris. Vous pouvez réclamer vos **frais réels** causés par le retard (repas, hôtel, transport), jusqu'à ~5 430€ par passager (4 694 DTS), sur justificatifs.
+- **Aller simple Dakar → Paris :** le voyage part du Sénégal, c'est la **Convention de Varsovie** qui s'applique, avec des plafonds plus bas et une protection moins favorable que Montréal.
+
+Dans les deux cas, il s'agit de frais réels sur justificatifs, jamais de l'indemnité forfaitaire de 600€.
 
 ---
 
@@ -68,13 +75,13 @@ Le CE261 ne s'applique pas. Mais la Convention de Montréal permet de réclamer 
 
 ### Annulation depuis Paris : droits CE261
 
-Si Air Sénégal annule votre vol depuis Paris (CDG ou ORY) :
+Si Air Sénégal annule votre vol Paris CDG → Dakar, deux droits se cumulent : un **remboursement ou un réacheminement** (toujours, à votre choix), et parfois une **indemnité de 600€**. L'indemnité dépend du moment où on vous prévient :
 
-- **Prévenu moins de 14 jours avant le départ :** droit à l'indemnité + choix entre remboursement du billet OU réacheminement vers la destination finale dans des conditions comparables.
+- **Plus de 14 jours avant le départ :** pas d'indemnité. Vous gardez le droit au remboursement du billet ou à un réacheminement vers Dakar.
+- **Entre 7 et 13 jours avant :** indemnité de 600€ due, **sauf** si le réacheminement proposé part au plus tôt 2h avant l'heure prévue et vous fait arriver moins de 4h après l'heure prévue.
+- **Moins de 7 jours avant (ou le jour même) :** indemnité de 600€ due, **sauf** si le réacheminement part au plus tôt 1h avant et vous fait arriver moins de 2h après l'heure prévue.
 
-- **Prévenu entre 7 et 14 jours avant :** indemnité due si le réacheminement proposé ne correspond pas à votre planning (départ trop tôt / arrivée trop tard).
-
-- **Prévenu plus de 14 jours avant :** indemnité non due, mais remboursement ou réacheminement obligatoire.
+En clair : plus l'annonce est tardive et plus le vol de remplacement bouscule vos horaires, plus les 600€ vous sont dus.
 
 **Montant annulation Paris-Dakar :** 600€ par passager (distance > 3 500 km).
 
@@ -94,11 +101,11 @@ Air Sénégal peut être exonérée si elle prouve une circonstance extraordinai
 
 ## 3. Bagages perdus, retardés ou endommagés par Air Sénégal
 
-La **Convention de Montréal** s'applique sur tous les vols Air Sénégal, quel que soit le sens.
+Pour les bagages, la convention applicable suit la même logique que pour le retard : **Convention de Montréal** si votre voyage part de France (aller-retour depuis Paris), **Convention de Varsovie** si vous partez du Sénégal en aller simple. Le plafond d'indemnisation change en conséquence.
 
 ### Bagage perdu ou endommagé
 
-**Plafond :** environ 1 800 € par passager (1 519 DTS). Vous devez déclarer dans :
+**Plafond sous Montréal :** environ 1 800 € par passager (1 519 DTS). Sous Varsovie (aller simple au départ de Dakar), le plafond est nettement plus bas (environ 20 € par kilo). Vous devez déclarer dans :
 - **7 jours** pour un bagage endommagé
 - **21 jours** pour un bagage retardé (qui vous a été rendu)
 - **21 jours** pour déclencher la procédure bagage perdu
