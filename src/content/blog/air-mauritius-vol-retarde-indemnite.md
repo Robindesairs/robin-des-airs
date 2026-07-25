@@ -1,6 +1,6 @@
 ---
 title: "Air Mauritius : vol retardé ou annulé, quelle indemnité ?"
-meta_title: "Air Mauritius vol retardé : jusqu'à 600 € d'indemnité"
+meta_title: "Air Mauritius vol retardé ou annulé : jusqu'à 600 €"
 meta_description: "Vol Air Mauritius Paris-Maurice retardé de 3h ou annulé ? Jusqu'à 600 € par passager, 2 400 € pour une famille de 4. Vérifié en 2 min, 0 € d'avance."
 slug: air-mauritius-vol-retarde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

@@ -1,6 +1,6 @@
 ---
 title: "Vol Air Côte d'Ivoire retardé ou annulé : indemnité jusqu'à 600 €"
-meta_title: "Air Côte d'Ivoire vol retardé : jusqu'à 600 € d'indemnité"
+meta_title: "Air Côte d'Ivoire vol retardé ou annulé : jusqu'à 600 €"
 meta_description: "Vol Air Côte d'Ivoire Paris-Abidjan retardé de 3h ou annulé ? Jusqu'à 600 € par passager, soit 4 x 600 € pour une famille. Vérifié en 2 min, 0 € d'avance."
 slug: air-cote-ivoire-vol-retarde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
