@@ -82,6 +82,8 @@ Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilit
 
 **En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en wolof.
 
+Voir aussi : [Guide CE 261 : vos droits sur les vols Afrique-Europe](/blog/guide-ce261-droits-passagers-afrique.html), [Air Sénégal vol retardé](/blog/air-senegal-vol-retarde-indemnite.html), [Vol Lisbonne-Dakar retardé](/blog/vol-retarde-lisbonne-dakar-indemnite.html).
+
 → [Déposer mon dossier Madrid-Dakar en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

@@ -119,17 +119,19 @@ const REDIRECTED_SLUGS = new Set<string>([
 
 // Pages-villes à faible ROI diaspora passées en noindex (X-Robots-Tag via _headers) :
 // sorties du sitemap pour concentrer le budget de crawl sur les routes fortes.
+// Pilote 25/07/2026 : 4 routes « départs diaspora hors France » RÉ-INDEXÉES (retirées ici
+// ET du _headers) : madrid-dakar, milan-lagos, lisbonne-dakar, frankfurt-abidjan. Mesurer à 3-4 sem.
 const NOINDEX_SLUGS = new Set<string>([
   'vol-retarde-addis-abeba-paris-indemnite', 'vol-retarde-alger-paris-indemnite',
   'vol-retarde-amsterdam-accra-indemnite', 'vol-retarde-amsterdam-lagos-indemnite',
   'vol-retarde-amsterdam-nairobi-indemnite', 'vol-retarde-bujumbura-paris-indemnite',
   'vol-retarde-cap-vert-paris-indemnite', 'vol-retarde-casablanca-paris-indemnite',
   'vol-retarde-dar-es-salaam-paris-indemnite', 'vol-retarde-djibouti-paris-indemnite',
-  'vol-retarde-frankfurt-abidjan-indemnite', 'vol-retarde-freetown-paris-indemnite',
+  'vol-retarde-freetown-paris-indemnite',
   'vol-retarde-ile-maurice-paris-indemnite', 'vol-retarde-johannesburg-paris-indemnite',
-  'vol-retarde-kampala-paris-indemnite', 'vol-retarde-lisbonne-dakar-indemnite',
-  'vol-retarde-luanda-paris-indemnite', 'vol-retarde-madrid-dakar-indemnite',
-  'vol-retarde-maputo-paris-indemnite', 'vol-retarde-milan-lagos-indemnite',
+  'vol-retarde-kampala-paris-indemnite',
+  'vol-retarde-luanda-paris-indemnite',
+  'vol-retarde-maputo-paris-indemnite',
   'vol-retarde-montreal-paris-indemnite', 'vol-retarde-new-york-paris-indemnite',
   'vol-retarde-rome-nairobi-indemnite', 'vol-retarde-stockholm-accra-indemnite',
   'vol-retarde-tunis-paris-indemnite',
