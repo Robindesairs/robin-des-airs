@@ -224,11 +224,30 @@ function waLink(src: string): string {
   return `https://wa.me/33756863630?text=${encodeURIComponent(msg)}`;
 }
 
+/**
+ * datePublished STABLE : on relit la date de la page DÉJÀ générée pour ne PAS la
+ * réécrire à la date du jour à chaque build (sinon Google voit l'article « republié »
+ * et l'article perd son ancienneté). Nouvelle page (aucun fichier) → date du jour.
+ * Rend le build idempotent : un rebuild sans changement ne touche plus les dates.
+ */
+function readExistingMeta(slug: string): { datePublished: string; dateModified: string } {
+  try {
+    const html = fs.readFileSync(path.join(BLOG_OUT_DIR, `${slug}.html`), 'utf-8');
+    const dp = html.match(/"datePublished":"(\d{4}-\d{2}-\d{2})/);
+    const dm = html.match(/"dateModified":"(\d{4}-\d{2}-\d{2})/);
+    return { datePublished: dp ? dp[1] : TODAY, dateModified: dm ? dm[1] : TODAY };
+  } catch {
+    return { datePublished: TODAY, dateModified: TODAY };
+  }
+}
+
 function renderArticlePage(
   post: Awaited<ReturnType<typeof getBySlug>>,
-  related: Array<{ slug: string; title: string }> = []
+  related: Array<{ slug: string; title: string }> = [],
+  familyLinks: Array<{ slug: string; title: string }> = []
 ): string {
   if (!post) return '';
+  const meta = readExistingMeta(post.slug);
   const canonical = `${SITE_URL}/blog/${post.slug}.html`;
   const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
   // hreflang : posé UNIQUEMENT si une vraie traduction EN existe (hreflang_en en frontmatter) —
@@ -250,8 +269,8 @@ function renderArticlePage(
     description: post.meta_description,
     url: canonical,
     image: ogImage,
-    datePublished: TODAY,
-    dateModified: TODAY,
+    datePublished: meta.datePublished,
+    dateModified: meta.dateModified,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     author: { '@type': 'Person', '@id': SITE_URL + '/a-propos.html#climbie', name: 'Saint-Yves', url: SITE_URL + '/a-propos.html' },
     publisher: {
@@ -312,6 +331,20 @@ function renderArticlePage(
       </ul>
     </section>`
     : '';
+  // Bloc « famille » : maille chaque page compagnie/route vers ses sœurs (y compris les
+  // orphelines non indexées) → Google les découvre et les priorise depuis des pages fortes.
+  const famType = postType(post.slug);
+  const famTitle = famType === 'compagnie' ? 'Autres compagnies aériennes' : famType === 'route' ? 'Autres trajets fréquents' : '';
+  const familyHtml = familyLinks.length && famTitle
+    ? `<section class="related">
+      <h2>${famTitle}</h2>
+      <ul>
+        ${familyLinks
+          .map((r) => `<li><a href="/blog/${r.slug}.html">${escapeHtml(r.title)}</a></li>`)
+          .join('\n        ')}
+      </ul>
+    </section>`
+    : '';
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -367,6 +400,7 @@ function renderArticlePage(
       </p>
     </div>
     ${relatedHtml}
+    ${familyHtml}
   </main>
 </body>
 </html>`;
@@ -502,16 +536,34 @@ function main(): void {
   console.log('[build-blog] blog/index.html écrit.');
 
   const linkPool = merged.map((m) => ({ slug: m.slug, title: m.title }));
+  const compagnies = linkPool.filter((m) => postType(m.slug) === 'compagnie');
+  const routes = linkPool.filter((m) => postType(m.slug) === 'route').sort((a, b) => a.slug.localeCompare(b.slug));
   for (const p of posts) {
     const full = getBySlug(p.slug);
     if (full) {
       const related = computeRelated(full.slug, linkPool, 6);
+      // Maillage « famille » : compagnie → TOUTES les autres compagnies ; route → fenêtre
+      // tournante de 24 autres trajets (couvre le cluster sans gonfler la page). Chaque
+      // orpheline reçoit ainsi des liens entrants depuis les pages fortes de sa famille.
+      const t = postType(full.slug);
+      let family: Array<{ slug: string; title: string }> = [];
+      if (t === 'compagnie') {
+        family = compagnies.filter((c) => c.slug !== full.slug);
+      } else if (t === 'route') {
+        const others = routes.filter((c) => c.slug !== full.slug);
+        if (others.length <= 24) family = others;
+        else {
+          let off = 0;
+          for (const ch of full.slug) off = (off + ch.charCodeAt(0)) % others.length;
+          family = Array.from({ length: 24 }, (_, i) => others[(off + i) % others.length]);
+        }
+      }
       fs.writeFileSync(
         path.join(BLOG_OUT_DIR, `${full.slug}.html`),
-        renderArticlePage(full, related),
+        renderArticlePage(full, related, family),
         'utf-8'
       );
-      console.log(`[build-blog] blog/${full.slug}.html écrit (${related.length} liens).`);
+      console.log(`[build-blog] blog/${full.slug}.html écrit (${related.length} liens + ${family.length} famille).`);
     }
   }
 
