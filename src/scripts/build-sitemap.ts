@@ -124,6 +124,7 @@ const REDIRECTED_SLUGS = new Set<string>([
 // Le noindex était donc PROTECTEUR (contenu non fiable), pas juste du budget de crawl. On garde
 // les 4 en noindex tant que les tableaux compagnies ne sont pas vérifiés/corrigés route par route.
 const NOINDEX_SLUGS = new Set<string>([
+  'vol-retarde-abidjan-dakar-comparatif', // route régionale africaine + 6/8 compagnies fabriquées (vérif web 25/07)
   'vol-retarde-frankfurt-abidjan-indemnite', 'vol-retarde-lisbonne-dakar-indemnite',
   'vol-retarde-madrid-dakar-indemnite', 'vol-retarde-milan-lagos-indemnite',
   'vol-retarde-addis-abeba-paris-indemnite', 'vol-retarde-alger-paris-indemnite',

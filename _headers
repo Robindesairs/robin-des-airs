@@ -122,6 +122,11 @@
   Content-Type: application/xml; charset=utf-8
 
 # === SEO 29/06/2026 : pages-villes faible ROI diaspora → noindex (budget de crawl) ===
+# 25/07/2026 : abidjan-dakar-comparatif ajouté (route régionale africaine hors CE261 +
+# 6 compagnies fabriquées sur 8, vérifié web : Air France/Corsair/Brussels/Transavia/Ethiopian/Turkish
+# n'opèrent PAS ABJ-DKR direct ; seules Air Côte d'Ivoire et Air Sénégal le font).
+/blog/vol-retarde-abidjan-dakar-comparatif.html
+  X-Robots-Tag: noindex, follow
 /blog/vol-retarde-addis-abeba-paris-indemnite.html
   X-Robots-Tag: noindex, follow
 /blog/vol-retarde-alger-paris-indemnite.html
