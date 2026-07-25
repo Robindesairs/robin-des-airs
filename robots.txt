@@ -51,6 +51,38 @@ Disallow: /api/
 # means allowed. Only name a bot here to BLOCK it.
 
 # ============================================================
+# SEO / backlink spy crawlers — BLOCKED (competitive intelligence)
+# ============================================================
+# Ces robots existent pour revendre vos donnees (mots-cles, backlinks,
+# structure) a des outils que les concurrents utilisent. Le blocage est
+# indicatif (les robots respectueux obeissent) et n'affecte NI Google, NI Bing,
+# NI les IA ci-dessus. Chaque robot est un groupe nomme : rappel que ces groupes
+# n'heritent de rien du "*", donc le Disallow: / est bien leur regle entiere.
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: rogerbot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: Barkrowler
+Disallow: /
+
+# ============================================================
 # Sitemaps
 # ============================================================
 Sitemap: https://robindesairs.eu/sitemap-index.xml
