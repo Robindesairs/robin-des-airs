@@ -35,8 +35,8 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 | Trajet | Compagnie | Indemnité CE 261 si retard >= 3h |
 |---|---|---|
 | Paris vers Maurice | Air Mauritius (non-UE) | Oui : **600 € par passager** |
-| Paris vers Maurice | Air France (UE) | Oui : **600 € par passager** |
-| Maurice vers Paris | Air France (UE) | Oui : **600 € par passager** |
+| Paris vers Maurice | Air France ou Corsair (UE) | Oui : **600 € par passager** |
+| Maurice vers Paris | Air France ou Corsair (UE) | Oui : **600 € par passager** |
 | Maurice vers Paris | Air Mauritius (non-UE) | Non : frais réels via Convention de Montréal |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
@@ -49,6 +49,8 @@ Air Mauritius est immatriculée à Maurice : c'est une compagnie **non européen
 - **Au départ de Maurice**, ni le point de départ (hors UE) ni la compagnie (non-UE) ne déclenchent le forfait. Vous n'avez pas droit aux 600 €, mais vos **frais réels** (repas, hôtel, transport, sur justificatifs) restent dus au titre de la Convention de Montréal.
 
 Nous vous disons la vérité plutôt que de vous vendre une indemnité qui n'existe pas sur le sens retour.
+
+**L'astuce qui change tout au retour.** La ligne Paris-Maurice est aussi desservie par deux compagnies **européennes** : **Air France** et **Corsair**. Sur le retour Maurice vers Paris, un vol opéré par l'une d'elles reste couvert par le CE 261 (jusqu'à **600 €**), là où le même trajet sur Air Mauritius ne l'est pas. Si vous avez le choix à la réservation, une compagnie européenne au retour vous protège dans les deux sens.
 
 ## Vol avec correspondance
 
