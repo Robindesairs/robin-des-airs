@@ -17,6 +17,8 @@ faq:
     a: "Pour le CE261 : **2 à 5 ans** selon le droit applicable (loi française généralement). Pour la Convention de Montréal (bagages) : 2 ans maximum. Gardez tous vos documents."
   - q: "Air Sénégal a invoqué une circonstance extraordinaire. C'est valable ?"
     a: "Peut-être pas. Les pannes techniques ne sont généralement pas des circonstances extraordinaires (arrêt Wallentin-Hermann, CJUE). Robin des Airs conteste systématiquement ces refus."
+  - q: "Robin des Airs, c'est une vraie société française ?"
+    a: "Oui. Robin des Airs est un service français dont le siège est à Paris, spécialisé dans l'indemnisation des vols Afrique-Europe. L'équipe qui vous répond connaît la réalité de ces trajets et vous parle en français ou en wolof, au téléphone. Vous déposez votre dossier sur WhatsApp en 2 minutes, 0 € d'avance : vous ne payez que si on récupère votre argent."
 ---
 
 **Votre vol Air Sénégal a été retardé de 3h ou plus, ou annulé ? Selon votre trajet, vous pouvez réclamer jusqu'à 600 € par passager.** Au départ d'Europe (ex. Paris → Dakar), c'est couvert ; au départ du Sénégal, Air Sénégal n'étant pas européenne, l'indemnité n'est en principe pas due. On vérifie gratuitement votre cas, 0 € d'avance.
@@ -174,8 +176,9 @@ Robin des Airs spécialisé sur les corridors Afrique-Europe :
 ## Pourquoi Robin des Airs ?
 
 - **Une vraie voix humaine.** Un des rares services où un humain vous répond et suit votre dossier, pas un robot ni un formulaire anonyme.
-- **Dans votre langue, au téléphone.** Une question, un doute en wolof ? On vous rappelle et on vous explique de vive voix.
-- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste.
+- **En wolof, au téléphone.** Un doute sur votre vol Dakar-Paris, une question sur vos droits ? On vous rappelle et on vous explique en wolof, de vive voix.
+- **Sur WhatsApp, en 2 minutes.** Vous envoyez votre billet, on s'occupe de tout le reste : vous n'avez rien à rédiger.
+- **Le sérieux d'ici, la proximité de là-bas.** Un service français, basé à Paris, avec une équipe qui connaît vraiment la réalité des vols Afrique-Europe et vous parle en wolof. Pas une plateforme anonyme.
 - **0 € d'avance, 0 € si rien n'est récupéré.** Vous ne payez jamais de votre poche.
 
 Voir aussi : [Guide CE 261 : vos droits sur les vols Afrique-Europe](/blog/guide-ce261-droits-passagers-afrique.html), [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Air Côte d'Ivoire vol retardé](/blog/air-cote-ivoire-vol-retarde-indemnite.html), [Air Mauritius vol retardé](/blog/air-mauritius-vol-retarde-indemnite.html).
