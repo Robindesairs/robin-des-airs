@@ -84,17 +84,9 @@ function reclamation(d) {
   };
 }
 
-/** Argent récupéré, on verse le client (issue amiable). + invitation avis Trustpilot. */
-function paye(d) {
-  const montant = eur(d.montant);
-  const ligneMontant = montant
-    ? p(`On a récupéré votre indemnité, et <strong>vous recevez ${montant}</strong> sur votre compte. On vous confirme le virement dès qu'il part.`)
-    : p(`On a récupéré votre indemnité, et <strong>votre argent arrive sur votre compte</strong>. On vous confirme le virement dès qu'il part.`);
-  const body =
-    `<tr><td style="padding:26px 28px 0;text-align:center;"><div style="font-size:34px;line-height:1;">🎉</div></td></tr>` +
-    h1('Votre argent est en route') +
-    p(`Bonjour ${esc(d.prenom || '')},`) +
-    ligneMontant +
+/** Bloc réutilisable : invitation avis Trustpilot + parrainage lounge (gardés séparés). */
+function avisParrainageTail() {
+  return (
     p(`Une dernière chose, si vous avez deux minutes : un petit avis nous aide énormément à faire connaître Robin des Airs auprès d'autres familles qui n'osent pas réclamer.`) +
     btn(TRUSTPILOT, 'Laisser un avis') +
     `<tr><td style="padding:2px 28px 6px;"><div style="border-top:1px solid #edf0f4;"></div></td></tr>` +
@@ -105,7 +97,105 @@ function paye(d) {
         <div style="font-size:13px;color:#c3d0e0;line-height:1.55;">Recommandez-le. Pour chaque proche dont on gagne le dossier, vous recevez un <strong style="color:#00E5A0;">accès salon lounge VIP</strong> en aéroport, valable 1 an.</div>
         <a href="${PARRAINAGE}" style="display:inline-block;margin-top:12px;background:#ffffff;color:#0B1F3A;font-size:13.5px;font-weight:800;text-decoration:none;padding:11px 22px;border-radius:10px;">Parrainer un proche&nbsp;→</a>
       </td></tr></table>
-    </td></tr>`;
+    </td></tr>`
+  );
+}
+
+/** Contrat enregistré (confirmation courte ; l'envoi auto reste géré par submit-mandat). */
+function confirmation(d) {
+  const body =
+    h1('C\'est enregistré, merci') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`Votre contrat est bien enregistré. À partir de maintenant, <strong>on s'occupe de tout</strong> : on prépare la réclamation et on la porte à la compagnie. Vous n'avez rien à faire ni à avancer.`) +
+    p(`On vous écrit à chaque étape importante. Une question d'ici là&nbsp;? On est là.`) +
+    btn(suiviUrl(d.ref), 'Suivre mon dossier');
+  return {
+    subject: `C'est enregistré, merci ${esc(d.prenom || '')} — votre dossier ${d.ref}`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, votre contrat est bien enregistré. On s'occupe de tout. Suivi : ${suiviUrl(d.ref)}`,
+  };
+}
+
+/** La compagnie n'a pas encore répondu favorablement : on relance. */
+function relance(d) {
+  const cie = esc(d.compagnie || 'la compagnie');
+  const body =
+    h1('On relance la compagnie') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`${cie} n'a pas encore donné suite. C'est fréquent, et ça ne change rien à la solidité du dossier&nbsp;: <strong>on vient de la relancer</strong>.`) +
+    p(`Il n'y a pas de délai imposé à la compagnie pour répondre, alors on ne lâche rien&nbsp;: on relance, puis on passe au juge s'il le faut. Vous n'avez toujours rien à faire ni à avancer.`) +
+    btn(suiviUrl(d.ref), 'Suivre mon dossier');
+  return {
+    subject: `Votre dossier ${d.ref} — on relance la compagnie`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, la compagnie n'a pas encore répondu, on vient de la relancer. On ne lâche rien. Suivi : ${suiviUrl(d.ref)}`,
+  };
+}
+
+/** La compagnie va payer : on collecte le RIB pour verser le client. */
+function rib(d) {
+  const ribUrl = `https://robindesairs.eu/rib.html?r=${encodeURIComponent(d.ref || '')}`;
+  const body =
+    h1('Bonne nouvelle, on va vous verser votre argent') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`L'indemnité a été obtenue&nbsp;! Pour vous <strong>verser votre argent</strong>, il nous manque juste le compte sur lequel l'envoyer.`) +
+    p(`Ça prend une minute, c'est sécurisé, et les frais de transfert sont pour nous.`) +
+    btn(ribUrl, 'Indiquer mon compte');
+  return {
+    subject: `${d.ref} — où vous verser votre argent`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, l'indemnité est obtenue. Indiquez le compte où recevoir votre argent : ${ribUrl}`,
+  };
+}
+
+/** On saisit le tribunal. Transparence sur le passage 75/25 -> 60/40 (client reçoit 60%). */
+function tribunal_saisi(d) {
+  const cie = esc(d.compagnie || 'la compagnie');
+  const body =
+    h1('On passe au tribunal') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`${cie} n'a pas réglé à l'amiable. On ne s'arrête pas là&nbsp;: <strong>on saisit le tribunal</strong> pour obtenir ce qu'elle vous doit. C'est plus long, mais on va au bout.`) +
+    p(`À ce stade, les conditions évoluent&nbsp;: sur un dossier réglé au tribunal, <strong>vous recevez 60&nbsp;% du montant récupéré</strong> (au lieu de 75&nbsp;% à l'amiable). Et toujours&nbsp;: <strong>0&nbsp;€ à avancer, 0&nbsp;€ si on ne récupère rien</strong>.`) +
+    btn(suiviUrl(d.ref), 'Suivre mon dossier');
+  return {
+    subject: `Votre dossier ${d.ref} — on saisit le tribunal`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, la compagnie n'a pas réglé à l'amiable, on saisit le tribunal. Au tribunal vous recevez 60% du montant récupéré. On va au bout. Suivi : ${suiviUrl(d.ref)}`,
+  };
+}
+
+/** Victoire au tribunal : argent en route + avis + parrainage. */
+function tribunal_gagne(d) {
+  const montant = eur(d.montant);
+  const ligneMontant = montant
+    ? p(`Le tribunal nous a donné raison, et <strong>vous recevez ${montant}</strong> sur votre compte.`)
+    : p(`Le tribunal nous a donné raison, et <strong>votre argent arrive sur votre compte</strong>.`);
+  const body =
+    `<tr><td style="padding:26px 28px 0;text-align:center;"><div style="font-size:34px;line-height:1;">🏆</div></td></tr>` +
+    h1('Ça y est, on a gagné !') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    ligneMontant +
+    p(`Merci de nous avoir fait confiance jusqu'au bout. C'est exactement pour ça qu'on existe.`) +
+    avisParrainageTail();
+  return {
+    subject: `${d.ref} — on a gagné au tribunal 🏆`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, on a gagné au tribunal${montant ? `, vous recevez ${montant}` : ''}. Merci de votre confiance. Un avis nous aiderait : ${TRUSTPILOT}`,
+  };
+}
+
+/** Argent récupéré à l'amiable : on verse le client + avis + parrainage. */
+function paye(d) {
+  const montant = eur(d.montant);
+  const ligneMontant = montant
+    ? p(`On a récupéré votre indemnité, et <strong>vous recevez ${montant}</strong> sur votre compte. On vous confirme le virement dès qu'il part.`)
+    : p(`On a récupéré votre indemnité, et <strong>votre argent arrive sur votre compte</strong>. On vous confirme le virement dès qu'il part.`);
+  const body =
+    `<tr><td style="padding:26px 28px 0;text-align:center;"><div style="font-size:34px;line-height:1;">🎉</div></td></tr>` +
+    h1('Votre argent est en route') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    ligneMontant +
+    avisParrainageTail();
   return {
     subject: `${d.ref} — votre argent est en route`,
     html: shell(body),
@@ -113,9 +203,46 @@ function paye(d) {
   };
 }
 
+/** Clôture (issue défavorable à l'amiable) : on restitue la créance, franchise et honnêteté. */
+function cloture(d) {
+  const body =
+    h1('On doit clore votre dossier') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`Malgré tous nos efforts, votre dossier n'aboutira pas. On vous doit la vérité, même quand elle est difficile&nbsp;: dans ce cas précis, la compagnie n'est pas tenue de vous indemniser.`) +
+    p(`Concrètement pour vous&nbsp;: <strong>vous n'avez rien à payer</strong>, et <strong>nous vous restituons votre créance</strong> — vous restez donc libre de toute autre démarche de votre côté.`) +
+    p(`On est désolé de ne pas avoir pu faire mieux sur celui-ci. Si un autre vol vous pose problème un jour, vous savez où nous trouver.`);
+  return {
+    subject: `Votre dossier ${d.ref}`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, malgré nos efforts votre dossier n'aboutira pas. Vous n'avez rien à payer et nous vous restituons votre créance.`,
+  };
+}
+
+/** Défaite au tribunal : franchise, pas de rétrocession possible (chose jugée). */
+function tribunal_perdu(d) {
+  const body =
+    h1('Le tribunal a tranché') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`Malgré tous nos efforts, le tribunal a donné raison à la compagnie. On est sincèrement déçu&nbsp;: on y a mis tout ce qu'on avait.`) +
+    p(`Concrètement pour vous&nbsp;: <strong>vous n'avez rien à payer</strong>. La décision étant celle d'un juge, elle met un point final au dossier.`) +
+    p(`Merci de nous avoir fait confiance jusqu'au bout. Si un autre vol vous pose problème un jour, on sera là.`);
+  return {
+    subject: `Votre dossier ${d.ref}`,
+    html: shell(body),
+    text: `Bonjour ${d.prenom || ''}, malgré nos efforts le tribunal a donné raison à la compagnie. Vous n'avez rien à payer. Merci de votre confiance.`,
+  };
+}
+
 const TEMPLATES = {
+  confirmation,
   reclamation,
+  relance,
+  rib,
+  tribunal_saisi,
+  tribunal_gagne,
   paye,
+  cloture,
+  tribunal_perdu,
 };
 
 /** Construit un e-mail. `type` ∈ Object.keys(TEMPLATES). Renvoie {subject,html,text} ou null. */

@@ -1801,20 +1801,24 @@
         chainSign(list, 0, uploadResults); // ouvre le cadre de signature du 1er signataire ; la suite en callbacks
       });
     }
-    return fetch('/api/depot-create', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: full, phone: S.phone, email: S.email,
-        flightNum: S.flightNum, route: (S.dep && S.arr) ? (S.dep + ' → ' + S.arr) : '',
-        dep: S.dep, arr: S.arr, date: S.date, incident: S.incident,
-        thirdPartyFree: S.tiers === 'non', // déclare : ni avocat, ni autre société, ni procédure en cours
-        pax: S.pax, passengers: passengersData, website: $('website').value,
-      }),
-    })
-    .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){
-      if (!r.ok || !j.ref) throw new Error((j && j.error) || 'Création du dossier impossible.');
-      REF = j.ref;
-    }); })
+    // Arrivée par référence (WhatsApp / CRM) : le dossier existe déjà (REF pré-rempli) → on NE le recrée pas
+    // (submit-mandat met à jour un dossier existant). Parcours normal : REF vide → depot-create le crée.
+    var _createDossier = REF
+      ? Promise.resolve()
+      : fetch('/api/depot-create', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: full, phone: S.phone, email: S.email,
+            flightNum: S.flightNum, route: (S.dep && S.arr) ? (S.dep + ' → ' + S.arr) : '',
+            dep: S.dep, arr: S.arr, date: S.date, incident: S.incident,
+            thirdPartyFree: S.tiers === 'non', // déclare : ni avocat, ni autre société, ni procédure en cours
+            pax: S.pax, passengers: passengersData, website: $('website').value,
+          }),
+        }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){
+          if (!r.ok || !j.ref) throw new Error((j && j.error) || 'Création du dossier impossible.');
+          REF = j.ref;
+        }); });
+    return _createDossier
     .then(function(){
       // Contrat IDENTIQUE à mandat.html (clés attendues par submit-mandat.js)
       return fetch('/api/submit-mandat', {
@@ -1951,6 +1955,49 @@
   // Retour depuis la signature Yousign en PLEIN ÉCRAN (repli quand l'iframe embarquée est indisponible) :
   // Yousign → signe-ok.html → nous ramène ici avec ?signed=1. L'état du tunnel est perdu après la redirection,
   // mais le dossier est déjà créé et signé → on affiche un simple écran de confirmation.
+  // ── Arrivée par RÉFÉRENCE (WhatsApp / CRM) : depot-express.html?r=<ref> ───────
+  // Le dossier est déjà qualifié : on récupère ses infos (dossier-get), on pré-remplit l'état
+  // et on saute DIRECTEMENT à l'écran récap + signature. Même page, même design que le dépôt
+  // en ligne : le client ne re-répond à rien, il vérifie et il signe. Parcours normal (sans ?r=) intact.
+  function _toIso(fr){ var m = String(fr || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) return m[3] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2); return /^\d{4}-\d{2}-\d{2}$/.test(fr) ? fr : ''; }
+  function _toFr(v){ var m = String(v || '').match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if (m) return ('0' + m[3]).slice(-2) + '/' + ('0' + m[2]).slice(-2) + '/' + m[1]; return /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v) ? v : ''; }
+  function hydrateFromRef(ref){
+    return fetch('/api/dossier-get?r=' + encodeURIComponent(ref), { credentials: 'omit' })
+      .then(function(r){ if (!r.ok) throw new Error('Dossier introuvable'); return r.json().catch(function(){ return {}; }); })
+      .then(function(d){
+        if (!d || d.error) throw new Error((d && d.error) || 'Dossier introuvable');
+        REF = String(ref);
+        var pax = Array.isArray(d.passengers) ? d.passengers : [];
+        S.pax = d.pax || pax.length || 1;
+        S.flightNum = d.vol || '';
+        S.pnr = d.pnr || '';
+        S.date = _toIso(d.date);
+        if (d.route) { var st = String(d.route).split(/→|->/).map(function(x){ return x.trim(); }).filter(Boolean); if (st.length >= 2) { S.dep = st[0]; S.arr = st[st.length - 1]; } }
+        if (Array.isArray(d.legs) && d.legs.length > 1) { S.typeVol = 'escale'; S.legs = d.legs.map(function(l){ return { num: l.fnum || l.vol || '', dep: l.dep || '', arr: l.arr || '' }; }); }
+        S.phone = d.phone || d.whatsapp || '';
+        S.email = d.email || '';
+        S.names = []; S.paxData = [];
+        for (var i = 0; i < S.pax; i++) {
+          var p = pax[i] || {};
+          var prenom = p.prenom || (i === 0 ? (d.prenom || '') : '');
+          var nom = p.nom || (i === 0 ? (d.nom || '') : '');
+          var nm = (p.name || (prenom + ' ' + nom).trim() || (i === 0 ? (d.name || '') : '')).trim();
+          var dobFr = _toFr(p.dob);
+          S.names.push(nm);
+          S.paxData.push({ prenom: prenom, nom: nom, dob: dobFr, minor: dobFr ? isMinor(dobFr, S.date) : false, adresse: p.adresse || (i === 0 ? (d.address || '') : '') });
+        }
+        // S.piece synthétique (principal) : submit() dérive prénom/nom/adresse depuis S.piece (pas d'OCR ici).
+        var p0 = pax[0] || {};
+        var _fn = p0.prenom || d.prenom || (S.names[0] || '').split(/\s+/)[0] || '';
+        var _ln = p0.nom || d.nom || (S.names[0] || '').split(/\s+/).slice(1).join(' ') || '';
+        S.piece = { prenom: _fn, nom: _ln, adresse: p0.adresse || d.address || '', pays: '', dob: _toFr(p0.dob), lieuNaissance: p0.birth || '' };
+        S.manualPrenom = _fn; S.manualNom = _ln;
+        S.fromRef = true;
+        idx = FLOW.indexOf('sign'); far = FLOW.length - 1;
+        render();
+      });
+  }
+
   if (new URLSearchParams(location.search).get('signed') === '1') {
     $('crumbs').innerHTML = ''; $('fill').style.width = '100%'; stage.innerHTML = '';
     var _done = document.createElement('div'); _done.className = 'screen done'; _done.style.display = 'block';
@@ -1960,6 +2007,16 @@
       + '<p>📞 Un expert vous appelle depuis le <b style="white-space:nowrap">+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »).</p>'
       + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>';
     stage.appendChild(_done);
+  } else if (new URLSearchParams(location.search).get('r')) {
+    // Lien personnalisé (WhatsApp / CRM) : on pré-remplit et on va droit au récap + signature.
+    $('crumbs').innerHTML = ''; stage.innerHTML = '<div class="screen" style="display:block;text-align:center;padding:40px 12px"><div class="spin" style="margin:0 auto 14px"></div><p style="color:var(--muted)">On charge votre dossier…</p></div>';
+    hydrateFromRef(new URLSearchParams(location.search).get('r')).catch(function(){
+      stage.innerHTML = '';
+      var er = document.createElement('div'); er.className = 'screen'; er.style.display = 'block';
+      er.innerHTML = '<h2>😕 Lien expiré ou dossier introuvable</h2>'
+        + '<p>On n\'a pas retrouvé ce dossier. Reprenez avec nous sur <a href="https://wa.me/33756863630" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800">WhatsApp</a>, ou <a href="/depot-express.html" style="color:var(--neon-ink);font-weight:800">déposez votre dossier en 2 minutes</a>.</p>';
+      stage.appendChild(er);
+    });
   } else {
     render();
   }
