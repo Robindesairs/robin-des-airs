@@ -10,7 +10,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://robindesairs.eu/rib.html">
   <meta property="og:title" content="Comment recevoir votre indemnité, Robin des Airs">
-  <meta property="og:description" content="Virement, Wave, Orange Money ou MTN MoMo. Votre part nette, frais de transfert inclus. Connexion chiffrée, usage unique : votre versement.">
+  <meta property="og:description" content="Indiquez votre compte, on s'occupe du versement. Frais de transfert inclus. Connexion chiffrée, usage unique : votre versement.">
   <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -26,6 +26,10 @@
       background:#fff;color:#1b2733;font:600 14px/1 Montserrat,system-ui,sans-serif;cursor:pointer;transition:.15s}
     .mode-chip:hover{border-color:#9fb0c4}
     .mode-chip.is-active{border-color:#047857;background:#ecfdf5;color:#047857;box-shadow:0 0 0 3px rgba(4,120,87,.12)}
+    .mode-chip.soon{opacity:.55;cursor:not-allowed;background:#f4f6f9;color:#8a94a6;border-color:#e6eaf0}
+    .mode-chip.soon:hover{border-color:#e6eaf0}
+    .mode-chip.soon .op-dot{filter:grayscale(1)}
+    .soon-tag{font:800 9px/1 Montserrat,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.05em;background:#e2e6ee;color:#6b7688;padding:3px 5px;border-radius:5px;margin-left:3px}
     /* Pastille de marque (emplacement du futur logo officiel) */
     .op-dot{width:18px;height:18px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;
       flex:0 0 auto;font:800 9px/1 Montserrat,system-ui,sans-serif;color:#fff;letter-spacing:.02em}
@@ -50,8 +54,9 @@
 
   <main class="shell">
     <div class="pagehead">
+      <img src="/favicon.png" alt="Robin des Airs" width="64" height="64" style="width:64px;height:64px;border-radius:16px;display:block;margin:0 auto 18px">
       <h1>Votre indemnité est prête à partir.</h1>
-      <p class="lead">Choisissez <b>comment</b> recevoir votre part. On s'occupe du versement.</p>
+      <p class="lead">Indiquez le compte où <b>recevoir votre argent</b>. On s'occupe du versement.</p>
       <div class="ref-chip">Dossier <b id="refLine"> </b></div>
       <div class="trust">
         <span>🔒 Chiffré</span>
@@ -62,16 +67,16 @@
 
     <!-- Étape 1 : choix du mode + saisie -->
     <section class="panel" id="form" aria-labelledby="pTitle">
-      <h2 id="pTitle">💸 Comment recevoir votre part&nbsp;?</h2>
-      <p class="sub">Vous recevez votre <b>part nette (75&nbsp;% en amiable, 60&nbsp;% si procédure judiciaire), frais de transfert inclus</b> : quel que soit le mode, <b>les frais de transfert sont pour nous</b>, votre part n'est pas rognée.</p>
+      <h2 id="pTitle">💸 Où recevoir votre argent&nbsp;?</h2>
+      <p class="sub"><b>Les frais de transfert sont pour nous.</b> Vous recevez votre argent, nous ne rognons rien dessus.</p>
 
       <div class="modes" role="tablist" aria-label="Mode de versement">
         <button type="button" class="mode-chip is-active" data-mode="iban" aria-selected="true"><span class="op-dot">€</span> Virement (IBAN)</button>
-        <button type="button" class="mode-chip" data-mode="wave" aria-selected="false"><span class="op-dot">W</span> Wave</button>
-        <button type="button" class="mode-chip" data-mode="om" aria-selected="false"><span class="op-dot">OM</span> Orange Money</button>
-        <button type="button" class="mode-chip" data-mode="mtn" aria-selected="false"><span class="op-dot">MTN</span> MTN MoMo</button>
+        <button type="button" class="mode-chip soon" data-mode="wave" disabled aria-disabled="true"><span class="op-dot">W</span> Wave <span class="soon-tag">bientôt</span></button>
+        <button type="button" class="mode-chip soon" data-mode="om" disabled aria-disabled="true"><span class="op-dot">OM</span> Orange Money <span class="soon-tag">bientôt</span></button>
+        <button type="button" class="mode-chip soon" data-mode="mtn" disabled aria-disabled="true"><span class="op-dot">MTN</span> MTN MoMo <span class="soon-tag">bientôt</span></button>
       </div>
-      <p class="logos-note">Logos officiels (Wave, Orange Money, MTN) à intégrer après validation marque.</p>
+      <p class="logos-note">Wave, Orange Money et MTN MoMo arrivent bientôt. Pour l'instant, versement par virement bancaire.</p>
       <p class="proof">✅ Quel que soit le mode : versement <b>avec preuve</b> (justificatif d'envoi).</p>
 
       <!-- Groupe IBAN -->
@@ -130,7 +135,7 @@
     <section class="panel done" id="doneCard" role="status" aria-live="polite">
       <div class="seal" aria-hidden="true">✓</div>
       <h2>Bien reçu, merci&nbsp;!</h2>
-      <p id="doneLead">Nous verserons votre part&nbsp;:</p>
+      <p id="doneLead">Nous verserons votre argent&nbsp;:</p>
       <div class="data" id="doneDest"> </div>
       <p>Notre équipe vous confirme l'envoi sur WhatsApp.</p>
       <p class="signoff">Reposez-vous, on s'occupe du reste. <b> L'équipe Robin des Airs 🏹</b></p>
