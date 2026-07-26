@@ -514,7 +514,10 @@
   // Même si le trajet vient de la carte d'embarquement / e-billet, la personne le voit et peut le corriger.
   function recapCard(sc, opts){
     opts = opts || {};
-    var card = document.createElement('div'); card.className = 'recap';
+    var card = document.createElement('div'); card.className = 'recap recap-nx';
+    if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}'; document.head.appendChild(_nxst); }
+    var NXA = ['#2E8BC0','#8E44AD','#E67E22','#16A085','#2E8BC0','#8E44AD'];
+    function nxIni(n){ var p = String(n||'').trim().split(/\s+/).filter(Boolean); return (((p[0]||'')[0]||'')+((p.length>1?p[p.length-1]:'')[0]||'')).toUpperCase() || '?'; }
     function row(ic, k, vhtml, editKey){
       return '<div class="recap-row"><div class="recap-ic">' + ic + '</div>'
         + '<div class="recap-main"><div class="recap-k">' + esc(k) + '</div><div class="recap-v">' + vhtml + '</div></div>'
@@ -554,8 +557,9 @@
       + '<button type="button" class="recap-pnrinfo" aria-label="Qu\'est-ce que le numéro de réservation ?" style="border:1px solid var(--line-2);background:var(--surface-2);color:var(--muted);border-radius:50%;width:16px;height:16px;font-size:11px;font-weight:800;line-height:1;cursor:pointer;padding:0;vertical-align:middle">i</button></div>'
       + '<div class="recap-pnrhelp" style="display:none;font-size:12px;color:var(--ink-soft);margin:5px 0 2px;line-height:1.45;font-weight:400">Aussi appelé <b>PNR</b> ou <b>référence de dossier</b>. En général <b>6 caractères</b> (lettres et chiffres), parfois plus selon la compagnie. Vous le trouvez sur votre <b>billet</b> ou votre <b>e-mail de confirmation</b>.</div>'
       + '<input class="input recap-pnrinp" value="' + esc(S.pnr || '') + '" placeholder="ex. 2ABCDE" maxlength="20" style="margin-top:4px;text-transform:uppercase"></div></div>';
+    var _renderCount = S.pax || S.names.filter(Boolean).length;
     if (!opts.skipPax) S.names.forEach(function(nm, i){
-      if (!nm) return;
+      if (!nm && i >= _renderCount) return; // rend une carte vide éditable pour un passager ajouté (i < pax)
       var pd = S.paxData[i] || {};
       // Date de naissance : stockée en JJ/MM/AAAA → convertie en ISO pour l'input date natif (éditable EN PLACE).
       var _dobIso = (function(d){ var m = String(d || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + '-' + m[2] + '-' + m[1] : ''; })(pd.dob);
@@ -563,8 +567,9 @@
       // sinon à compléter. Sert au contrat de cession et à la mise en demeure. Éditable en ligne.
       var _adr = pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '');
       // NOM + DATE DE NAISSANCE + ADRESSE du MÊME passager, tous ÉDITABLES EN PLACE, regroupés dans un encadré. Aucun retour en arrière.
-      rows += '<div class="recap-pax">'
-        + '<div class="recap-pax-h">🧑 Passager ' + (i + 1) + (pd.minor ? ' <span class="muted" style="font-weight:600;text-transform:none;letter-spacing:0">· mineur·e</span>' : '') + '</div>'
+      var _acc = NXA[i % NXA.length];
+      rows += '<div class="recap-pax" style="--nxacc:' + _acc + '">'
+        + '<div class="recap-pax-h"><span class="nx-av" style="background:' + _acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm || ('Passager ' + (i + 1))) + '</span><span class="nx-badge ' + (pd.minor ? 'mi' : 'ad') + '">' + (pd.minor ? 'Mineur·e' : 'Adulte') + '</span></div>'
         + '<div class="recap-row"><div class="recap-ic">👤</div><div class="recap-main">'
         +   '<div class="recap-k">Nom</div>'
         +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="Prénom NOM" style="margin-top:4px;text-transform:uppercase">'
@@ -579,7 +584,17 @@
       + '<input class="input recap-phonein" type="tel" value="' + esc(S.phone) + '" placeholder="+33 6 12 34 56 78" style="margin-top:4px"></div></div>';
     if (S.email) rows += '<div class="recap-row"><div class="recap-ic">📧</div><div class="recap-main"><div class="recap-k">Email</div>'
       + '<input class="input recap-emailin" type="email" value="' + esc(S.email) + '" placeholder="vous@email.com" style="margin-top:4px"></div></div>';
-    card.innerHTML = '<div class="recap-h">🧾 Votre dossier, en clair, vérifiez avant de signer</div>' + rows
+    var _namesN = S.names.filter(Boolean); var _paxN = S.pax || _namesN.length || 1;
+    var _routeStr = isEsc ? [S.legs[0] && S.legs[0].dep].concat(S.legs.map(function(l){ return l.arr; })).filter(Boolean).join(' → ') : [S.dep, S.arr].filter(Boolean).join(' → ');
+    var _dfr = (function(iso){ var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[3] + '/' + m[2] + '/' + m[1] : (iso || ''); })(S.date);
+    var _strip = opts.skipPax ? '' : '<div class="nx-strip">'
+      + '<span class="nx-chip">✈️ ' + esc(_routeStr || '—') + '</span>'
+      + '<span class="nx-chip">👪 ' + _paxN + ' pax</span>'
+      + (_dfr ? '<span class="nx-chip">📅 ' + esc(_dfr) + '</span>' : '')
+      + '<span class="nx-chip gold">💶 jusqu\'à ' + ((_paxN * 600).toLocaleString('fr-FR')) + ' €</span>'
+      + '</div>';
+    var _addBtn = opts.skipPax ? '' : '<button type="button" class="nx-addpax" id="nxAddPax">➕ Ajouter un passager</button>';
+    card.innerHTML = '<div class="recap-h">🧾 Votre dossier, vérifiez avant de signer</div>' + _strip + rows + _addBtn
       + '<div class="recap-foot">Une info à corriger ? Modifiez-la directement ci-dessus, tout reste éditable.</div>';
     Array.prototype.forEach.call(card.querySelectorAll('.recap-edit'), function(b){
       b.addEventListener('click', function(){ var k = b.getAttribute('data-k'); if (k === '__trajet') editTrajet(); else jump(k); });
@@ -607,6 +622,13 @@
     });
     var _ph = card.querySelector('.recap-phonein'); if (_ph) _ph.addEventListener('input', function(){ S.phone = _ph.value.replace(/[^\d+]/g, ''); });
     var _em = card.querySelector('.recap-emailin'); if (_em) _em.addEventListener('input', function(){ S.email = _em.value.trim(); });
+    var _addP = card.querySelector('#nxAddPax');
+    if (_addP) _addP.addEventListener('click', function(){
+      S.pax = (S.pax || S.names.filter(Boolean).length || 1) + 1;
+      S.names.push(''); S.paxData.push({});
+      var _tmp = document.createElement('div'); recapCard(_tmp, opts); // ré-rend la carte à l'identique
+      if (_tmp.firstChild) card.replaceWith(_tmp.firstChild);
+    });
     sc.appendChild(card);
   }
   // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
