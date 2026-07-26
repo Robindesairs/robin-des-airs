@@ -1050,7 +1050,7 @@ function buildMandatUrl(s, phone) {
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
   };
   if (s.ref) { DOSSIERS.set(s.ref, dossier); persistDossiers(); storeDossierDurable(s.ref, dossier).catch(() => {}); }
-  const _page = isEN(s) ? 'mandat-en.html' : 'mandat.html'; // client anglophone → mandat traduit
+  const _page = isEN(s) ? 'mandat-en.html' : 'depot-express.html'; // FR → page unifiée récap+signature (?r= hydrate via dossier-get) ; EN reste sur mandat-en.html (pas encore de depot-express EN)
   return `https://robindesairs.eu/${_page}?r=${encodeURIComponent(s.ref || '')}`;
 }
 
