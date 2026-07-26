@@ -1,0 +1,582 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contrat de cession de créance — Robin des Airs</title><link rel="icon" href="/favicon.png" type="image/png"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet"><meta name="robots" content="noindex,nofollow"><style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Palette officielle Robin des Airs */
+  --navy:#0B1F3A;
+  --navy-soft:#1A3559;
+  --green:#00C87A;
+  --green-bright:#00E5A0;
+  --green-deep:#047857;
+  --green-pale:#E6FAF1;
+  --green-tint:#EFF9F4;
+  --bg:#F9FAFB;
+  --bg-soft:#F7F8FA;
+  --paper:#FFFFFF;
+  --border:#E2E6EE;
+  --border-soft:#F1F2F4;
+  --ink:#0B1F3A;
+  --text:#374151;
+  --muted:#51607A;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --red-border:#FECACA;
+}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{background:var(--bg);font-family:'Montserrat',sans-serif;color:var(--text);min-height:100vh}
+/* TOP BAR */
+.topbar{background:var(--navy);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--green);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
+.brand{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:.5px;text-transform:uppercase}
+.brand em{font-style:normal;color:var(--green-bright);font-weight:800}
+.doc-badge{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.2em}
+.topbar-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topbar-links a{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(0,229,160,.45);padding:4px 10px;border-radius:4px;transition:background .2s,color .2s}
+.topbar-links a:hover{background:var(--green);color:var(--navy);border-color:var(--green)}
+.progress-wrap{height:3px;background:rgba(11,31,58,.12)}
+.progress-bar{height:3px;background:linear-gradient(90deg,var(--green),var(--green-bright));width:0%;transition:width .5s}
+/* MISE EN PAGE */
+.page{max-width:780px;margin:0 auto;padding:32px 20px 80px}
+/* BLOCS */
+.doc-header{background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--green);border-radius:12px 12px 0 0;padding:32px 36px 24px}
+.doc-logo-line{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.doc-logo{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase}
+.doc-logo em{font-style:normal;color:var(--green-deep);font-weight:800}
+.doc-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:right;line-height:1.9}
+.doc-ref strong{color:var(--navy)}
+.doc-title{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:900;text-align:center;color:var(--navy);padding:18px 0 6px;border-top:1px solid var(--border);line-height:1.2}
+.doc-subtitle{font-size:11px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.15em;margin-top:8px}
+.doc-section{background:var(--paper);border:1px solid var(--border);border-top:none;padding:28px 36px}
+.doc-section:last-of-type{border-bottom:1px solid var(--border);border-radius:0 0 12px 12px}
+/* HERO MONTANT */
+.amount-hero{background:linear-gradient(135deg,var(--navy),var(--navy-soft));color:#fff;padding:26px 32px;margin:0 -36px 28px;border-radius:0;display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
+.amount-col{text-align:center;padding:0 20px}
+.amount-div{background:rgba(255,255,255,.2);align-self:stretch}
+.amount-tag{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.7);margin-bottom:6px}
+.amount-num{font-family:'Montserrat',sans-serif;font-size:34px;font-weight:900;line-height:1;color:#fff}
+.amount-num.net{color:var(--green-bright)}
+.amount-sub{font-size:11px;margin-top:6px;color:rgba(255,255,255,.75)}
+.amount-reserve{font-size:11px;line-height:1.6;margin-top:12px;padding:8px 12px;background:rgba(10,61,46,.06);border-radius:6px;color:#3a4a63}
+.amount-reserve strong{color:#0B1F3A}
+.formula-box{font-size:12px;margin-top:10px;padding:7px 12px;background:rgba(0,0,0,.25);font-family:'DM Mono',monospace;color:#fff;display:inline-block;border-radius:4px}
+/* PARTIES */
+.parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.partie-box{border:1px solid var(--border);padding:18px 20px;position:relative;border-radius:8px;background:var(--bg-soft)}
+.partie-box::before{content:attr(data-label);position:absolute;top:-9px;left:14px;background:var(--bg-soft);font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);padding:0 6px;font-weight:700}
+.partie-name{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.partie-detail{font-size:12.5px;color:var(--text);font-weight:500;line-height:1.8}
+/* SECTION TITRE */
+.sec-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;color:var(--navy);padding-bottom:10px;border-bottom:2px solid var(--green);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+/* CHAMPS */
+.field-row{margin-bottom:16px}
+.field-row.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-row.tri{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+label{display:block;font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#4B5563;margin-bottom:6px;font-weight:600}
+label .req{color:var(--red);margin-left:2px}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:16px;font-weight:500;color:var(--ink);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;border-radius:6px}
+/* La règle ci-dessus (appearance:none + border + padding) cassait les boutons radio / cases à cocher
+   (plus de rond ni de coche visibles → « on dirait que ça ne clique pas »). On restaure le natif. */
+input[type=radio],input[type=checkbox]{width:auto;height:auto;min-height:0;padding:0;margin:0;border:0;border-radius:0;background:none;-webkit-appearance:auto;appearance:auto;box-shadow:none;accent-color:var(--green-deep)}
+.wa-phone-row{display:flex;gap:8px;align-items:stretch}
+.pays-pick-wrap{position:relative;flex:0 0 auto;max-width:50%}
+.pays-pick-wrap .wa-indicatif-select{width:100%}
+.wa-phone-row .wa-national-input{flex:1 1 auto;width:auto}
+/* Menu pays custom : remplace <datalist>, non fiable sur Safari iOS (n'affiche aucune
+   suggestion cliquable — champ figé sur la valeur par défaut "France"). */
+.pays-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:40;background:#fff;border:1.5px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.16);max-height:240px;overflow-y:auto;min-width:230px}
+.pays-dd.open{display:block}
+.pays-dd-item{padding:9px 12px;font-size:13.5px;cursor:pointer;white-space:nowrap;font-family:'Montserrat',sans-serif}
+.pays-dd-item:hover{background:var(--green-tint)}
+.pays-dd-empty{padding:9px 12px;font-size:12.5px;color:var(--muted);font-style:italic}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
+input.ro{background:var(--green-tint);border-color:#B8DDC9;color:var(--green-deep);font-weight:600}
+textarea{resize:vertical;min-height:72px}
+.ferr{color:var(--red);font-size:11px;margin-top:4px;display:none;font-weight:600}
+input.err,textarea.err,select.err{border-color:var(--red)!important;background:var(--red-bg)}
+/* CLAUSES */
+.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:14px;font-weight:500;line-height:1.75;color:#2B3648;border-radius:0 6px 6px 0;background:var(--bg-soft)}
+.clause strong{color:var(--navy)}
+.cnum{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--green-deep);margin-bottom:5px;display:block;font-weight:700}
+.clause.hi{background:var(--green-tint);border-color:var(--green)}
+.clause.le{background:var(--green-pale);border-color:var(--green-deep)}
+.clause.pro{background:var(--red-bg);border-color:var(--red-border)}
+/* TABLEAU HONORAIRES */
+.fee-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.fee-table th{background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:11px 14px;text-align:left;font-weight:600}
+.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border-soft)}
+.fee-table tr:nth-child(even) td{background:var(--bg-soft)}
+.fee-table tr:last-child td{border-bottom:none}
+.fee-table .em{font-weight:700;color:var(--green-deep)}
+/* DÉCLARATION */
+.declaration-box{background:var(--green-tint);border:1px solid #B8DDC9;border-radius:8px;padding:18px 20px;margin:20px 0;font-size:13px;font-weight:500;line-height:1.75;color:#2B3648}
+.declaration-box strong{color:var(--navy)}
+/* SEUL CHECK UNIQUE */
+.single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--bg-soft);border-radius:8px;margin:16px 0;cursor:pointer;transition:border-color .2s,background .2s}
+.single-check:hover{border-color:var(--green);background:var(--green-tint)}
+.single-check input[type=checkbox]{-webkit-appearance:none;appearance:none;width:24px;height:24px;min-width:24px;margin-top:1px;cursor:pointer;border:2px solid var(--green-deep);border-radius:6px;background:#fff;position:relative;flex-shrink:0;transition:background .15s,border-color .15s}
+.single-check input[type=checkbox]:checked{background:var(--green-deep);border-color:var(--green-deep)}
+.single-check input[type=checkbox]:checked::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
+.single-check:has(input[type=checkbox]:checked){border-color:var(--green-deep);background:var(--green-tint)}
+.single-check p{font-size:13px;font-weight:500;line-height:1.7;color:var(--text)}
+.single-check p strong{color:var(--navy)}
+/* EMAIL DOSSIER TECHNIQUE */
+.email-tech-note{font-size:12px;line-height:1.75;color:var(--text);padding:14px 18px;background:var(--green-tint);border:1px solid #B8DDC9;border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin:10px 0 0}
+.email-tech-note strong{color:var(--navy)}
+.email-tech-ref{font-family:'DM Mono',monospace;font-size:12px;color:var(--green-deep);word-break:break-all;font-weight:600}
+/* SIGNATURE */
+.sig-area{background:var(--paper);border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:16px 0}
+.sig-area:hover{border-color:var(--green);background:var(--green-tint)}
+#sigCanvas{display:none;border:1.5px solid var(--border);cursor:crosshair;touch-action:none;background:#fff;max-width:100%;border-radius:6px}
+.sig-ph{font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600}
+.sig-clear{font-size:11px;color:var(--green-deep);text-decoration:underline;cursor:pointer;font-family:'DM Mono',monospace;display:none;margin-top:4px;font-weight:600}
+/* BOUTONS */
+.btn-submit{width:100%;background:var(--green);color:var(--navy);border:none;padding:18px 32px;font-family:'Montserrat',sans-serif;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:background .2s,transform .1s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px;border-radius:8px;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,200,122,.25)}
+.btn-submit:hover{background:var(--green-bright);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,200,122,.35)}
+.btn-submit:disabled{background:var(--muted);color:#fff;cursor:not-allowed;transform:none;box-shadow:none}
+/* TRUST */
+.trust-bar{display:flex;justify-content:space-around;padding:14px 20px;background:var(--bg-soft);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;flex-wrap:wrap;gap:8px}
+.trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600}
+/* SUCCÈS */
+.success-screen{display:none;background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--green);border-radius:12px;padding:60px 40px;text-align:center}
+.success-icon{width:92px;height:92px;background:radial-gradient(circle at 50% 38%,var(--green-bright),var(--green));border-radius:50%;color:#fff;font-size:44px;font-weight:900;line-height:92px;margin:0 auto 22px;box-shadow:0 0 0 9px var(--green-tint),0 10px 24px rgba(0,200,122,.32);animation:seal-pop .5s cubic-bezier(.23,1,.32,1) both}
+.success-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px}
+.success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-tint);border:1px solid #B8DDC9;padding:10px 20px;display:inline-block;margin:10px 0 20px;border-radius:6px;font-weight:600}
+.success-ref strong{color:var(--green-deep)}
+.success-steps{text-align:left;max-width:440px;margin:20px auto 0}
+.sstep{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border-soft);font-size:13px;line-height:1.6;color:var(--text)}
+.sstep:last-child{border-bottom:none}
+.sstep strong{color:var(--navy)}
+.snum{width:28px;height:28px;min-width:28px;background:var(--green);color:var(--navy);border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:800;margin-top:1px}
+/* SUCCÈS, blocs enrichis (preuve, rassurance, contact, croissance) */
+@keyframes seal-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.success-screen{max-width:520px;margin:0 auto}
+.success-screen:focus{outline:none}
+h1.success-title{margin:0 auto 10px}
+.success-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-deep);font-weight:700;margin-bottom:10px}
+.success-tagline{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14.5px;line-height:1.45;color:var(--green-deep);max-width:440px;margin:14px auto 0;padding:8px 0 8px 13px;border-left:3px solid var(--green);text-align:left}
+.success-tagline span{color:var(--navy)}
+.success-warn{max-width:440px;margin:16px auto 0;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:12px 16px;font-size:12.5px;line-height:1.6;color:#9A3412;text-align:left;display:none}
+.success-warn strong{color:#7C2D12}
+.success-block{max-width:440px;margin:16px auto 0;text-align:left;border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:var(--paper)}
+.success-block.tint{background:var(--green-tint);border-color:#B8DDC9;border-left:3px solid var(--green-deep);border-radius:0 10px 10px 0}
+.sb-label{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--green-deep);margin-bottom:8px}
+.sb-meta{font-size:12.5px;line-height:1.85;color:var(--text)}
+.sb-meta strong{color:var(--navy)}
+.sb-note{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.65}
+.success-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:13px 20px;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;text-decoration:none}
+.success-cta.full{width:100%}
+.success-cta.wa{background:#1FAF54;color:#fff;box-shadow:0 4px 12px rgba(31,175,84,.28)}
+.success-cta.nav{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(11,31,58,.18)}
+.success-cta.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--border)}
+.success-cta.wa:hover{background:#198F45}.success-cta.nav:hover{background:var(--navy-soft)}.success-cta.ghost:hover{border-color:var(--green);background:var(--green-tint)}
+.success-signoff{font-size:13px;color:var(--text);font-style:italic;margin:22px auto 4px;max-width:440px}
+.success-signoff b{color:var(--navy);font-style:normal}
+.success-screen a.back-link{display:inline-block;min-height:44px;padding:12px 16px;color:#007A4D;font-weight:700;font-size:13px;text-decoration:underline}
+.hero-seal{max-width:440px;margin:24px auto 0;padding:18px 18px 4px;border-top:1px solid var(--border-soft);text-align:center}
+.hero-seal-mark{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase}
+.hero-seal-mark em{font-style:normal;color:var(--green-deep);font-weight:800}
+.hero-seal-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+@media(max-width:600px){
+  .page{padding:20px 12px 60px}
+  .doc-header,.doc-section{padding:20px 20px}
+  .amount-hero{grid-template-columns:1fr;padding:20px;margin:0 -20px 24px}
+  .amount-div{display:none}
+  .parties-grid,.field-row.duo,.field-row.tri{grid-template-columns:1fr}
+  .doc-badge{display:none}
+  .doc-title{font-size:22px}
+}
+.clause .plain{margin-top:10px;padding:9px 13px;background:#EFF9F4;border-left:3px solid #00C87A;border-radius:0 6px 6px 0;font-size:12.5px;color:#1a2436;line-height:1.65;font-style:normal}
+.clause .plain strong{color:#047857}
+.signing-summary{background:#EFF9F4;border:1.5px solid #00C87A;border-radius:10px;padding:18px 20px;margin-bottom:14px}
+.signing-summary .ss-title{font-weight:800;color:#0B1F3A;font-size:15px;margin-bottom:10px}
+.signing-summary ul{margin:0;padding-left:20px}
+.signing-summary li{font-size:14.5px;line-height:1.7;color:#1a2436;margin-bottom:7px}
+.signing-summary .ss-note{font-size:12px;color:#047857;font-style:italic;margin-top:10px;margin-bottom:0}
+details.mandat-full>summary{cursor:pointer;list-style:none;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#047857;background:#F7F8FA;border:1px solid #E2E6EE;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:8px}
+details.mandat-full>summary:hover{background:#EFF9F4}
+details.mandat-full>summary::-webkit-details-marker{display:none}
+details.mandat-full>summary::after{content:'▾';margin-left:auto}
+details.mandat-full[open]>summary{margin-bottom:12px}
+.addr-summary-print{display:none}
+@media print{
+  /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
+  body{background:#fff !important}
+  body *{visibility:hidden !important}
+  #mandatForm,#mandatForm *{visibility:visible !important}
+  #mandatForm{display:block !important;position:absolute;left:0;top:0;width:100%;margin:0;padding:0}
+  details.mandat-full{display:block !important}
+  details.mandat-full>summary{display:none}
+  #successScreen{display:none !important}
+  /* Masquer l'interface interactive (boutons, aide à signer), on garde le contenu du mandat et la signature. */
+  #btnAddPax,.btn-submit,.success-cta,.sig-clear,#sigPh{display:none !important;visibility:hidden !important}
+  /* Adresses des co-passagers : le résumé dédoublonné remplace les champs de saisie bruts
+     (menu « même adresse que » notamment, qui n'a aucun sens imprimé). */
+  .paddr-block{display:none !important}
+  .addr-summary-print{display:block !important;visibility:visible !important}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+@media print { .topbar-nav, .no-print { display: none !important; } }
+.print-banner { background: var(--gold-pale); border: 1px solid rgba(138,109,59,.35); padding: 12px 16px; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; }
+.field-blank { display: inline-block; min-width: 120px; border-bottom: 1px solid #888; min-height: 1.1em; vertical-align: bottom; }
+/* ── En-tête + bloc données (contrat rempli) ── */
+.c2-head{background:#0B1F3A;color:#fff;padding:22px 30px}
+.c2-brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800}
+.c2-brand img{width:26px;height:26px;border-radius:6px}
+.c2-head h1{margin:14px 0 3px;font-size:21px;font-weight:900;letter-spacing:-.3px}
+.c2-head .sub{font-size:13px;color:#9fb2cc}
+.c2-head .refline{margin-top:12px;font-size:12px;color:#c3d0e0;font-family:'DM Mono',monospace}
+.c2-parties{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#e7ecf3}
+.c2-party{background:#fff;padding:15px 22px}
+.c2-party .k{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#7a879b}
+.c2-party .v{font-size:14.5px;font-weight:800;color:#0B1F3A;margin-top:3px;line-height:1.35}
+.c2-party .m{font-size:12.5px;color:#7a879b;margin-top:2px;line-height:1.4}
+.c2-recap{margin:18px 22px 0;background:#f6f8fb;border:1px solid #e7ecf3;border-radius:12px;padding:4px}
+.c2-recap-h{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#7a879b;padding:11px 14px 6px}
+.c2-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#e7ecf3;border-radius:9px;overflow:hidden}
+.c2-rc{background:#fff;padding:10px 14px}
+.c2-rc .k{font-size:10.5px;font-weight:700;text-transform:uppercase;color:#7a879b}
+.c2-rc .v{font-size:14px;font-weight:800;color:#0B1F3A;margin-top:2px}
+.c2-tbl{margin:10px 4px 4px;border-radius:9px;overflow:hidden;border:1px solid #e7ecf3;font-size:12.5px}
+.c2-tbl .tr{display:grid;grid-template-columns:1.5fr 1fr 1.7fr}
+.c2-tbl .th{background:#fff;font-weight:800;color:#7a879b;text-transform:uppercase;font-size:10.5px}
+.c2-tbl .td{color:#0B1F3A;font-weight:700}
+.c2-tbl .tr>span{padding:9px 12px;border-top:1px solid #e7ecf3}
+.c2-tbl .th>span{border-top:0}
+.c2-note{margin:16px 22px 0;background:#EAF7F1;border:1px solid #BFE6D4;border-radius:11px;padding:12px 14px;font-size:12.5px;color:#2f4c3c;line-height:1.55}
+.c2-load{padding:40px 20px;text-align:center;color:#7a879b}
+</style></head><body><div class="doc" style="max-width:760px;margin:14px auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(11,31,58,.05),0 16px 44px rgba(11,31,58,.07)">
+<div class="c2-head">
+  <div class="c2-brand"><img src="/favicon.png" alt=""> Robin des Airs</div>
+  <h1>Contrat de cession de créance</h1>
+  <div class="sub">Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil</div>
+  <div class="refline">Dossier <span id="c-ref">—</span> · établi le <span id="c-etabli">—</span></div>
+</div>
+<div class="c2-parties">
+  <div class="c2-party"><div class="k">Le Cédant</div><div class="v" id="c-cedant">—</div><div class="m" id="c-cedant-addr"></div></div>
+  <div class="c2-party"><div class="k">Le Cessionnaire</div><div class="v">Robin des Airs</div><div class="m">Service recouvrement CE 261/2004 · agit en son nom propre<br>66 av. des Champs-Élysées, 75008 Paris</div></div>
+</div>
+<div class="c2-recap">
+  <div class="c2-recap-h">Le dossier, en clair</div>
+  <div class="c2-grid">
+    <div class="c2-rc"><div class="k">Trajet</div><div class="v" id="c-route">—</div></div>
+    <div class="c2-rc"><div class="k">Voyage commençant le</div><div class="v" id="c-tripdate">—</div></div>
+    <div class="c2-rc"><div class="k">Vol(s)</div><div class="v" id="c-vols">—</div></div>
+    <div class="c2-rc"><div class="k">Réservation</div><div class="v" id="c-pnr">—</div></div>
+    <div class="c2-rc"><div class="k">Incident</div><div class="v" id="c-incident">—</div></div>
+    <div class="c2-rc"><div class="k">Indemnité visée</div><div class="v" id="c-amount">—</div></div>
+  </div>
+  <div class="c2-tbl">
+    <div class="tr th"><span>Passager</span><span>Naissance</span><span>Adresse / représentant</span></div>
+    <div id="c-paxbody"></div>
+  </div>
+</div>
+<div class="c2-note">🔒 Signature électronique certifiée Yousign (horodatage, adresse IP, document scellé, piste d'audit). Chaque cédant adulte signe ; la part d'un passager mineur n'est pas cédée mais recouvrée par mandat spécial (Article 9 bis), le parent/tuteur signant pour lui.</div>
+<div class="doc-section">
+  <div class="sec-title">⚖️ Conditions du contrat de cession de créance</div>
+  <div class="signing-summary">
+    <div class="ss-title">📝 Ce que vous signez, l'essentiel</div>
+    <ul>
+      <li>💶 <strong>450&nbsp;€ sur 600&nbsp;€</strong> dans votre poche si on récupère à l'amiable (75&nbsp;%), versés sous 5 jours ouvrés — 0&nbsp;€ d'avance, jamais. <span style="font-size:11px;color:#5b6b82">(Barème complet selon la phase&nbsp;: Article&nbsp;4)</span></li>
+      <li>🛡️ <strong>Rien récupéré = rien payé</strong>&nbsp;: 0&nbsp;€ de votre poche, et votre créance vous revient automatiquement.</li>
+      <li>🤝 Concrètement, vous nous <strong>vendez votre créance</strong> (jusqu'à 600&nbsp;€ par passager)&nbsp;: Robin des Airs devient propriétaire du dossier et se bat en son propre nom — la compagnie paie sur notre compte, <strong>vous n'avez plus rien à gérer</strong>.</li>
+      <li>📅 Exclusif <strong>18 mois</strong> (résiliation libre après 12 mois si pas d'assignation) · <strong>rétractation 14 jours</strong> sans frais · correspondances couvertes.</li>
+    </ul>
+    <p class="ss-note">Le contrat complet, en langage clair, est juste en dessous, rien à payer pour le lire 🙂</p>
+  </div>
+  <details class="mandat-full">
+    <summary>📄 Lire le contrat complet (toutes les conditions)</summary>
+  <div class="clause le">
+    <span class="cnum">Article 1, Objet et régime de cession</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vous <strong>vendez votre créance</strong> à Robin des Airs, qui devient propriétaire du dossier et le recouvre en son nom propre. Le prix de votre créance dépend de ce qui est effectivement récupéré (75&nbsp;% du recouvré en amiable, 60&nbsp;% si tribunal, 0&nbsp;€ si rien). Vol avec correspondance ? C'est l'arrivée finale qui compte, et c'est couvert.</div>
+    Le présent acte est un <strong>CONTRAT DE CESSION DE CRÉANCE PURE ET SIMPLE</strong> (articles 1321 et suivants du Code civil). Le <strong>Cédant</strong> (le passager) cède à Robin des Airs (le <strong>Cessionnaire</strong>), qui acquiert <strong>en son nom propre et pour son propre compte</strong>, sa créance née ou à naître au titre du <strong>Règlement (CE) n° 261/2004</strong>&nbsp;: indemnité forfaitaire (art. 7), remboursements et prise en charge (art. 8 et 9) et, le cas échéant, préjudice complémentaire (art. 12), liée au retard, à l'annulation ou au refus d'embarquement objet du présent acte (l'«&nbsp;Incident&nbsp;»).
+    <br><br>
+    <strong>Transfert de propriété et de risque.</strong> La cession opère <strong>transfert intégral de la créance</strong> au Cessionnaire&nbsp;: à compter de la signature, Robin des Airs en est seul propriétaire, l'exerce en son nom, assume seule l'aléa du recouvrement et <strong>supporte sans recours contre le Cédant</strong> l'ensemble des frais engagés (avocat, huissier, greffe, plateforme). Le Cédant ne supporte aucun frais et ne peut être appelé en garantie de l'insuccès.
+    <br><br>
+    <strong>Prix de cession.</strong> Le prix de cession est <strong>variable et aléatoire</strong> (articles 1108 et 1964 du Code civil), indexé sur le montant effectivement encaissé par le Cessionnaire&nbsp;: il est défini à l'<strong>Article 4</strong>. Le Cédant accepte expressément ce caractère aléatoire&nbsp;: si aucune somme n'est recouvrée, le prix est nul et le Cédant ne peut prétendre à aucune somme.
+    <br><br>
+    <strong>Transparence sur l'aléa et évaluation éclairée du Cédant.</strong> Le Cédant <strong>déclare expressément avoir reçu, préalablement à la signature</strong>, les éléments d'information lui permettant d'évaluer souverainement l'aléa du recouvrement, notamment&nbsp;: (i) la <strong>distance du vol</strong> et le <strong>montant forfaitaire CE&nbsp;261/2004</strong> potentiellement dû&nbsp;; (ii) le <strong>taux moyen de recouvrement</strong> historique du Cessionnaire pour la compagnie concernée (« matrice compagnies », mise à disposition sur simple demande et publiée sur <strong>robindesairs.eu/transparence</strong>)&nbsp;; (iii) les <strong>causes principales d'échec</strong> connues (insolvabilité, prescription, circonstances extraordinaires, juridiction non-UE)&nbsp;; (iv) la <strong>durée moyenne de procédure</strong> (12 à 24 mois). Le Cédant reconnaît avoir disposé du temps nécessaire à cette évaluation et ne pas s'être engagé sous la pression. Cette information sincère et complète exclut tout vice du consentement, lésion ou défaut de cause au sens de l'article 1131 du Code civil.
+    <br><br>
+    <strong>Créance contestée — transfert d'aléa (absence de retrait litigieux).</strong> La créance cédée présente un caractère <strong>incertain et contesté</strong>&nbsp;: son existence et son quantum sont susceptibles d'être discutés par le débiteur (le transporteur aérien). Ce caractère incertain fonde le prix variable et aléatoire (Article 4) et le transfert intégral de l'aléa au Cessionnaire. En revanche, <strong>aucun procès n'étant pendant à la date de la cession</strong> et aucune contestation sur le fond du droit n'ayant été élevée en justice, la créance n'est <strong>pas litigieuse au sens des articles 1699 et 1700 du Code civil</strong>&nbsp;: le transporteur débiteur cédé <strong>ne dispose d'aucune faculté de retrait litigieux</strong> (Article 5 bis).
+    <br><br><strong>Réalité économique du transfert (rejet de la requalification en mandat).</strong> La qualification de cession — et non de mandat — repose sur la <strong>réalité économique de l'opération</strong>, seul critère souverainement retenu par le juge&nbsp;: (i) le Cessionnaire agit <strong>en son nom propre et pour son propre compte</strong>, et non au nom du Cédant&nbsp;; (ii) il <strong>supporte seul et sans recours</strong> l'intégralité de l'aléa et des frais (Articles 4 et 5 bis), le Cédant ne pouvant jamais être appelé en garantie de l'insuccès ni tenu d'aucune avance&nbsp;; (iii) la cession est <strong>notifiée au débiteur cédé</strong> (Articles 1 bis et 6), ce qu'un mandat de recouvrement n'emporte pas&nbsp;; (iv) le Cédant <strong>perd la maîtrise du dossier</strong> (clause de non-instruction, Article 1 bis). Ces éléments caractérisent un <strong>véritable transfert de propriété</strong> de la créance et excluent la qualification de mandat.
+    <br><br>
+    <strong>Correspondances.</strong> Lorsque le voyage comporte une ou plusieurs correspondances sous une <strong>même réservation</strong>, la cession couvre <strong>l'ensemble du voyage</strong>&nbsp;: l'indemnisation est déterminée par la <strong>destination finale</strong> et la <strong>distance totale</strong>, le retard étant apprécié à l'<strong>arrivée à la destination finale</strong> (CJUE, 26 février 2013, <em>Folkerts</em>, C-11/11).
+    <br><br>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Pour gérer votre dossier, Robin des Airs ouvre une adresse email dédiée qui reçoit les réponses de la compagnie. C'est nous qui nous en occupons de A à Z&nbsp;,  vous, vous êtes simplement suivi par WhatsApp.</div>
+    <strong>Adresse email du dossier.</strong> Robin des Airs crée une <strong>adresse email technique dédiée</strong> (référence du dossier suivie de «&nbsp;@robindesairs.eu&nbsp;»
+    , ex.&nbsp;: <strong id="clauseEmailExample">ref@robindesairs.eu</strong>) constituant l'<strong>adresse de référence</strong> pour l'ensemble des échanges avec la compagnie, ses représentants et tout tiers&nbsp;; Robin des Airs en assure seul l'administration. Le Cédant autorise expressément sa création et son exploitation pour la durée du contrat, y compris pour les mises en demeure et actes de procédure, et conserve les accès, copies et pièces afin d'assurer la traçabilité du dossier. Le suivi opérationnel avec le Cédant peut être assuré via <strong>WhatsApp</strong> ou tout autre canal convenu, sans caractère exclusif.
+    <br><br>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Votre contrat existe en français et en anglais (même document). Vous signez une fois&nbsp;; si la compagnie est étrangère, on lui présente la version anglaise, mais c'est toujours votre version française signée qui fait foi.</div>
+    <strong>Langue.</strong> Le présent contrat est un <strong>instrument bilingue</strong> établi en <strong>français et en anglais</strong>, la <strong>version française étant la seule faisant foi</strong>. Le Cédant autorise Robin des Airs à <strong>établir, produire et opposer la version anglaise</strong> (ou une traduction fidèle) à la compagnie et à tout tiers. En cas de divergence, <strong>l'original français signé prévaut</strong>. La signature couvre l'instrument dans ses deux langues.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 1 bis, Notification de la cession et indépendance d'action</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> À partir de la signature, Robin des Airs devient propriétaire de la créance et agit <strong>en son nom propre</strong> du début à la fin. La cession est notifiée à la compagnie dès la première mise en demeure&nbsp;: à partir de là, la compagnie ne peut plus payer qu'à nous. Si l'affaire va au tribunal, c'est toujours un avocat qui plaide.</div>
+    <strong>Effet immédiat.</strong> La cession produit ses effets <strong>entre les parties dès la signature</strong> (art. 1321 C. civ.). Le Cessionnaire est, à compter de cette date, <strong>seul titulaire</strong> de la créance et agit <strong>exclusivement en son nom propre et pour son propre compte</strong> à tous les stades (réclamation, mise en demeure, médiation éventuelle, procédure judiciaire), sans représenter le Cédant.
+    <br><br>
+    <strong>Notification immédiate au transporteur.</strong> La cession est <strong>notifiée au transporteur (débiteur cédé) dès le premier acte formel</strong> de recouvrement (réclamation officielle ou mise en demeure adressée par le Cessionnaire ou son avocat), conformément à l'<strong>article 1324 du Code civil</strong>. À compter de cette notification, <strong>seul le paiement effectué entre les mains du Cessionnaire est libératoire</strong>.
+    <br><br>
+    <strong>Clause de non-instruction.</strong> La créance étant la propriété du Cessionnaire, le Cédant <strong>ne peut donner aucune instruction</strong> au Cessionnaire quant au choix de la juridiction, à la stratégie procédurale, à l'opportunité ou aux modalités d'une transaction, ni au moment du dépôt de l'assignation. Le Cessionnaire conduit seul le dossier dans son propre intérêt économique et apprécie librement la viabilité des dossiers avant d'engager une procédure judiciaire. Le Cédant est tenu informé des étapes clés à titre de courtoisie, sans que cette information ne constitue une consultation ni un mandat.
+    <br><br>
+    <strong>Représentation en justice par avocat.</strong> Le Cessionnaire n'exerce aucune activité réservée aux avocats et <strong>ne se présente jamais seul devant une juridiction</strong>. <strong>Toute procédure judiciaire est obligatoirement conduite par un avocat inscrit à un barreau</strong>, mandaté par le Cessionnaire à ses frais exclusifs, qui assure seul la représentation et la plaidoirie.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 2, Durée et facultés de résiliation</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Le contrat dure <strong>18 mois</strong>. Il peut être arrêté à tout moment en cas de problème grave (préavis 15 jours). Et si on n'a toujours pas saisi le tribunal après 12 mois, vous pouvez y mettre fin librement, sans frais.</div>
+    Le présent contrat est consenti pour <strong>18 mois</strong> à compter de la signature. Cette durée tient compte des délais réels de traitement (relances, négociation, et le cas échéant procédure judiciaire). Il peut être résilié par email à tout moment&nbsp;:
+    <br><br>
+    <strong>(i) Résiliation pour faute&nbsp;:</strong> en cas de <strong>faute grave, fraude avérée ou non-coopération persistante</strong> de l'une des parties, avec un préavis de 15 jours.
+    <br><br>
+    <strong>(ii) Résiliation libre pour convenance (Cédant) après épuisement de la phase amiable&nbsp;:</strong> lorsque la <strong>phase amiable a été épuisée sans résultat</strong> et qu'aucune procédure judiciaire n'a été engagée, le Cédant peut <strong>résilier librement</strong> par email, avec un préavis de 15 jours, sans frais.
+    <br><br>
+    <strong>(iii) Résiliation libre pour convenance (Cédant) après 12 mois sans assignation&nbsp;:</strong> à l'expiration d'un délai de <strong>12 mois</strong> à compter de la signature, et <strong>tant qu'aucune assignation n'a été déposée</strong> par le Cessionnaire ou son avocat, le Cédant peut <strong>résilier librement</strong> par email, avec un préavis de 15 jours, sans frais ni indemnité.
+    <br><br>
+    Dans tous les cas de résiliation, la créance est <strong>rétrocédée de plein droit</strong> au Cédant (Article 5 bis) et le Cessionnaire supporte seul les frais déjà engagés, sans recours.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 3, Exclusivité & Anti-contournement</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Pendant ce temps, ne confiez pas le même dossier à quelqu'un d'autre et ne négociez pas seul avec la compagnie sans nous prévenir.</div>
+    Le présent contrat est <strong>exclusif</strong>. La créance étant cédée à Robin des Airs (Article 1) et n'appartenant plus au Cédant à compter de la signature, ce dernier s'engage, pendant la durée du contrat, à <strong>ne pas céder à un tiers</strong> cette même créance dont il n'est plus titulaire, ni à <strong>négocier directement avec la compagnie</strong> pour le même Incident <strong>sans en informer préalablement Robin des Airs</strong>. Seul un accord conclu <strong>de mauvaise foi, dans le seul but de contourner la cession</strong>, engage la responsabilité du Cédant&nbsp;; ce dernier devra alors reverser au Cessionnaire <strong>l'intégralité des sommes perçues</strong> de la compagnie, à charge pour le Cessionnaire de lui verser le prix de cession (Article 4). Une démarche de bonne foi du Cédant n'entraîne aucune pénalité.
+  </div>
+  <div class="clause hi">
+    <span class="cnum">Article 4, Prix de cession variable (aléatoire) · No Win, No Fee</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Robin des Airs vous <strong>achète votre créance</strong> à un <strong>prix variable</strong> qui dépend de ce qui est récupéré&nbsp;: vous recevez <strong>75 %</strong> du recouvré si on règle à l'amiable, <strong>60 %</strong> si on doit aller au tribunal, <strong>0 €</strong> si rien n'est récupéré. Les deux taux sont acceptés dès la signature, sans nouvel accord ultérieur. Si rien n'est récupéré, vous ne devez rien et la créance vous revient.</div>
+    <strong>Caractère aléatoire (art. 1108 et 1964 C. civ.).</strong> Le Cédant accepte expressément que le prix de cession soit <strong>variable et aléatoire</strong>, déterminé en fonction d'un événement futur incertain&nbsp;: le montant effectivement encaissé par le Cessionnaire au titre de la créance cédée. Cette qualification résulte du caractère incertain et contesté de la créance (Article 1) et reflète le transfert intégral à Robin des Airs de l'<strong>aléa économique du recouvrement</strong>.
+    <br><br>
+    <strong>Barème du prix de cession (acceptés dès la signature, sans nouvel accord ultérieur)</strong>&nbsp;:
+    <br><br>
+    <strong>(i) Recouvrement en phase amiable ou pré-contentieuse</strong> (réclamation à la compagnie, mise en demeure du Cessionnaire ou de son avocat, négociation pré-judiciaire)&nbsp;:
+    <ul>
+      <li><strong>Prix de cession versé au Cédant&nbsp;: 75&nbsp;%</strong> du montant effectivement encaissé par le Cessionnaire.</li>
+      <li>Le Cessionnaire conserve <strong>25&nbsp;%</strong> à titre de marge sur l'opération de cession.</li>
+      <li><em>Exemple : sur 600&nbsp;€ encaissés, le Cédant reçoit <strong>450&nbsp;€</strong> et le Cessionnaire conserve <strong>150&nbsp;€</strong>.</em></li>
+    </ul>
+    <strong>(ii) Recouvrement en phase contentieuse</strong> (assignation devant la juridiction compétente par l'avocat partenaire du Cessionnaire)&nbsp;:
+    <ul>
+      <li><strong>Prix de cession versé au Cédant&nbsp;: 60&nbsp;%</strong> du montant effectivement encaissé par le Cessionnaire.</li>
+      <li>Le Cessionnaire conserve <strong>40&nbsp;%</strong>. Cet écart reflète l'<strong>aléa procédural accru</strong> et la charge intégrale des frais (avocat, huissier, greffe, plateforme), supportée seule par le Cessionnaire sans recours contre le Cédant.</li>
+      <li><em>Exemple : sur 600&nbsp;€ encaissés, le Cédant reçoit <strong>330&nbsp;€</strong> et le Cessionnaire conserve <strong>270&nbsp;€</strong>.</em></li>
+    </ul>
+    <br>
+    <strong>Application des deux taux : préavis 7 jours et faculté de résiliation libre avant assignation.</strong> Le Cédant reconnaît avoir pris connaissance des deux taux (75&nbsp;% amiable / 60&nbsp;% contentieux) <strong>avant la signature</strong> du présent contrat et les accepte <strong>tous deux dès la signature</strong>. Le passage de l'un à l'autre résulte de la décision du Cessionnaire, qui apprécie souverainement l'opportunité du contentieux (Article 1 bis, clause de non-instruction).
+    <br><br>
+    Toutefois, afin de préserver une parfaite information du Cédant et d'écarter toute critique tirée d'une modification unilatérale du contrat (article R. 212-1, 3° du Code de la consommation), <strong>aucune assignation n'est déposée avant l'expiration d'un délai de 7 jours calendaires</strong> à compter d'une <strong>notification écrite</strong> au Cédant (WhatsApp ET email), précisant&nbsp;:
+    <ul>
+      <li>l'<strong>échec de la phase amiable</strong> et le passage envisagé en contentieux&nbsp;;</li>
+      <li>le <strong>nouveau taux de 60&nbsp;%</strong> qui s'appliquera mécaniquement à l'encaissement contentieux&nbsp;;</li>
+      <li>la <strong>faculté pour le Cédant de résilier librement</strong> le présent contrat par simple email avant l'expiration de ce délai, <strong>sans frais ni indemnité</strong>, la créance lui étant alors <strong>rétrocédée de plein droit</strong> (Articles 2 et 5 bis).
+      </li>
+    </ul>
+    À défaut de résiliation dans ce délai de 7 jours, le Cessionnaire est <strong>libre de déposer l'assignation</strong> sans nouvel accord du Cédant, le taux de 60&nbsp;% s'appliquant alors mécaniquement.
+    <br><br>
+    <strong>Absence de prix dû en cas d'échec.</strong> En cas de non-recouvrement, le prix de cession est <strong>nul</strong>&nbsp;: aucune somme n'est due par le Cédant, aucune avance n'est exigée à aucun stade, et la créance lui est <strong>rétrocédée de plein droit</strong> (Article 5 bis). Le Cessionnaire supporte seul les frais engagés à fonds perdus (« <strong>No Win No Fee</strong> »).
+    <br><br><strong>Contrepartie sérieuse en toute hypothèse (absence de prix dérisoire).</strong> Le prix de cession est <strong>déterminable</strong> par référence à un événement futur (articles 1591 et 1592 C. civ.)&nbsp;; son éventuelle valeur nulle en cas d'échec constitue l'<strong>essence même de l'aléa</strong> licitement accepté (article 1964 C. civ.), et non un défaut ou une vileté de prix. En contrepartie de la cession, le Cédant reçoit <strong>en toute hypothèse et dès la signature</strong> une <strong>valeur réelle et immédiate</strong>&nbsp;: la prise en charge intégrale du risque et de la totalité des frais de recouvrement (avocat, huissier, greffe, plateforme), l'immunité de tout recours en cas d'échec, et l'engagement de diligences immédiates. Cette contrepartie exclut toute nullité pour prix dérisoire ou défaut de contrepartie (article 1169 C. civ.).
+    <br><br>
+    <strong>Sommes incluses et exclues du prix.</strong> Le barème ci-dessus s'applique exclusivement à l'<strong>indemnité forfaitaire</strong> (art. 7), aux <strong>remboursements et prise en charge</strong> (art. 8 et 9) et au <strong>préjudice complémentaire</strong> (art. 12) effectivement encaissés. L'<strong>article 700 du Code de procédure civile</strong>, les <strong>dépens</strong> et les <strong>intérêts moratoires</strong> alloués par le juge restent <strong>intégralement acquis au Cessionnaire et à son avocat</strong> (ils rémunèrent le risque et les frais procéduraux qu'il a supportés seul) et ne sont pas inclus dans la base de calcul du prix dû au Cédant.
+    <br><br>
+    <strong>Compensation en nature.</strong> Le barème s'applique également à toute compensation en nature (bon d'achat, avoir, miles…) acceptée par le Cessionnaire dans le cadre du recouvrement, calculée sur sa valeur. Le Cédant <strong>exige le paiement en numéraire (virement)</strong> et <strong>refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service</strong> proposé en lieu et place&nbsp;: conformément à l'<strong>article 7§3 du Règlement (CE) n° 261/2004</strong>, une compensation en nature suppose l'accord signé du passager, que le Cédant ne donne pas.
+  </div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Recouvrement amiable — Prix de cession 75 %</div>
+  <table class="fee-table">
+    <tr><th>Distance du vol</th><th>Montant encaissé / pax</th><th>Marge cessionnaire (25 %)</th><th>Prix de cession (75 %)</th></tr>
+    <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
+    <tr><td>1 500-3 500 km (Afrique du Nord)</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
+    <tr><td>&gt; 3 500 km (Afrique subsaharienne)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
+  </table>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Recouvrement contentieux — Prix de cession 60 % (acceptés dès la signature, sans nouvel accord)</div>
+  <table class="fee-table">
+    <tr><th>Distance du vol</th><th>Montant encaissé / pax</th><th>Marge cessionnaire (40 %)</th><th>Prix de cession (60 %)</th></tr>
+    <tr><td>≤ 1 500 km</td><td>250 €</td><td>112,50 €</td><td class="em">137,50 €</td></tr>
+    <tr><td>1 500-3 500 km (Afrique du Nord)</td><td>400 €</td><td>180 €</td><td class="em">220 €</td></tr>
+    <tr><td>&gt; 3 500 km (Afrique subsaharienne)</td><td>600 €</td><td>270 €</td><td class="em">330 €</td></tr>
+  </table>
+  <div style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 14px">Note&nbsp;: l'article 700 du CPC, les dépens et les intérêts moratoires alloués par le juge restent intégralement acquis au Cessionnaire et à son avocat (Article 4), en contrepartie de l'aléa et des frais qu'ils ont supportés seuls. Ils ne sont pas inclus dans la base de calcul du prix de cession.</div>
+  <div class="clause pro">
+    <span class="cnum">Article 5, Encaissement et versement du prix de cession</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> La compagnie paie sur le compte de Robin des Airs (qui est propriétaire de la créance). On vous verse votre prix de cession (75&nbsp;% ou 60&nbsp;% du recouvré) sous 5 jours ouvrés après encaissement effectif.</div>
+    La créance étant la propriété du Cessionnaire dès la signature (Article 1) et la cession étant notifiée au transporteur dès le premier acte formel de recouvrement (Article 1 bis), <strong>seul le paiement effectué sur le compte bancaire dédié du Cessionnaire est libératoire</strong>. Le Cédant donne instruction <strong>expresse et irrévocable</strong> à la compagnie aérienne de verser toute indemnité, tout remboursement et toute somme due <strong>exclusivement sur le compte bancaire dédié désigné par Robin des Airs</strong>, à l'exclusion de tout autre compte, y compris celui du Cédant. Les sommes encaissées constituent le <strong>produit du recouvrement de la créance acquise par le Cessionnaire</strong>&nbsp;; elles servent de base au calcul du prix de cession dû au Cédant (Article 4).
+    <br><br>
+    Le Cessionnaire verse au Cédant son <strong>prix de cession</strong> (75&nbsp;% du recouvré en amiable, 60&nbsp;% en contentieux — Article 4) sur l'IBAN communiqué dans le présent contrat dans un délai de <strong>5 jours ouvrés à compter de l'encaissement effectif et irrévocable</strong> des fonds (virement SEPA crédité, sans réserve ni rétrofacturation), sous réserve des vérifications d'identité et de conformité (LCB-FT). <strong>À défaut d'IBAN en zone SEPA</strong>, le versement s'effectue par tout moyen convenu avec le Cédant — <strong>Wave, Orange Money ou MTN Mobile Money</strong> — selon les coordonnées qu'il communique&nbsp;; les <strong>frais de transfert et de change éventuels sont à la charge du Cessionnaire</strong>, de sorte que le prix de cession ne soit pas diminué. Si la compagnie verse, en violation de la notification de cession, directement entre les mains du Cédant, ce dernier s'engage à <strong>reverser sans délai au Cessionnaire l'intégralité de la somme perçue</strong>, le Cessionnaire lui versant ensuite le prix de cession dû.
+    <br><br>
+    <strong>Cédant injoignable.</strong> Le prix de cession <strong>reste intégralement dû</strong>&nbsp;: la somme est conservée à la disposition du Cédant et versée dès contact rétabli, dans les conditions de l'<strong>article 6 bis des CGV</strong> (diligences de contact, mise en demeure et consignation art. 1345 s. C. civ., prescription de 5 ans). Le Cédant s'engage à tenir ses coordonnées à jour.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 5 bis, Modalités de la cession, absence de retrait litigieux et rétrocession</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vous vendez votre créance à Robin des Airs, qui en devient propriétaire dès la signature. La compagnie est avertie dès la première mise en demeure. Si rien n'est récupéré ou si vous vous rétractez dans les 14 jours, la créance vous revient automatiquement.</div>
+    <strong>Objet et étendue de la cession.</strong> Le Cédant <strong>cède pleinement et définitivement</strong> à Robin des Airs la <strong>créance d'indemnisation née ou à naître</strong> qu'il détient à l'encontre du <strong>transporteur aérien effectif</strong> ayant réalisé le vol (art. 2 b) du Règlement), quel que soit le numéro de vol commercial ou la compagnie de commercialisation (<strong>partage de code / codeshare</strong>), au titre du <strong>Règlement (CE) n° 261/2004</strong> pour l'Incident, en ce compris l'<strong>indemnité forfaitaire</strong> (art. 7), les <strong>remboursements et frais</strong> (art. 8 et 9), le <strong>préjudice complémentaire</strong> (art. 12), intérêts, pénalités et accessoires. <strong>La créance d'un passager mineur n'entre pas dans la cession</strong>&nbsp;: elle fait l'objet du <strong>mandat spécial d'encaissement</strong> prévu à l'<strong>Article 9 bis</strong>.
+    <br><br>
+    <strong>Effet entre les parties.</strong> Conformément aux <strong>articles 1321 à 1326 du Code civil</strong>, la cession prend effet <strong>entre les parties dès la signature</strong> et porte sur une créance <strong>déterminable</strong> (parties, vol, date, fondement CE&nbsp;261/2004). Le Cessionnaire devient <strong>seul titulaire</strong> de la créance et l'exerce en son nom propre.
+    <br><br>
+    <strong>Opposabilité au transporteur (immédiate).</strong> La cession devient <strong>opposable au transporteur (débiteur cédé)</strong> au sens de l'<strong>article 1324 du Code civil</strong> <strong>dès le premier acte formel de recouvrement</strong> adressé au transporteur par le Cessionnaire ou son avocat (réclamation officielle ou mise en demeure), lequel <strong>vaut notification de la cession</strong>. À compter de cette notification, <strong>seul le paiement effectué entre les mains du Cessionnaire est libératoire</strong>, et le Cessionnaire agit en recouvrement <strong>en son nom propre et pour son propre compte</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale.
+    <br><br>
+    <strong>Absence de droit litigieux et de retrait (art. 1699 et 1700 C. civ.).</strong> Aux termes de l'article 1700 du Code civil, une chose n'est litigieuse que «&nbsp;dès qu'il y a procès et contestation sur le fond du droit&nbsp;». À la date de la signature, <strong>aucune instance n'est pendante</strong> au sujet de la créance cédée et aucune contestation sur le fond n'a été élevée en justice&nbsp;: la créance, simplement <strong>incertaine et contestée</strong>, n'est <strong>pas litigieuse</strong> au sens de ces textes et le transporteur débiteur cédé <strong>ne peut exercer aucun retrait litigieux</strong> (art. 1699 C. civ.). La qualification de cession — et non de mandat — résulte de la <strong>réalité économique de l'opération</strong> (Article 1&nbsp;: action en nom propre, transfert intégral de l'aléa et des frais, notification au débiteur, clause de non-instruction), et non d'une étiquette formelle.
+    <br><br>
+    <strong>Prix réel de la cession — stipulation subsidiaire (pour le seul cas où un retrait litigieux serait néanmoins jugé recevable).</strong> À titre surabondant, si une juridiction devait, contre l'analyse qui précède, juger un retrait litigieux recevable, les parties conviennent <strong>irréfragablement entre elles</strong> que le « prix réel de la cession » est <strong>forfaitairement fixé</strong> au montant suivant, correspondant à la valeur économique que les parties ont assignée à la créance à la signature&nbsp;:
+    <ul>
+      <li><strong>75&nbsp;% du montant forfaitaire CE 261/2004</strong> applicable au vol (250&nbsp;€, 400&nbsp;€ ou 600&nbsp;€ selon la distance), par passager cédant&nbsp;;</li>
+      <li><strong>majoré des frais et loyaux coûts justifiés</strong> exposés par le Cessionnaire (frais d'avocat, d'huissier, de greffe, de plateforme judiciaire)&nbsp;;</li>
+      <li><strong>et des intérêts au taux légal</strong> à compter de la signature.</li>
+    </ul>
+    Cette détermination forfaitaire fait obstacle à toute fixation du prix à un montant inférieur, notamment en raison du caractère variable du prix de cession (Article 4)&nbsp;: le caractère aléatoire du prix régit la relation Cédant-Cessionnaire et n'est pas opposable au débiteur cédé exerçant le retrait litigieux. Toute fixation contraire serait inopposable au Cédant et au Cessionnaire.
+    <br><br>
+    <strong>Garantie de sincérité et rétrocession.</strong> Le Cédant <strong>garantit la sincérité des éléments déclarés</strong> (identité, réservation confirmée, vol et date concernés) et, si la créance est <strong>déjà née</strong> à la signature, son existence&nbsp;; si la créance est <strong>à naître</strong> (perturbation en cours à la signature), il <strong>ne garantit pas la survenance</strong> de l'événement ouvrant droit à indemnisation (arrivée finale retardée de 3 heures ou plus), cet aléa étant intégralement transféré au Cessionnaire. Il déclare que la créance n'a fait l'objet d'aucune cession, transaction ni paiement antérieur. Le Cédant <strong>ne garantit ni la solvabilité du débiteur ni l'issue du recouvrement</strong>, dont l'aléa est intégralement transféré au Cessionnaire (Article 1). À l'extinction du contrat sans recouvrement, en cas de clôture pour irrécouvrabilité (Article 7 quater), ou en cas de rétractation dans le délai de l'Article 9, la créance est <strong>rétrocédée de plein droit</strong> au Cédant, sans frais ni indemnité de part et d'autre.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 5 ter, Validité de la cession et inopposabilité des clauses d'incessibilité</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> La justice européenne a tranché deux fois récemment : (1) la cession de créance CE 261 est parfaitement valable et la compagnie ne peut l'interdire dans ses CGT ; (2) la cession ne change rien à la compétence des tribunaux, donc Robin des Airs peut agir devant le tribunal compétent comme l'aurait fait le passager.</div>
+    <strong>Validité de la cession et compétence du Cessionnaire (CJUE, 9 octobre 2025, Lufthansa c/ AirHelp, C-551/24).</strong> La Cour de justice de l'Union européenne a jugé que la cession d'une créance d'indemnisation au titre du Règlement (CE) n°&nbsp;261/2004 est <strong>parfaitement licite</strong> et que <strong>la cession n'a aucune incidence en tant que telle sur la détermination de la juridiction compétente</strong>&nbsp;: le cessionnaire peut invoquer les mêmes chefs de compétence que le cédant, et notamment l'article 7§1 du Règlement Bruxelles I bis (lieu de fourniture du service&nbsp;= aéroport de départ ou d'arrivée du vol, CJUE Rehder C-204/08).
+    <br><br>
+    <strong>Inopposabilité des clauses d'incessibilité (CJUE, 29 février 2024, Eventmedia c/ Air Europa, C-11/23).</strong> Le Cédant déclare avoir connaissance des conditions générales de transport de la compagnie. <strong>Toute clause des conditions générales de transport interdisant ou limitant la cession de la créance d'indemnisation due au titre du Règlement (CE) n° 261/2004 est inopposable</strong>, comme contraire à l'article 15 du Règlement (CJUE, 29 février 2024, Eventmedia Soluciones c/ Air Europa Líneas Aéreas, C-11/23). En conséquence, la compagnie aérienne ne saurait opposer une telle clause à la cession consentie à Robin des Airs (Articles 1 et 5 bis).
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 5 quater, Inopposabilité des clauses procédurales restrictives au cessionnaire</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Si la compagnie sort une clause de ses CGT pour imposer un délai d'attente ou empêcher la cession, on la conteste : ces clauses ne nous sont pas opposables.</div>
+    Le Cessionnaire, agissant en son nom propre comme titulaire de la créance cédée (Article 1), <strong>n'est pas lié par les clauses des conditions générales de transport</strong> qui (i) subordonneraient la recevabilité d'une réclamation au titre du Règlement (CE) n° 261/2004 à un <strong>délai d'attente préalable</strong>, (ii) restreindraient le droit du passager de se faire représenter, (iii) limiteraient la cession de la créance, (iv) exigeraient qu'une <strong>réclamation émane personnellement du passager</strong> préalablement à toute démarche d'un tiers ou d'un cessionnaire, ou (v) imposeraient que le <strong>paiement soit effectué exclusivement entre les mains du passager</strong> nonobstant la cession notifiée. Ces clauses sont inopposables au regard du <strong>caractère impératif du Règlement (article 15)</strong> et, s'agissant des clauses limitant la cessibilité, de la jurisprudence <strong>CJUE, 29 février 2024, Eventmedia Soluciones c/ Air Europa, C-11/23</strong>.
+    <br><br>
+    <strong>Clauses attributives de juridiction (CJUE, 18 novembre 2020, Ryanair c/ DelayFix, C-519/19).</strong> Une clause attributive de juridiction insérée dans le contrat de transport conclu entre le passager et la compagnie <strong>n'est pas opposable au Cessionnaire</strong>, tiers à ce contrat, qui n'y a pas consenti&nbsp;; une telle clause, non négociée individuellement, est au surplus susceptible d'être déclarée <strong>abusive</strong>. Le Cessionnaire saisit donc librement les juridictions désignées à l'Article 11.
+  </div>
+  <div class="clause pro">
+    <span class="cnum" style="color:var(--red)">Article 6, Clause non libératoire pour la compagnie aérienne</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Une fois la cession notifiée (dès la première mise en demeure), si la compagnie vous paie directement pour nous contourner, elle nous doit quand même le paiement.</div>
+    <strong>À compter de la notification de la cession au transporteur</strong> (Article 1 bis et Article 5 bis — notification effectuée dès le premier acte formel de recouvrement), <strong>tout paiement effectué directement par la compagnie aérienne au Cédant ne libère pas la compagnie de ses obligations</strong> envers Robin des Airs, cessionnaire. Robin des Airs notifie expressément à la compagnie, dès la première mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur son compte bancaire dédié.
+    <br><br>
+    En conséquence : (i) tout règlement opéré directement au Cédant en violation de cette instruction, postérieurement à la notification, sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du Cessionnaire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation s'appuie sur la <strong>cession de créance</strong> (articles 1321 à 1324 du Code civil) et est opposable au transporteur à compter de la notification qui lui en est faite.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 7, Obligations du Cessionnaire</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> On instruit votre dossier avec sérieux, on vous tient informé, on vous verse votre prix de cession vite et on protège vos données.</div>
+    Robin des Airs s'engage à : (i) instruire le dossier avec diligence et à ses frais exclusifs ; (ii) informer le Cédant à chaque étape clé à titre de courtoisie ; (iii) verser le prix de cession dû au Cédant (Article 4) sous 5 jours ouvrés après encaissement effectif et irrévocable ; (iv) notifier la cession à la compagnie aérienne dès le premier acte formel de recouvrement (Article 1 bis) ; (v) protéger les données personnelles conformément au RGPD.
+    <br><br>
+    <strong>Responsabilité (obligation de moyens).</strong> Robin des Airs ne garantit pas l'obtention de l'indemnisation. Sauf faute lourde ou dol, sa responsabilité est limitée aux <strong>dommages directs</strong> et plafonnée au <strong>plus élevé</strong> de&nbsp;: la marge conservée sur le dossier, <strong>trois fois le prix de cession</strong> dû, ou un <strong>plancher de 500&nbsp;€</strong> (art. R. 212-1, 6° C. conso). Elle ne répond pas des décisions de la compagnie ou des juridictions.
+    <br><br>
+    <strong>Intervenants.</strong> Robin des Airs peut confier tout ou partie de l'exécution à des <strong>avocats ou prestataires</strong> agissant pour son compte, à ses frais exclusifs (Article 4)&nbsp;; le Cédant <strong>consent</strong> à la transmission des pièces strictement nécessaires, aux seules fins du recouvrement (RGPD, Politique de confidentialité). Robin des Airs demeure responsable de la bonne exécution à l'égard du Cédant.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 7 quater, Clôture pour irrécouvrabilité</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Si le dossier est manifestement voué à l'échec, on peut l'arrêter, vous ne payez rien.</div>
+    Robin des Airs peut mettre fin au dossier par notification motivée s'il apparaît, après analyse, que la réclamation est <strong>manifestement irrécouvrable</strong> (notamment insolvabilité du transporteur, prescription, absence de fondement au regard du Règlement) ou que la <strong>créance n'est pas née</strong> (notamment retard finalement résorbé sous le seuil de 3 heures à l'arrivée à destination finale, ou passager non présenté à l'embarquement hors annulation). Cette clôture <strong>n'ouvre droit à aucune indemnité</strong> de part et d'autre et, conformément au principe « No Win No Fee », <strong>aucune somme n'est due</strong> par le Cédant ; la créance lui est <strong>rétrocédée de plein droit</strong>.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 8, Obligations du Cédant</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Donnez-nous des infos exactes, prévenez-nous si la compagnie vous contacte, et n'encaissez rien sans nous le dire.</div>
+    Le Cédant s'engage à : (i) fournir des informations <strong>exactes et sincères</strong> et transmettre les documents utiles ; (ii) signaler à Robin des Airs <strong>tout contact, offre ou paiement de la compagnie sous 24&nbsp;h</strong>, sans rien encaisser ni conclure sans l'en aviser ; (iii) ne pas agir en parallèle sur le même dossier. Il garantit être <strong>seul titulaire</strong> de la créance, laquelle n'a fait l'objet d'<strong>aucune cession, transaction ni paiement antérieur</strong> et n'est pas déjà confiée à un tiers. Le détail des obligations, garanties et conséquences d'un manquement — y compris <strong>document falsifié</strong> (annulation du dossier, art. 441-1 C. pén.) — figure à l'<strong>article 4 des CGV</strong>, que le Cédant accepte.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 9, Droit de rétractation (14 jours) & Démarrage immédiat</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vous pouvez changer d'avis sous 14 jours, sans frais ni justification. La créance vous revient automatiquement.</div>
+    Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Cédant dispose d'un <strong>délai de rétractation de 14 jours calendaires</strong> à compter de la signature, <strong>sans avoir à se justifier et sans frais</strong>. Il peut exercer ce droit par toute déclaration dénuée d'ambiguïté, par exemple par email à <strong>contact@robindesairs.eu</strong> avec la mention « Je me rétracte, Réf. [numéro de dossier] », ou via le <strong>formulaire-type ci-dessous</strong>.
+    <br><br>
+    Conformément à l'article L. 221-25 du Code de la consommation, si le Cédant demande expressément l'<strong>exécution immédiate du contrat avant l'expiration du délai de 14 jours</strong> (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. <strong>En cas de rétractation dans ce délai, et conformément au principe « No Win No Fee », aucune somme n'est due par le Cédant</strong>, y compris au titre des démarches déjà accomplies ; la créance lui est <strong>rétrocédée de plein droit</strong>.
+    <br><br>
+    <strong>Articulation avec la notification au transporteur (rétractation après notification de la cession).</strong> Si le Cédant exerce son droit de rétractation <strong>après</strong> que le Cessionnaire a notifié la cession au transporteur (Article 1 bis), le Cessionnaire&nbsp;:
+    <ul>
+      <li><strong>notifie sans délai au transporteur, par LRAR</strong>, la rétractation et la rétrocession de la créance au Cédant&nbsp;;</li>
+      <li><strong>jusqu'à réception</strong> de cette notification par le transporteur, tout paiement effectué entre les mains du Cessionnaire <strong>demeure libératoire</strong>&nbsp;; le Cessionnaire reverse intégralement au Cédant toute somme ainsi encaissée, sans déduction de la moindre commission ni de frais&nbsp;;</li>
+      <li>à compter de la réception de cette notification par le transporteur, ce dernier est tenu de payer <strong>directement au Cédant</strong> redevenu titulaire de la créance.</li>
+    </ul>
+    Le Cédant est informé que cette notification au transporteur est <strong>effectuée à l'initiative et aux frais du Cessionnaire</strong>, sans recours contre lui, afin de garantir l'opposabilité de la rétrocession.
+    <div style="margin-top:14px;border:1px dashed var(--border);border-radius:8px;padding:14px 16px;background:var(--green-tint);font-size:12px;line-height:1.7">
+      <strong style="text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--green-deep)">Formulaire-type de rétractation</strong>
+      <div style="color:var(--muted);margin:2px 0 8px">(à compléter et à renvoyer uniquement si vous souhaitez vous rétracter)</div>
+      À l'attention de <strong>Robin des Airs</strong>, 66 avenue des Champs-Élysées, 75008 Paris, <strong>contact@robindesairs.eu</strong> :<br>
+      Je vous notifie par la présente ma rétractation du <strong>contrat de cession de créance</strong> portant sur la réclamation d'indemnisation aérienne ci-dessous :
+      <ul style="margin:6px 0 0;padding-left:18px">
+        <li>Contrat signé le : …………………………</li>
+        <li>Référence du dossier : …………………………</li>
+        <li>Nom du Cédant : …………………………</li>
+        <li>Adresse du Cédant : …………………………</li>
+        <li>Signature (uniquement en cas de notification sur papier) : …………………………</li>
+        <li>Date : …………………………</li>
+      </ul>
+    </div>
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 9 bis, Passagers mineurs — mandat spécial d'encaissement (la part du mineur n'est pas cédée)</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> La créance d'un enfant mineur n'est <strong>pas vendue</strong> (cela pourrait exiger l'accord du juge des tutelles). À la place, le parent donne <strong>mandat</strong> à Robin des Airs de la réclamer et de l'encaisser au nom de l'enfant, aux <strong>mêmes conditions</strong>&nbsp;: 0&nbsp;€ d'avance, même part nette (75&nbsp;% amiable / 60&nbsp;% contentieux, 100&nbsp;% des frais pour nous). Le parent signe seul pour l'enfant.</div>
+    <strong>Exclusion de la cession.</strong> Par exception aux Articles 1 et 5 bis, la créance d'indemnisation d'un <strong>passager mineur n'est pas cédée</strong> au Cessionnaire. Aucun acte de disposition n'est ainsi accompli sur le patrimoine du mineur, ce qui écarte <strong>par construction</strong> toute discussion fondée sur l'article 387-1 du Code civil (autorisation préalable du juge des tutelles).
+    <br><br>
+    <strong>Mandat spécial d'encaissement (acte d'administration).</strong> Pour la part du mineur, le représentant légal, agissant dans le cadre de l'<strong>administration légale</strong> (articles 382 et suivants du Code civil) — la perception d'une créance indemnitaire constituant un <strong>acte d'administration</strong> qu'il peut accomplir seul, sans autorisation du juge des tutelles —, donne à Robin des Airs un <strong>mandat spécial</strong> de réclamer, poursuivre et <strong>encaisser avec effet libératoire</strong> l'indemnité due au mineur au titre du Règlement (CE) n° 261/2004, <strong>au nom et pour le compte du mineur représenté</strong>. Toute procédure judiciaire relative à la part du mineur est conduite par un <strong>avocat inscrit à un barreau</strong>, le mineur y étant représenté par son représentant légal.
+    <br><br>
+    <strong>Protection des droits du mineur.</strong> Robin des Airs réclame pour le mineur le <strong>paiement intégral</strong> de l'indemnité forfaitaire due. Elle <strong>ne transige pas au nom du mineur et ne renonce à aucun de ses droits</strong> (actes soumis à l'autorisation du juge des tutelles, art. 387-1 C. civ.)&nbsp;: à défaut de paiement intégral amiable, la voie contentieuse est appréciée dans les conditions du contrat.
+    <br><br>
+    <strong>Conditions financières identiques (No Win No Fee).</strong> La rémunération de Robin des Airs sur la part du mineur suit le <strong>barème de l'Article 4</strong>&nbsp;: <strong>25&nbsp;%</strong> des sommes encaissées en phase amiable, <strong>40&nbsp;%</strong> en phase contentieuse, <strong>0&nbsp;€</strong> si rien n'est recouvré&nbsp;; le solde (<strong>75&nbsp;% / 60&nbsp;%</strong>) est versé au représentant légal <strong>ès qualités, pour le compte du mineur</strong>, dans les conditions de l'Article 5. Aucune avance ni aucun frais ne sont dus. Les fonds encaissés pour le compte du mineur transitent par le <strong>compte dédié</strong> du Cessionnaire, l'activité de recouvrement amiable pour le compte d'autrui étant exercée conformément aux <strong>articles L. 124-1 et suivants et R. 124-1 et suivants du Code des procédures civiles d'exécution</strong>.
+    <br><br>
+    <strong>Signature et garantie de pouvoir.</strong> Pour tout passager mineur, <strong>le représentant légal signe seul</strong>, en son nom et au nom du mineur&nbsp;; le mineur ne signe pas. Le représentant légal <strong>déclare et garantit</strong> exercer l'autorité parentale (ou la qualité de tuteur) sur le mineur&nbsp;; il tient Robin des Airs indemne des conséquences directes d'une déclaration inexacte sur son pouvoir de représentation, dans la limite des sommes qu'il a perçues au titre de la part du mineur.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 10, Confidentialité & RGPD</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vos données servent uniquement à votre dossier. Jamais revendues.</div>
+    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Cédant dispose des droits d'<strong>accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition</strong>, ainsi que du droit de retirer son consentement, en écrivant à <strong>expert@robindesairs.eu</strong> ; il peut également saisir la <strong>CNIL</strong>. Les modalités complètes (finalités, durées de conservation, sous-traitants) figurent dans la <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a>.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 10 bis, Formation par voie électronique, preuve et date certaine</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Le contrat est signé en ligne dans les règles&nbsp;: vous relisez l'intégralité du contrat, puis vous le signez directement sur cette page, dans la foulée. Une copie signée vous est adressée. Le dossier de preuve (identité, horodatage, empreinte du document, journal complet) vaut preuve de votre signature et de sa date — personne ne peut prétendre que le contrat n'existe pas ou qu'il a été signé « après coup ».</div>
+    <strong>Formation du contrat à distance.</strong> Le présent contrat est conclu par voie électronique dans les conditions des <strong>articles 1125 à 1127-2 du Code civil</strong>&nbsp;: le Cédant a eu accès à l'<strong>intégralité des stipulations</strong> avant signature, a pu vérifier le détail de son engagement et corriger d'éventuelles erreurs, puis a confirmé son acceptation. Conformément à l'<strong>article L. 221-13 du Code de la consommation</strong>, la <strong>confirmation du contrat conclu</strong>, comprenant l'ensemble de ses stipulations et l'information sur le droit de rétractation (Article 9), est fournie au Cédant <strong>sur support durable</strong> immédiatement après la signature, par l'envoi du contrat signé au format PDF à l'adresse électronique qu'il a communiquée et, à défaut, par sa mise à disposition sur un lien de téléchargement permanent qui lui est transmis sur le canal de messagerie utilisé pour la conclusion du contrat.
+    <br><br>
+    <strong>Signature électronique et convention de preuve (art. 1366 à 1368 C. civ. ; art. 25 du Règlement eIDAS n° 910/2014).</strong> Le contrat est signé au moyen d'une <strong>signature électronique</strong> dont l'effet juridique et la recevabilité comme preuve <strong>ne peuvent être refusés au seul motif de sa forme électronique</strong> (art. 25 eIDAS). Le procédé, opéré via un <strong>prestataire de services de confiance</strong> (Yousign), associe&nbsp;: une <strong>session de signature personnelle</strong> ouverte au signataire au terme de la saisie de son dossier, dans la continuité immédiate de celle-ci (consultation et signature journalisées), l'<strong>horodatage</strong> de chaque étape, un <strong>sceau d'intégrité</strong> du document signé (empreinte cryptographique) et un <strong>dossier de preuve</strong> établi par le prestataire (consultation, signature, empreinte d'adresse IP, appareil). Les parties conviennent, à titre de <strong>convention de preuve</strong>, que ce <strong>dossier de preuve</strong> fait <strong>preuve entre elles</strong> de l'identité des signataires, de l'intégrité du document, du consentement et de sa date, sauf preuve contraire. Robin des Airs peut, en complément, recourir à un <strong>prestataire de signature avancée</strong> (art. 26 eIDAS), sans que cela conditionne la validité du présent contrat. L'écrit électronique ainsi établi a la <strong>même force probante que l'écrit sur support papier</strong> (art. 1366 C. civ.) et toute copie qui en est issue constitue une <strong>copie fiable</strong> (art. 1379 C. civ.).
+    <br><br>
+    <strong>Date certaine et antériorité de la cession.</strong> L'horodatage du dossier de preuve, corroboré par l'empreinte SHA-256 du document, établit que la cession est <strong>antérieure à tout acte de recouvrement, à toute mise en demeure et à toute instance</strong> engagés par le Cessionnaire. Le Cessionnaire conserve le dossier de preuve pendant toute la durée du contrat et les délais de prescription applicables, et peut le <strong>produire en justice</strong> pour justifier de sa qualité à agir et de la date de la cession.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 11, Loi applicable, juridictions & litiges</span>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Droit français. Si on doit aller au tribunal contre la compagnie, c'est le tribunal de commerce de Paris (procédure rapide). Si vous avez un litige avec nous, c'est le tribunal de votre lieu de résidence (protection consommateur).</div>
+    Le présent contrat est soumis au <strong>droit français</strong>. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours.
+    <br><br>
+    <strong>Élection de juridiction&nbsp;:</strong>
+    <ul>
+      <li><strong>Litiges entre Robin des Airs et le transporteur aérien</strong> (recouvrement de la créance cédée) : compétence au <strong>choix du Cessionnaire</strong>, conformément à la liberté reconnue par <strong>CJUE, 9 oct. 2025, Lufthansa c/ AirHelp, C-551/24</strong> et l'article 7§1 du Règlement Bruxelles I bis, entre&nbsp;:
+        <ul>
+          <li>le <strong>Tribunal de commerce du lieu de départ</strong> du vol (lieu de fourniture du service au sens CJUE Rehder C-204/08)&nbsp;;</li>
+          <li>le <strong>Tribunal de commerce du lieu d'arrivée</strong> du vol (idem)&nbsp;;</li>
+          <li>le <strong>Tribunal de commerce du siège français</strong> du transporteur (le cas échéant)&nbsp;;</li>
+          <li>à défaut ou pour les transporteurs hors UE, le <strong>Tribunal de commerce de Paris</strong> en application des articles L. 721-3 et L. 721-5 du Code de commerce et de l'article 46 du Code de procédure civile.</li>
+        </ul>
+        Le Cédant reconnaît que la cession transmet la créance, <strong>non la qualité de consommateur</strong> du Cédant&nbsp;: à compter de la signature, le rapport entre le Cessionnaire et le transporteur est <strong>purement commercial</strong> (CJUE, 9 oct. 2025, C-551/24, précité). La compétence des tribunaux de commerce est ainsi pleinement justifiée.
+        <br><br><strong>Cohérence des protections consommateur et de la cession.</strong> Les facultés de <strong>rétractation</strong> (Article 9) et de <strong>résiliation libre</strong> (Article 2), ainsi que la <strong>rétrocession de plein droit</strong> qui les accompagne, sont des protections d'ordre public imposées par le Code de la consommation au bénéfice du Cédant. Leur présence est <strong>sans incidence sur la réalité du transfert de propriété</strong> opéré entre la signature et une éventuelle rétrocession, et <strong>ne saurait être interprétée comme révélant un mandat</strong>&nbsp;: jusqu'à leur exercice, le Cessionnaire demeure seul titulaire de la créance et agit en son nom propre.
+      </li>
+      <li><strong>Litiges entre Robin des Airs et le Cédant</strong> (consommateur) : compétence du <strong>tribunal du lieu de résidence du Cédant</strong> ou du lieu de l'exécution du contrat, conformément à l'article R. 631-3 du Code de la consommation, sans qu'aucune clause attributive de compétence ne puisse y déroger.</li>
+    </ul>
+    <strong>Médiation de la consommation préalable&nbsp;:</strong> avant tout recours juridictionnel entre Robin des Airs et le Cédant, ce dernier peut saisir gratuitement la <strong>Médiation du Tourisme et du Voyage (MTV)</strong>, médiateur désigné par le Prestataire (cf. CGV article 13).
+    <br><br>
+    <strong>Divisibilité&nbsp;:</strong> si une stipulation du présent contrat est jugée nulle ou inopposable, les autres <strong>conservent leur plein effet</strong>, la stipulation concernée étant réputée non écrite ou réduite dans la mesure permise par la loi.
+    <br><br>
+    <strong>Survie&nbsp;:</strong> la fin du contrat ne met pas fin aux stipulations qui, par leur nature, survivent, notamment <strong>confidentialité et données personnelles</strong>, <strong>obligation du Cédant de reverser au Cessionnaire toute somme reçue directement de la compagnie</strong> après notification de la cession, <strong>propriété intellectuelle</strong>, <strong>responsabilité</strong> et <strong>règlement des litiges</strong>.
+  </div>
+  </details>
+</div></div>
+<script>
+(function(){
+  function $(id){return document.getElementById(id);}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function toFr(v){var m=String(v||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return ('0'+m[3]).slice(-2)+'/'+('0'+m[2]).slice(-2)+'/'+m[1];return v||'';}
+  function toParts(v){var m=String(v||'').match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return{d:+m[1],mo:+m[2],y:+m[3]};var i=String(v||'').match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(i)return{d:+i[3],mo:+i[2],y:+i[1]};return null;}
+  function age(dob,ref){var a=toParts(dob),b=toParts(ref);if(!a||!b)return null;var g=b.y-a.y;if(b.mo<a.mo||(b.mo===a.mo&&b.d<a.d))g--;return g;}
+  var ref=(new URLSearchParams(location.search).get('r')||'').replace(/[^A-Za-z0-9_-]/g,'').slice(0,64);
+  $('c-ref').textContent=ref||'—';
+  $('c-etabli').textContent=new Date().toLocaleDateString('fr-FR');
+  document.querySelectorAll('details').forEach(function(x){x.open=true;}); // « lire le contrat » : tout visible
+  if(!ref){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">Lien incomplet.</p>');return;}
+  fetch('/api/dossier-get?r='+encodeURIComponent(ref),{credentials:'omit'})
+    .then(function(r){if(!r.ok)throw 0;return r.json();})
+    .then(function(d){
+      var pax=Array.isArray(d.passengers)?d.passengers:[];
+      var n=d.pax||pax.length||1;
+      var main=(pax[0]&&(pax[0].name||((pax[0].prenom||'')+' '+(pax[0].nom||'')).trim()))||d.name||((d.prenom||'')+' '+(d.nom||'')).trim();
+      $('c-cedant').innerHTML=esc(main)+(n>1?' <span style="font-weight:600;color:#7a879b">et '+(n-1)+' co-cédant'+(n-1>1?'s':'')+'</span>':'');
+      $('c-cedant-addr').textContent=d.address||(pax[0]&&pax[0].adresse)||'';
+      var route=d.route||[d.depAirport,d.arrAirport].filter(Boolean).join(' → ');
+      if((!route||route.indexOf('→')<0)&&Array.isArray(d.legs)&&d.legs.length){var pts=[d.legs[0].dep];d.legs.forEach(function(l){pts.push(l.arr);});route=pts.filter(Boolean).join(' → ');}
+      $('c-route').textContent=route||'—';
+      $('c-tripdate').textContent=toFr(d.date)||d.date||'—';
+      var vols=(Array.isArray(d.legs)&&d.legs.length?d.legs.map(function(l){return l.fnum||l.vol;}).filter(Boolean):[]).join(' · ')||d.vol||'—';
+      $('c-vols').textContent=vols;
+      $('c-pnr').textContent=d.pnr||'—';
+      $('c-incident').textContent=d.motif||({delay:'Retard à l\'arrivée',cancel:'Annulation',denied:'Refus d\'embarquement'}[d.incident])||'—';
+      var per=parseInt(d.indemnite,10)||600; $('c-amount').textContent='jusqu\'à '+((per*n).toLocaleString('fr-FR'))+' €';
+      var tref=toFr(d.date)||d.date;
+      var rows='';
+      for(var i=0;i<n;i++){var p=pax[i]||{};var nm=(p.name||((p.prenom||'')+' '+(p.nom||'')).trim())||(i===0?main:'—');var dob=toFr(p.dob);var g=age(p.dob,tref);var minor=g!=null&&g<18;
+        var right=minor?('<b>Mineur·e</b> — part non cédée (mandat, art. 9 bis)'+(p.legalRepName?'<br>Représenté·e par '+esc(p.legalRepName):'')):esc(p.adresse||d.address||'');
+        rows+='<div class="tr td"><span>'+esc(nm)+(minor?' <span style="color:#9a6a00">· mineur·e</span>':'')+'</span><span>'+esc(dob||'—')+'</span><span>'+right+'</span></div>';}
+      $('c-paxbody').innerHTML=rows;
+    })
+    .catch(function(){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">😕 Dossier introuvable ou lien expiré. <a href="https://wa.me/33756863630">Reprendre sur WhatsApp</a>.</p>');});
+})();
+</script></body></html>

@@ -1179,7 +1179,8 @@
       // PRÉ-GÉNÉRATION en arrière-plan dès que l'écran s'affiche : plus d'attente au dépliage.
       var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
       var _accUrl = null, _accErr = false;
-      var _accPromise = fetch('/api/render-mandat-pdf', {
+      // Arrivée par référence (?r=, WhatsApp/CRM) : contrat léger HTML (/contrat.html?r=) → on évite l'appel PDF Chromium lourd.
+      var _accPromise = REF ? Promise.resolve(null) : fetch('/api/render-mandat-pdf', {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: _sig(30000),
           body: JSON.stringify({ n: lastName, fn: firstName, vol: S.flightNum, date: S.date, dep: S.dep, arr: S.arr,
             compagnie: (S.dep && S.arr && !S.flightNum) ? (S.dep + ' → ' + S.arr) : '', pnr: S.pnr || '',
@@ -1194,7 +1195,10 @@
       function _accLink(url){ return '📄 <a href="' + url + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800;font-size:15px">Ouvrir votre contrat rempli (PDF)</a>'
             + '<div style="font-size:12.5px;color:var(--muted);margin-top:7px">Le contrat complet, rempli avec vos informations, s\'ouvre dans un nouvel onglet.</div>'; }
       var _accFallback = 'Aperçu momentanément indisponible. Le <b>contrat complet et rempli</b> vous sera présenté juste après, sur l\'écran de signature. Une question ? <a href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp</a>.';
+      function _htmlContractLink(){ return '📄 <a href="/contrat.html?r=' + encodeURIComponent(REF) + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800;font-size:15px">Ouvrir votre contrat rempli</a>'
+            + '<div style="font-size:12.5px;color:var(--muted);margin-top:7px">Le contrat complet, rempli avec vos informations, s\'ouvre dans un nouvel onglet.</div>'; }
       function _renderAcc(){
+        if (REF) { _accBox.innerHTML = _htmlContractLink(); return; }
         if (_accUrl) { _accBox.innerHTML = _accLink(_accUrl); return; }
         if (_accErr) { _accBox.innerHTML = _accFallback; return; }
         _accBox.innerHTML = '⏳ On prépare votre contrat rempli…<br><span style="font-size:12px;color:var(--muted)">quelques secondes</span>';
