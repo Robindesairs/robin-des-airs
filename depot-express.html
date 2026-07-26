@@ -400,6 +400,11 @@
   var REF = '';
   var INCIDENT_LABEL = { delay: 'Retard +3 h', cancel: 'Annulation', denied: "Refus d'embarquement" };
   function esc(s){ return String(s == null ? '' : s).replace(/[<>&]/g, function(c){ return c==='<'?'&lt;':c==='>'?'&gt;':'&amp;'; }); }
+  // Traduction : en arrivée par référence (?r=), la langue du dossier (bot) pilote les libellés. TR(fr, en).
+  function TR(fr, en){ return (typeof S !== 'undefined' && S && S.lang === 'en') ? en : fr; }
+  // Palette + initiales des avatars — partagées entre le récap et l'écran de signature (cartes par adulte).
+  var NXA = ['#2E8BC0', '#8E44AD', '#E67E22', '#16A085', '#2E8BC0', '#8E44AD'];
+  function nxIni(n){ var p = String(n || '').trim().split(/\s+/).filter(Boolean); return (((p[0] || '')[0] || '') + ((p.length > 1 ? p[p.length - 1] : '')[0] || '')).toUpperCase() || '?'; }
   // Signal d'abandon avec délai : le PDF est généré par un Chromium headless (~10-16 s). Sans borne, un appel
   // lent bloquerait l'UI à l'infini (« il se passe plus rien »). Au-delà du délai, le fetch échoue → erreur + repli WhatsApp.
   function _sig(ms){ var c = new AbortController(); setTimeout(function(){ try { c.abort(); } catch (_) {} }, ms); return c.signal; }
@@ -516,22 +521,20 @@
     opts = opts || {};
     var card = document.createElement('div'); card.className = 'recap recap-nx';
     if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}'; document.head.appendChild(_nxst); }
-    var NXA = ['#2E8BC0','#8E44AD','#E67E22','#16A085','#2E8BC0','#8E44AD'];
-    function nxIni(n){ var p = String(n||'').trim().split(/\s+/).filter(Boolean); return (((p[0]||'')[0]||'')+((p.length>1?p[p.length-1]:'')[0]||'')).toUpperCase() || '?'; }
     var _adultNames = []; S.names.forEach(function(nm, j){ if (nm && !(S.paxData[j] && S.paxData[j].minor)) _adultNames.push(nm); });
     function _repSelect(i){
       var cur = (S.paxData[i] && S.paxData[i].legalRepName) || '';
       var inList = _adultNames.indexOf(cur) >= 0;
-      var opts = '<option value="">— choisir —</option>';
+      var opts = '<option value="">' + TR('— choisir —', '— choose —') + '</option>';
       _adultNames.forEach(function(an){ opts += '<option value="' + esc(an) + '"' + (cur === an ? ' selected' : '') + '>' + esc(an) + '</option>'; });
-      opts += '<option value="__autre__"' + ((cur && !inList) ? ' selected' : '') + '>Un autre représentant légal…</option>';
+      opts += '<option value="__autre__"' + ((cur && !inList) ? ' selected' : '') + '>' + TR('Un autre représentant légal…', 'Another legal representative…') + '</option>';
       return '<select class="input recap-repsel" data-idx="' + i + '" style="margin-top:4px">' + opts + '</select>'
-        + '<input class="input recap-repother" data-idx="' + i + '" value="' + esc((cur && !inList) ? cur : '') + '" placeholder="Prénom NOM du représentant" style="margin-top:8px;display:' + ((cur && !inList) ? 'block' : 'none') + '">';
+        + '<input class="input recap-repother" data-idx="' + i + '" value="' + esc((cur && !inList) ? cur : '') + '" placeholder="' + TR('Prénom NOM du représentant', 'Representative first & last name') + '" style="margin-top:8px;display:' + ((cur && !inList) ? 'block' : 'none') + '">';
     }
     function row(ic, k, vhtml, editKey){
       return '<div class="recap-row"><div class="recap-ic">' + ic + '</div>'
         + '<div class="recap-main"><div class="recap-k">' + esc(k) + '</div><div class="recap-v">' + vhtml + '</div></div>'
-        + '<button type="button" class="recap-edit" data-k="' + esc(editKey) + '">Modifier</button></div>';
+        + '<button type="button" class="recap-edit" data-k="' + esc(editKey) + '">' + TR('Modifier', 'Edit') + '</button></div>';
     }
     var rows = '';
     var isEsc = S.typeVol === 'escale' && S.legs && S.legs.length;
@@ -541,21 +544,21 @@
     if (S.date) {
       var _t = new Date(); _t.setDate(_t.getDate() + 2);
       var _maxDate = _t.getFullYear() + '-' + String(_t.getMonth() + 1).padStart(2, '0') + '-' + String(_t.getDate()).padStart(2, '0');
-      _dateFieldInner = '<div class="recap-k">Date du vol</div><input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px">';
+      _dateFieldInner = '<div class="recap-k">' + TR('Date du vol', 'Flight date') + '</div><input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px">';
     }
     if (isEsc) {
       var legHtml = S.legs.map(function(l, n){
         var num = l.num ? '<b>' + esc(l.num) + '</b> · ' : '';
-        return '<span class="leg">Vol ' + (n + 1) + ' : ' + num + esc(l.dep || '?') + ' → ' + esc(l.arr || '?') + '</span>';
+        return '<span class="leg">' + TR('Vol', 'Flight') + ' ' + (n + 1) + ' : ' + num + esc(l.dep || '?') + ' → ' + esc(l.arr || '?') + '</span>';
       }).join('');
-      rows += row('🔄', 'Votre trajet · ' + S.legs.length + ' vols (correspondance)', legHtml, '__trajet');
+      rows += row('🔄', TR('Votre trajet · ' + S.legs.length + ' vols (correspondance)', 'Your trip · ' + S.legs.length + ' flights (connection)'), legHtml, '__trajet');
     } else {
       // Vol direct : UN SEUL bloc « Votre vol » : n° de vol, puis DÉPART / ARRIVÉE SUR UNE MÊME LIGNE, puis la date. Aucun retour en arrière.
-      rows += '<div class="recap-row"><div class="recap-ic">✈️</div><div class="recap-main"><div class="recap-k">Votre vol</div>'
-        + '<input class="input recap-flightnum" value="' + esc(S.flightNum || '') + '" placeholder="N° de vol (ex. AF718)" style="margin-top:4px;text-transform:uppercase">'
+      rows += '<div class="recap-row"><div class="recap-ic">✈️</div><div class="recap-main"><div class="recap-k">' + TR('Votre vol', 'Your flight') + '</div>'
+        + '<input class="input recap-flightnum" value="' + esc(S.flightNum || '') + '" placeholder="' + TR('N° de vol (ex. AF718)', 'Flight no. (e.g. AF718)') + '" style="margin-top:4px;text-transform:uppercase">'
         + '<div style="display:flex;gap:8px;margin-top:6px">'
-        +   '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="Départ" style="flex:1.15;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
-        +   '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="Arrivée" style="flex:1;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
+        +   '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="' + TR('Départ', 'Departure') + '" style="flex:1.15;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
+        +   '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="' + TR('Arrivée', 'Arrival') + '" style="flex:1;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
         + '</div>' + (_dateFieldInner ? '<div style="margin-top:10px">' + _dateFieldInner + '</div>' : '') + '</div></div>';
     }
     // Correspondance : la date reste une ligne à part (le trajet a son propre éditeur de tronçons).
@@ -563,10 +566,10 @@
     // Numéro de réservation (PNR), éditable en ligne (souvent mal lu ou absent → le client peut le compléter).
     // Longueur variable selon la compagnie (6 le plus souvent, parfois plus) → pas de bridage strict + « i » explicatif.
     rows += '<div class="recap-row"><div class="recap-ic">🔖</div><div class="recap-main">'
-      + '<div class="recap-k">Numéro de réservation '
+      + '<div class="recap-k">' + TR('Numéro de réservation', 'Booking reference') + ' '
       + '<button type="button" class="recap-pnrinfo" aria-label="Qu\'est-ce que le numéro de réservation ?" style="border:1px solid var(--line-2);background:var(--surface-2);color:var(--muted);border-radius:50%;width:16px;height:16px;font-size:11px;font-weight:800;line-height:1;cursor:pointer;padding:0;vertical-align:middle">i</button></div>'
-      + '<div class="recap-pnrhelp" style="display:none;font-size:12px;color:var(--ink-soft);margin:5px 0 2px;line-height:1.45;font-weight:400">Aussi appelé <b>PNR</b> ou <b>référence de dossier</b>. En général <b>6 caractères</b> (lettres et chiffres), parfois plus selon la compagnie. Vous le trouvez sur votre <b>billet</b> ou votre <b>e-mail de confirmation</b>.</div>'
-      + '<input class="input recap-pnrinp" value="' + esc(S.pnr || '') + '" placeholder="ex. 2ABCDE" maxlength="20" style="margin-top:4px;text-transform:uppercase"></div></div>';
+      + '<div class="recap-pnrhelp" style="display:none;font-size:12px;color:var(--ink-soft);margin:5px 0 2px;line-height:1.45;font-weight:400">' + TR('Aussi appelé <b>PNR</b> ou <b>référence de dossier</b>. En général <b>6 caractères</b> (lettres et chiffres), parfois plus selon la compagnie. Vous le trouvez sur votre <b>billet</b> ou votre <b>e-mail de confirmation</b>.', 'Also called <b>PNR</b> or <b>booking reference</b>. Usually <b>6 characters</b> (letters and digits), sometimes more depending on the airline. You\'ll find it on your <b>ticket</b> or <b>confirmation email</b>.') + '</div>'
+      + '<input class="input recap-pnrinp" value="' + esc(S.pnr || '') + '" placeholder="' + TR('ex. 2ABCDE', 'e.g. 2ABCDE') + '" maxlength="20" style="margin-top:4px;text-transform:uppercase"></div></div>';
     var _renderCount = S.pax || S.names.filter(Boolean).length;
     if (!opts.skipPax) S.names.forEach(function(nm, i){
       if (!nm && i >= _renderCount) return; // rend une carte vide éditable pour un passager ajouté (i < pax)
@@ -579,19 +582,19 @@
       // NOM + DATE DE NAISSANCE + ADRESSE du MÊME passager, tous ÉDITABLES EN PLACE, regroupés dans un encadré. Aucun retour en arrière.
       var _acc = NXA[i % NXA.length];
       rows += '<div class="recap-pax" style="--nxacc:' + _acc + '">'
-        + '<div class="recap-pax-h"><span class="nx-av" style="background:' + _acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm || ('Passager ' + (i + 1))) + '</span><span class="nx-badge ' + (pd.minor ? 'mi' : 'ad') + '">' + (pd.minor ? 'Mineur·e' : 'Adulte') + '</span></div>'
+        + '<div class="recap-pax-h"><span class="nx-av" style="background:' + _acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm || (TR('Passager', 'Passenger') + ' ' + (i + 1))) + '</span><span class="nx-badge ' + (pd.minor ? 'mi' : 'ad') + '">' + (pd.minor ? TR('Mineur·e', 'Minor') : TR('Adulte', 'Adult')) + '</span></div>'
         + '<div class="recap-row"><div class="recap-ic">👤</div><div class="recap-main">'
-        +   '<div class="recap-k">Nom</div>'
-        +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="Prénom NOM" style="margin-top:4px;text-transform:uppercase">'
-        +   '<div class="recap-k" style="margin-top:10px">Date de naissance</div>'
+        +   '<div class="recap-k">' + TR('Nom', 'Name') + '</div>'
+        +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="' + TR('Prénom NOM', 'First name LAST NAME') + '" style="margin-top:4px;text-transform:uppercase">'
+        +   '<div class="recap-k" style="margin-top:10px">' + TR('Date de naissance', 'Date of birth') + '</div>'
         +   '<input type="date" class="input recap-dobin" data-idx="' + i + '" value="' + esc(_dobIso) + '" max="' + _todayIso + '" style="margin-top:4px"></div></div>'
         + '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-        +   '<div class="recap-k">Adresse <span class="muted" style="font-weight:400">· ' + (_adr ? 'corrigez si besoin' : 'à compléter') + '</span></div>'
+        +   '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + (_adr ? TR('corrigez si besoin', 'fix if needed') : TR('à compléter', 'to complete')) + '</span></div>'
         +   '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>'
-        + (pd.minor ? '<div class="recap-row" style="background:var(--gold-tint,#FFF6E6)"><div class="recap-ic">👤</div><div class="recap-main"><div class="recap-k">Représenté·e par (parent / tuteur légal)</div>' + _repSelect(i) + '<div style="font-size:11.5px;color:#9a6a00;margin-top:5px;line-height:1.4">Obligatoire pour un mineur : ce représentant signe pour l\'enfant.</div></div></div>' : '')
+        + (pd.minor ? '<div class="recap-row" style="background:var(--gold-tint,#FFF6E6)"><div class="recap-ic">👤</div><div class="recap-main"><div class="recap-k">' + TR('Représenté·e par (parent / tuteur légal)', 'Represented by (parent / legal guardian)') + '</div>' + _repSelect(i) + '<div style="font-size:11.5px;color:#9a6a00;margin-top:5px;line-height:1.4">' + TR('Obligatoire pour un mineur : ce représentant signe pour l\'enfant.', 'Required for a minor: this representative signs for the child.') + '</div></div></div>' : '')
         + '</div>';
     });
-    if (S.phone) rows += '<div class="recap-row"><div class="recap-ic">📞</div><div class="recap-main"><div class="recap-k">Téléphone</div>'
+    if (S.phone) rows += '<div class="recap-row"><div class="recap-ic">📞</div><div class="recap-main"><div class="recap-k">' + TR('Téléphone', 'Phone') + '</div>'
       + '<input class="input recap-phonein" type="tel" value="' + esc(S.phone) + '" placeholder="+33 6 12 34 56 78" style="margin-top:4px"></div></div>';
     if (S.email) rows += '<div class="recap-row"><div class="recap-ic">📧</div><div class="recap-main"><div class="recap-k">Email</div>'
       + '<input class="input recap-emailin" type="email" value="' + esc(S.email) + '" placeholder="vous@email.com" style="margin-top:4px"></div></div>';
@@ -600,13 +603,13 @@
     var _dfr = (function(iso){ var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[3] + '/' + m[2] + '/' + m[1] : (iso || ''); })(S.date);
     var _strip = opts.skipPax ? '' : '<div class="nx-strip">'
       + '<span class="nx-chip">✈️ ' + esc(_routeStr || '—') + '</span>'
-      + '<span class="nx-chip">👪 ' + _paxN + ' pax</span>'
+      + '<span class="nx-chip">👪 ' + _paxN + ' ' + TR('pax', 'pax') + '</span>'
       + (_dfr ? '<span class="nx-chip">📅 ' + esc(_dfr) + '</span>' : '')
-      + '<span class="nx-chip gold">💶 jusqu\'à ' + ((_paxN * 600).toLocaleString('fr-FR')) + ' €</span>'
+      + '<span class="nx-chip gold">💶 ' + TR('jusqu\'à', 'up to') + ' ' + ((_paxN * 600).toLocaleString(S.lang === 'en' ? 'en-GB' : 'fr-FR')) + ' €</span>'
       + '</div>';
-    var _addBtn = opts.skipPax ? '' : '<button type="button" class="nx-addpax" id="nxAddPax">➕ Ajouter un passager</button>';
-    card.innerHTML = '<div class="recap-h">🧾 Votre dossier, vérifiez avant de signer</div>' + _strip + rows + _addBtn
-      + '<div class="recap-foot">Une info à corriger ? Modifiez-la directement ci-dessus, tout reste éditable.</div>';
+    var _addBtn = opts.skipPax ? '' : '<button type="button" class="nx-addpax" id="nxAddPax">➕ ' + TR('Ajouter un passager', 'Add a passenger') + '</button>';
+    card.innerHTML = '<div class="recap-h">🧾 ' + TR('Votre dossier, vérifiez avant de signer', 'Your file — review before signing') + '</div>' + _strip + rows + _addBtn
+      + '<div class="recap-foot">' + TR('Une info à corriger ? Modifiez-la directement ci-dessus, tout reste éditable.', 'Need to fix something? Edit it directly above — everything stays editable.') + '</div>';
     Array.prototype.forEach.call(card.querySelectorAll('.recap-edit'), function(b){
       b.addEventListener('click', function(){ var k = b.getAttribute('data-k'); if (k === '__trajet') editTrajet(); else jump(k); });
     });
@@ -1193,17 +1196,17 @@
     sign: function(sc){
       // Pas de rappel du prix ici (les concurrents n'affichent pas de prix à la signature) : le montant est déjà
       // montré à l'écran d'éligibilité, et la commission figure dans « ce que vous signez, l'essentiel » + le contrat.
-      sc.innerHTML = '<h2>✍️ Dernière étape : signez</h2><p class="sub">Vérifiez votre dossier ci-dessous, puis signez.</p>';
+      sc.innerHTML = '<h2>✍️ ' + TR('Dernière étape : signez', 'Last step: sign') + '</h2><p class="sub">' + TR('Vérifiez votre dossier ci-dessous, puis signez.', 'Review your file below, then sign.') + '</p>';
       // Récap CONCRET du dossier (vol, trajet, passagers, contact), chaque ligne modifiable.
       recapCard(sc);
       // Encadré « l'essentiel » (repris du mandat) + lien contrat complet
       var box = document.createElement('div'); box.className = 'ss-box';
-      box.innerHTML = '<div class="ss-h">📝 Ce que vous signez, l\'essentiel</div><ul>'
-        + '<li>🤝 Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b>, vous ne gérez rien.</li>'
-        + '<li>💶 <b>0 € à payer si rien n\'est récupéré</b> : vous n\'avancez jamais un centime. En cas de succès, vous <b>gardez 75 %</b> de la somme (<b>60 %</b> si le dossier va au tribunal), on se rémunère uniquement sur ce qu\'on récupère pour vous.</li>'
-        + '<li>🛡️ Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.</li>'
-        + '<li>✍️ <b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez confié votre créance.</li>'
-        + '<li>📅 <b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.</li>'
+      box.innerHTML = '<div class="ss-h">📝 ' + TR('Ce que vous signez, l\'essentiel', 'What you\'re signing, in short') + '</div><ul>'
+        + '<li>🤝 ' + TR('Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b>, vous ne gérez rien.', 'You <b>assign your claim</b> to us: Robin des Airs acts in its own name, the airline pays us, <b>we pay you your share</b>, you handle nothing.') + '</li>'
+        + '<li>💶 ' + TR('<b>0 € à payer si rien n\'est récupéré</b> : vous n\'avancez jamais un centime. En cas de succès, vous <b>gardez 75 %</b> de la somme (<b>60 %</b> si le dossier va au tribunal), on se rémunère uniquement sur ce qu\'on récupère pour vous.', '<b>£0 to pay if nothing is recovered</b>: you never advance a penny. If we succeed, you <b>keep 75%</b> of the amount (<b>60%</b> if the case goes to court); we\'re only paid on what we recover for you.') + '</li>'
+        + '<li>🛡️ ' + TR('Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.', 'Even in court: lawyer, bailiff and court fees <b>are on us</b>.') + '</li>'
+        + '<li>✍️ ' + TR('<b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez confié votre créance.', '<b>Your signature will appear on the assignment contract sent to the airline</b>, as proof that you entrusted your claim to us.') + '</li>'
+        + '<li>📅 ' + TR('<b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.', '<b>14 days to withdraw</b>, free of charge · connections covered.') + '</li>'
         + '</ul>';
       sc.appendChild(box);
       // Contrat COMPLET en accordéon, physiquement sur la page (le plus sûr juridiquement).
@@ -1212,7 +1215,7 @@
       // Aperçu = LIEN vers le PDF rempli (ouvre dans un nouvel onglet = lecteur PDF natif). On n'embarque PLUS
       // le PDF dans une <iframe> : blanc sur mobile (pas de rendu PDF) ET sur desktop Chrome (object-src 'none'
       // bloque le plugin PDF interne). Le lien ouvre un onglet top-level, hors CSP → fiable partout.
-      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance, rempli avec vos informations</summary><div class="acc-body"><div class="acc-link" style="padding:18px 14px;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6"></div></div>';
+      acc.innerHTML = '<summary>📄 ' + TR('Lire le contrat de cession de créance, rempli avec vos informations', 'Read the assignment-of-claim contract, filled with your details') + '</summary><div class="acc-body"><div class="acc-link" style="padding:18px 14px;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6"></div></div>';
       sc.appendChild(acc);
       var _accBox = acc.querySelector('.acc-link');
       // Prénom/nom pour l'aperçu du contrat : même dérivation que submit() (pièce OCR d'abord,
@@ -1241,8 +1244,8 @@
       function _accLink(url){ return '📄 <a href="' + url + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800;font-size:15px">Ouvrir votre contrat rempli (PDF)</a>'
             + '<div style="font-size:12.5px;color:var(--muted);margin-top:7px">Le contrat complet, rempli avec vos informations, s\'ouvre dans un nouvel onglet.</div>'; }
       var _accFallback = 'Aperçu momentanément indisponible. Le <b>contrat complet et rempli</b> vous sera présenté juste après, sur l\'écran de signature. Une question ? <a href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp</a>.';
-      function _htmlContractLink(){ return '📄 <a href="/contrat.html?r=' + encodeURIComponent(REF) + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800;font-size:15px">Ouvrir votre contrat rempli</a>'
-            + '<div style="font-size:12.5px;color:var(--muted);margin-top:7px">Le contrat complet, rempli avec vos informations, s\'ouvre dans un nouvel onglet.</div>'; }
+      function _htmlContractLink(){ return '📄 <a href="/contrat.html?r=' + encodeURIComponent(REF) + '" target="_blank" rel="noopener" style="color:var(--neon-ink);font-weight:800;font-size:15px">' + TR('Ouvrir votre contrat rempli', 'Open your filled contract') + '</a>'
+            + '<div style="font-size:12.5px;color:var(--muted);margin-top:7px">' + TR('Le contrat complet, rempli avec vos informations, s\'ouvre dans un nouvel onglet.', 'The full contract, filled with your details, opens in a new tab.') + '</div>'; }
       function _renderAcc(){
         if (REF) { _accBox.innerHTML = _htmlContractLink(); return; }
         if (_accUrl) { _accBox.innerHTML = _accLink(_accUrl); return; }
@@ -1254,41 +1257,49 @@
       // ── Signature ÉLECTRONIQUE CERTIFIÉE (Yousign embarqué) — plus de dessin ──────────────
       //    Chaque ADULTE signe sa propre signature dans un cadre Yousign, sur cette page (voir submit()).
       //    Les mineurs sont couverts par le parent/tuteur signataire (pas de signature directe).
-      var adultsInfo = document.createElement('div'); adultsInfo.className = 'ss-box'; adultsInfo.style.marginTop = '10px';
-      var adultNames = S.names.filter(function(nm, i){ var pd = S.paxData[i] || {}; return nm && !pd.minor; });
+      // ── Signature façon maquette : une CARTE PAR ADULTE (cases + état), Yousign par-dessous ──
+      if (!document.getElementById('nx-sign-css')) { var _sst = document.createElement('style'); _sst.id = 'nx-sign-css'; _sst.textContent = '.nx-signcard{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0 0;position:relative;padding-left:5px}.nx-signcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.nx-signhead{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px;border-bottom:1px solid var(--line)}.nx-signhead .nx-nm{flex:1;font-size:15px;font-weight:800;color:var(--navy)}.nx-signstate{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;background:#eef1f5;color:#8a94a6;white-space:nowrap}.nx-signstate.act{background:#fff4e0;color:#9a6a00}.nx-signstate.done{background:#dff5ea;color:#047857}.nx-signbody{padding:8px 14px 12px}.nx-signbody .ck{padding:4px 0}'; document.head.appendChild(_sst); }
+      var adultIdxs = []; S.names.forEach(function(nm, i){ var pd = S.paxData[i] || {}; if (nm && !pd.minor) adultIdxs.push(i); });
       var minorNames = S.names.filter(function(nm, i){ var pd = S.paxData[i] || {}; return nm && pd.minor; });
-      var who = '<div class="ss-h">✍️ Qui signe</div><ul>';
-      adultNames.forEach(function(nm){ who += '<li>🖊️ <b>' + esc(nm) + '</b> signe sa signature électronique</li>'; });
-      if (minorNames.length) who += '<li>👶 ' + minorNames.map(esc).join(', ') + ' (mineur·e·s) : couvert·e·s par le parent/tuteur signataire</li>';
-      if (adultNames.length > 1) who += '<li style="list-style:none;color:var(--muted);font-size:12.5px;margin-top:4px">Chacun signe à son tour sur cet appareil (on se passe le téléphone).</li>';
-      who += '</ul>';
-      adultsInfo.innerHTML = who;
-      sc.appendChild(adultsInfo);
-
+      var _sigChecks = [];
+      var _sh = document.createElement('div'); _sh.className = 'ss-h'; _sh.style.marginTop = '10px'; _sh.innerHTML = '✍️ ' + TR('Signature de chaque adulte', 'Each adult signs'); sc.appendChild(_sh);
+      adultIdxs.forEach(function(si, j){
+        var nm = S.names[si]; var acc = NXA[si % NXA.length];
+        var cardEl = document.createElement('div'); cardEl.className = 'nx-signcard'; cardEl.style.setProperty('--nxacc', acc);
+        cardEl.innerHTML = '<div class="nx-signhead"><span class="nx-av" style="background:' + acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm) + '</span><span class="nx-signstate" id="nxsignstate-' + j + '">' + TR('À signer', 'To sign') + '</span></div>'
+          + '<div class="nx-signbody">'
+          + '<label class="ck"><input type="checkbox" class="nx-sig-ck"><span>' + TR('Je <b>cède ma créance</b>, née ou à naître, à Robin des Airs pour ce vol.', 'I <b>assign my claim</b>, present or future, to Robin des Airs for this flight.') + '</span></label>'
+          + '<label class="ck"><input type="checkbox" class="nx-sig-ck"><span>' + TR("J'ai <b>lu et j'accepte</b> le <a href='/cgv.html' target='_blank' rel='noopener'>contrat de cession et les CGV</a> ; je comprends que <b>l'indemnité n'est pas garantie</b>.", "I have <b>read and accept</b> the <a href='/cgv.html' target='_blank' rel='noopener'>assignment contract and Terms</a>; I understand the <b>compensation is not guaranteed</b>.") + '</span></label>'
+          + '</div>';
+        sc.appendChild(cardEl);
+        Array.prototype.forEach.call(cardEl.querySelectorAll('.nx-sig-ck'), function(c){ _sigChecks.push(c); });
+      });
+      if (minorNames.length) { var _mi = document.createElement('div'); _mi.className = 'ss-box'; _mi.style.cssText = 'margin-top:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.5'; _mi.innerHTML = '👶 ' + minorNames.map(esc).join(', ') + TR(' : la part du mineur n\'est pas cédée ; elle est recouvrée par mandat, le parent/tuteur signataire agit pour l\'enfant.', ': the minor\'s share is not assigned; it is recovered by mandate — the signing parent/guardian acts for the child.'); sc.appendChild(_mi); }
+      // Les cartes passent à « en cours… » puis « Signé ✓ » à mesure que chaque adulte signe dans Yousign.
+      _onSignerActive = function(i){ var el = document.getElementById('nxsignstate-' + i); if (el) { el.textContent = TR('en cours…', 'signing…'); el.className = 'nx-signstate act'; } };
+      _onSignerDone = function(i){ var el = document.getElementById('nxsignstate-' + i); if (el) { el.textContent = '✅ ' + TR('Signé', 'Signed'); el.className = 'nx-signstate done'; } };
       function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
-      var ck0 = ckRow("Je <b>déclare être le passager titulaire du billet</b> du vol indiqué et je <b>cède ma créance, née ou à naître</b>, à Robin des Airs afin qu'elle récupère les sommes qui me seraient dues au titre de ce vol.");
-      var ck1 = ckRow("J'ai <b>lu et j'accepte</b> le <b>contrat de cession</b> ci-dessus, les <a href='/cgv.html' target='_blank' rel='noopener'>CGV</a> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a> ; je <b>comprends que l'indemnité n'est pas garantie</b>.");
-      var ck3 = ckRow("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25), je reste libre de me rétracter, sans frais." + (S.pax > 1 ? " <span style='color:var(--muted)'>Cette demande vaut pour tous les passagers du dossier.</span>" : ""));
+      var ck3 = ckRow(TR("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25), je reste libre de me rétracter, sans frais.", "<b>Optional:</b> I ask Robin des Airs to <b>start right away</b>, without waiting for the end of my 14-day withdrawal period, and I remain free to withdraw, free of charge.") + (S.pax > 1 ? " <span style='color:var(--muted)'>" + TR('Cette demande vaut pour tous les passagers du dossier.', 'This request applies to all passengers on the file.') + "</span>" : ""));
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
-      go.textContent = '✍️ Signer électroniquement mon dossier';
+      go.textContent = '✍️ ' + TR('Signer électroniquement mon dossier', 'Sign my file electronically');
       sc.appendChild(go);
       var se = document.createElement('div'); se.className = 'suberr'; sc.appendChild(se);
       // Message d'attente : la génération du contrat + signature prend ~15 s (Chromium headless) → on prévient
       // pour ne pas que le client croie à un bug (« il se passe plus rien ») et ferme la page.
       var wait = document.createElement('div'); wait.style.cssText = 'display:none;margin-top:10px;font-size:13px;color:var(--ink-soft);font-weight:600;line-height:1.5;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px';
-      wait.innerHTML = '⏳ On génère votre <b>contrat sécurisé</b> et votre <b>signature électronique</b>. Cela prend <b>une quinzaine de secondes</b>, ne fermez pas la page.';
+      wait.innerHTML = TR('⏳ On génère votre <b>contrat sécurisé</b> et votre <b>signature électronique</b>. Cela prend <b>une quinzaine de secondes</b>, ne fermez pas la page.', '⏳ We\'re generating your <b>secure contract</b> and your <b>electronic signature</b>. This takes <b>about fifteen seconds</b> — please don\'t close the page.');
       sc.appendChild(wait);
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
-      rg.innerHTML = '<span>🔒</span><span>Signature électronique certifiée (Yousign) : horodatée, adresse IP enregistrée, document scellé et piste d\'audit. Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
+      rg.innerHTML = '<span>🔒</span><span>' + TR('Signature électronique certifiée (Yousign) : horodatée, adresse IP enregistrée, document scellé et piste d\'audit. Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.', 'Certified electronic signature (Yousign): timestamped, IP address recorded, sealed document and audit trail. It appears on the assignment contract sent to the airline (proof of assignment). Encrypted transmission (HTTPS). 14-day withdrawal. GDPR.') + '</span>';
       sc.appendChild(rg);
-      function refresh(){ go.disabled = !(ck0.checked && ck1.checked); } // signature = étape suivante (Yousign)
-      [ck0, ck1, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
+      function refresh(){ go.disabled = !(_sigChecks.length && _sigChecks.every(function(c){ return c.checked; })); } // toutes les cases de TOUS les adultes cochées
+      _sigChecks.concat([ck3]).forEach(function(c){ c.addEventListener('change', refresh); });
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
         go.disabled = true; go.textContent = '⏳ Préparation en cours…'; se.classList.remove('on'); wait.style.display = 'block';
         submit().catch(function(e){
-          go.disabled = false; go.textContent = '✍️ Signer électroniquement mon dossier'; wait.style.display = 'none';
+          go.disabled = false; go.textContent = '✍️ ' + TR('Signer électroniquement mon dossier', 'Sign my file electronically'); wait.style.display = 'none';
           se.innerHTML = '⚠️ ' + esc(e.message || 'Signature impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
           se.classList.add('on');
         });
@@ -1790,6 +1801,7 @@
   }
 
   // ── Soumission : depot-create → submit-mandat → depot-upload (pièce) ─────────
+  var _onSignerActive = null, _onSignerDone = null; // hooks mis par l'écran de signature pour les cartes par adulte
   function submit(){
     if ($('website').value) return Promise.reject(new Error('Envoi impossible.')); // honeypot
     var nowIso = new Date().toISOString();
@@ -1817,8 +1829,9 @@
       if (i >= list.length) { success(uploadResults); return; }
       var s = list[i];
       if (!s || !s.signing_url) { chainSign(list, i + 1, uploadResults); return; }
+      if (typeof _onSignerActive === 'function') _onSignerActive(i); // carte de l'adulte en cours → « en cours… »
       window.embedYousign(s.signing_url, {
-        onSuccess: function(){ chainSign(list, i + 1, uploadResults); },
+        onSuccess: function(){ if (typeof _onSignerDone === 'function') _onSignerDone(i); chainSign(list, i + 1, uploadResults); }, // sa carte → « Signé ✓ », puis adulte suivant
         onDeclined: function(){ render(); } // annulation dans Yousign → on ré-affiche l'écran de signature
       });
     }
@@ -2026,6 +2039,7 @@
         if (Array.isArray(d.legs) && d.legs.length > 1) { S.typeVol = 'escale'; S.legs = d.legs.map(function(l){ return { num: l.fnum || l.vol || '', dep: l.dep || '', arr: l.arr || '' }; }); }
         S.phone = d.phone || d.whatsapp || '';
         S.email = d.email || '';
+        S.lang = (d.lang === 'en' || d.langue_code === 'en') ? 'en' : 'fr';
         S.names = []; S.paxData = [];
         for (var i = 0; i < S.pax; i++) {
           var p = pax[i] || {};
