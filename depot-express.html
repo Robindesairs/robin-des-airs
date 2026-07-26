@@ -518,6 +518,16 @@
     if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}'; document.head.appendChild(_nxst); }
     var NXA = ['#2E8BC0','#8E44AD','#E67E22','#16A085','#2E8BC0','#8E44AD'];
     function nxIni(n){ var p = String(n||'').trim().split(/\s+/).filter(Boolean); return (((p[0]||'')[0]||'')+((p.length>1?p[p.length-1]:'')[0]||'')).toUpperCase() || '?'; }
+    var _adultNames = []; S.names.forEach(function(nm, j){ if (nm && !(S.paxData[j] && S.paxData[j].minor)) _adultNames.push(nm); });
+    function _repSelect(i){
+      var cur = (S.paxData[i] && S.paxData[i].legalRepName) || '';
+      var inList = _adultNames.indexOf(cur) >= 0;
+      var opts = '<option value="">— choisir —</option>';
+      _adultNames.forEach(function(an){ opts += '<option value="' + esc(an) + '"' + (cur === an ? ' selected' : '') + '>' + esc(an) + '</option>'; });
+      opts += '<option value="__autre__"' + ((cur && !inList) ? ' selected' : '') + '>Un autre représentant légal…</option>';
+      return '<select class="input recap-repsel" data-idx="' + i + '" style="margin-top:4px">' + opts + '</select>'
+        + '<input class="input recap-repother" data-idx="' + i + '" value="' + esc((cur && !inList) ? cur : '') + '" placeholder="Prénom NOM du représentant" style="margin-top:8px;display:' + ((cur && !inList) ? 'block' : 'none') + '">';
+    }
     function row(ic, k, vhtml, editKey){
       return '<div class="recap-row"><div class="recap-ic">' + ic + '</div>'
         + '<div class="recap-main"><div class="recap-k">' + esc(k) + '</div><div class="recap-v">' + vhtml + '</div></div>'
@@ -578,6 +588,7 @@
         + '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
         +   '<div class="recap-k">Adresse <span class="muted" style="font-weight:400">· ' + (_adr ? 'corrigez si besoin' : 'à compléter') + '</span></div>'
         +   '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>'
+        + (pd.minor ? '<div class="recap-row" style="background:var(--gold-tint,#FFF6E6)"><div class="recap-ic">👤</div><div class="recap-main"><div class="recap-k">Représenté·e par (parent / tuteur légal)</div>' + _repSelect(i) + '<div style="font-size:11.5px;color:#9a6a00;margin-top:5px;line-height:1.4">Obligatoire pour un mineur : ce représentant signe pour l\'enfant.</div></div></div>' : '')
         + '</div>';
     });
     if (S.phone) rows += '<div class="recap-row"><div class="recap-ic">📞</div><div class="recap-main"><div class="recap-k">Téléphone</div>'
@@ -606,6 +617,19 @@
     Array.prototype.forEach.call(card.querySelectorAll('.recap-addrinp'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
       inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].adresse = inp.value; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = inp.value; } });
+    });
+    Array.prototype.forEach.call(card.querySelectorAll('.recap-repsel'), function(sel){
+      var _i = parseInt(sel.getAttribute('data-idx'), 10);
+      var other = card.querySelector('.recap-repother[data-idx="' + _i + '"]');
+      sel.addEventListener('change', function(){
+        S.paxData[_i] = S.paxData[_i] || {};
+        if (sel.value === '__autre__') { if (other) other.style.display = 'block'; S.paxData[_i].legalRepName = (other && other.value.trim()) || ''; }
+        else { if (other) other.style.display = 'none'; S.paxData[_i].legalRepName = sel.value; }
+      });
+    });
+    Array.prototype.forEach.call(card.querySelectorAll('.recap-repother'), function(inp){
+      var _i = parseInt(inp.getAttribute('data-idx'), 10);
+      inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].legalRepName = inp.value.trim(); });
     });
     // ── Édition EN PLACE des autres champs (vol direct, date, noms, téléphone, email) : plus de retour en arrière ──
     var _fn = card.querySelector('.recap-flightnum'); if (_fn) _fn.addEventListener('input', function(){ S.flightNum = _fn.value.toUpperCase().replace(/\s+/g, ''); });
@@ -1777,7 +1801,7 @@
     var names = S.names.filter(Boolean);
     var passengersData = names.map(function(n, i){
       var pd = S.paxData[i] || {};
-      var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor, adresse: pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '') };
+      var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor, adresse: pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : ''), legalRepName: pd.legalRepName || '' };
       if (i === 0) { base.prenom = firstName; base.nom = lastName; base.dob = (S.piece && S.piece.dob) || pd.dob || ''; if (S.piece) base.birth = S.piece.lieuNaissance || ''; base.minor = base.dob ? isMinor(base.dob, S.date) : false; }
       if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
       return base;
