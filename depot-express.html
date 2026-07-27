@@ -405,6 +405,23 @@
   // Palette + initiales des avatars — partagées entre le récap et l'écran de signature (cartes par adulte).
   var NXA = ['#2E8BC0', '#8E44AD', '#E67E22', '#16A085', '#2E8BC0', '#8E44AD'];
   function nxIni(n){ var p = String(n || '').trim().split(/\s+/).filter(Boolean); return (((p[0] || '')[0] || '') + ((p.length > 1 ? p[p.length - 1] : '')[0] || '')).toUpperCase() || '?'; }
+  // Popup de confirmation léger (retrait d'un vol) — action réversible côté client mais on demande confirmation.
+  function nxConfirm(msg, onYes){
+    var ov = document.createElement('div');
+    ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true');
+    ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(11,31,58,.55);display:flex;align-items:center;justify-content:center;padding:20px';
+    ov.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:340px;width:100%;padding:20px 20px 16px;box-shadow:0 20px 60px rgba(11,31,58,.3);font-family:inherit">'
+      + '<p style="margin:0 0 16px;font-size:14.5px;line-height:1.5;color:#0B1F3A;font-weight:600">' + msg + '</p>'
+      + '<div style="display:flex;gap:8px">'
+      +   '<button type="button" class="nxc-no" style="flex:1;border:1.5px solid #e7ecf3;background:#fff;color:#0B1F3A;border-radius:11px;padding:11px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer">' + (typeof TR === 'function' ? TR('Annuler', 'Cancel') : 'Annuler') + '</button>'
+      +   '<button type="button" class="nxc-yes" style="flex:1;border:0;background:#c0392b;color:#fff;border-radius:11px;padding:11px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer">' + (typeof TR === 'function' ? TR('Retirer', 'Remove') : 'Retirer') + '</button>'
+      + '</div></div>';
+    function close(){ if (ov.parentNode) ov.parentNode.removeChild(ov); }
+    ov.addEventListener('click', function(e){ if (e.target === ov) close(); });
+    ov.querySelector('.nxc-no').addEventListener('click', close);
+    ov.querySelector('.nxc-yes').addEventListener('click', function(){ close(); onYes(); });
+    document.body.appendChild(ov);
+  }
   // Signal d'abandon avec délai : le PDF est généré par un Chromium headless (~10-16 s). Sans borne, un appel
   // lent bloquerait l'UI à l'infini (« il se passe plus rien »). Au-delà du délai, le fetch échoue → erreur + repli WhatsApp.
   function _sig(ms){ var c = new AbortController(); setTimeout(function(){ try { c.abort(); } catch (_) {} }, ms); return c.signal; }
@@ -547,11 +564,24 @@
       _dateFieldInner = '<div class="recap-k">' + TR('Date du vol', 'Flight date') + '</div><input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px">';
     }
     if (isEsc) {
+      // Éditeur de tronçons EN PLACE : chaque vol éditable (n°, départ, arrivée), ajout/retrait sans revenir en arrière.
+      if (!document.getElementById('nx-legs-css')) { var _lst = document.createElement('style'); _lst.id = 'nx-legs-css'; _lst.textContent = '.nx-leg{border:1px solid var(--line);border-radius:11px;padding:10px 11px;margin-bottom:8px;background:#fbfcfe}.nx-leg-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.nx-leg-h span{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}.nx-leg-x{border:0;background:#fdecea;color:#c0392b;border-radius:8px;width:26px;height:26px;font-size:13px;font-weight:800;cursor:pointer;line-height:1;padding:0}.nx-addleg{width:100%;border:1.5px dashed #b9c6da;background:#f2f6fb;color:#0B1F3A;border-radius:11px;padding:10px;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;margin-top:2px}'; document.head.appendChild(_lst); }
       var legHtml = S.legs.map(function(l, n){
-        var num = l.num ? '<b>' + esc(l.num) + '</b> · ' : '';
-        return '<span class="leg">' + TR('Vol', 'Flight') + ' ' + (n + 1) + ' : ' + num + esc(l.dep || '?') + ' → ' + esc(l.arr || '?') + '</span>';
+        return '<div class="nx-leg" data-n="' + n + '">'
+          + '<div class="nx-leg-h"><span>' + TR('Vol', 'Flight') + ' ' + (n + 1) + '</span>'
+          + (S.legs.length > 1 ? '<button type="button" class="nx-leg-x" data-n="' + n + '" aria-label="' + TR('Retirer ce vol', 'Remove this flight') + '" title="' + TR('Retirer ce vol', 'Remove this flight') + '">✕</button>' : '')
+          + '</div>'
+          + '<input class="input nx-leg-num" data-n="' + n + '" value="' + esc(l.num || '') + '" placeholder="' + TR('N° de vol (ex. AF718)', 'Flight no. (e.g. AF718)') + '" style="text-transform:uppercase">'
+          + '<div style="display:flex;gap:8px;margin-top:6px">'
+          +   '<input class="input nx-leg-dep" data-n="' + n + '" value="' + esc(l.dep || '') + '" placeholder="' + TR('Départ', 'Departure') + '" style="flex:1;min-width:0">'
+          +   '<input class="input nx-leg-arr" data-n="' + n + '" value="' + esc(l.arr || '') + '" placeholder="' + TR('Arrivée', 'Arrival') + '" style="flex:1;min-width:0">'
+          + '</div></div>';
       }).join('');
-      rows += row('🔄', TR('Votre trajet · ' + S.legs.length + ' vols (correspondance)', 'Your trip · ' + S.legs.length + ' flights (connection)'), legHtml, '__trajet');
+      rows += '<div class="recap-row"><div class="recap-ic">🔄</div><div class="recap-main">'
+        + '<div class="recap-k">' + TR('Votre trajet · ' + S.legs.length + ' vols (correspondance)', 'Your trip · ' + S.legs.length + ' flights (connection)') + '</div>'
+        + '<div class="nx-legs" style="margin-top:6px">' + legHtml + '</div>'
+        + '<button type="button" class="nx-addleg">➕ ' + TR('Ajouter un vol', 'Add a flight') + '</button>'
+        + '</div></div>';
     } else {
       // Vol direct : UN SEUL bloc « Votre vol » : n° de vol, puis DÉPART / ARRIVÉE SUR UNE MÊME LIGNE, puis la date. Aucun retour en arrière.
       rows += '<div class="recap-row"><div class="recap-ic">✈️</div><div class="recap-main"><div class="recap-k">' + TR('Votre vol', 'Your flight') + '</div>'
@@ -571,6 +601,26 @@
       + '<div class="recap-pnrhelp" style="display:none;font-size:12px;color:var(--ink-soft);margin:5px 0 2px;line-height:1.45;font-weight:400">' + TR('Aussi appelé <b>PNR</b> ou <b>référence de dossier</b>. En général <b>6 caractères</b> (lettres et chiffres), parfois plus selon la compagnie. Vous le trouvez sur votre <b>billet</b> ou votre <b>e-mail de confirmation</b>.', 'Also called <b>PNR</b> or <b>booking reference</b>. Usually <b>6 characters</b> (letters and digits), sometimes more depending on the airline. You\'ll find it on your <b>ticket</b> or <b>confirmation email</b>.') + '</div>'
       + '<input class="input recap-pnrinp" value="' + esc(S.pnr || '') + '" placeholder="' + TR('ex. 2ABCDE', 'e.g. 2ABCDE') + '" maxlength="20" style="margin-top:4px;text-transform:uppercase"></div></div>';
     var _renderCount = S.pax || S.names.filter(Boolean).length;
+    // Adresse du 1er passager (cédant principal) : sert de référence « même adresse » pour la famille.
+    var _mainAdr = (S.paxData[0] && S.paxData[0].adresse) || (S.piece && S.piece.adresse) || '';
+    function _shortAdr(a){ a = String(a || '').trim(); return a.length > 30 ? a.slice(0, 28).replace(/,\s*$/, '') + '…' : a; }
+    // Bloc adresse : principal = champ libre ; co-passager = menu « même adresse / autre » (maquette validée).
+    function _addrBlock(i, adr){
+      if (i === 0) {
+        return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
+          + '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + (adr ? TR('corrigez si besoin', 'fix if needed') : TR('à compléter', 'to complete')) + '</span></div>'
+          + '<input class="input recap-addrinp" data-idx="0" value="' + esc(adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>';
+      }
+      var same = !adr || (_mainAdr && adr.trim() === _mainAdr.trim());
+      var mainNm = S.names[0] || TR('le 1er passager', 'the 1st passenger');
+      return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
+        + '<div class="recap-k">' + TR('Adresse', 'Address') + '</div>'
+        + '<select class="input recap-addrmode" data-idx="' + i + '" style="margin-top:4px">'
+        +   '<option value="__same__"' + (same ? ' selected' : '') + '>' + TR('Même adresse que ', 'Same address as ') + esc(mainNm) + (_mainAdr ? ' (' + esc(_shortAdr(_mainAdr)) + ')' : '') + '</option>'
+        +   '<option value="__other__"' + (same ? '' : ' selected') + '>' + TR('Autre adresse', 'A different address') + '</option>'
+        + '</select>'
+        + '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(same ? '' : adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:6px;display:' + (same ? 'none' : 'block') + '"></div></div>';
+    }
     if (!opts.skipPax) S.names.forEach(function(nm, i){
       if (!nm && i >= _renderCount) return; // rend une carte vide éditable pour un passager ajouté (i < pax)
       var pd = S.paxData[i] || {};
@@ -588,9 +638,7 @@
         +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="' + TR('Prénom NOM', 'First name LAST NAME') + '" style="margin-top:4px;text-transform:uppercase">'
         +   '<div class="recap-k" style="margin-top:10px">' + TR('Date de naissance', 'Date of birth') + '</div>'
         +   '<input type="date" class="input recap-dobin" data-idx="' + i + '" value="' + esc(_dobIso) + '" max="' + _todayIso + '" style="margin-top:4px"></div></div>'
-        + '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-        +   '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + (_adr ? TR('corrigez si besoin', 'fix if needed') : TR('à compléter', 'to complete')) + '</span></div>'
-        +   '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(_adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>'
+        + _addrBlock(i, _adr)
         + (pd.minor ? '<div class="recap-row" style="background:var(--gold-tint,#FFF6E6)"><div class="recap-ic">👤</div><div class="recap-main"><div class="recap-k">' + TR('Représenté·e par (parent / tuteur légal)', 'Represented by (parent / legal guardian)') + '</div>' + _repSelect(i) + '<div style="font-size:11.5px;color:#9a6a00;margin-top:5px;line-height:1.4">' + TR('Obligatoire pour un mineur : ce représentant signe pour l\'enfant.', 'Required for a minor: this representative signs for the child.') + '</div></div></div>' : '')
         + '</div>';
     });
@@ -620,6 +668,16 @@
     Array.prototype.forEach.call(card.querySelectorAll('.recap-addrinp'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
       inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].adresse = inp.value; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = inp.value; } });
+    });
+    // Menu « même adresse / autre » (co-passagers) : « même » → adresse vide (le contrat retombe sur celle du principal).
+    Array.prototype.forEach.call(card.querySelectorAll('.recap-addrmode'), function(sel){
+      var _i = parseInt(sel.getAttribute('data-idx'), 10);
+      var inp = card.querySelector('.recap-addrinp[data-idx="' + _i + '"]');
+      sel.addEventListener('change', function(){
+        S.paxData[_i] = S.paxData[_i] || {};
+        if (sel.value === '__other__') { if (inp) { inp.style.display = 'block'; inp.focus(); } S.paxData[_i].adresse = (inp && inp.value.trim()) || ''; }
+        else { if (inp) inp.style.display = 'none'; S.paxData[_i].adresse = ''; }
+      });
     });
     Array.prototype.forEach.call(card.querySelectorAll('.recap-repsel'), function(sel){
       var _i = parseInt(sel.getAttribute('data-idx'), 10);
@@ -656,6 +714,31 @@
       var _tmp = document.createElement('div'); recapCard(_tmp, opts); // ré-rend la carte à l'identique
       if (_tmp.firstChild) card.replaceWith(_tmp.firstChild);
     });
+    // Re-rend la carte récap à l'identique (après ajout/retrait de vol).
+    function _rerenderRecap(){ var _tmp = document.createElement('div'); recapCard(_tmp, opts); if (_tmp.firstChild) card.replaceWith(_tmp.firstChild); }
+    // Recalcule trajet/n° de vol depuis les tronçons après édition en place.
+    function _recomputeFromLegs(){
+      var kept = (S.legs || []).filter(function(l){ return l && (l.dep || l.arr || l.num); });
+      if (kept.length) { S.dep = kept[0].dep || ''; S.arr = kept[kept.length - 1].arr || ''; S.flightNum = kept.map(function(l){ return l.num; }).filter(Boolean).join(' / '); }
+    }
+    Array.prototype.forEach.call(card.querySelectorAll('.nx-leg-num'), function(inp){ var n = parseInt(inp.getAttribute('data-n'), 10); inp.addEventListener('input', function(){ S.legs[n] = S.legs[n] || {}; S.legs[n].num = inp.value.toUpperCase().replace(/\s+/g, ''); _recomputeFromLegs(); }); });
+    Array.prototype.forEach.call(card.querySelectorAll('.nx-leg-dep'), function(inp){ var n = parseInt(inp.getAttribute('data-n'), 10); airportAuto(inp); inp.addEventListener('input', function(){ S.legs[n] = S.legs[n] || {}; S.legs[n].dep = inp.value.trim(); _recomputeFromLegs(); }); });
+    Array.prototype.forEach.call(card.querySelectorAll('.nx-leg-arr'), function(inp){ var n = parseInt(inp.getAttribute('data-n'), 10); airportAuto(inp); inp.addEventListener('input', function(){ S.legs[n] = S.legs[n] || {}; S.legs[n].arr = inp.value.trim(); _recomputeFromLegs(); }); });
+    Array.prototype.forEach.call(card.querySelectorAll('.nx-leg-x'), function(btn){
+      btn.addEventListener('click', function(){
+        var n = parseInt(btn.getAttribute('data-n'), 10);
+        var l = S.legs[n] || {};
+        var label = (l.dep || '?') + ' → ' + (l.arr || '?');
+        nxConfirm(TR('Retirer le vol ', 'Remove flight ') + (n + 1) + ' (' + esc(label) + ') ' + TR('de votre trajet ?', 'from your trip?'), function(){
+          S.legs.splice(n, 1);
+          if (S.legs.length <= 1) { S.typeVol = 'direct'; if (S.legs[0]) { S.dep = S.legs[0].dep || ''; S.arr = S.legs[0].arr || ''; S.flightNum = S.legs[0].num || ''; } S.legs = []; }
+          else { _recomputeFromLegs(); }
+          _rerenderRecap();
+        });
+      });
+    });
+    var _addL = card.querySelector('.nx-addleg');
+    if (_addL) _addL.addEventListener('click', function(){ S.legs = S.legs || []; S.legs.push({ num: '', dep: (S.legs.length ? (S.legs[S.legs.length - 1].arr || '') : ''), arr: '' }); _rerenderRecap(); });
     sc.appendChild(card);
   }
   // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
