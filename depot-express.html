@@ -2122,7 +2122,9 @@
         if (Array.isArray(d.legs) && d.legs.length > 1) { S.typeVol = 'escale'; S.legs = d.legs.map(function(l){ return { num: l.fnum || l.vol || '', dep: l.dep || '', arr: l.arr || '' }; }); }
         S.phone = d.phone || d.whatsapp || '';
         S.email = d.email || '';
-        S.lang = (d.lang === 'en' || d.langue_code === 'en') ? 'en' : 'fr';
+        // Langue : paramètre ?lang= (posé par le lien WhatsApp EN) prioritaire, sinon dossier stocké.
+        var _qlang = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+        S.lang = (_qlang === 'en' || (!_qlang && (d.lang === 'en' || d.langue_code === 'en'))) ? 'en' : 'fr';
         S.names = []; S.paxData = [];
         for (var i = 0; i < S.pax; i++) {
           var p = pax[i] || {};

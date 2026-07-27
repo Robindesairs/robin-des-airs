@@ -1050,8 +1050,10 @@ function buildMandatUrl(s, phone) {
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
   };
   if (s.ref) { DOSSIERS.set(s.ref, dossier); persistDossiers(); storeDossierDurable(s.ref, dossier).catch(() => {}); }
-  const _page = isEN(s) ? 'mandat-en.html' : 'depot-express.html'; // FR → page unifiée récap+signature (?r= hydrate via dossier-get) ; EN reste sur mandat-en.html (pas encore de depot-express EN)
-  return `https://robindesairs.eu/${_page}?r=${encodeURIComponent(s.ref || '')}`;
+  // FR et EN → même page unifiée récap+signature depot-express.html?r= (hydrate via dossier-get).
+  // EN : &lang=en force l'anglais côté page (TR()), indépendamment du dossier stocké. Fini l'ancien mandat-en.html.
+  const _q = `?r=${encodeURIComponent(s.ref || '')}` + (isEN(s) ? '&lang=en' : '');
+  return `https://robindesairs.eu/depot-express.html${_q}`;
 }
 
 // ─── OCR (Vision) ────────────────────────────────────────────────────────────
