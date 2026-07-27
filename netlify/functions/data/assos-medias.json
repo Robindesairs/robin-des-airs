@@ -27,23 +27,32 @@
   "id": "a003",
   "nom": "CRAN (Conseil Representatif des Associations Noires)",
   "pays": "multi-afro",
-  "email": "",
+  "email": "contact@cranfrance.org",
   "url": "https://cranfrance.org",
   "type": "federation",
   "tier": 1,
   "note": "federation · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "cranfrance.org/contact",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a004",
   "nom": "Coordination SUD",
   "pays": "multi-ONG",
-  "email": "",
+  "email": "sud@coordinationsud.org",
   "url": "https://coordinationsud.org",
   "type": "plateforme",
   "tier": 1,
   "note": "plateforme · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "coordinationsud.org",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "statut_reponse": "accuse_auto"
  },
  {
   "id": "a005",
@@ -61,12 +70,17 @@
   "id": "a006",
   "nom": "UCE (Union des Camerounais de l'Etranger)",
   "pays": "Cameroun",
-  "email": "",
+  "email": "contact@ucetranger.org",
   "url": "https://ucetranger.org",
   "type": "parapluie/annuaire 275+",
   "tier": 2,
   "note": "parapluie/annuaire 275+ · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "ucetranger.org",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "note_envoi": "variante Cameroun + ref Data Cameroon 29/07"
  },
  {
   "id": "a007",
@@ -95,12 +109,16 @@
   "id": "a009",
   "nom": "PACOF (Plateforme Assos Congolaises de France)",
   "pays": "RDC",
-  "email": "",
+  "email": "communication@pacof.fr",
   "url": "https://pacof.fr",
   "type": "plateforme 57 assos",
   "tier": 2,
   "note": "plateforme 57 assos · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "pacof.fr/contacts",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a010",
@@ -151,12 +169,17 @@
   "id": "a014",
   "nom": "Convention de la Diaspora Gabonaise (CDG)",
   "pays": "Gabon",
-  "email": "",
+  "email": "contact@cdg-gabon.com",
   "url": "https://cdg-gabon.com",
   "type": "plateforme",
   "tier": 2,
   "note": "plateforme · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "cdg-gabon.com (domaine non résolu live)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "statut_livraison": "renvoye_fondateur_a_confirmer"
  },
  {
   "id": "a015",
@@ -184,23 +207,31 @@
   "id": "a017",
   "nom": "HCMF (Haut Conseil des Maliens de France)",
   "pays": "Mali",
-  "email": "",
+  "email": "contact@hcmf.fr",
   "url": "https://hcmf.fr",
   "type": "federation",
   "tier": 2,
   "note": "federation · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "a_relever",
+  "email_confiance": "low",
+  "email_source": "hcmf.fr (non vérifié)",
+  "email_statut": "trouve_auto_2026-07-27"
  },
  {
   "id": "a018",
   "nom": "CADERKAF (Assos Cercles Region Kayes)",
   "pays": "Mali",
-  "email": "",
+  "email": "caderkafrance@yahoo.fr",
   "url": "https://caderkaf.fr",
   "type": "coordination",
   "tier": 2,
   "note": "coordination · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "caderkaf.fr (cfemail décodé)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "statut_livraison": "rebond_2026-07-27"
  },
  {
   "id": "a019",
@@ -217,12 +248,17 @@
   "id": "a020",
   "nom": "UABF (Union des Associations Burkinabe de France)",
   "pays": "Burkina Faso",
-  "email": "",
+  "email": "info@uabf.net",
   "url": "https://uabf.net",
   "type": "federation",
   "tier": 2,
   "note": "federation · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "uabf.net",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "statut_livraison": "renvoye_fondateur_a_confirmer"
  },
  {
   "id": "a021",
@@ -263,23 +299,31 @@
   "id": "a024",
   "nom": "RAME (Reseau Assos Mauritaniennes en Europe)",
   "pays": "Mauritanie",
-  "email": "",
+  "email": "contact@le-rame.org",
   "url": "https://le-rame.org",
   "type": "reseau",
   "tier": 2,
   "note": "reseau · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "le-rame.org",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a025",
   "nom": "CoNiF (Conseil des Nigeriens de France)",
   "pays": "Niger",
-  "email": "",
+  "email": "conifniger@gmail.com",
   "url": "https://conif.fr",
   "type": "conseil",
   "tier": 2,
   "note": "conseil · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "FORIM",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a026",
@@ -296,23 +340,31 @@
   "id": "a027",
   "nom": "FESSEF (Federation Assos Etudiants Senegalais de France)",
   "pays": "Senegal",
-  "email": "",
+  "email": "fesef.france@gmail.com",
   "url": "https://fessef.fr",
   "type": "federation etudiante",
   "tier": 2,
   "note": "federation etudiante · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "annuaire étudiant",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a028",
   "nom": "RADBFS (Reseau Dev Bassin Fleuve Senegal)",
   "pays": "Senegal",
-  "email": "",
+  "email": "radbfs@gmail.com",
   "url": "",
   "type": "reseau",
   "tier": 2,
   "note": "reseau · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "FORIM",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a029",
@@ -340,23 +392,30 @@
   "id": "a031",
   "nom": "CBF (Conseil des Beninois de France)",
   "pays": "Benin",
-  "email": "",
+  "email": "jean_charles.ahomadegbe@yahoo.fr",
   "url": "https://cbfdiaspora.fr",
   "type": "federation",
   "tier": 2,
   "note": "federation · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "a_relever",
+  "email_confiance": "low",
+  "email_source": "perso président (site SSL cassé)",
+  "email_statut": "trouve_auto_2026-07-27"
  },
  {
   "id": "a032",
   "nom": "CNDDB (Coordination Nouveau Depart Diaspora Benin)",
   "pays": "Benin",
-  "email": "",
+  "email": "secretariatcnddb@gmail.com",
   "url": "https://cnddb.org",
   "type": "coordination",
   "tier": 2,
   "note": "coordination · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "cnddb.org/contact",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a033",
@@ -373,23 +432,29 @@
   "id": "a034",
   "nom": "CEN (RNS malgache)",
   "pays": "Madagascar",
-  "email": "",
+  "email": "contact@rns-cen.com",
   "url": "https://rns-cen.com",
   "type": "federation 43 assos",
   "tier": 2,
   "note": "federation 43 assos · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "a_relever",
+  "email_confiance": "low",
+  "email_source": "rns-cen.com (form only)",
+  "email_statut": "trouve_auto_2026-07-27"
  },
  {
   "id": "a035",
   "nom": "FECOM (Federation Comorienne de Marseille)",
   "pays": "Comores",
-  "email": "",
+  "email": "fecom@wanadoo.fr",
   "url": "",
   "type": "federation 150+ assos",
   "tier": 2,
   "note": "federation 150+ assos · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "a_relever",
+  "email_confiance": "low",
+  "email_source": "net1901 (wanadoo, possiblement obsolète)",
+  "email_statut": "trouve_auto_2026-07-27"
  },
  {
   "id": "a036",
@@ -450,23 +515,32 @@
   "id": "a041",
   "nom": "Centre Culturel RDC",
   "pays": "RDC",
-  "email": "",
+  "email": "info@centreculturel-rdc.org",
   "url": "https://centreculturel-rdc.org",
   "type": "asso culturelle",
   "tier": 3,
   "note": "asso culturelle · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "centreculturel-rdc.org/kontakt",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a042",
   "nom": "FEDIAS / FEDIASCONGO",
   "pays": "Congo/RDC",
-  "email": "",
+  "email": "info@fediascongo.com",
   "url": "https://fediascongo.com",
   "type": "federation (site 404)",
   "tier": 3,
   "note": "federation (site 404) · France/Belgique",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "fediascongo.com (Bruxelles)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "statut_livraison": "rebond_2026-07-27"
  },
  {
   "id": "a043",
@@ -529,12 +603,16 @@
   "id": "a048",
   "nom": "ANRF (Assos des Nigeriens Residents en France)",
   "pays": "Niger",
-  "email": "",
+  "email": "contact@anrf.fr",
   "url": "https://anrf.fr",
   "type": "association",
   "tier": 3,
   "note": "association · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "Cylex (site SSL expiré)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a049",
@@ -551,12 +629,15 @@
   "id": "a050",
   "nom": "ANAN Niger",
   "pays": "Niger",
-  "email": "",
+  "email": "anan.niger@gmail.com",
   "url": "https://association-anan-niger.fr",
   "type": "association",
   "tier": 3,
   "note": "association · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "a_relever",
+  "email_confiance": "low",
+  "email_source": "non vérifié",
+  "email_statut": "trouve_auto_2026-07-27"
  },
  {
   "id": "a051",
@@ -573,12 +654,16 @@
   "id": "a052",
   "nom": "AESF (Assos des Etudiants Senegalais en France)",
   "pays": "Senegal",
-  "email": "",
+  "email": "masteraesf@gmail.com",
   "url": "https://aesf.fr",
   "type": "asso etudiante",
   "tier": 3,
   "note": "asso etudiante · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "aesf.fr",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a053",
@@ -628,12 +713,16 @@
   "id": "a057",
   "nom": "IRA France Mauritanie",
   "pays": "Mauritanie",
-  "email": "",
+  "email": "Contact@irafrance-ong.com",
   "url": "",
   "type": "association (droits humains)",
   "tier": 3,
   "note": "association (droits humains) · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "irafrance-mauritanie.org",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a058",
@@ -650,12 +739,16 @@
   "id": "a059",
   "nom": "CCEDIAF (Chefs d'Entreprises Diaspora Ivoirienne)",
   "pays": "Cote d'Ivoire",
-  "email": "",
+  "email": "secretariat@ccediaf.org",
   "url": "https://ccediaf.org",
   "type": "asso reseau entrepreneurs",
   "tier": 3,
   "note": "asso reseau entrepreneurs · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "ccediaf.org (footer)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a060",
@@ -738,12 +831,15 @@
   "id": "a067",
   "nom": "Groupe de la Diaspora Togolaise",
   "pays": "Togo",
-  "email": "",
+  "email": "togodiaspora2021@gmail.com",
   "url": "https://togodiaspora.org",
   "type": "asso reseau",
   "tier": 3,
   "note": "asso reseau · France/intl",
-  "statut_initial": "a_relever"
+  "statut_initial": "a_relever",
+  "email_confiance": "med",
+  "email_source": "togodiaspora.org — HORS PÉRIMÈTRE (US)",
+  "email_statut": "trouve_auto_2026-07-27"
  },
  {
   "id": "a068",
@@ -772,12 +868,16 @@
   "id": "a070",
   "nom": "Hetsika",
   "pays": "Madagascar",
-  "email": "",
+  "email": "contact@hetsika.fr",
   "url": "https://hetsika.fr",
   "type": "asso culturelle",
   "tier": 3,
   "note": "asso culturelle · France (Nantes)",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "hetsika.fr/nous-contacter",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a071",
@@ -816,23 +916,31 @@
   "id": "a074",
   "nom": "ALFT (Lever les Freins pour Tous)",
   "pays": "Comores",
-  "email": "",
+  "email": "contact@alft-asso.com",
   "url": "https://alft-asso.com",
   "type": "association",
   "tier": 3,
   "note": "association · France",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "alft-asso.com/contact",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a075",
   "nom": "Asso Diaspora Comorienne de Foumbouni",
   "pays": "Comores",
-  "email": "",
+  "email": "adcf.ladiascof@gmail.com",
   "url": "",
   "type": "association",
   "tier": 3,
   "note": "association · France (Marseille)",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "net1901",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a076",
@@ -850,34 +958,47 @@
   "id": "a077",
   "nom": "Conseil des Guineens de Belgique",
   "pays": "Guinee",
-  "email": "",
+  "email": "contact@conseildesguineens.be",
   "url": "https://conseildesguineens.be",
   "type": "conseil/federation",
   "tier": 3,
   "note": "conseil/federation · Belgique",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "conseildesguineens.be (BE)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a078",
   "nom": "GAMS Belgique",
   "pays": "diaspora africaine",
-  "email": "",
+  "email": "info@gams.be",
   "url": "https://gams.be",
   "type": "association",
   "tier": 3,
   "note": "association · Belgique",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "high",
+  "email_source": "gams.be (BE)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27"
  },
  {
   "id": "a079",
   "nom": "La Maison Africaine asbl",
   "pays": "panafricaine",
-  "email": "",
+  "email": "t.vanpevenage@maisonafricaine.be",
   "url": "https://vitrineafricaine.be",
   "type": "association",
   "tier": 3,
   "note": "association · Belgique",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "maisonafricaine.be (adresse staff)",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "statut_reponse": "accuse_auto"
  },
  {
   "id": "a080",
@@ -931,11 +1052,16 @@
   "id": "a084",
   "nom": "CEBAPH (Cercle Belgo-Africain Promotion Humaine)",
   "pays": "Cameroun",
-  "email": "",
+  "email": "asblcebaph@gmail.com",
   "url": "",
   "type": "association",
   "tier": 3,
   "note": "association · Belgique",
-  "statut_initial": "a_relever"
+  "statut_initial": "envoye",
+  "email_confiance": "med",
+  "email_source": "over-blog",
+  "email_statut": "trouve_auto_2026-07-27",
+  "date_envoi": "2026-07-27",
+  "note_envoi": "variante Cameroun + ref Data Cameroon 29/07"
  }
 ]

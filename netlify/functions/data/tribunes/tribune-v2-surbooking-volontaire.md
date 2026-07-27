@@ -6,7 +6,7 @@
 
 *Quand un vol est vendu au delà de sa capacité, la compagnie demande d'abord des volontaires. C'est une bonne affaire pour elle, et parfois une mauvaise pour celui qui lève la main. Le règlement européen traite très différemment celui qui accepte de rester au sol et celui qu'on écarte sans son accord.*
 
-Il y a une scène que tout personnel navigant connaît. L'appel passe en salle d'embarquement, une voix propose une compensation à qui accepterait de partir plus tard, et quelques passagers s'avancent. L'ambiance est bon enfant. Personne ne parle de droit à ce moment là.
+Il y a une scène qui se rejoue sans cesse en salle d'embarquement. L'appel passe en salle d'embarquement, une voix propose une compensation à qui accepterait de partir plus tard, et quelques passagers s'avancent. L'ambiance est bon enfant. Personne ne parle de droit à ce moment là.
 
 C'est précisément là que se joue l'écart le plus mal compris du règlement CE 261/2004.
 
@@ -54,4 +54,4 @@ Sur des liaisons où les clientèles voyagent massivement en groupe familial, ce
 
 Le volontariat n'est pas un piège. C'est simplement une transaction, et une transaction se négocie avec les deux chiffres sous les yeux.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs (robindesairs.eu).

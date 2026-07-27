@@ -46,4 +46,4 @@ Rappelons enfin le champ d'application. Tout départ depuis un aéroport de l'Un
 
 Un demi-tour n'est pas un incident de parcours anodin. C'est une qualification juridique à part entière, et elle mérite d'être vérifiée avant d'accepter un simple mot d'excuse.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs (robindesairs.eu).

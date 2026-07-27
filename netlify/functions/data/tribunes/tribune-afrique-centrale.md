@@ -67,7 +67,7 @@ C'est souvent tout ce qui sépare une créance recouvrable d'un droit éteint.
 **Bio**
 
 Saint-Yves Kodjo est fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique.
-Spécialiste du secteur aérien, il a passé quinze ans en vol comme steward puis chef de cabine, et vingt ans dans le transport aérien.
+
 Il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
 robindesairs.eu
 
@@ -87,7 +87,7 @@ Il se termine par des conseils pratiques et gratuits, dont le fait qu'en France 
 
 Le texte fait environ 5 000 signes et est prêt à publier. Je peux l'ajuster si vous préférez un autre format ou un autre angle.
 
-Sur ma légitimité : j'ai passé quinze ans en vol comme steward puis chef de cabine, et vingt ans dans le transport aérien. Je connais de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires. C'est cet angle opérationnel que le texte apporte, plutôt qu'un commentaire de doctrine.
+Sur ma légitimité : je travaille au quotidien sur les dossiers d'indemnisation aérienne des familles de la diaspora. Je connais de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires. C'est cet angle opérationnel que le texte apporte, plutôt qu'un commentaire de doctrine.
 
 Une question pratique, que je préfère poser d'emblée : la publication d'une tribune est-elle gratuite chez vous ?
 

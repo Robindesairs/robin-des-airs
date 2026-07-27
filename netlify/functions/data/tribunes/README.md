@@ -43,8 +43,12 @@ limite la cadence de la routine hebdomadaire `presse-vague-hebdo`.
   vert, bio encadrée. PAS de logo, PAS de bandeau, PAS de bouton, PAS d'image.
 - 🔴 L'URL s'écrit en TEXTE BRUT, jamais en `<a href>` : sinon Gmail la réécrit
   en redirection `google.com/url?q=` et le lien perd tout intérêt.
-- Signature 4 lignes : nom, fonction, « Ancien chef de cabine · 20 ans dans le
-  transport aérien », puis `robindesairs.eu · +33 7 56 86 36 30`.
+- Signature 3 lignes : nom, fonction, puis `robindesairs.eu · +33 7 56 86 36 30`.
+- 🔴 NE JAMAIS mentionner le parcours navigant du fondateur (chef de cabine,
+  steward, « X ans en vol / dans le transport aérien »), ni aucune tournure
+  d'initié qui le laisse deviner. Bio neutre uniquement : « fondateur de Robin
+  des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers
+  aériens sur l'axe Europe-Afrique ». Un article publié reste en ligne.
 - Expéditeur : `expert@robindesairs.eu`. Signature : Saint-Yves Kodjo.
 - Ne JAMAIS se présenter comme juriste (loi 71-1130).
 

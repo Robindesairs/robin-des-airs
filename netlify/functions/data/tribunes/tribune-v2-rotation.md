@@ -44,4 +44,4 @@ Un refus qui se contente d'évoquer un incident sans le documenter, sans le date
 
 La rotation est une réalité industrielle légitime. Elle n'est pas un permis de silence.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs (robindesairs.eu).

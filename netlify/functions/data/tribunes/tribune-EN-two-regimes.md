@@ -75,7 +75,7 @@ That last point is not a procedural detail. It is often the only thing standing 
 **Author bio**
 
 Saint-Yves Kodjo is the founder of Robin des Airs, a service specialising in the recovery of air passenger compensation on the Europe-Africa routes.
-An aviation industry specialist, he spent fifteen years flying as cabin crew and then purser, and twenty years in air transport.
+
 He knows from the inside how airlines classify delays, cancellations and extraordinary circumstances.
 robindesairs.eu
 
@@ -95,7 +95,7 @@ It closes on a trap that costs travellers the most: the Montreal Convention's tw
 
 The text runs to about 5,000 characters and is ready to publish as it stands. I am happy to adjust the length or the angle if that suits you better.
 
-On my standing: I spent fifteen years flying as cabin crew and then purser, and twenty years in air transport. I know from the inside how airlines classify delays, cancellations and extraordinary circumstances. That operational perspective is what the piece brings, rather than a legal commentary. I am not a lawyer and the piece does not pretend to be legal advice.
+On my standing: I work daily on air-passenger compensation claims for diaspora families. I know from the inside how airlines classify delays, cancellations and extraordinary circumstances. That operational perspective is what the piece brings, rather than a legal commentary. I am not a lawyer and the piece does not pretend to be legal advice.
 
 One practical question, which I prefer to ask up front: is publication in your opinion section free of charge?
 

@@ -56,6 +56,6 @@ Le règlement européen ne s'applique pas à une route, il s'applique à un vol.
 **Bio**
 
 Saint-Yves Kodjo est fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique.
-Spécialiste du secteur aérien, il a passé quinze ans en vol comme steward puis chef de cabine, et vingt ans dans le transport aérien.
+
 Il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
 robindesairs.eu · +33 7 56 86 36 30

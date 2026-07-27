@@ -48,4 +48,4 @@ Si l'une des trois manque, demandez le paiement en argent. Le règlement vous y 
 
 Une dernière remarque, souvent décisive. La vraie comparaison n'est pas le bon contre l'indemnité. C'est le bon contre le prix du billet que vous auriez réellement payé. Un bon dont la valeur affichée dépasse le prix du trajet que vous comptiez acheter ne vous rapporte pas la différence : il vous la fait perdre.
 
-Saint-Yves Kodjo, fondateur de Robin des Airs, vingt ans dans le transport aérien.
+Saint-Yves Kodjo, fondateur de Robin des Airs (robindesairs.eu).

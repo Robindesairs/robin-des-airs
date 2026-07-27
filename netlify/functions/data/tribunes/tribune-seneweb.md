@@ -59,7 +59,7 @@ Ce n'est pas un détail de procédure. C'est souvent la seule chose qui sépare 
 **Bio**
 
 Saint-Yves Kodjo est fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique.
-Spécialiste du secteur aérien, il a passé quinze ans en vol comme steward puis chef de cabine, et vingt ans dans le transport aérien.
+
 Il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
 Voyageur régulier entre l'Europe et l'Afrique de l'Ouest, il travaille sur les litiges des familles de la diaspora.
 robindesairs.eu

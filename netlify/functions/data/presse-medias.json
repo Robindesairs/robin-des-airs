@@ -7,7 +7,9 @@
   "url": "https://lalternative.info/category/tribune/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m002",
@@ -17,7 +19,9 @@
   "url": "https://burkina24.com/category/actualite/opinion/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m003",
@@ -27,7 +31,11 @@
   "url": "https://togobreakingnews.info/category/opinions/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "refus_payant",
+  "note_reponse": "publication invitee facturee"
  },
  {
   "id": "m004",
@@ -37,7 +45,9 @@
   "url": "https://lefaso.net/spip.php?rubrique21",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m005",
@@ -47,7 +57,9 @@
   "url": "https://www.actuniger.com/tribune-opinion.html",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m006",
@@ -57,7 +69,9 @@
   "url": "https://journaldumali.com/category/idees/tribune/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m007",
@@ -77,7 +91,9 @@
   "url": "https://connectionivoirienne.net/category/libre-opinion/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m009",
@@ -117,7 +133,11 @@
   "url": "",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "accepte",
+  "note_reponse": "confirme par Diawo Barry, dir. publication"
  },
  {
   "id": "m013",
@@ -127,7 +147,9 @@
   "url": "https://ledjely.com/category/tribune/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m014",
@@ -137,7 +159,10 @@
   "url": "https://mosaiqueguinee.com/chroniques/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27",
+  "statut_livraison": "rebond_2026-07-27"
  },
  {
   "id": "m015",
@@ -167,7 +192,9 @@
   "url": "https://www.nigerdiaspora.net/magazine/idees-et-opinions",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m018",
@@ -177,7 +204,9 @@
   "url": "https://lesechosduniger.com/category/opinion-tribune/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m019",
@@ -197,7 +226,9 @@
   "url": "https://www.adiac-congo.com/opinion_rubrique/Tribune%20libre",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m021",
@@ -207,7 +238,11 @@
   "url": "https://www.gabonreview.com/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "accepte",
+  "note_reponse": "photo+PJ envoyees 20/07 - publication a venir"
  },
  {
   "id": "m022",
@@ -217,7 +252,9 @@
   "url": "https://zoom-eco.net/category/tribune/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m023",
@@ -237,7 +274,11 @@
   "url": "https://datacameroon.com/category/tribune/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "accepte",
+  "note_reponse": "publie 29/07"
  },
  {
   "id": "m025",
@@ -257,7 +298,9 @@
   "url": "https://www.dakaractu.com/submit/",
   "type": "formulaire",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m027",
@@ -277,7 +320,9 @@
   "url": "https://www.pressafrik.com/Opinion_r12.html",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m029",
@@ -307,7 +352,9 @@
   "url": "https://www.madagascar-tribune.com/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m032",
@@ -317,7 +364,9 @@
   "url": "",
   "type": "diaspora",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m033",
@@ -327,7 +376,9 @@
   "url": "",
   "type": "redaction",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m034",
@@ -337,7 +388,9 @@
   "url": "",
   "type": "redaction",
   "tier": 2,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m035",
@@ -347,7 +400,9 @@
   "url": "https://www.premiumtimesng.com/contact",
   "type": "tribune",
   "tier": 1,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m036",
@@ -357,7 +412,9 @@
   "url": "https://www.thecable.ng/contact-us/",
   "type": "tribune",
   "tier": 1,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m037",
@@ -367,7 +424,9 @@
   "url": "https://thebftonline.com/contact/",
   "type": "tribune",
   "tier": 2,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m038",
@@ -377,7 +436,11 @@
   "url": "https://www.dailymaverick.co.za/contact-us",
   "type": "tribune",
   "tier": 2,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "reponse_recue",
+  "note_reponse": "desk lettres -> opinion"
  },
  {
   "id": "m039",
@@ -387,7 +450,9 @@
   "url": "",
   "type": "redaction",
   "tier": 2,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m040",
@@ -417,7 +482,9 @@
   "url": "https://www.financialafrik.com/author/contribution/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m043",
@@ -437,7 +504,9 @@
   "url": "https://www.afrik.com/contact-ours",
   "type": "tribune",
   "tier": 3,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m045",
@@ -447,7 +516,9 @@
   "url": "https://www.quotidiendutourisme.com/statics/contacts.html",
   "type": "redaction",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m046",
@@ -477,7 +548,9 @@
   "url": "https://www.air-journal.fr/contact",
   "type": "redaction",
   "tier": 2,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m049",
@@ -487,7 +560,13 @@
   "url": "https://www.mizane.info/contact/",
   "type": "tribune",
   "tier": 1,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "publie",
+  "date_publication": "2026-07-27",
+  "url_publication": "https://www.mizane.info/vol-annule-le-bon-d-achat-n-est-pas-l-indemnite",
+  "note_reponse": "PUBLIE 27/07 - rubrique Tourisme - byline Saint-Yves Kodjo - backlink robindesairs.eu - bio navigant NON reprise"
  },
  {
   "id": "m050",
@@ -497,7 +576,9 @@
   "url": "https://www.lalibre.be/debats/opinions/",
   "type": "tribune",
   "tier": 2,
-  "note": ""
+  "note": "",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m051",
@@ -537,7 +618,10 @@
   "url": "https://afriquexxi.info/proposer-des-articles",
   "type": "tribune",
   "tier": 1,
-  "note": "Consignes publiées : 8 000 à 12 000 signes. Association sans but lucratif, zéro signal commercial. Lire leur charte avant d'écrire."
+  "note": "Consignes publiées : 8 000 à 12 000 signes. Association sans but lucratif, zéro signal commercial. Lire leur charte avant d'écrire.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "statut_reponse": "accuse_auto",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m055",
@@ -547,7 +631,11 @@
   "url": "https://www.letemps.ch/opinions/publie-pages-debats-temps",
   "type": "tribune",
   "tier": 1,
-  "note": "Rubrique Débats & Opinions (C. Frammery). Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes. Exclusivité exigée, non rémunéré. Angle : la Suisse applique le CE 261 par accord bilatéral."
+  "note": "Rubrique Débats & Opinions (C. Frammery). Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes. Exclusivité exigée, non rémunéré. Angle : la Suisse applique le CE 261 par accord bilatéral.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "interesse_exclusif",
+  "note_reponse": "repondu 22/07 avec 2 PJ (doc+photo), exclusivite confirmee et verifiee; balle dans le camp du Temps, RAS"
  },
  {
   "id": "m056",
@@ -557,7 +645,11 @@
   "url": "https://addisstandard.com/contact/",
   "type": "tribune",
   "tier": 1,
-  "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "en_review",
+  "note_reponse": "exclusivite promise 23/07"
  },
  {
   "id": "m057",
@@ -567,7 +659,9 @@
   "url": "https://www.monitor.co.ug/uganda/oped",
   "type": "tribune",
   "tier": 1,
-  "note": "Groupe Nation Media. letters@ug.nationmedia.com pour le format court. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Groupe Nation Media. letters@ug.nationmedia.com pour le format court. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m058",
@@ -577,7 +671,9 @@
   "url": "https://diggers.news/opinion/",
   "type": "tribune",
   "tier": 2,
-  "note": "Indépendant, rubriques Opinion et Letters distinctes, aucun signal payant. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Indépendant, rubriques Opinion et Letters distinctes, aucun signal payant. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m059",
@@ -587,7 +683,9 @@
   "url": "https://www.newsday.co.zw/category/9/opinion-analysis",
   "type": "tribune",
   "tier": 2,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m060",
@@ -617,7 +715,9 @@
   "url": "https://expressodasilhas.cv/opiniao",
   "type": "tribune",
   "tier": 2,
-  "note": "Lusophone. Diaspora cap-verdienne dense en Europe, trafic réel vers Lisbonne et Paris."
+  "note": "Lusophone. Diaspora cap-verdienne dense en Europe, trafic réel vers Lisbonne et Paris.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m063",
@@ -637,7 +737,9 @@
   "url": "",
   "type": "redaction",
   "tier": 4,
-  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m065",
@@ -747,7 +849,9 @@
   "url": "https://dailytrust.com/",
   "type": "tribune",
   "tier": 1,
-  "note": "Titre du Nord nigerian, tres lu par la diaspora. Section Letters en navigation. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Titre du Nord nigerian, tres lu par la diaspora. Section Letters en navigation. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m076",
@@ -757,7 +861,9 @@
   "url": "https://thenationonlineng.net/contact-us",
   "type": "redaction",
   "tier": 1,
-  "note": "Adresse de l'Online Editor, nomme. Meilleure chance de reponse humaine qu'une boite generique. General : info@thenationonlineng.net. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Adresse de l'Online Editor, nomme. Meilleure chance de reponse humaine qu'une boite generique. General : info@thenationonlineng.net. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m077",
@@ -807,7 +913,9 @@
   "url": "https://www.graphic.com.gh/",
   "type": "tribune",
   "tier": 1,
-  "note": "Quotidien de reference. Rubriques Opinion, Features et Editorials distinctes. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Quotidien de reference. Rubriques Opinion, Features et Editorials distinctes. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m082",
@@ -837,7 +945,9 @@
   "url": "https://www.capitalfm.co.ke/",
   "type": "tribune",
   "tier": 1,
-  "note": "Rubrique 'Op-Eds' affichee en navigation = politique de tribunes assumee. Seule vraie porte kenyane. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Rubrique 'Op-Eds' affichee en navigation = politique de tribunes assumee. Seule vraie porte kenyane. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m085",
@@ -857,7 +967,9 @@
   "url": "https://www.citizen.co.za/",
   "type": "tribune",
   "tier": 1,
-  "note": "Adresse letters@ DEDIEE aux contributions de lecteurs. Aucune friction. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+  "note": "Adresse letters@ DEDIEE aux contributions de lecteurs. Aucune friction. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m087",
@@ -877,7 +989,9 @@
   "url": "https://newsaero.info",
   "type": "tribune",
   "tier": 1,
-  "note": "Seul media aviation francophone d'Afrique subsaharienne. Rubrique « Tribune libre ». Bilingue FR/EN. CIBLE N.1"
+  "note": "Seul media aviation francophone d'Afrique subsaharienne. Rubrique « Tribune libre ». Bilingue FR/EN. CIBLE N.1",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m089",
@@ -887,7 +1001,9 @@
   "url": "https://nigeriaaviationreport.com.ng",
   "type": "tribune",
   "tier": 1,
-  "note": "Rubrique « Analysis & Opinion ». Email redaction distinct de la regie"
+  "note": "Rubrique « Analysis & Opinion ». Email redaction distinct de la regie",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m090",
@@ -897,7 +1013,10 @@
   "url": "https://nigerianflightdeck.com",
   "type": "tribune",
   "tier": 1,
-  "note": "Publication quasi quotidienne. Rubrique « Comfort & Crew », colle au sujet passager"
+  "note": "Publication quasi quotidienne. Rubrique « Comfort & Crew », colle au sujet passager",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27",
+  "statut_livraison": "rebond_2026-07-27"
  },
  {
   "id": "m091",
@@ -967,7 +1086,9 @@
   "url": "https://africapresse.paris",
   "type": "tribune",
   "tier": 1,
-  "note": "Rubrique /-Tribunes- vivante, signataires nommes. Publie deja sur l'aviation africaine. Gratuit"
+  "note": "Rubrique /-Tribunes- vivante, signataires nommes. Publie deja sur l'aviation africaine. Gratuit",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m098",
@@ -977,7 +1098,9 @@
   "url": "https://congoindependant.com",
   "type": "tribune",
   "tier": 1,
-  "note": "Rubrique Opinion-Debat. Axe Kinshasa-Bruxelles, un de nos corridors"
+  "note": "Rubrique Opinion-Debat. Axe Kinshasa-Bruxelles, un de nos corridors",
+  "statut_envoi": "envoye_2026-07-27",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m099",
@@ -1097,7 +1220,9 @@
   "url": "https://agenceecofin.com",
   "type": "tribune",
   "tier": 1,
-  "note": "Rubrique Transports dediee. Un seul pitch couvre aussi Investir au Cameroun, meme maison"
+  "note": "Rubrique Transports dediee. Un seul pitch couvre aussi Investir au Cameroun, meme maison",
+  "statut_envoi": "envoye_vague_anterieure",
+  "date_dedup": "2026-07-27"
  },
  {
   "id": "m111",
