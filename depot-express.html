@@ -405,6 +405,8 @@
   // Palette + initiales des avatars — partagées entre le récap et l'écran de signature (cartes par adulte).
   var NXA = ['#2E8BC0', '#8E44AD', '#E67E22', '#16A085', '#2E8BC0', '#8E44AD'];
   function nxIni(n){ var p = String(n || '').trim().split(/\s+/).filter(Boolean); return (((p[0] || '')[0] || '') + ((p.length > 1 ? p[p.length - 1] : '')[0] || '')).toUpperCase() || '?'; }
+  // Saisie de date au clavier : on tape les chiffres, les « / » se placent seuls (14051990 → 14/05/1990).
+  function dateAutoSlash(s){ var d = String(s || '').replace(/\D/g, '').slice(0, 8); if (d.length > 4) return d.slice(0, 2) + '/' + d.slice(2, 4) + '/' + d.slice(4); if (d.length > 2) return d.slice(0, 2) + '/' + d.slice(2); return d; }
   // Popup de confirmation léger (retrait d'un vol) — action réversible côté client mais on demande confirmation.
   function nxConfirm(msg, onYes){
     var ov = document.createElement('div');
@@ -561,9 +563,9 @@
     var _now2 = new Date(); var _todayIso = _now2.getFullYear() + '-' + String(_now2.getMonth() + 1).padStart(2, '0') + '-' + String(_now2.getDate()).padStart(2, '0');
     var _dateFieldInner = '';
     if (S.date) {
-      var _t = new Date(); _t.setDate(_t.getDate() + 2);
-      var _maxDate = _t.getFullYear() + '-' + String(_t.getMonth() + 1).padStart(2, '0') + '-' + String(_t.getDate()).padStart(2, '0');
-      _dateFieldInner = '<div class="recap-k">' + TR('Date du vol', 'Flight date') + '</div><input type="date" class="input recap-datein" value="' + esc(S.date) + '" max="' + _maxDate + '" style="margin-top:4px">';
+      // Date TAPÉE (JJ/MM/AAAA) au lieu du calendrier natif (peu pratique). S.date est stocké en ISO → affichage FR.
+      var _dateFr = (function(iso){ var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[3] + '/' + m[2] + '/' + m[1] : (iso || ''); })(S.date);
+      _dateFieldInner = '<div class="recap-k">' + TR('Date du vol', 'Flight date') + '</div><input type="text" inputmode="numeric" class="input recap-datein" value="' + esc(_dateFr) + '" placeholder="JJ/MM/AAAA" maxlength="10" style="margin-top:4px;max-width:220px">';
     }
     if (isEsc) {
       // Éditeur de tronçons EN PLACE : chaque vol éditable (n°, départ, arrivée), ajout/retrait sans revenir en arrière.
@@ -633,7 +635,7 @@
         : '<div class="nx-inpad"><canvas class="nx-inkcanvas" data-idx="' + i + '"></canvas><div class="nx-inbase"></div><div class="nx-inhint">' + TR('Signez ici avec votre doigt', 'Sign here with your finger') + '</div></div>';
       return '<div class="nx-sigblock">'
         + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-idx="' + i + '" data-k="0"' + (pd.sc0 ? ' checked' : '') + '><span>' + TR('Je <b>cède ma créance</b>, née ou à naître, à Robin des Airs pour ce vol.', 'I <b>assign my claim</b>, present or future, to Robin des Airs for this flight.') + '</span></label>'
-        + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-idx="' + i + '" data-k="1"' + (pd.sc1 ? ' checked' : '') + '><span>' + TR("J'ai <b>lu et j'accepte</b> le <a href='/cgv.html' target='_blank' rel='noopener'>contrat de cession et les CGV</a> ; je comprends que <b>l'indemnité n'est pas garantie</b>.", "I have <b>read and accept</b> the <a href='/cgv.html' target='_blank' rel='noopener'>assignment contract and Terms</a>; I understand the <b>compensation is not guaranteed</b>.") + '</span></label>'
+        + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-idx="' + i + '" data-k="1"' + (pd.sc1 ? ' checked' : '') + '><span>' + TR("J'ai <b>lu et j'accepte</b> le <a href='/cgv.html' target='_blank' rel='noopener'>contrat de cession et les CGV</a> ainsi que la <a href='/politique-confidentialite' target='_blank' rel='noopener'>politique de confidentialité</a> ; je comprends que <b>l'indemnité n'est pas garantie</b>.", "I have <b>read and accept</b> the <a href='/cgv.html' target='_blank' rel='noopener'>assignment contract and Terms</a> and the <a href='/politique-confidentialite' target='_blank' rel='noopener'>privacy policy</a>; I understand the <b>compensation is not guaranteed</b>.") + '</span></label>'
         + '<div class="recap-k" style="margin-top:9px">✍️ ' + TR('Votre signature', 'Your signature') + '</div>'
         + pad
         + '<div class="nx-inact"><button type="button" class="nx-inclear" data-idx="' + i + '">' + TR('Effacer', 'Clear') + '</button><span class="nx-instate" data-idx="' + i + '">' + (pd.sig ? '✅ ' + TR('Signé', 'Signed') : '') + '</span></div>'
@@ -658,7 +660,7 @@
         +   '<span class="nx-badge ' + (pd.minor ? 'mi' : 'ad') + '">' + (pd.minor ? TR('Mineur·e', 'Minor') : TR('Adulte', 'Adult')) + '</span></div>'
         + '<div class="recap-row"><div class="recap-ic">🎂</div><div class="recap-main">'
         +   '<div class="recap-k">' + TR('Date de naissance', 'Date of birth') + '</div>'
-        +   '<input type="date" class="input recap-dobin" data-idx="' + i + '" value="' + esc(_dobIso) + '" max="' + _todayIso + '" style="margin-top:4px"></div></div>'
+        +   '<input type="text" inputmode="numeric" class="input recap-dobin" data-idx="' + i + '" value="' + esc(pd.dob || '') + '" placeholder="JJ/MM/AAAA" maxlength="10" autocomplete="bday" style="margin-top:4px;max-width:220px"></div></div>'
         + _addrBlock(i, _adr)
         + (pd.minor ? '<div class="recap-row" style="background:var(--gold-tint,#FFF6E6)"><div class="recap-ic">👤</div><div class="recap-main"><div class="recap-k">' + TR('Représenté·e par (parent / tuteur légal)', 'Represented by (parent / legal guardian)') + '</div>' + _repSelect(i) + '<div style="font-size:11.5px;color:#9a6a00;margin-top:5px;line-height:1.4">' + TR('Obligatoire pour un mineur : ce représentant signe pour l\'enfant.', 'Required for a minor: this representative signs for the child.') + '</div></div></div>' : '')
         // Écran signature : les cases + le bouton « Signer » de CHAQUE adulte sont DANS sa carte (maquette).
@@ -732,7 +734,7 @@
     var _fn = card.querySelector('.recap-flightnum'); if (_fn) _fn.addEventListener('input', function(){ S.flightNum = _fn.value.toUpperCase().replace(/\s+/g, ''); });
     var _dep = card.querySelector('.recap-dep'); if (_dep) { airportAuto(_dep); _dep.addEventListener('input', function(){ S.dep = _dep.value.trim(); _updateChips(); }); }
     var _arr = card.querySelector('.recap-arr'); if (_arr) { airportAuto(_arr); _arr.addEventListener('input', function(){ S.arr = _arr.value.trim(); _updateChips(); }); }
-    var _dt = card.querySelector('.recap-datein'); if (_dt) _dt.addEventListener('change', function(){ if (/^\d{4}-\d{2}-\d{2}$/.test(_dt.value)) { S.date = _dt.value; _updateChips(); } });
+    var _dt = card.querySelector('.recap-datein'); if (_dt) _dt.addEventListener('input', function(){ _dt.value = dateAutoSlash(_dt.value); var m = _dt.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (m) { S.date = m[3] + '-' + m[2] + '-' + m[1]; _updateChips(); } });
     // Nom éditable EN LIGNE dans l'en-tête (crayon) : met à jour l'état + les initiales de l'avatar en direct.
     Array.prototype.forEach.call(card.querySelectorAll('.nx-nm-edit'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
@@ -744,7 +746,7 @@
     });
     Array.prototype.forEach.call(card.querySelectorAll('.recap-dobin'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
-      inp.addEventListener('change', function(){ var m = String(inp.value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/); var fr = m ? (m[3] + '/' + m[2] + '/' + m[1]) : ''; S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].dob = fr; S.paxData[_i].minor = fr ? isMinor(fr, S.date) : false; });
+      inp.addEventListener('input', function(){ inp.value = dateAutoSlash(inp.value); S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].dob = inp.value; var ok = /^\d{2}\/\d{2}\/\d{4}$/.test(inp.value); if (ok) S.paxData[_i].minor = isMinor(inp.value, S.date); });
     });
     var _ph = card.querySelector('.recap-phonein'); if (_ph) _ph.addEventListener('input', function(){ S.phone = _ph.value.replace(/[^\d+]/g, ''); });
     var _em = card.querySelector('.recap-emailin'); if (_em) _em.addEventListener('input', function(){ S.email = _em.value.trim(); });
