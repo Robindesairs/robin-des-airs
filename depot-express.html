@@ -572,10 +572,12 @@
           + (S.legs.length > 1 ? '<button type="button" class="nx-leg-x" data-n="' + n + '" aria-label="' + TR('Retirer ce vol', 'Remove this flight') + '" title="' + TR('Retirer ce vol', 'Remove this flight') + '">✕</button>' : '')
           + '</div>'
           + '<input class="input nx-leg-num" data-n="' + n + '" value="' + esc(l.num || '') + '" placeholder="' + TR('N° de vol (ex. AF718)', 'Flight no. (e.g. AF718)') + '" style="text-transform:uppercase">'
-          + '<div style="display:flex;gap:8px;margin-top:6px">'
-          +   '<input class="input nx-leg-dep" data-n="' + n + '" value="' + esc(l.dep || '') + '" placeholder="' + TR('Départ', 'Departure') + '" style="flex:1;min-width:0">'
-          +   '<input class="input nx-leg-arr" data-n="' + n + '" value="' + esc(l.arr || '') + '" placeholder="' + TR('Arrivée', 'Arrival') + '" style="flex:1;min-width:0">'
-          + '</div></div>';
+          // Départ / Arrivée EN PLEINE LARGEUR, l'un sous l'autre : les noms de ville + code aéroport (ex. « Ouagadougou (OUA) ») ne sont plus tronqués.
+          + '<div class="recap-k" style="margin-top:8px;font-size:11px">' + TR('Départ', 'Departure') + '</div>'
+          + '<input class="input nx-leg-dep" data-n="' + n + '" value="' + esc(l.dep || '') + '" placeholder="' + TR('Ville de départ', 'Departure city') + '" style="margin-top:3px">'
+          + '<div class="recap-k" style="margin-top:8px;font-size:11px">' + TR('Arrivée', 'Arrival') + '</div>'
+          + '<input class="input nx-leg-arr" data-n="' + n + '" value="' + esc(l.arr || '') + '" placeholder="' + TR('Ville d\'arrivée', 'Arrival city') + '" style="margin-top:3px">'
+          + '</div>';
       }).join('');
       rows += '<div class="recap-row"><div class="recap-ic">🔄</div><div class="recap-main">'
         + '<div class="recap-k">' + TR('Votre trajet · ' + S.legs.length + ' vols (correspondance)', 'Your trip · ' + S.legs.length + ' flights (connection)') + '</div>'
@@ -1300,7 +1302,7 @@
         + '<li>🤝 ' + TR('Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b>, vous ne gérez rien.', 'You <b>assign your claim</b> to us: Robin des Airs acts in its own name, the airline pays us, <b>we pay you your share</b>, you handle nothing.') + '</li>'
         + '<li>💶 ' + TR('<b>0 € à payer si rien n\'est récupéré</b> : vous n\'avancez jamais un centime. En cas de succès, vous <b>gardez 75 %</b> de la somme (<b>60 %</b> si le dossier va au tribunal), on se rémunère uniquement sur ce qu\'on récupère pour vous.', '<b>£0 to pay if nothing is recovered</b>: you never advance a penny. If we succeed, you <b>keep 75%</b> of the amount (<b>60%</b> if the case goes to court); we\'re only paid on what we recover for you.') + '</li>'
         + '<li>🛡️ ' + TR('Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.', 'Even in court: lawyer, bailiff and court fees <b>are on us</b>.') + '</li>'
-        + '<li>✍️ ' + TR('<b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez confié votre créance.', '<b>Your signature will appear on the assignment contract sent to the airline</b>, as proof that you entrusted your claim to us.') + '</li>'
+        + '<li>✍️ ' + TR('<b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez <b>cédé</b> votre créance.', '<b>Your signature will appear on the assignment contract sent to the airline</b>, as proof that you <b>assigned</b> your claim to us.') + '</li>'
         + '<li>📅 ' + TR('<b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.', '<b>14 days to withdraw</b>, free of charge · connections covered.') + '</li>'
         + '</ul>';
       sc.appendChild(box);
