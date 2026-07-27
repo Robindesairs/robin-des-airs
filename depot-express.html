@@ -590,6 +590,8 @@
         +   '<input class="input recap-dep" value="' + esc(S.dep || '') + '" placeholder="' + TR('Départ', 'Departure') + '" style="flex:1.15;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
         +   '<input class="input recap-arr" value="' + esc(S.arr || '') + '" placeholder="' + TR('Arrivée', 'Arrival') + '" style="flex:1;min-width:0;font-size:13px;padding-left:10px;padding-right:6px">'
         + '</div>' + (_dateFieldInner ? '<div style="margin-top:10px">' + _dateFieldInner + '</div>' : '') + '</div></div>';
+      // Vol direct → possibilité d'AJOUTER UN VOL (le trajet devient une correspondance : 1er tronçon = ce vol, 2e à compléter).
+      rows += '<div style="padding:0 2px 4px"><button type="button" class="nx-addleg-direct" style="width:100%;border:1.5px dashed #b9c6da;background:#f2f6fb;color:#0B1F3A;border-radius:11px;padding:10px;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer">➕ ' + TR('Ajouter un vol (correspondance)', 'Add a flight (connection)') + '</button></div>';
     }
     // Correspondance : la date reste une ligne à part (le trajet a son propre éditeur de tronçons).
     if (isEsc && _dateFieldInner) rows += '<div class="recap-row"><div class="recap-ic">📅</div><div class="recap-main">' + _dateFieldInner + '</div></div>';
@@ -739,6 +741,9 @@
     });
     var _addL = card.querySelector('.nx-addleg');
     if (_addL) _addL.addEventListener('click', function(){ S.legs = S.legs || []; S.legs.push({ num: '', dep: (S.legs.length ? (S.legs[S.legs.length - 1].arr || '') : ''), arr: '' }); _rerenderRecap(); });
+    // Vol direct → « Ajouter un vol » : bascule en correspondance (1er tronçon = vol actuel, 2e vide à compléter).
+    var _addLD = card.querySelector('.nx-addleg-direct');
+    if (_addLD) _addLD.addEventListener('click', function(){ S.typeVol = 'escale'; S.legs = [{ num: S.flightNum || '', dep: S.dep || '', arr: S.arr || '' }, { num: '', dep: S.arr || '', arr: '' }]; _rerenderRecap(); });
     sc.appendChild(card);
   }
   // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
