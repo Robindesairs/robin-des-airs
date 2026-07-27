@@ -606,20 +606,26 @@
     // Adresse du 1er passager (cédant principal) : sert de référence « même adresse » pour la famille.
     var _mainAdr = (S.paxData[0] && S.paxData[0].adresse) || (S.piece && S.piece.adresse) || '';
     function _shortAdr(a){ a = String(a || '').trim(); return a.length > 30 ? a.slice(0, 28).replace(/,\s*$/, '') + '…' : a; }
-    // Bloc adresse : principal = champ libre ; co-passager = menu « même adresse / autre » (maquette validée).
+    // Bloc adresse : menu pour TOUS (maquette). Principal → option = son adresse connue ; co-passager →
+    // option = « Même adresse que [principal] ». Dans les deux cas, « Une autre adresse… » ouvre un champ.
+    var _addrRef = {}; // adresse de référence proposée, par index (lue par le handler)
     function _addrBlock(i, adr){
-      if (i === 0) {
+      var ref = (i === 0) ? adr : _mainAdr;
+      _addrRef[i] = ref;
+      // Aucune adresse connue à proposer (principal dont la pièce n'a pas donné d'adresse) → champ libre à compléter.
+      if (!ref) {
         return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-          + '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + (adr ? TR('corrigez si besoin', 'fix if needed') : TR('à compléter', 'to complete')) + '</span></div>'
-          + '<input class="input recap-addrinp" data-idx="0" value="' + esc(adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>';
+          + '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + TR('à compléter', 'to complete') + '</span></div>'
+          + '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>';
       }
-      var same = !adr || (_mainAdr && adr.trim() === _mainAdr.trim());
+      var same = !adr || (adr.trim() === ref.trim());
       var mainNm = S.names[0] || TR('le 1er passager', 'the 1st passenger');
+      var opt1 = (i === 0) ? esc(_shortAdr(ref)) : (TR('Même adresse que ', 'Same address as ') + esc(mainNm) + ' (' + esc(_shortAdr(ref)) + ')');
       return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
         + '<div class="recap-k">' + TR('Adresse', 'Address') + '</div>'
         + '<select class="input recap-addrmode" data-idx="' + i + '" style="margin-top:4px">'
-        +   '<option value="__same__"' + (same ? ' selected' : '') + '>' + TR('Même adresse que ', 'Same address as ') + esc(mainNm) + (_mainAdr ? ' (' + esc(_shortAdr(_mainAdr)) + ')' : '') + '</option>'
-        +   '<option value="__other__"' + (same ? '' : ' selected') + '>' + TR('Autre adresse', 'A different address') + '</option>'
+        +   '<option value="__same__"' + (same ? ' selected' : '') + '>' + opt1 + '</option>'
+        +   '<option value="__other__"' + (same ? '' : ' selected') + '>' + TR('Une autre adresse…', 'A different address…') + '</option>'
         + '</select>'
         + '<input class="input recap-addrinp" data-idx="' + i + '" value="' + esc(same ? '' : adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:6px;display:' + (same ? 'none' : 'block') + '"></div></div>';
     }
@@ -671,14 +677,15 @@
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
       inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].adresse = inp.value; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = inp.value; } });
     });
-    // Menu « même adresse / autre » (co-passagers) : « même » → adresse vide (le contrat retombe sur celle du principal).
+    // Menu adresse : « autre » → champ visible. « même » → principal garde son adresse connue (_addrRef[0]),
+    // co-passager remet vide (le contrat retombe alors sur l'adresse du principal).
     Array.prototype.forEach.call(card.querySelectorAll('.recap-addrmode'), function(sel){
       var _i = parseInt(sel.getAttribute('data-idx'), 10);
       var inp = card.querySelector('.recap-addrinp[data-idx="' + _i + '"]');
       sel.addEventListener('change', function(){
         S.paxData[_i] = S.paxData[_i] || {};
-        if (sel.value === '__other__') { if (inp) { inp.style.display = 'block'; inp.focus(); } S.paxData[_i].adresse = (inp && inp.value.trim()) || ''; }
-        else { if (inp) inp.style.display = 'none'; S.paxData[_i].adresse = ''; }
+        if (sel.value === '__other__') { if (inp) { inp.style.display = 'block'; inp.focus(); } S.paxData[_i].adresse = (inp && inp.value.trim()) || ''; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = S.paxData[0].adresse; } }
+        else { if (inp) inp.style.display = 'none'; var keep = (_i === 0) ? (_addrRef[0] || '') : ''; S.paxData[_i].adresse = keep; if (_i === 0) { S.piece = S.piece || {}; S.piece.adresse = keep; } }
       });
     });
     Array.prototype.forEach.call(card.querySelectorAll('.recap-repsel'), function(sel){
