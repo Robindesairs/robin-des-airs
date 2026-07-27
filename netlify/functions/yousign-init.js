@@ -19,6 +19,9 @@
 
 const { checkRateLimit } = require("./lib/rate-limit");
 const { getBlobStore } = require("./lib/netlify-blobs-store");
+// Acte de cession (2e document signable de l'enveloppe) — activé par YOUSIGN_SIGN_ACTE=1 uniquement.
+let genererActeCessionPdf = null;
+try { ({ genererActeCessionPdf } = require("./lib/acte-cession-pdf")); } catch (_) {}
 
 const HEADERS = {
   "Content-Type": "application/json",
@@ -461,6 +464,96 @@ exports.handler = async (event) => {
       });
     }
 
+    // 2quater) DEUXIÈME DOCUMENT SIGNABLE : l'acte de cession (notification au débiteur, art. 1324).
+    // Objectif : la signature certifiée figure sur les DEUX documents (contrat + acte), sous le même
+    // sceau + piste d'audit Yousign. Le webhook archive déjà tous les documents de l'enveloppe.
+    // 🔒 Activé UNIQUEMENT si YOUSIGN_SIGN_ACTE=1 (défaut OFF = comportement historique, contrat seul).
+    // Best-effort intégral : toute erreur ici est journalisée et n'interrompt PAS la signature du contrat.
+    let acteDocId = null;
+    if (process.env.YOUSIGN_SIGN_ACTE === "1" && genererActeCessionPdf && dossierRef) {
+      try {
+        const mandats = getBlobStore(event, "mandats");
+        const dossier = (mandats && (await mandats.get("m/" + dossierRef, { type: "json" }))) || {};
+        const acte = await genererActeCessionPdf({
+          presign: true,
+          ref: dossierRef,
+          showAddress: true,
+          passengers: Array.isArray(dossier.passengers) && dossier.passengers.length
+            ? dossier.passengers.map((p) => ({
+                name: p.name || "",
+                dob: p.dob || "",
+                birth: p.birth || p.lieuNaissance || "",
+                minor: !!p.minor,
+                legalRepName: p.legalRepName || "",
+                adresse: p.adresse || p.address || "",
+              }))
+            : [{ name: dossier.name || "", adresse: dossier.address || "" }],
+          name: dossier.name || "",
+          airline: dossier.compagnie || dossier.airline || "",
+          flightNum: dossier.vol || dossier.flightNum || "",
+          flightDate: dossier.date || dossier.flightDate || "",
+          pnr: dossier.pnr || "",
+          depAirport: dossier.depAirport || "",
+          arrAirport: dossier.arrAirport || "",
+          route: dossier.route || "",
+          incident: dossier.incident || "",
+        });
+        const acteBuf = acte && acte.buffer;
+        const acteZones = (acte && acte.sigZones) || [];
+        if (acteBuf && acteBuf.length > 500 && acteZones.length) {
+          // Upload de l'acte comme 2e document signable.
+          const acteForm = new FormData();
+          acteForm.append("file", new Blob([acteBuf], { type: "application/pdf" }), "acte-cession-robin-des-airs.pdf");
+          acteForm.append("nature", "signable_document");
+          acteForm.append("parse_anchors", "false");
+          const acteRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${apiKey}` },
+            body: acteForm,
+          });
+          if (acteRes.ok) {
+            const acteJson = await acteRes.json();
+            acteDocId = acteJson.id || null;
+            // Persiste l'id du doc acte dans la map → le webhook classe la version signée sous pdf-acte/<ref>.
+            if (acteDocId && dossierRef) {
+              try {
+                const sigStore2 = getBlobStore(event, "robin-signatures");
+                if (sigStore2) await sigStore2.setJSON(`map/${signatureRequestId}`, { ref: dossierRef, acteDocId, createdAt: new Date().toISOString() });
+              } catch (e) { console.warn("[yousign-init] map acteDocId échec:", e.message); }
+            }
+          } else {
+            console.warn("[yousign-init] upload acte (2e doc) ignoré:", (await acteRes.text()).slice(0, 200));
+          }
+          // Une zone signature par cédant adulte, aux coordonnées EXACTES rapportées par le générateur.
+          // Appariement par index : createdSigners (adultes, dans l'ordre) ↔ acteZones (adultes, même ordre).
+          if (acteDocId) {
+            const nZones = Math.min(createdSigners.length, acteZones.length);
+            for (let z = 0; z < nZones; z++) {
+              const zone = acteZones[z];
+              const sg = createdSigners[z];
+              await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${acteDocId}/fields`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  type: "signature",
+                  signer_id: sg.signer_id,
+                  page: zone.page,
+                  x: zone.x,
+                  y: zone.y,
+                  width: zone.w,
+                  height: zone.h,
+                }),
+              }).then((r) => { if (!r || !r.ok) console.warn(`[yousign-init] champ signature acte signataire ${z + 1} ignoré`); })
+                .catch((e) => console.warn(`[yousign-init] champ signature acte signataire ${z + 1} erreur:`, e.message));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("[yousign-init] acte de cession (2e doc) échoué, on garde le contrat seul:", e.message);
+        acteDocId = null;
+      }
+    }
+
     // signerId pour rétro-compatibilité (premier signataire = principal)
     const signerId = createdSigners[0].signer_id;
 
@@ -522,6 +615,8 @@ exports.handler = async (event) => {
       signing_url: signingUrl,
       // Nouveau : tableau complet des signataires + URLs
       signers: createdSigners,
+      // Acte de cession signé dans la même enveloppe (null si YOUSIGN_SIGN_ACTE≠1 ou échec best-effort)
+      acte_document_id: acteDocId,
     });
   } catch (e) {
     return json(500, { error: "Erreur serveur YouSign", details: String(e && e.message ? e.message : e) });

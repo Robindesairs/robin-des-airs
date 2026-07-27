@@ -77,7 +77,7 @@ async function downloadAsBase64(url, apiKey) {
   return { base64: buf.toString("base64"), size: buf.length, contentType: res.headers.get("content-type") || "application/octet-stream" };
 }
 
-async function archiveSignatureRequest(srId, baseUrl, apiKey, store, ref) {
+async function archiveSignatureRequest(srId, baseUrl, apiKey, store, ref, acteDocId) {
   // 1) Liste des documents de la signature_request
   const docsRes = await fetch(`${baseUrl}/signature_requests/${srId}/documents`, {
     headers: { Authorization: `Bearer ${apiKey}` },
@@ -104,8 +104,18 @@ async function archiveSignatureRequest(srId, baseUrl, apiKey, store, ref) {
         base64: dl.base64,
         downloaded_at: new Date().toISOString(),
       });
-      // Classe le PDF signé PAR RÉF (pdf/<ref>) → source de vérité is-signed + affichage dans le dossier.
-      if (ref && !pdfSaved) {
+      // Classe l'ACTE de cession signé sous pdf-acte/<ref> (2e document de l'enveloppe, si présent).
+      // Identifié par acteDocId (posé par yousign-init dans la map) → robuste quel que soit l'ordre renvoyé.
+      if (ref && acteDocId && docId === acteDocId) {
+        try {
+          await store.set(`pdf-acte/${ref}`, Buffer.from(dl.base64, "base64"), {
+            metadata: { contentType: "application/pdf", ref, srId, signedAt: new Date().toISOString(), kind: "acte-cession" },
+          });
+        } catch (e) { console.warn(`[yousign-webhook] pdf-acte/${ref} write failed:`, e.message); }
+      }
+      // Classe le CONTRAT signé PAR RÉF (pdf/<ref>) → source de vérité is-signed + affichage dans le dossier.
+      // On saute l'acte pour ne pas écraser le contrat par l'acte (le contrat est le 1er doc non-acte).
+      else if (ref && !pdfSaved) {
         try {
           await store.set(`pdf/${ref}`, Buffer.from(dl.base64, "base64"), {
             metadata: { contentType: "application/pdf", ref, srId, signedAt: new Date().toISOString() },
@@ -189,12 +199,13 @@ exports.handler = async (event) => {
   let dossierRef = "";
   if (eventName === "signature_request.done") {
     // Réf du dossier (posée par yousign-init dans map/<sr_id>) → on sait QUEL dossier mettre à jour.
-    try { const m = await store.get(`map/${srId}`, { type: "json" }); dossierRef = (m && m.ref) || ""; } catch (_) {}
+    let acteDocId = "";
+    try { const m = await store.get(`map/${srId}`, { type: "json" }); dossierRef = (m && m.ref) || ""; acteDocId = (m && m.acteDocId) || ""; } catch (_) {}
     const baseUrl = (process.env.YOUSIGN_BASE_URL || "https://api.yousign.app/v3").replace(/\/+$/, "");
     const apiKey = process.env.YOUSIGN_API_KEY || "";
     if (apiKey) {
       try {
-        archive = await archiveSignatureRequest(srId, baseUrl, apiKey, store, dossierRef);
+        archive = await archiveSignatureRequest(srId, baseUrl, apiKey, store, dossierRef, acteDocId);
         // Index global pour browse rapide depuis bureau.html
         try {
           let index = (await store.get("__yousign_index", { type: "json" })) || [];

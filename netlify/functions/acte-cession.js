@@ -48,6 +48,27 @@ exports.handler = async (event) => {
       return J(409, { error: 'Contrat non signé pour cette référence — acte de cession indisponible.' });
     }
 
+    // 1bis) Si l'acte a été SIGNÉ dans l'enveloppe Yousign (YOUSIGN_SIGN_ACTE=1), on sert cette version
+    // signée (pdf-acte/<ref>, posée par le webhook) plutôt que d'en régénérer une non signée.
+    try {
+      const acteSigned = await sigStore.get('pdf-acte/' + ref, { type: 'arrayBuffer' });
+      if (acteSigned && acteSigned.byteLength > 500) {
+        const buf = Buffer.from(acteSigned);
+        const nomP = String(signed.name || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'Dossier';
+        return {
+          statusCode: 200,
+          headers: {
+            ...corsHeaders(),
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `${q.dl ? 'attachment' : 'inline'}; filename="Cession-signee-${nomP}-${codeFromRef(ref)}.pdf"`,
+            'Cache-Control': 'no-store',
+          },
+          body: buf.toString('base64'),
+          isBase64Encoded: true,
+        };
+      }
+    } catch (_) { /* pas d'acte signé → régénération classique ci-dessous */ }
+
     // 2) Dossier (vol + passagers avec les données du contrat, mergées par submit-mandat).
     const mandats = getBlobStore(event, 'mandats');
     const dossier = (mandats && (await mandats.get('m/' + ref, { type: 'json' }))) || {};

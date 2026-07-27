@@ -57,8 +57,15 @@ function genererActeCessionPdf(d) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     const doc = new PDFDocument({ margin: 46, size: 'A4' });
+    // Mode « presign » : l'acte est envoyé à Yousign AVANT signature (2e document de l'enveloppe).
+    // Il porte alors des ZONES de signature (une par cédant adulte) dont on rapporte les coordonnées
+    // exactes à l'appelant (yousign-init place les widgets dessus). Sinon : rendu classique post-signature.
+    const presign = !!d.presign;
+    const sigZones = [];   // [{ name, page, x, y, w, h }] — rempli en presign
+    let pageNo = 1;        // suivi de la page courante (Yousign place par page)
+    doc.on('pageAdded', () => { pageNo += 1; });
     doc.on('data', (x) => chunks.push(x));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('end', () => resolve(presign ? { buffer: Buffer.concat(chunks), sigZones } : Buffer.concat(chunks)));
     doc.on('error', reject);
 
     const W = doc.page.width;
@@ -75,6 +82,9 @@ function genererActeCessionPdf(d) {
     const inc = incidentLabels(d.incident);
     const sigFr = fmtDate(d.signedAt, 'fr');
     const sigEn = fmtDate(d.signedAt, 'en');
+    // En presign, aucune date de signature n'existe encore : l'en-tête porte la date d'établissement (aujourd'hui).
+    const _todayIso = new Date().toISOString();
+    const headDateFr = presign ? fmtDate(_todayIso, 'fr') : sigFr;
     const routeTxt = [d.depAirport, d.arrAirport].filter(Boolean).join(' - ') || (d.route || '—');
 
     // ── En-tête épuré (document officiel, pas bannière web) : marque à gauche,
@@ -85,7 +95,7 @@ function genererActeCessionPdf(d) {
     doc.fillColor(GRAY).font('Helvetica').fontSize(8).text("Cessionnaire / Assignee — Recouvrement d'indemnités aériennes CE 261/2004", left + 31, 62, { width: contentW - 150 });
     doc.fillColor(GRAY).font('Helvetica').fontSize(7.5).text('RÉF. DOSSIER / FILE REF', left, 40, { width: contentW, align: 'right', characterSpacing: 0.5 });
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(10).text(`${d.ref || '—'}`, left, 50, { width: contentW, align: 'right' });
-    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Fait le / Date : ${sigFr}`, left, 64, { width: contentW, align: 'right' });
+    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Fait le / Date : ${headDateFr}`, left, 64, { width: contentW, align: 'right' });
     doc.moveTo(left, 86).lineTo(W - left, 86).lineWidth(1.2).stroke(NEON);
 
     // ── Titre
@@ -144,9 +154,13 @@ function genererActeCessionPdf(d) {
 
     bilingual(
       '3. Signature électronique',
-      `Contrat signé électroniquement le ${sigFr} via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve et copie intégrale du contrat disponibles sur demande.`,
+      presign
+        ? `Le présent acte est signé électroniquement par chaque cédant via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.). La date et le certificat de signature figurent dans le dossier de preuve Yousign, disponible sur demande.`
+        : `Contrat signé électroniquement le ${sigFr} via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve et copie intégrale du contrat disponibles sur demande.`,
       '3. Electronic signature',
-      `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
+      presign
+        ? `This deed is signed electronically by each assignor via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code). The signing date and certificate are recorded in the Yousign evidence file, available upon request.`
+        : `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
     );
 
     const contactEmail = `${String(d.ref || '').trim() || 'contact'}@robindesairs.eu`;
@@ -169,8 +183,12 @@ function genererActeCessionPdf(d) {
       if (p.dob) infoBits.push(`né(e) le / born ${p.dob}${p.birth ? ` à / in ${p.birth}` : ''}`);
       if (d.showAddress && p.adresse) infoBits.push(`domicile / address : ${String(p.adresse).replace(/\s*\n\s*/g, ', ')}`);
       const sigTxt = p.minor
-        ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} — signé élec. le ${sigFr}`
-        : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`;
+        ? (presign
+            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} — part non cédée (mandat, art. 9 bis)`
+            : `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} — signé élec. le ${sigFr}`)
+        : (presign
+            ? `Signature électronique ci-dessous / Electronic signature below`
+            : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`);
       doc.font('Helvetica').fontSize(7.8);
       const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join(' — ');
       const h = 12 + doc.heightOfString(line2, { width: contentW - 20 }) + rowPad * 2 - 4;
@@ -192,6 +210,32 @@ function genererActeCessionPdf(d) {
       "* Les termes de ce document ont la signification définie dans les Conditions générales sur robindesairs.eu, acceptées par les Cédants. / * Terms herein have the meaning defined in the Terms & Conditions on robindesairs.eu, accepted by the Assignors.",
       left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
     );
+
+    // ── PRESIGN : bande de signatures (une zone par cédant ADULTE), coordonnées rapportées à yousign-init.
+    // Chaque zone = boîte étiquetée où Yousign posera le widget signature. Les mineurs ne signent pas
+    // (part non cédée, art. 9 bis) : leur parent adulte signataire couvre le mandat d'encaissement.
+    if (presign) {
+      const adultes = pax.filter((p) => !p.minor);
+      const boxW = 210, boxH = 58, labelH = 12, blockH = labelH + boxH + 14;
+      doc.y += 14;
+      if (doc.y + 18 + blockH > doc.page.height - 46) { doc.addPage(); doc.y = 46; }
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text("Signatures des cédants / Assignors' signatures", left, doc.y, { width: contentW });
+      doc.y += 6;
+      let rowTop = doc.y; // top de la rangée courante, STABLE (doc.text ferait dériver doc.y entre colonnes)
+      adultes.forEach((p, k) => {
+        if (k % 2 === 0) { // début d'une nouvelle rangée
+          if (rowTop + blockH > doc.page.height - 40) { doc.addPage(); rowTop = 46; }
+        }
+        const bx = left + (k % 2) * (colW + gap);
+        const boxY = rowTop + labelH;
+        doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Signature de ${p.name || '—'}`, bx, rowTop, { width: boxW });
+        doc.roundedRect(bx, boxY, boxW, boxH, 5).lineWidth(1).stroke(BORDER);
+        // Coordonnées PDF (origine haut-gauche, points) rapportées telles quelles → Yousign v3.
+        sigZones.push({ name: p.name || '', page: pageNo, x: Math.round(bx), y: Math.round(boxY + 6), w: boxW, h: boxH - 12 });
+        // Fin de rangée (2e colonne ou dernier) → on descend d'un bloc.
+        if (k % 2 === 1 || k === adultes.length - 1) { rowTop = boxY + boxH + 12; doc.y = rowTop; }
+      });
+    }
 
     // Pied de page : margins.bottom = 0 pour dessiner sous la zone de texte SANS déclencher
     // la pagination automatique de pdfkit (sinon le footer part seul en page 2).
