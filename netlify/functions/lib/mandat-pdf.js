@@ -7,7 +7,18 @@
  */
 
 const PDFDocument = require('pdfkit');
-const MANDAT_ARTICLES = require('./mandat-articles-fr.json'); // texte intégral extrait de autorisation.html (scripts/build-mandat-articles.js)
+const MANDAT_ARTICLES = require('./mandat-articles-fr.json'); // (ancien texte intégral 18 articles — désormais dans les CGV)
+// ACTE DE CESSION COURT (générique, renvoi CGV) : le PDF signé reprend ces 7 clauses ; le détail est aux CGV.
+// Aligné sur contrat.html / BROUILLON-acte-cession-court. 🔴 wording à valider par Me Pitcher.
+const SHORT_ACTE = [
+  { title: '1. Cession', body: ["Le Cédant cède à Robin des Airs, qui l'accepte, sa créance née ou à naître au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire, remboursement, prise en charge), résultant de l'irrégularité du vol ci-dessus (retard, annulation ou refus d'embarquement). Robin des Airs acquiert la créance en son nom propre et pour son propre compte (articles 1321 et suivants du Code civil)."] },
+  { title: '2. Transfert de propriété et de risque', body: ["Dès la signature, Robin des Airs est seul propriétaire de la créance, l'exerce en son nom, assume seul l'aléa du recouvrement et l'ensemble des frais (avocat, huissier, greffe), sans recours contre le Cédant. Le Cédant n'avance et ne supporte aucun frais."] },
+  { title: '3. Prix de cession', body: ["Prix variable et aléatoire, indexé sur le montant effectivement recouvré : le Cédant reçoit 75 % du montant recouvré à l'amiable, 60 % en cas de recouvrement judiciaire. Rien récupéré, rien dû."] },
+  { title: '4. Passagers mineurs', body: ["La part d'un passager mineur n'est pas cédée ; elle est recouvrée par mandat spécial d'encaissement (Article 9 bis des CGV), le représentant légal signant pour l'enfant."] },
+  { title: '5. Notification au débiteur', body: ["La cession est opposable au transporteur par sa notification, réalisée par l'envoi d'une copie du présent acte (article 1324 du Code civil) : à compter de sa réception, seul un paiement effectué à Robin des Airs est libératoire. Les clauses restreignant la cession des créances CE 261/2004 sont inopposables (CJUE, 29 février 2024, C-11/23)."] },
+  { title: '6. Conditions Générales', body: ["Le présent acte est complété par les Conditions Générales accessibles sur robindesairs.eu/cgv, que le Cédant déclare avoir lues et acceptées et qui en font partie intégrante (exclusivité, correspondances, encaissement, protection des données, litiges, etc.)."] },
+  { title: '7. Rétractation', body: ["Le Cédant dispose d'un délai de 14 jours pour se rétracter, sans frais."] },
+];
 
 const NAVY = '#0B1F3A';
 const NEON = '#00C87A';
@@ -120,7 +131,7 @@ function genererMandatPdf(record) {
     doc.y = headerH + 22;
 
     // ── Titre ──
-    doc.fillColor(NAVY).fontSize(18).font('Helvetica-Bold').text('Contrat de Cession de Créance — copie signée', left, doc.y, { width: contentW, align: 'center' });
+    doc.fillColor(NAVY).fontSize(18).font('Helvetica-Bold').text('Acte de cession de créance — copie signée', left, doc.y, { width: contentW, align: 'center' });
     doc.moveDown(0.6);
 
     // ── Certificat de signature électronique (eIDAS) — piste de preuve détaillée ──
@@ -188,17 +199,15 @@ function genererMandatPdf(record) {
       kv('Date du vol', record.flightDate);
     }
     kv('PNR', record.pnr);
-    kv('Itinéraire', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || record.route);
+    kv('Itinéraire', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || String(record.route||'').replace(/→/g,' -> '));
     if (!legsFr.length && record.connecting) kv('Correspondance(s)', record.connecting);
     kv('Incident', INCIDENT_LABEL[record.incident] || record.incident);
     doc.moveDown(0.4);
 
-    // ── Texte intégral du mandat (extrait de la page signée — « ce que vous signez = ce que vous recevez ») ──
-    sectionTitle('Texte intégral du contrat de cession');
-    (MANDAT_ARTICLES.items || []).forEach((it) => {
-      if (it.type === 'table') { clauseTable(it.rows); return; }
+    // ── Acte de cession COURT (générique) : le détail juridique est dans les CGV, acceptées par case ──
+    sectionTitle('Acte de cession de créance');
+    SHORT_ACTE.forEach((it) => {
       clauseTitle(it.title);
-      (it.plain || []).forEach(clausePlain);
       (it.body || []).forEach(clauseBody);
       doc.moveDown(0.25);
     });
@@ -217,8 +226,8 @@ function genererMandatPdf(record) {
       doc.fillColor(TEXT).fontSize(8.5).font('Helvetica').text(t, left + 16, y - 1, { width: contentW - 16 });
       doc.y = Math.max(doc.y, y + 13);
     };
-    consent(true, "Déclaration sur l'honneur : être ou avoir été passager(e) du vol indiqué (réservation confirmée) et subir ou avoir subi la perturbation déclarée ; si le vol est en cours, la cession porte sur la créance à naître (Articles 1 et 7 quater) — engagement d'embarquer et de conserver la carte d'embarquement.");
-    consent(true, "Lecture et acceptation du contrat de cession pure et simple ET des CGV ; cession de la créance à Robin des Airs (Articles 1 et 5 bis), acceptation expresse des deux taux (75 % amiable / 60 % contentieux — Article 4) et de la conduite du dossier par le Cessionnaire (Article 1 bis). Mineur : mandat spécial du parent (Article 9 bis).");
+    consent(true, "Déclaration sur l'honneur : être ou avoir été passager(e) du vol indiqué (réservation confirmée) et subir ou avoir subi la perturbation déclarée ; si le vol est en cours, la cession porte sur la créance à naître ; engagement d'embarquer et de conserver la carte d'embarquement.");
+    consent(true, "Lecture et acceptation de l'acte de cession de créance pure et simple ET des Conditions Générales ; cession de la créance à Robin des Airs, acceptation expresse du prix de cession (75 % amiable / 60 % contentieux) et de la conduite du dossier par le Cessionnaire. Passager mineur : mandat spécial du parent/tuteur (Article 9 bis des CGV).");
     consent(record.eligibilityAcknowledged !== false, "Compréhension : l'indemnité n'est pas garantie — obligation de moyens, sous réserve d'éligibilité (CE 261/2004) et de paiement effectif par la compagnie.");
     consent(!!record.startNow, "Demande de démarrage immédiat du dossier, sans attendre le délai de rétractation de 14 jours (Art. L.221-25 C. conso.).");
     if ((record.pax || 1) > 1) consent(!!record.coPassAgreement, "Accord de tous les co-passagers (et du représentant légal pour chaque passager mineur).");
@@ -353,7 +362,7 @@ function genererMandatBilinguePdf(record) {
         kv(fr ? 'Date du vol' : 'Flight date', record.flightDate);
       }
       kv('PNR', record.pnr);
-      kv(fr ? 'Itinéraire' : 'Itinerary', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || record.route);
+      kv(fr ? 'Itinéraire' : 'Itinerary', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || String(record.route||'').replace(/→/g,' -> '));
       if (!legsBi.length && record.connecting) kv(fr ? 'Correspondance(s)' : 'Connection(s)', record.connecting);
       kv(fr ? 'Incident' : 'Disruption', (fr ? INCIDENT_LABEL : INCIDENT_LABEL_EN)[record.incident] || record.incident);
       doc.moveDown(0.4);
