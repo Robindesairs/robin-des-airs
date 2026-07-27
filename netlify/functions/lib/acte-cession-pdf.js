@@ -100,7 +100,7 @@ function genererActeCessionPdf(d) {
     doc.moveTo(left, 42).lineTo(left + 22, 52).lineWidth(2.5).stroke(NEON);
     doc.polygon([left + 22, 52], [left + 15.5, 48], [left + 17, 55.5]).fill(NEON);
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(19).text('Robin des Airs', left + 30, 38);
-    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text("Cessionnaire / Assignee — Recouvrement d'indemnités aériennes CE 261/2004", left + 31, 62, { width: contentW - 150 });
+    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text("Cessionnaire / Assignee · Recouvrement d'indemnités aériennes (Règlement CE 261/2004)", left + 31, 62, { width: contentW - 150 });
     doc.fillColor(GRAY).font('Helvetica').fontSize(7.5).text('RÉF. DOSSIER / FILE REF', left, 40, { width: contentW, align: 'right', characterSpacing: 0.5 });
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(10).text(`${d.ref || '—'}`, left, 50, { width: contentW, align: 'right' });
     doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Fait le / Date : ${headDateFr}`, left, 64, { width: contentW, align: 'right' });
@@ -119,15 +119,15 @@ function genererActeCessionPdf(d) {
     const volH = 40;
     doc.roundedRect(left, volTop, contentW, volH, 5).fillAndStroke(OFF, BORDER);
     const volLine1 = `Vol / Flight ${d.flightNum || '—'}   ·   ${d.flightDate || '—'}   ·   ${routeTxt}${d.pnr ? `   ·   PNR ${d.pnr}` : ''}`;
-    const volLine2 = `Compagnie / Air carrier : ${d.airline || '—'}   ·   Irrégularité / Disruption : ${inc.fr} / ${inc.en}`;
+    const volLine2 = `Compagnie / Air carrier : ${d.airline || '—'}   ·   Irrégularité / Disruption : retard, annulation ou refus d'embarquement / delay, cancellation or denied boarding`;
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(volLine1, left + 12, volTop + 9, { width: contentW - 24 });
     doc.fillColor(TEXT).font('Helvetica').fontSize(8.8).text(volLine2, left + 12, volTop + 23, { width: contentW - 24 });
     doc.y = volTop + volH + 16;
 
     // ── En-têtes de colonnes
     doc.fillColor(GRAY).font('Helvetica-Bold').fontSize(7.2);
-    doc.text('VERSION FRANÇAISE — FAIT FOI', x1, doc.y, { width: colW, characterSpacing: 0.4 });
-    doc.text('ENGLISH VERSION — COURTESY TRANSLATION', x2, doc.y - doc.currentLineHeight(), { width: colW, characterSpacing: 0.4 });
+    doc.text('VERSION FRANÇAISE (FAIT FOI)', x1, doc.y, { width: colW, characterSpacing: 0.4 });
+    doc.text('ENGLISH VERSION (COURTESY TRANSLATION)', x2, doc.y - doc.currentLineHeight(), { width: colW, characterSpacing: 0.4 });
     doc.y += 8;
 
     // ── Paragraphes bilingues synchronisés (aérés : lineGap + espace inter-sections)
@@ -148,9 +148,9 @@ function genererActeCessionPdf(d) {
 
     bilingual(
       '1. Parties',
-      `D'une part, les passagers désignés ci-dessous (les « Cédants ») ; d'autre part, Robin des Airs, SASU en cours d'immatriculation au RCS de Paris, service de recouvrement d'indemnités aériennes (le « Cessionnaire »).`,
+      `D'une part, les passagers désignés ci-dessous (les « Cédants ») ; d'autre part, Robin des Airs, SASU en cours d'immatriculation au RCS de Paris, service de recouvrement d'indemnités aériennes, sise 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (le « Cessionnaire »), agissant en son nom propre et pour son propre compte.`,
       '1. Parties',
-      `On the one hand, the passengers listed below (the "Assignors"); on the other hand, Robin des Airs, a French simplified joint-stock company (SASU) being registered with the Paris Trade & Companies Register, an air-passenger claims recovery service (the "Assignee").`
+      `On the one hand, the passengers listed below (the "Assignors"); on the other hand, Robin des Airs, a French simplified joint-stock company (SASU) being registered with the Paris Trade & Companies Register, an air-passenger claims recovery service, registered office at 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (the "Assignee"), acting in its own name and on its own behalf.`
     );
 
     bilingual(
@@ -192,8 +192,8 @@ function genererActeCessionPdf(d) {
       if (d.showAddress && p.adresse) infoBits.push(`domicile / address : ${String(p.adresse).replace(/\s*\n\s*/g, ', ')}`);
       const sigTxt = p.minor
         ? (presign
-            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} — part non cédée (mandat, art. 9 bis)`
-            : `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} — signé élec. le ${sigFr}`)
+            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · part non cédée (mandat, art. 9 bis)`
+            : `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · signature du représentant / signed by the representative`)
         : (presign
             ? `Signature électronique ci-dessous / Electronic signature below`
             : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`);
@@ -201,7 +201,7 @@ function genererActeCessionPdf(d) {
       // Signature dessinée (mode post-signature) : tamponnée à droite de la ligne de l'adulte.
       const sig = (!presign && !p.minor) ? sigBuffer(p.signatureImg) : null;
       const textW = sig ? contentW - 150 : contentW - 20;
-      const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join(' — ');
+      const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join('   ·   ');
       const h = Math.max(sig ? 46 : 0, 12 + doc.heightOfString(line2, { width: textW }) + rowPad * 2 - 4);
       doc.roundedRect(left, yR, contentW, h, 4).fillAndStroke('#FFFFFF', BORDER);
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, left + 10, yR + rowPad, { width: textW });
@@ -255,7 +255,7 @@ function genererActeCessionPdf(d) {
     const footY = doc.page.height - 34;
     doc.rect(0, footY - 8, W, 42).fill(OFF);
     doc.fillColor(GRAY).font('Helvetica').fontSize(7)
-      .text(`Robin des Airs — Cession de créance CE 261/2004 · robindesairs.eu · ${contactEmail}` + (d.certId ? ` · Certificat ${d.certId}` : ''), left, footY, { width: contentW, align: 'center', lineBreak: false });
+      .text(`Robin des Airs · Cession de créance CE 261/2004 · robindesairs.eu · ${contactEmail}` + (d.certId ? ` · Certificat ${d.certId}` : ''), left, footY, { width: contentW, align: 'center', lineBreak: false });
 
     doc.end();
   });
