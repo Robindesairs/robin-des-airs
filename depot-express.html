@@ -539,7 +539,7 @@
   function recapCard(sc, opts){
     opts = opts || {};
     var card = document.createElement('div'); card.className = 'recap recap-nx';
-    if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}.nx-nmwrap{flex:1;min-width:0}.nx-nmrow{display:flex;align-items:center;gap:6px}.nx-nm-edit{flex:1;min-width:0;border:0;border-bottom:1.5px dashed #c8d3e2;background:transparent;font-size:15px;font-weight:800;color:var(--navy);font-family:inherit;padding:1px 0 3px;text-transform:uppercase}.nx-nm-edit:focus{outline:none;border-bottom-color:#047857}.nx-pen{font-size:12px;opacity:.55;flex:0 0 auto}.nx-role{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px}.nx-signmode .topbar,.nx-signmode .pagehead,.nx-signmode .prog,.nx-signmode .crumbs{display:none!important}.nx-signmode .shell{padding-top:14px}.nx-hero{background:linear-gradient(135deg,#0B1F3A 0%,#123156 60%,#0d5c46 130%);color:#fff;border-radius:16px 16px 0 0;padding:20px 18px 2px;position:relative;overflow:hidden}.nx-hero::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(0,200,122,.35),transparent 70%);pointer-events:none}.nx-hero .nx-brand{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800;color:#fff;position:relative}.nx-hero h3{margin:12px 0 3px;font-size:22px;font-weight:900;letter-spacing:-.3px;position:relative}.nx-hero .nx-sub{font-size:13px;color:#cfe0d8;margin:0 0 14px;position:relative}'; document.head.appendChild(_nxst); }
+    if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}.nx-nmwrap{flex:1;min-width:0}.nx-nmrow{display:flex;align-items:center;gap:6px}.nx-nm-edit{flex:1;min-width:0;border:0;border-bottom:1.5px dashed #c8d3e2;background:transparent;font-size:15px;font-weight:800;color:var(--navy);font-family:inherit;padding:1px 0 3px;text-transform:uppercase}.nx-nm-edit:focus{outline:none;border-bottom-color:#047857}.nx-pen{font-size:12px;opacity:.55;flex:0 0 auto}.nx-role{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px}.nx-signmode .topbar,.nx-signmode .pagehead,.nx-signmode .prog,.nx-signmode .crumbs{display:none!important}.nx-signmode .shell{padding-top:14px}.nx-hero{background:linear-gradient(135deg,#0B1F3A 0%,#123156 60%,#0d5c46 130%);color:#fff;border-radius:16px 16px 0 0;padding:20px 18px 2px;position:relative;overflow:hidden}.nx-hero::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;background:radial-gradient(circle,rgba(0,200,122,.35),transparent 70%);pointer-events:none}.nx-hero .nx-brand{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:800;color:#fff;position:relative}.nx-hero h3{margin:12px 0 3px;font-size:22px;font-weight:900;letter-spacing:-.3px;position:relative}.nx-hero .nx-sub{font-size:13px;color:#cfe0d8;margin:0 0 14px;position:relative}.recap-nx input[type="date"]{text-align:left}.recap-nx input[type="date"]::-webkit-date-and-time-value{text-align:left}.recap-nx input[type="date"]::-webkit-datetime-edit{text-align:left}'; document.head.appendChild(_nxst); }
     var _adultNames = []; S.names.forEach(function(nm, j){ if (nm && !(S.paxData[j] && S.paxData[j].minor)) _adultNames.push(nm); });
     function _repSelect(i){
       var cur = (S.paxData[i] && S.paxData[i].legalRepName) || '';
@@ -616,7 +616,14 @@
     function _addrBlock(i, adr){
       var ref = (i === 0) ? adr : _mainAdr;
       _addrRef[i] = ref;
-      // Aucune adresse connue à proposer (principal dont la pièce n'a pas donné d'adresse) → champ libre à compléter.
+      // Passager PRINCIPAL : champ complet éditable (son adresse s'affiche EN ENTIER, lisible). Pas de menu :
+      // il n'a rien à « choisir », c'est sa propre adresse. Le menu « même / autre » ne sert qu'aux co-passagers.
+      if (i === 0) {
+        return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
+          + '<div class="recap-k">' + TR('Adresse', 'Address') + '</div>'
+          + '<input class="input recap-addrinp" data-idx="0" value="' + esc(adr) + '" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px"></div></div>';
+      }
+      // Co-passager sans adresse de référence connue → champ libre à compléter.
       if (!ref) {
         return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
           + '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + TR('à compléter', 'to complete') + '</span></div>'
@@ -645,7 +652,7 @@
       var both = !!(pd.sc0 && pd.sc1);
       var signrow = pd.sig
         ? '<div class="nx-signrow done"><div class="lab">✅ ' + TR('Signé', 'Signed') + '<small>' + TR('Signature enregistrée', 'Signature saved') + '</small></div><img class="nx-sigthumb" src="' + pd.sig + '" alt="signature"></div>'
-        : '<div class="nx-signrow"><div class="lab">✍️ ' + TR('Signature de ', 'Signature of ') + esc(fn) + '<small>' + TR('Tracez votre signature au doigt', 'Draw your signature with your finger') + '</small></div><button type="button" class="nx-sbtn" data-idx="' + i + '"' + (both ? '' : ' disabled') + '>' + TR('Signer', 'Sign') + '</button></div>';
+        : '<div class="nx-signrow"><div class="lab">✍️ ' + TR('Signature de ', 'Signature of ') + esc(fn) + '<small>' + TR('Tracez votre signature au doigt', 'Draw your signature with your finger') + '</small></div><button type="button" class="nx-sbtn" data-idx="' + i + '">' + TR('Signer', 'Sign') + '</button></div>';
       return '<div class="nx-sigblock">'
         + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-idx="' + i + '" data-k="0"' + (pd.sc0 ? ' checked' : '') + '><span>' + TR('Je <b>cède ma créance</b>, née ou à naître, à Robin des Airs pour ce vol.', 'I <b>assign my claim</b>, present or future, to Robin des Airs for this flight.') + '</span></label>'
         + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-idx="' + i + '" data-k="1"' + (pd.sc1 ? ' checked' : '') + '><span>' + TR("J'ai <b>lu et j'accepte</b> le <a href='/cgv.html' target='_blank' rel='noopener'>contrat de cession et les CGV</a> ; je comprends que <b>l'indemnité n'est pas garantie</b>.", "I have <b>read and accept</b> the <a href='/cgv.html' target='_blank' rel='noopener'>assignment contract and Terms</a>; I understand the <b>compensation is not guaranteed</b>.") + '</span></label>'
@@ -685,9 +692,9 @@
     var _routeStr = isEsc ? [S.legs[0] && S.legs[0].dep].concat(S.legs.map(function(l){ return l.arr; })).filter(Boolean).join(' → ') : [S.dep, S.arr].filter(Boolean).join(' → ');
     var _dfr = (function(iso){ var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[3] + '/' + m[2] + '/' + m[1] : (iso || ''); })(S.date);
     var _strip = opts.skipPax ? '' : '<div class="nx-strip">'
-      + '<span class="nx-chip">✈️ ' + esc(_routeStr || '—') + '</span>'
+      + '<span class="nx-chip nx-chip-route">✈️ ' + esc(_routeStr || '—') + '</span>'
       + '<span class="nx-chip">👪 ' + _paxN + ' ' + TR('pax', 'pax') + '</span>'
-      + (_dfr ? '<span class="nx-chip">📅 ' + esc(_dfr) + '</span>' : '')
+      + '<span class="nx-chip nx-chip-date"' + (_dfr ? '' : ' style="display:none"') + '>📅 ' + esc(_dfr || '') + '</span>'
       + '<span class="nx-chip gold">💶 ' + TR('jusqu\'à', 'up to') + ' ' + ((_paxN * 600).toLocaleString(S.lang === 'en' ? 'en-GB' : 'fr-FR')) + ' €</span>'
       + '</div>';
     var _addBtn = opts.skipPax ? '' : '<button type="button" class="nx-addpax" id="nxAddPax">➕ ' + TR('Ajouter un passager', 'Add a passenger') + '</button>';
@@ -734,11 +741,17 @@
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
       inp.addEventListener('input', function(){ S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].legalRepName = inp.value.trim(); });
     });
+    // Met à jour EN DIRECT les chips du hero (trajet + date) quand on édite le trajet.
+    function _updateChips(){
+      var routeStr = (S.typeVol === 'escale' && S.legs && S.legs.length) ? [S.legs[0] && S.legs[0].dep].concat(S.legs.map(function(l){ return l.arr; })).filter(Boolean).join(' → ') : [S.dep, S.arr].filter(Boolean).join(' → ');
+      var rc = card.querySelector('.nx-chip-route'); if (rc) rc.textContent = '✈️ ' + (routeStr || '—');
+      var dc = card.querySelector('.nx-chip-date'); if (dc) { var m = String(S.date || '').match(/^(\d{4})-(\d{2})-(\d{2})/); var dfr = m ? (m[3] + '/' + m[2] + '/' + m[1]) : (S.date || ''); if (dfr) { dc.style.display = ''; dc.textContent = '📅 ' + dfr; } else dc.style.display = 'none'; }
+    }
     // ── Édition EN PLACE des autres champs (vol direct, date, noms, téléphone, email) : plus de retour en arrière ──
     var _fn = card.querySelector('.recap-flightnum'); if (_fn) _fn.addEventListener('input', function(){ S.flightNum = _fn.value.toUpperCase().replace(/\s+/g, ''); });
-    var _dep = card.querySelector('.recap-dep'); if (_dep) { airportAuto(_dep); _dep.addEventListener('input', function(){ S.dep = _dep.value.trim(); }); }
-    var _arr = card.querySelector('.recap-arr'); if (_arr) { airportAuto(_arr); _arr.addEventListener('input', function(){ S.arr = _arr.value.trim(); }); }
-    var _dt = card.querySelector('.recap-datein'); if (_dt) _dt.addEventListener('change', function(){ if (/^\d{4}-\d{2}-\d{2}$/.test(_dt.value)) S.date = _dt.value; });
+    var _dep = card.querySelector('.recap-dep'); if (_dep) { airportAuto(_dep); _dep.addEventListener('input', function(){ S.dep = _dep.value.trim(); _updateChips(); }); }
+    var _arr = card.querySelector('.recap-arr'); if (_arr) { airportAuto(_arr); _arr.addEventListener('input', function(){ S.arr = _arr.value.trim(); _updateChips(); }); }
+    var _dt = card.querySelector('.recap-datein'); if (_dt) _dt.addEventListener('change', function(){ if (/^\d{4}-\d{2}-\d{2}$/.test(_dt.value)) { S.date = _dt.value; _updateChips(); } });
     // Nom éditable EN LIGNE dans l'en-tête (crayon) : met à jour l'état + les initiales de l'avatar en direct.
     Array.prototype.forEach.call(card.querySelectorAll('.nx-nm-edit'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
@@ -767,6 +780,7 @@
     function _recomputeFromLegs(){
       var kept = (S.legs || []).filter(function(l){ return l && (l.dep || l.arr || l.num); });
       if (kept.length) { S.dep = kept[0].dep || ''; S.arr = kept[kept.length - 1].arr || ''; S.flightNum = kept.map(function(l){ return l.num; }).filter(Boolean).join(' / '); }
+      _updateChips();
     }
     Array.prototype.forEach.call(card.querySelectorAll('.nx-leg-num'), function(inp){ var n = parseInt(inp.getAttribute('data-n'), 10); inp.addEventListener('input', function(){ S.legs[n] = S.legs[n] || {}; S.legs[n].num = inp.value.toUpperCase().replace(/\s+/g, ''); _recomputeFromLegs(); }); });
     Array.prototype.forEach.call(card.querySelectorAll('.nx-leg-dep'), function(inp){ var n = parseInt(inp.getAttribute('data-n'), 10); airportAuto(inp); inp.addEventListener('input', function(){ S.legs[n] = S.legs[n] || {}; S.legs[n].dep = inp.value.trim(); _recomputeFromLegs(); }); });
@@ -796,8 +810,6 @@
         c.addEventListener('change', function(){
           var _i = parseInt(c.getAttribute('data-idx'), 10);
           S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i][c.getAttribute('data-k') === '0' ? 'sc0' : 'sc1'] = c.checked;
-          var btn = card.querySelector('.nx-sbtn[data-idx="' + _i + '"]');
-          if (btn) btn.disabled = !(S.paxData[_i].sc0 && S.paxData[_i].sc1);
           _notify();
         });
       });
@@ -822,7 +834,18 @@
       _pad.querySelector('#nxPadOk').addEventListener('click', function(){ if (!_hasInk || _padFor == null) return; S.paxData[_padFor] = S.paxData[_padFor] || {}; S.paxData[_padFor].sig = _pcanvas.toDataURL('image/png'); _pad.classList.remove('on'); _notify(); _rerenderRecap(); });
       _pad.addEventListener('click', function(e){ if (e.target === _pad) _pad.classList.remove('on'); });
       Array.prototype.forEach.call(card.querySelectorAll('.nx-sbtn'), function(b){
-        b.addEventListener('click', function(){ var _i = parseInt(b.getAttribute('data-idx'), 10); var pd = S.paxData[_i] || {}; if (!(pd.sc0 && pd.sc1)) return; _padFor = _i; _pad.querySelector('#nxPadWho').textContent = TR('Signature de ', 'Signature of ') + (S.names[_i] || ''); _pad.classList.add('on'); setTimeout(_setupCanvas, 30); });
+        b.addEventListener('click', function(){
+          var _i = parseInt(b.getAttribute('data-idx'), 10); var pd = S.paxData[_i] || {};
+          // Cases manquantes → on les fait clignoter au lieu de « ne rien faire » (le client comprend quoi faire).
+          if (!(pd.sc0 && pd.sc1)) {
+            var pc = b.closest('.recap-pax');
+            Array.prototype.forEach.call((pc || card).querySelectorAll('.nx-sig-ck[data-idx="' + _i + '"]'), function(ck){
+              if (!ck.checked) { var lab = ck.closest('.ck'); if (lab && lab.animate) lab.animate([{ background: '#fde8e8' }, { background: 'transparent' }], { duration: 950 }); }
+            });
+            return;
+          }
+          _padFor = _i; _pad.querySelector('#nxPadWho').textContent = TR('Signature de ', 'Signature of ') + (S.names[_i] || ''); _pad.classList.add('on'); setTimeout(_setupCanvas, 30);
+        });
       });
     }
     sc.appendChild(card);
@@ -1371,11 +1394,9 @@
       // Encadré « l'essentiel » (repris du mandat) + lien contrat complet
       var box = document.createElement('div'); box.className = 'ss-box';
       box.innerHTML = '<div class="ss-h">📝 ' + TR('Ce que vous signez, l\'essentiel', 'What you\'re signing, in short') + '</div><ul>'
-        + '<li>🤝 ' + TR('Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b>, vous ne gérez rien.', 'You <b>assign your claim</b> to us: Robin des Airs acts in its own name, the airline pays us, <b>we pay you your share</b>, you handle nothing.') + '</li>'
-        + '<li>💶 ' + TR('<b>0 € à payer si rien n\'est récupéré</b> : vous n\'avancez jamais un centime. En cas de succès, vous <b>gardez 75 %</b> de la somme (<b>60 %</b> si le dossier va au tribunal), on se rémunère uniquement sur ce qu\'on récupère pour vous.', '<b>£0 to pay if nothing is recovered</b>: you never advance a penny. If we succeed, you <b>keep 75%</b> of the amount (<b>60%</b> if the case goes to court); we\'re only paid on what we recover for you.') + '</li>'
-        + '<li>🛡️ ' + TR('Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.', 'Even in court: lawyer, bailiff and court fees <b>are on us</b>.') + '</li>'
-        + '<li>✍️ ' + TR('<b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez <b>cédé</b> votre créance.', '<b>Your signature will appear on the assignment contract sent to the airline</b>, as proof that you <b>assigned</b> your claim to us.') + '</li>'
-        + '<li>📅 ' + TR('<b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.', '<b>14 days to withdraw</b>, free of charge · connections covered.') + '</li>'
+        + '<li>🤝 ' + TR('Vous nous <b>cédez votre créance</b> : on se bat en notre nom, <b>on vous reverse votre part</b>.', 'You <b>assign us your claim</b>: we fight in our own name and <b>pay you your share</b>.') + '</li>'
+        + '<li>💶 ' + TR('<b>0 € d\'avance, 0 € de frais</b> : vous gardez <b>75 %</b> (60 % au tribunal), on ne gagne que si vous gagnez.', '<b>£0 upfront, £0 in fees</b>: you keep <b>75%</b> (60% in court); we only earn if you win.') + '</li>'
+        + '<li>📅 ' + TR('<b>14 jours pour changer d\'avis</b>, sans frais.', '<b>14 days to change your mind</b>, free of charge.') + '</li>'
         + '</ul>';
       sc.appendChild(box);
       // Contrat COMPLET en accordéon, physiquement sur la page (le plus sûr juridiquement).
