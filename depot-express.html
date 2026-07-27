@@ -610,35 +610,14 @@
     // Adresse du 1er passager (cédant principal) : sert de référence « même adresse » pour la famille.
     var _mainAdr = (S.paxData[0] && S.paxData[0].adresse) || (S.piece && S.piece.adresse) || '';
     function _shortAdr(a){ a = String(a || '').trim(); return a.length > 30 ? a.slice(0, 28).replace(/,\s*$/, '') + '…' : a; }
-    // Bloc adresse : menu pour TOUS (maquette). Principal → option = son adresse connue ; co-passager →
-    // option = « Même adresse que [principal] ». Dans les deux cas, « Une autre adresse… » ouvre un champ.
-    var _addrRef = {}; // adresse de référence proposée, par index (lue par le handler)
+    // Bloc adresse : MÊME champ complet (2 lignes) pour TOUS, adresse écrite EN CLAIR. Plus de menu
+    // « même adresse » (tronqué sur mobile). Co-passager : pré-rempli avec l'adresse du principal, éditable.
     function _addrBlock(i, adr){
-      var ref = (i === 0) ? adr : _mainAdr;
-      _addrRef[i] = ref;
-      // Passager PRINCIPAL : champ complet éditable (son adresse s'affiche EN ENTIER, lisible). Pas de menu :
-      // il n'a rien à « choisir », c'est sa propre adresse. Le menu « même / autre » ne sert qu'aux co-passagers.
-      if (i === 0) {
-        return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-          + '<div class="recap-k">' + TR('Adresse', 'Address') + '</div>'
-          + '<textarea class="input recap-addrinp" data-idx="0" rows="2" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px">' + esc(adr) + '</textarea></div></div>';
-      }
-      // Co-passager sans adresse de référence connue → champ libre à compléter.
-      if (!ref) {
-        return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-          + '<div class="recap-k">' + TR('Adresse', 'Address') + ' <span class="muted" style="font-weight:400">· ' + TR('à compléter', 'to complete') + '</span></div>'
-          + '<textarea class="input recap-addrinp" data-idx="' + i + '" rows="2" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px">' + esc(adr) + '</textarea></div></div>';
-      }
-      var same = !adr || (adr.trim() === ref.trim());
-      var mainNm = S.names[0] || TR('le 1er passager', 'the 1st passenger');
-      var opt1 = (i === 0) ? esc(_shortAdr(ref)) : (TR('Même adresse que ', 'Same address as ') + esc(mainNm) + ' (' + esc(_shortAdr(ref)) + ')');
+      var val = (i === 0) ? adr : (adr || _mainAdr);
+      if (i > 0 && !adr && _mainAdr) { S.paxData[i] = S.paxData[i] || {}; S.paxData[i].adresse = _mainAdr; } // persiste le défaut (adresse du principal)
       return '<div class="recap-row"><div class="recap-ic">🏠</div><div class="recap-main">'
-        + '<div class="recap-k">' + TR('Adresse', 'Address') + '</div>'
-        + '<select class="input recap-addrmode" data-idx="' + i + '" style="margin-top:4px">'
-        +   '<option value="__same__"' + (same ? ' selected' : '') + '>' + opt1 + '</option>'
-        +   '<option value="__other__"' + (same ? '' : ' selected') + '>' + TR('Une autre adresse…', 'A different address…') + '</option>'
-        + '</select>'
-        + '<textarea class="input recap-addrinp" data-idx="' + i + '" rows="2" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:6px;display:' + (same ? 'none' : 'block') + '">' + esc(same ? '' : adr) + '</textarea></div></div>';
+        + '<div class="recap-k">' + TR('Adresse', 'Address') + (val ? '' : ' <span class="muted" style="font-weight:400">· ' + TR('à compléter', 'to complete') + '</span>') + '</div>'
+        + '<textarea class="input recap-addrinp" data-idx="' + i + '" rows="2" placeholder="N°, rue, code postal, ville, pays" autocomplete="street-address" style="margin-top:4px">' + esc(val) + '</textarea></div></div>';
     }
     // Bloc signature INLINE d'un adulte (écran signature) : 2 cases + rangée « Signer » (ou « ✅ Signé » + vignette).
     if (opts.sign && !document.getElementById('nx-sign-css')) { var _sst = document.createElement('style'); _sst.id = 'nx-sign-css'; _sst.textContent =
@@ -824,7 +803,8 @@
         function pos(e){ var r = cv.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
         function start(e){ if (!ctx) setup(); drawing = true; var p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); if (!hasInk) { hasInk = true; var hint = cv.parentElement.querySelector('.nx-inhint'); if (hint) hint.style.display = 'none'; } e.preventDefault(); }
         function move(e){ if (!drawing) return; var p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); e.preventDefault(); }
-        function end(){ if (!drawing) return; drawing = false; if (hasInk) { S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].sig = cv.toDataURL('image/png'); cv.parentElement.classList.add('done'); var st = card.querySelector('.nx-instate[data-idx="' + _i + '"]'); if (st) st.textContent = '✅ ' + TR('Signé', 'Signed'); _notify(); } }
+        // On lève le doigt : on capture SILENCIEUSEMENT (sans figer le carré) → on peut ajouter d'autres traits.
+        function end(){ if (!drawing) return; drawing = false; if (hasInk) { S.paxData[_i] = S.paxData[_i] || {}; S.paxData[_i].sig = cv.toDataURL('image/png'); var st = card.querySelector('.nx-instate[data-idx="' + _i + '"]'); if (st) st.textContent = '✅ ' + TR('Signature enregistrée', 'Signature saved'); _notify(); } }
         ['mousedown', 'touchstart'].forEach(function(ev){ cv.addEventListener(ev, start, { passive: false }); });
         ['mousemove', 'touchmove'].forEach(function(ev){ cv.addEventListener(ev, move, { passive: false }); });
         ['mouseup', 'mouseleave', 'touchend'].forEach(function(ev){ cv.addEventListener(ev, end); });
