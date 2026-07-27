@@ -537,7 +537,7 @@
   function recapCard(sc, opts){
     opts = opts || {};
     var card = document.createElement('div'); card.className = 'recap recap-nx';
-    if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}'; document.head.appendChild(_nxst); }
+    if (!document.getElementById('nx-recap-css')) { var _nxst = document.createElement('style'); _nxst.id = 'nx-recap-css'; _nxst.textContent = '.recap-nx{border:0;background:transparent;box-shadow:none}.recap-nx>.recap-h{background:linear-gradient(135deg,#0B1F3A,#0d5c46);color:#fff;border:0;font-size:15px;font-weight:800;padding:16px 16px 10px;border-radius:14px 14px 0 0}.nx-strip{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px 15px;background:linear-gradient(135deg,#0B1F3A,#0d5c46);border-radius:0 0 14px 14px;margin-bottom:13px}.nx-chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:700;color:#eaf2ff}.nx-chip.gold{background:#F0A020;color:#3a2a00;border:0}.recap-nx .recap-pax{border:1.5px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(11,31,58,.05);overflow:hidden;position:relative;margin:0 0 12px;padding-left:5px}.recap-nx .recap-pax::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.recap-nx .recap-pax-h{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px}.nx-av{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px}.nx-nm{flex:1;min-width:0;font-size:15px;font-weight:800;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nx-badge{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:20px;white-space:nowrap}.nx-badge.ad{background:#EAF7F1;color:#047857;border:1px solid #BFE6D4}.nx-badge.mi{background:#FFF4E0;color:#9a6a00;border:1px solid #F6D89B}.nx-addpax{width:100%;border:1.5px dashed #BFE6D4;background:#EAF7F1;color:#047857;border-radius:12px;padding:11px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;margin-bottom:6px}.nx-nmwrap{flex:1;min-width:0}.nx-nmrow{display:flex;align-items:center;gap:6px}.nx-nm-edit{flex:1;min-width:0;border:0;border-bottom:1.5px dashed #c8d3e2;background:transparent;font-size:15px;font-weight:800;color:var(--navy);font-family:inherit;padding:1px 0 3px;text-transform:uppercase}.nx-nm-edit:focus{outline:none;border-bottom-color:#047857}.nx-pen{font-size:12px;opacity:.55;flex:0 0 auto}.nx-role{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px}'; document.head.appendChild(_nxst); }
     var _adultNames = []; S.names.forEach(function(nm, j){ if (nm && !(S.paxData[j] && S.paxData[j].minor)) _adultNames.push(nm); });
     function _repSelect(i){
       var cur = (S.paxData[i] && S.paxData[i].legalRepName) || '';
@@ -641,12 +641,15 @@
       var _adr = pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : '');
       // NOM + DATE DE NAISSANCE + ADRESSE du MÊME passager, tous ÉDITABLES EN PLACE, regroupés dans un encadré. Aucun retour en arrière.
       var _acc = NXA[i % NXA.length];
+      // Rôle sous le nom (comme la maquette) : titulaire / passager adulte / mineur·e.
+      var _roleLabel = pd.minor ? TR('Mineur·e', 'Minor') : (i === 0 ? TR('Titulaire du dossier', 'File holder') : TR('Passager adulte', 'Adult passenger'));
       rows += '<div class="recap-pax" style="--nxacc:' + _acc + '">'
-        + '<div class="recap-pax-h"><span class="nx-av" style="background:' + _acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm || (TR('Passager', 'Passenger') + ' ' + (i + 1))) + '</span><span class="nx-badge ' + (pd.minor ? 'mi' : 'ad') + '">' + (pd.minor ? TR('Mineur·e', 'Minor') : TR('Adulte', 'Adult')) + '</span></div>'
-        + '<div class="recap-row"><div class="recap-ic">👤</div><div class="recap-main">'
-        +   '<div class="recap-k">' + TR('Nom', 'Name') + '</div>'
-        +   '<input class="input recap-namein" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="' + TR('Prénom NOM', 'First name LAST NAME') + '" style="margin-top:4px;text-transform:uppercase">'
-        +   '<div class="recap-k" style="margin-top:10px">' + TR('Date de naissance', 'Date of birth') + '</div>'
+        // En-tête : avatar + NOM ÉDITABLE EN LIGNE (souligné pointillé + crayon) + rôle + badge.
+        + '<div class="recap-pax-h"><span class="nx-av" style="background:' + _acc + '">' + esc(nxIni(nm)) + '</span>'
+        +   '<div class="nx-nmwrap"><div class="nx-nmrow"><input class="nx-nm-edit" data-idx="' + i + '" value="' + esc(nm) + '" placeholder="' + TR('Prénom NOM', 'First name LAST NAME') + '"><span class="nx-pen">✏️</span></div><div class="nx-role">' + esc(_roleLabel) + '</div></div>'
+        +   '<span class="nx-badge ' + (pd.minor ? 'mi' : 'ad') + '">' + (pd.minor ? TR('Mineur·e', 'Minor') : TR('Adulte', 'Adult')) + '</span></div>'
+        + '<div class="recap-row"><div class="recap-ic">🎂</div><div class="recap-main">'
+        +   '<div class="recap-k">' + TR('Date de naissance', 'Date of birth') + '</div>'
         +   '<input type="date" class="input recap-dobin" data-idx="' + i + '" value="' + esc(_dobIso) + '" max="' + _todayIso + '" style="margin-top:4px"></div></div>'
         + _addrBlock(i, _adr)
         + (pd.minor ? '<div class="recap-row" style="background:var(--gold-tint,#FFF6E6)"><div class="recap-ic">👤</div><div class="recap-main"><div class="recap-k">' + TR('Représenté·e par (parent / tuteur légal)', 'Represented by (parent / legal guardian)') + '</div>' + _repSelect(i) + '<div style="font-size:11.5px;color:#9a6a00;margin-top:5px;line-height:1.4">' + TR('Obligatoire pour un mineur : ce représentant signe pour l\'enfant.', 'Required for a minor: this representative signs for the child.') + '</div></div></div>' : '')
@@ -708,9 +711,14 @@
     var _dep = card.querySelector('.recap-dep'); if (_dep) { airportAuto(_dep); _dep.addEventListener('input', function(){ S.dep = _dep.value.trim(); }); }
     var _arr = card.querySelector('.recap-arr'); if (_arr) { airportAuto(_arr); _arr.addEventListener('input', function(){ S.arr = _arr.value.trim(); }); }
     var _dt = card.querySelector('.recap-datein'); if (_dt) _dt.addEventListener('change', function(){ if (/^\d{4}-\d{2}-\d{2}$/.test(_dt.value)) S.date = _dt.value; });
-    Array.prototype.forEach.call(card.querySelectorAll('.recap-namein'), function(inp){
+    // Nom éditable EN LIGNE dans l'en-tête (crayon) : met à jour l'état + les initiales de l'avatar en direct.
+    Array.prototype.forEach.call(card.querySelectorAll('.nx-nm-edit'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
-      inp.addEventListener('input', function(){ S.names[_i] = inp.value.toUpperCase(); var sp = splitName(inp.value); S.paxData[_i] = Object.assign(S.paxData[_i] || {}, { prenom: sp.prenom, nom: sp.nom }); });
+      inp.addEventListener('input', function(){
+        S.names[_i] = inp.value.toUpperCase();
+        var sp = splitName(inp.value); S.paxData[_i] = Object.assign(S.paxData[_i] || {}, { prenom: sp.prenom, nom: sp.nom });
+        var pax = inp.closest('.recap-pax'); var av = pax && pax.querySelector('.nx-av'); if (av) av.textContent = nxIni(inp.value);
+      });
     });
     Array.prototype.forEach.call(card.querySelectorAll('.recap-dobin'), function(inp){
       var _i = parseInt(inp.getAttribute('data-idx'), 10);
