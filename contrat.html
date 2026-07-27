@@ -568,7 +568,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       var vols=(Array.isArray(d.legs)&&d.legs.length?d.legs.map(function(l){return l.fnum||l.vol;}).filter(Boolean):[]).join(' · ')||d.vol||'—';
       $('c-vols').textContent=vols;
       $('c-pnr').textContent=d.pnr||'—';
-      $('c-incident').textContent=d.motif||({delay:'Retard à l\'arrivée',cancel:'Annulation',denied:'Refus d\'embarquement'}[d.incident])||'—';
+      // Motif GÉNÉRIQUE (capture en amont = issue inconnue au moment de la signature). Le motif EXACT
+      // (retard/annulation/refus) est affirmé plus tard dans la mise en demeure, pas sur le doc signé.
+      $('c-incident').textContent='Irrégularité du vol au sens du Règlement (CE) 261/2004 : retard, annulation ou refus d\'embarquement';
       var per=parseInt(d.indemnite,10)||600; $('c-amount').textContent='jusqu\'à '+((per*n).toLocaleString('fr-FR'))+' €';
       var tref=toFr(d.date)||d.date;
       var rows='';
