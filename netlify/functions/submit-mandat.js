@@ -834,6 +834,11 @@ exports.handler = async (event) => {
         name: (p && p.name) || (existingPax[i] && existingPax[i].name) || '',
         dob: (p && p.dob) || (existingPax[i] && existingPax[i].dob) || '',
         adresse: (p && p.adresse) || (existingPax[i] && existingPax[i].adresse) || '',
+        birth: (p && p.birth) || (existingPax[i] && existingPax[i].birth) || '',
+        minor: !!(p && p.minor),
+        legalRepName: (p && p.legalRepName) || (existingPax[i] && existingPax[i].legalRepName) || '',
+        // Signature dessinée au doigt (base64) → l'acte de cession la tamponne aussi (signature sur les 2 docs).
+        signatureImg: (p && p.signatureImg) || (existingPax[i] && existingPax[i].signatureImg) || '',
       }));
       await mStore.setJSON('m/' + ref, { ...existing, address: record.address || existing.address || '', passengers: mergedPassengers, _ts: new Date().toISOString() });
     } catch (e) {

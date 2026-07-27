@@ -89,6 +89,7 @@ exports.handler = async (event) => {
             minor: !!p.minor,
             legalRepName: p.legalRepName || '',
             adresse: p.adresse || p.address || '',
+            signatureImg: p.signatureImg || '',
           }))
         : [{ name: dossier.name || '', adresse: dossier.address || '' }],
       name: dossier.name || '',

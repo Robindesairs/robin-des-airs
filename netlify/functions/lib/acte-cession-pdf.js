@@ -18,6 +18,14 @@
 
 const PDFDocument = require('pdfkit');
 
+// Décode une signature dessinée (data URL base64) en Buffer image, ou null si absente/invalide.
+function sigBuffer(dataUrl) {
+  try {
+    const m = String(dataUrl || '').match(/^data:image\/(png|jpe?g);base64,(.+)$/i);
+    return m ? Buffer.from(m[2], 'base64') : null;
+  } catch (_) { return null; }
+}
+
 const NAVY = '#0B1F3A';
 const NEON = '#00C87A';
 const NEON_B = '#00E5A0';
@@ -190,11 +198,15 @@ function genererActeCessionPdf(d) {
             ? `Signature électronique ci-dessous / Electronic signature below`
             : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`);
       doc.font('Helvetica').fontSize(7.8);
+      // Signature dessinée (mode post-signature) : tamponnée à droite de la ligne de l'adulte.
+      const sig = (!presign && !p.minor) ? sigBuffer(p.signatureImg) : null;
+      const textW = sig ? contentW - 150 : contentW - 20;
       const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join(' — ');
-      const h = 12 + doc.heightOfString(line2, { width: contentW - 20 }) + rowPad * 2 - 4;
+      const h = Math.max(sig ? 46 : 0, 12 + doc.heightOfString(line2, { width: textW }) + rowPad * 2 - 4);
       doc.roundedRect(left, yR, contentW, h, 4).fillAndStroke('#FFFFFF', BORDER);
-      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, left + 10, yR + rowPad, { width: contentW - 20 });
-      doc.fillColor(GRAY).font('Helvetica').fontSize(7.8).text(line2, left + 10, yR + rowPad + 11, { width: contentW - 20 });
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, left + 10, yR + rowPad, { width: textW });
+      doc.fillColor(GRAY).font('Helvetica').fontSize(7.8).text(line2, left + 10, yR + rowPad + 11, { width: textW });
+      if (sig) { try { doc.image(sig, left + contentW - 128, yR + (h - 30) / 2, { fit: [116, 30] }); } catch (_) {} }
       doc.y = yR + h + 5;
     });
 

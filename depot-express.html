@@ -1340,27 +1340,80 @@
       // ── Signature ÉLECTRONIQUE CERTIFIÉE (Yousign embarqué) — plus de dessin ──────────────
       //    Chaque ADULTE signe sa propre signature dans un cadre Yousign, sur cette page (voir submit()).
       //    Les mineurs sont couverts par le parent/tuteur signataire (pas de signature directe).
-      // ── Signature façon maquette : une CARTE PAR ADULTE (cases + état), Yousign par-dessous ──
-      if (!document.getElementById('nx-sign-css')) { var _sst = document.createElement('style'); _sst.id = 'nx-sign-css'; _sst.textContent = '.nx-signcard{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0 0;position:relative;padding-left:5px}.nx-signcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.nx-signhead{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px;border-bottom:1px solid var(--line)}.nx-signhead .nx-nm{flex:1;font-size:15px;font-weight:800;color:var(--navy)}.nx-signstate{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;background:#eef1f5;color:#8a94a6;white-space:nowrap}.nx-signstate.act{background:#fff4e0;color:#9a6a00}.nx-signstate.done{background:#dff5ea;color:#047857}.nx-signbody{padding:8px 14px 12px}.nx-signbody .ck{padding:4px 0}'; document.head.appendChild(_sst); }
+      // ── Signature DESSINÉE AU DOIGT par adulte (maquette validée) : cases + bouton « Signer » →
+      //    pad plein écran (canvas) → l'image est capturée dans S.paxData[i].sig et tamponnée sur le
+      //    contrat + l'acte de cession (mandat-pdf.js / acte-cession-pdf). Yousign reste côté API.
+      if (!document.getElementById('nx-sign-css')) { var _sst = document.createElement('style'); _sst.id = 'nx-sign-css'; _sst.textContent =
+        '.nx-signcard{border:1.5px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0 0;position:relative;padding-left:5px}.nx-signcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--nxacc,#2E8BC0)}.nx-signhead{display:flex;align-items:center;gap:10px;background:#fbfcfe;padding:11px 14px;border-bottom:1px solid var(--line)}.nx-signhead .nx-nm{flex:1;font-size:15px;font-weight:800;color:var(--navy)}.nx-signstate{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;background:#eef1f5;color:#8a94a6;white-space:nowrap}.nx-signstate.done{background:#dff5ea;color:#047857}.nx-signbody{padding:8px 14px 12px}.nx-signbody .ck{padding:4px 0}'
+        + '.nx-signrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:6px;padding:11px 13px;border:1.5px dashed #BFE6D4;border-radius:12px;background:#EAF7F1}.nx-signrow .lab{font-size:13px;font-weight:800;color:#047857}.nx-signrow .lab small{display:block;font-weight:600;color:#3d6b58;font-size:11.5px}.nx-sbtn{border:0;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;background:#047857;color:#fff;white-space:nowrap}.nx-sbtn:disabled{background:#cfd7e2;cursor:not-allowed}.nx-signrow.done{border-style:solid;border-color:#047857;background:#dff5ea}.nx-sigthumb{height:36px;border-radius:6px;background:#fff;border:1px solid #BFE6D4;padding:2px 6px}'
+        + '.nx-padwrap{position:fixed;inset:0;background:rgba(11,31,58,.55);display:none;align-items:flex-end;justify-content:center;z-index:9000}.nx-padwrap.on{display:flex}.nx-pad{background:#fff;width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px 20px 22px;box-shadow:0 -10px 40px rgba(0,0,0,.25)}.nx-pad h4{margin:0 0 3px;font-size:17px;font-weight:900;color:var(--navy)}.nx-pad .who{font-size:13px;color:var(--muted);margin:0 0 14px}.nx-cbox{position:relative;border:2px dashed #BFE6D4;border-radius:14px;background:#fbfffd;height:190px;overflow:hidden}.nx-cbox canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}.nx-chint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#b7c6bd;font-size:14px;font-weight:700;pointer-events:none}.nx-cbase{position:absolute;left:16px;right:16px;bottom:44px;border-bottom:2px solid #dfeae4}.nx-cx{position:absolute;left:20px;bottom:46px;color:#c9d6cf;font-size:20px;font-weight:900;pointer-events:none}.nx-padact{display:flex;gap:10px;margin-top:14px}.nx-padclear{flex:0 0 auto;border:1.5px solid var(--line);background:#fff;color:var(--muted);border-radius:11px;padding:12px 16px;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer}.nx-padok{flex:1;border:0;border-radius:11px;padding:13px;font-size:15px;font-weight:900;font-family:inherit;color:#fff;background:linear-gradient(135deg,#00C87A,#047857);cursor:pointer}.nx-padok:disabled{background:#cfd7e2;cursor:not-allowed}.nx-padcert{font-size:11px;color:var(--muted);text-align:center;margin:11px 0 0;line-height:1.5}';
+        document.head.appendChild(_sst); }
       var adultIdxs = []; S.names.forEach(function(nm, i){ var pd = S.paxData[i] || {}; if (nm && !pd.minor) adultIdxs.push(i); });
       var minorNames = S.names.filter(function(nm, i){ var pd = S.paxData[i] || {}; return nm && pd.minor; });
-      var _sigChecks = [];
+      var _firstName = function(nm){ var p = String(nm || '').trim().split(/\s+/).filter(Boolean); return p[0] || TR('l\'adulte', 'the adult'); };
       var _sh = document.createElement('div'); _sh.className = 'ss-h'; _sh.style.marginTop = '10px'; _sh.innerHTML = '✍️ ' + TR('Signature de chaque adulte', 'Each adult signs'); sc.appendChild(_sh);
-      adultIdxs.forEach(function(si, j){
-        var nm = S.names[si]; var acc = NXA[si % NXA.length];
-        var cardEl = document.createElement('div'); cardEl.className = 'nx-signcard'; cardEl.style.setProperty('--nxacc', acc);
-        cardEl.innerHTML = '<div class="nx-signhead"><span class="nx-av" style="background:' + acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm) + '</span><span class="nx-signstate" id="nxsignstate-' + j + '">' + TR('À signer', 'To sign') + '</span></div>'
-          + '<div class="nx-signbody">'
-          + '<label class="ck"><input type="checkbox" class="nx-sig-ck"><span>' + TR('Je <b>cède ma créance</b>, née ou à naître, à Robin des Airs pour ce vol.', 'I <b>assign my claim</b>, present or future, to Robin des Airs for this flight.') + '</span></label>'
-          + '<label class="ck"><input type="checkbox" class="nx-sig-ck"><span>' + TR("J'ai <b>lu et j'accepte</b> le <a href='/cgv.html' target='_blank' rel='noopener'>contrat de cession et les CGV</a> ; je comprends que <b>l'indemnité n'est pas garantie</b>.", "I have <b>read and accept</b> the <a href='/cgv.html' target='_blank' rel='noopener'>assignment contract and Terms</a>; I understand the <b>compensation is not guaranteed</b>.") + '</span></label>'
-          + '</div>';
-        sc.appendChild(cardEl);
-        Array.prototype.forEach.call(cardEl.querySelectorAll('.nx-sig-ck'), function(c){ _sigChecks.push(c); });
-      });
+      var _signWrap = document.createElement('div'); sc.appendChild(_signWrap);
+      // adulte « signé » = a une image de signature dans S.paxData[si].sig ; cases persistées dans .sc0/.sc1
+      function _adultChecked(si){ var pd = S.paxData[si] || {}; return !!(pd.sc0 && pd.sc1); }
+      function _allAdultsDone(){ return adultIdxs.length > 0 && adultIdxs.every(function(si){ return _adultChecked(si) && (S.paxData[si] && S.paxData[si].sig); }); }
+      function renderSignArea(){
+        var html = '';
+        adultIdxs.forEach(function(si, j){
+          var nm = S.names[si]; var pd = S.paxData[si] || {}; var acc = NXA[si % NXA.length];
+          var signed = !!pd.sig; var bothCk = _adultChecked(si);
+          var signrow = signed
+            ? '<div class="nx-signrow done"><div class="lab">✅ ' + TR('Signé', 'Signed') + '<small>' + TR('Signature enregistrée', 'Signature saved') + '</small></div><img class="nx-sigthumb" src="' + pd.sig + '" alt="signature"></div>'
+            : '<div class="nx-signrow"><div class="lab">✍️ ' + TR('Signature de ', 'Signature of ') + esc(_firstName(nm)) + '<small>' + TR('Tracez votre signature au doigt', 'Draw your signature with your finger') + '</small></div><button type="button" class="nx-sbtn" data-adult="' + j + '"' + (bothCk ? '' : ' disabled') + '>' + TR('Signer', 'Sign') + '</button></div>';
+          html += '<div class="nx-signcard" style="--nxacc:' + acc + '">'
+            + '<div class="nx-signhead"><span class="nx-av" style="background:' + acc + '">' + esc(nxIni(nm)) + '</span><span class="nx-nm">' + esc(nm) + '</span><span class="nx-signstate' + (signed ? ' done' : '') + '">' + (signed ? '✅ ' + TR('Signé', 'Signed') : TR('À signer', 'To sign')) + '</span></div>'
+            + '<div class="nx-signbody">'
+            + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-adult="' + j + '" data-k="0"' + (pd.sc0 ? ' checked' : '') + '><span>' + TR('Je <b>cède ma créance</b>, née ou à naître, à Robin des Airs pour ce vol.', 'I <b>assign my claim</b>, present or future, to Robin des Airs for this flight.') + '</span></label>'
+            + '<label class="ck"><input type="checkbox" class="nx-sig-ck" data-adult="' + j + '" data-k="1"' + (pd.sc1 ? ' checked' : '') + '><span>' + TR("J'ai <b>lu et j'accepte</b> le <a href='/cgv.html' target='_blank' rel='noopener'>contrat de cession et les CGV</a> ; je comprends que <b>l'indemnité n'est pas garantie</b>.", "I have <b>read and accept</b> the <a href='/cgv.html' target='_blank' rel='noopener'>assignment contract and Terms</a>; I understand the <b>compensation is not guaranteed</b>.") + '</span></label>'
+            + signrow + '</div></div>';
+        });
+        _signWrap.innerHTML = html;
+        Array.prototype.forEach.call(_signWrap.querySelectorAll('.nx-sig-ck'), function(c){
+          c.addEventListener('change', function(){
+            var si = adultIdxs[parseInt(c.getAttribute('data-adult'), 10)]; var k = c.getAttribute('data-k');
+            S.paxData[si] = S.paxData[si] || {}; S.paxData[si][k === '0' ? 'sc0' : 'sc1'] = c.checked;
+            var btn = _signWrap.querySelector('.nx-sbtn[data-adult="' + c.getAttribute('data-adult') + '"]');
+            if (btn) btn.disabled = !_adultChecked(si);
+            refresh();
+          });
+        });
+        Array.prototype.forEach.call(_signWrap.querySelectorAll('.nx-sbtn'), function(b){
+          b.addEventListener('click', function(){ var j = parseInt(b.getAttribute('data-adult'), 10); if (_adultChecked(adultIdxs[j])) _openPad(j); });
+        });
+      }
+      // ── Pad de signature (canvas) partagé, monté une fois ──
+      var _pad = document.createElement('div'); _pad.className = 'nx-padwrap';
+      _pad.innerHTML = '<div class="nx-pad"><h4>' + TR('Votre signature', 'Your signature') + '</h4><p class="who" id="nxPadWho"></p>'
+        + '<div class="nx-cbox" id="nxCbox"><canvas id="nxCanvas"></canvas><div class="nx-cbase"></div><div class="nx-cx">✕</div><div class="nx-chint" id="nxChint">' + TR('Signez ici avec votre doigt', 'Sign here with your finger') + '</div></div>'
+        + '<div class="nx-padact"><button type="button" class="nx-padclear" id="nxPadClear">' + TR('Effacer', 'Clear') + '</button><button type="button" class="nx-padok" id="nxPadOk" disabled>' + TR('Valider ma signature', 'Confirm my signature') + '</button></div>'
+        + '<p class="nx-padcert">🔒 ' + TR('Signature électronique (art. 1367 C. civ.) horodatée et rattachée à votre dossier.', 'Electronic signature (Art. 1367 Civil Code), timestamped and bound to your file.') + '</p></div>';
+      sc.appendChild(_pad);
+      var _padFor = null, _drawing = false, _hasInk = false, _pctx = null, _pcanvas = null;
+      function _setupCanvas(){ _pcanvas = _pad.querySelector('#nxCanvas'); var box = _pad.querySelector('#nxCbox'); var rc = box.getBoundingClientRect();
+        // Résolution interne du canvas = largeur réelle de la boîte ; fallback robuste si la mesure est absurde
+        // (viewport 0 / layout non stabilisé) → jamais de signature vide.
+        var w = Math.round(rc.width); if (!(w >= 100)) w = Math.min(500, (window.innerWidth || 480)) - 40;
+        var h = Math.round(rc.height); if (!(h >= 80)) h = 190;
+        _pcanvas.width = w; _pcanvas.height = h; _pctx = _pcanvas.getContext('2d'); _pctx.lineWidth = 3; _pctx.lineCap = 'round'; _pctx.lineJoin = 'round'; _pctx.strokeStyle = '#0B1F3A'; _hasInk = false; _pad.querySelector('#nxPadOk').disabled = true; _pad.querySelector('#nxChint').style.display = 'flex'; }
+      function _ppos(e){ var r = _pcanvas.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
+      function _pstart(e){ if (!_pctx) return; if (!_pcanvas.width) _setupCanvas(); _drawing = true; var p = _ppos(e); _pctx.beginPath(); _pctx.moveTo(p.x, p.y); if (!_hasInk) { _hasInk = true; _pad.querySelector('#nxChint').style.display = 'none'; _pad.querySelector('#nxPadOk').disabled = false; } e.preventDefault(); }
+      function _pmove(e){ if (!_drawing) return; var p = _ppos(e); _pctx.lineTo(p.x, p.y); _pctx.stroke(); e.preventDefault(); }
+      function _pend(){ _drawing = false; }
+      function _openPad(j){ _padFor = adultIdxs[j]; _pad.querySelector('#nxPadWho').textContent = TR('Signature de ', 'Signature of ') + (S.names[_padFor] || ''); _pad.classList.add('on'); setTimeout(_setupCanvas, 30); }
+      (function(){ var c = _pad.querySelector('#nxCanvas');
+        ['mousedown', 'touchstart'].forEach(function(ev){ c.addEventListener(ev, _pstart, { passive: false }); });
+        ['mousemove', 'touchmove'].forEach(function(ev){ c.addEventListener(ev, _pmove, { passive: false }); });
+        ['mouseup', 'mouseleave', 'touchend'].forEach(function(ev){ c.addEventListener(ev, _pend); });
+        _pad.querySelector('#nxPadClear').addEventListener('click', function(){ if (_pctx) _pctx.clearRect(0, 0, _pcanvas.width, _pcanvas.height); _hasInk = false; _pad.querySelector('#nxPadOk').disabled = true; _pad.querySelector('#nxChint').style.display = 'flex'; });
+        _pad.querySelector('#nxPadOk').addEventListener('click', function(){ if (!_hasInk || _padFor == null) return; S.paxData[_padFor] = S.paxData[_padFor] || {}; S.paxData[_padFor].sig = _pcanvas.toDataURL('image/png'); _pad.classList.remove('on'); renderSignArea(); refresh(); });
+        _pad.addEventListener('click', function(e){ if (e.target === _pad) _pad.classList.remove('on'); });
+      })();
+      renderSignArea();
       if (minorNames.length) { var _mi = document.createElement('div'); _mi.className = 'ss-box'; _mi.style.cssText = 'margin-top:10px;font-size:12.5px;color:var(--ink-soft);line-height:1.5'; _mi.innerHTML = '👶 ' + minorNames.map(esc).join(', ') + TR(' : la part du mineur n\'est pas cédée ; elle est recouvrée par mandat, le parent/tuteur signataire agit pour l\'enfant.', ': the minor\'s share is not assigned; it is recovered by mandate — the signing parent/guardian acts for the child.'); sc.appendChild(_mi); }
-      // Les cartes passent à « en cours… » puis « Signé ✓ » à mesure que chaque adulte signe dans Yousign.
-      _onSignerActive = function(i){ var el = document.getElementById('nxsignstate-' + i); if (el) { el.textContent = TR('en cours…', 'signing…'); el.className = 'nx-signstate act'; } };
-      _onSignerDone = function(i){ var el = document.getElementById('nxsignstate-' + i); if (el) { el.textContent = '✅ ' + TR('Signé', 'Signed'); el.className = 'nx-signstate done'; } };
       function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
       var ck3 = ckRow(TR("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25), je reste libre de me rétracter, sans frais.", "<b>Optional:</b> I ask Robin des Airs to <b>start right away</b>, without waiting for the end of my 14-day withdrawal period, and I remain free to withdraw, free of charge.") + (S.pax > 1 ? " <span style='color:var(--muted)'>" + TR('Cette demande vaut pour tous les passagers du dossier.', 'This request applies to all passengers on the file.') + "</span>" : ""));
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
@@ -1373,10 +1426,10 @@
       wait.innerHTML = TR('⏳ On génère votre <b>contrat sécurisé</b> et votre <b>signature électronique</b>. Cela prend <b>une quinzaine de secondes</b>, ne fermez pas la page.', '⏳ We\'re generating your <b>secure contract</b> and your <b>electronic signature</b>. This takes <b>about fifteen seconds</b> — please don\'t close the page.');
       sc.appendChild(wait);
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
-      rg.innerHTML = '<span>🔒</span><span>' + TR('Signature électronique certifiée (Yousign) : horodatée, adresse IP enregistrée, document scellé et piste d\'audit. Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.', 'Certified electronic signature (Yousign): timestamped, IP address recorded, sealed document and audit trail. It appears on the assignment contract sent to the airline (proof of assignment). Encrypted transmission (HTTPS). 14-day withdrawal. GDPR.') + '</span>';
+      rg.innerHTML = '<span>🔒</span><span>' + TR('Signature électronique (art. 1366-1367 C. civ.) : horodatée, adresse IP enregistrée, rattachée à votre dossier. Elle figure sur le contrat de cession et la notification transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.', 'Electronic signature (Art. 1366-1367 Civil Code): timestamped, IP address recorded, bound to your file. It appears on the assignment contract and the notice sent to the airline (proof of assignment). Encrypted transmission (HTTPS). 14-day withdrawal. GDPR.') + '</span>';
       sc.appendChild(rg);
-      function refresh(){ go.disabled = !(_sigChecks.length && _sigChecks.every(function(c){ return c.checked; })); } // toutes les cases de TOUS les adultes cochées
-      _sigChecks.concat([ck3]).forEach(function(c){ c.addEventListener('change', refresh); });
+      // Bouton final actif quand CHAQUE adulte a coché ses 2 cases ET tracé sa signature.
+      function refresh(){ go.disabled = !_allAdultsDone(); }
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
@@ -1898,7 +1951,8 @@
       var pd = S.paxData[i] || {};
       var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor, adresse: pd.adresse || (i === 0 ? ((S.piece && S.piece.adresse) || '') : ''), legalRepName: pd.legalRepName || '' };
       if (i === 0) { base.prenom = firstName; base.nom = lastName; base.dob = (S.piece && S.piece.dob) || pd.dob || ''; if (S.piece) base.birth = S.piece.lieuNaissance || ''; base.minor = base.dob ? isMinor(base.dob, S.date) : false; }
-      if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
+      // Signature dessinée au doigt : chaque ADULTE porte SON image (tamponnée sur le contrat + l'acte). Mineurs = pas de signature (couverts par le parent signataire).
+      if (!base.minor) base.signatureImg = pd.sig || '';
       return base;
     });
     // Correspondance : tronçons structurés (le mandat bascule en mode « correspondance » et pré-remplit chaque vol)
@@ -1988,9 +2042,11 @@
           passengerNames: names, passengersData: passengersData,
           depAirport: S.dep, arrAirport: S.arr, connecting: viaTxt, flightMode: isEsc ? 'connecting' : 'direct', flightLegs: legsPayload,
           signCity: '', signDate: nowIso.slice(0, 10),
-          signatureImg: '', // signature réelle = Yousign embarqué (plus de dessin) ; posée par le webhook Yousign
+          // Signature dessinée au doigt : image du cédant principal (les co-adultes sont dans passengersData[i].signatureImg).
+          // mandat-pdf.js tamponne chaque signature sur le contrat ; l'acte de cession les reprend aussi.
+          signatureImg: (passengersData[0] && passengersData[0].signatureImg) || '',
           source: 'depot-express.html', signedAt: nowIso,
-          mandatVersion: 'web-express-v6-yousign', watiConversationId: S.phone, linkSentAt: '',
+          mandatVersion: 'web-express-v7-drawn', watiConversationId: S.phone, linkSentAt: '',
         }),
       });
     })
@@ -2010,7 +2066,7 @@
           body: JSON.stringify({ ref: REF, filename: u.f.filename, mime: u.f.mime, dataBase64: u.f.dataBase64, kind: u.kind, passenger: u.who }),
         }).then(function(r){ return { label: u.label, kind: u.kind, ok: !!r.ok }; })
           .catch(function(){ return { label: u.label, kind: u.kind, ok: false }; });
-      })).then(function(results){ return doSign(results); }); // pièces envoyées → PDF + signature Yousign embarquée
+      })).then(function(results){ return success(results); }); // signatures dessinées déjà capturées → submit-mandat a généré le PDF signé → écran de confirmation
     });
   }
   // Envoi du JUSTIFICATIF DE FILIATION (post-signature, dossier avec mineur) : livret de famille / acte de
