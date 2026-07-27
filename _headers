@@ -52,6 +52,14 @@
   X-Frame-Options: DENY
   Cache-Control: no-store, no-cache, must-revalidate, private
 
+# Parcours de signature (page en évolution rapide) : JAMAIS de cache navigateur,
+# sinon le client garde une ancienne version (in-app WhatsApp / Safari mobile).
+/depot-express.html
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+
+/contrat.html
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+
 # Endpoints sensibles : signature électronique + mandats
 /api/sign-mandate*
   Cache-Control: no-store
