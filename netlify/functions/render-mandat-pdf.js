@@ -73,7 +73,11 @@ function buildMandatUrl(baseUrl, params) {
     qs.set(key, String(value));
   }
   const sep = baseUrl.includes("?") ? "&" : "?";
-  return `${baseUrl}/mandat.html${qs.toString() ? sep + qs.toString() : ""}`;
+  // Page rendue : contrat.html (l'ACTE DE CESSION) et non plus mandat.html (le contrat long).
+  // Le parcours signe desormais l'acte ; l'apercu doit montrer LE MEME document, sinon le
+  // client lit un texte et en signe un autre. Bascule par RDA_RENDER_PAGE si besoin.
+  const page = String(process.env.RDA_RENDER_PAGE || "contrat.html").replace(/[^a-z0-9.\-]/gi, "");
+  return `${baseUrl}/${page}${qs.toString() ? sep + qs.toString() : ""}`;
 }
 
 exports.handler = async (event) => {
@@ -126,7 +130,7 @@ exports.handler = async (event) => {
 
     if (!response || !response.ok()) {
       return json(502, {
-        error: "Echec navigation mandat.html",
+        error: "Echec navigation vers la page de l'acte",
         url: mandatUrl,
         status: response ? response.status() : "no_response",
       });

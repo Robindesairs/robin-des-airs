@@ -254,7 +254,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 .ac-cgv{display:inline-block;margin-top:8px;font-size:14px;font-weight:800;color:#047857;text-decoration:none;border:1.5px solid #BFE6D4;background:#EAF7F1;border-radius:10px;padding:9px 14px}
 </style></head><body><div class="doc" style="max-width:760px;margin:14px auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(11,31,58,.05),0 16px 44px rgba(11,31,58,.07)">
 <div class="c2-head" style="position:relative">
-  <button id="langBtn" type="button" aria-label="Switch to English" style="position:absolute;top:14px;right:14px;z-index:5;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.10);color:#fff;font:700 12px/1 system-ui,sans-serif;letter-spacing:.06em;padding:8px 12px;border-radius:999px;cursor:pointer">EN</button>
+  <button id="langBtn" type="button" aria-label="Switch to English" style="position:absolute;top:14px;right:14px;z-index:5;display:flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.16);color:#fff;font:700 12px/1 system-ui,sans-serif;letter-spacing:.04em;padding:9px 14px;border-radius:999px;cursor:pointer"><span aria-hidden="true">🌐</span><span id="langBtnLabel">Read in English</span></button>
 <div class="c2-brand"><img src="/favicon.png" alt=""> Robin des Airs</div>
   <h1 data-t="h1">Acte de cession de créance</h1>
   <div class="sub" data-t="sub">Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil</div>
@@ -279,7 +279,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div id="c-paxbody"></div>
   </div>
 </div>
-<div class="c2-note">🔒 Signature électronique certifiée Yousign (horodatage, adresse IP, document scellé, piste d'audit). Chaque cédant adulte signe ; la part d'un passager mineur n'est pas cédée mais recouvrée par mandat spécial (Article 9 bis), le parent/tuteur signant pour lui.</div>
+<div class="c2-note" data-t="note">🔒 Signature électronique certifiée Yousign (horodatage, adresse IP, document scellé, piste d'audit). Chaque cédant adulte signe ; la part d'un passager mineur n'est pas cédée mais recouvrée par mandat spécial (Article 9 bis), le parent/tuteur signant pour lui.</div>
 
 <div class="ac-wrap">
   <div class="ac-art" data-t="art1"><h2><span class="ac-num">1</span> Cession</h2>
@@ -355,6 +355,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     kIncident: 'Disruption', kIndem: 'Compensation sought',
     kPax: 'Passenger', kNaiss: 'Date of birth', kAdr: 'Address / representative',
     cgvLink: 'Read the Terms and Conditions &rarr;',
+    note: '🔒 Certified electronic signature by Yousign (timestamp, IP address, sealed document, audit trail). Each adult assignor signs. A minor passenger\u2019s share is not assigned: it is recovered under a special collection authority (Article 9 bis), the parent or guardian signing on the child\u2019s behalf.',
     mCess: 'A French simplified joint-stock company (SASU) being registered with the Paris Trade and Companies Register<br>EC 261/2004 claims recovery service · acting in its own name',
     art1: '<h2><span class="ac-num">1</span> Assignment</h2><p>The Assignor assigns to Robin des Airs, which accepts, its claim <strong>present or future</strong> under Regulation (EC) No 261/2004 (fixed compensation, reimbursement, right to care), arising from the <strong>disruption of the flight identified above &mdash; delay, cancellation or denied boarding</strong>. Robin des Airs acquires the claim <strong>in its own name and on its own behalf</strong> (Articles 1321 et seq. of the French Civil Code).</p>',
     art2: '<h2><span class="ac-num">2</span> Transfer of ownership and risk</h2><p>Upon signature, Robin des Airs is the <strong>sole owner</strong> of the claim, enforces it in its own name, <strong>bears alone the recovery risk and all costs</strong> (lawyer, enforcement officer, court registry), with no recourse against the Assignor. The Assignor advances and bears <strong>no cost whatsoever</strong>.</p>',
@@ -379,7 +380,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     if (note) note.style.display = lang === 'en' ? 'block' : 'none';
     document.documentElement.lang = lang;
     var b = document.getElementById('langBtn');
-    if (b) { b.textContent = lang === 'en' ? 'FR' : 'EN'; b.setAttribute('aria-label', lang === 'en' ? 'Repasser en français' : 'Switch to English'); }
+    var lbl = document.getElementById('langBtnLabel');
+    if (lbl) lbl.textContent = lang === 'en' ? 'Lire en français' : 'Read in English';
+    if (b) b.setAttribute('aria-label', lang === 'en' ? 'Lire en français' : 'Read in English');
     cur = lang;
     try { localStorage.setItem('rda_acte_lang', lang); } catch (e) {}
   }
