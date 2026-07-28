@@ -166,7 +166,8 @@ function genererActeCessionPdf(d) {
       // Paris-Dakar vendu sous numero American Airlines mais opere par Air France a pour
       // debiteur Air France. Le libelle nomme donc la bonne qualite, ce qui protege l'acte
       // meme si la saisie a retenu le transporteur commercial.
-      ['TRANSPORTEUR AÉRIEN EFFECTIF / OPERATING AIR CARRIER', d.airline || '—'],
+      ['TRANSPORTEUR EFFECTIF / OPERATING CARRIER',
+       d.airline ? `${d.airline} (indicatif)` : 'celui du vol ci-dessus / the one above'],
       ['INDEMNITÉ VISÉE / SOUGHT', "jusqu'à 600 € / up to €600"],
     ];
     const cardH = 22 + cellH * (cells.length / 2);
@@ -187,7 +188,15 @@ function genererActeCessionPdf(d) {
     doc.fillColor(TEXT).font('Helvetica').fontSize(8)
       .text("Irrégularité / Disruption : retard, annulation ou refus d'embarquement / delay, cancellation or denied boarding",
             left, doc.y, { width: contentW });
-    doc.y += 12;
+    doc.y += 11;
+    // La créance est identifiée par LE VOL, jamais par un nom de société. Sur un partage de
+    // code, le billet porte le numéro du transporteur commercial alors que le débiteur est
+    // l'opérateur réel : nommer une société à la signature reviendrait à figer une erreur
+    // dans un acte qu'on ne peut plus corriger. Le nom affiché n'est donc qu'indicatif.
+    doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.4)
+      .text("La créance cédée est celle détenue contre le transporteur ayant effectivement opéré le vol désigné ci-dessus, quel que soit le transporteur commercial figurant sur le billet (partage de code). Le nom mentionné est indicatif. / The assigned claim is the one held against the carrier that actually operated the flight identified above, whatever the marketing carrier shown on the ticket (codeshare). The name shown is indicative.",
+            left, doc.y, { width: contentW, align: 'justify', lineGap: 0.4 });
+    doc.y += 22;
 
     // ── PRESIGN : bandeau d'engagement. Le client doit voir CE QU'IL GAGNE avant le
     // vocabulaire juridique. Trois chiffres, rien d'autre.
