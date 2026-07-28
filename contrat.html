@@ -419,10 +419,15 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     var b = document.getElementById('langBtn');
     if (b) b.addEventListener('click', function () { apply(cur === 'en' ? 'fr' : 'en'); });
     // Présélection : ?lang= dans l'URL, puis choix mémorisé, puis langue du navigateur.
+    // Le français est la langue PAR DÉFAUT, et la seule qui fasse foi. On ne bascule en
+    // anglais que sur un signal EXPLICITE : ?lang=en dans l'URL (le bot WhatsApp l'ajoute
+    // pour ses clients anglophones) ou un choix déjà fait par l'utilisateur.
+    // Surtout PAS navigator.language : Chromium headless, qui génère le PDF d'aperçu via
+    // render-mandat-pdf, s'annonce en en-US. Un client français recevait donc un acte en
+    // anglais, et le titre imprimé devenait « Deed of assignment of claim ».
     var q = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
     var saved = ''; try { saved = localStorage.getItem('rda_acte_lang') || ''; } catch (e) {}
-    var nav = (navigator.language || '').slice(0, 2).toLowerCase();
-    var want = q === 'en' || q === 'fr' ? q : (saved || (nav && nav !== 'fr' ? 'en' : 'fr'));
+    var want = (q === 'en' || q === 'fr') ? q : (saved === 'en' ? 'en' : 'fr');
     if (want === 'en') apply('en'); else snapshot();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
