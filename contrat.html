@@ -253,48 +253,49 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 .ac-art strong{color:#0B1F3A}
 .ac-cgv{display:inline-block;margin-top:8px;font-size:14px;font-weight:800;color:#047857;text-decoration:none;border:1.5px solid #BFE6D4;background:#EAF7F1;border-radius:10px;padding:9px 14px}
 </style></head><body><div class="doc" style="max-width:760px;margin:14px auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(11,31,58,.05),0 16px 44px rgba(11,31,58,.07)">
-<div class="c2-head">
-  <div class="c2-brand"><img src="/favicon.png" alt=""> Robin des Airs</div>
-  <h1>Acte de cession de créance</h1>
-  <div class="sub">Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil</div>
+<div class="c2-head" style="position:relative">
+  <button id="langBtn" type="button" aria-label="Switch to English" style="position:absolute;top:14px;right:14px;z-index:5;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.10);color:#fff;font:700 12px/1 system-ui,sans-serif;letter-spacing:.06em;padding:8px 12px;border-radius:999px;cursor:pointer">EN</button>
+<div class="c2-brand"><img src="/favicon.png" alt=""> Robin des Airs</div>
+  <h1 data-t="h1">Acte de cession de créance</h1>
+  <div class="sub" data-t="sub">Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil</div>
   <div class="refline">Dossier <span id="c-ref">—</span> · établi le <span id="c-etabli">—</span></div>
 </div>
 <div class="c2-parties">
-  <div class="c2-party"><div class="k">Le Cédant</div><div class="v" id="c-cedant">—</div><div class="m" id="c-cedant-addr"></div></div>
-  <div class="c2-party"><div class="k">Le Cessionnaire</div><div class="v">Robin des Airs</div><div class="m">SASU en cours d'immatriculation au RCS de Paris<br>Service recouvrement CE 261/2004 · agit en son nom propre<br>66 av. des Champs-Élysées, 75008 Paris<br>contact@robindesairs.eu · +33 7 56 86 36 30</div></div>
+  <div class="c2-party"><div class="k" data-t="kCedant">Le Cédant</div><div class="v" id="c-cedant">—</div><div class="m" id="c-cedant-addr"></div></div>
+  <div class="c2-party"><div class="k" data-t="kCess">Le Cessionnaire</div><div class="v">Robin des Airs</div><div class="m" data-t="mCess">SASU en cours d'immatriculation au RCS de Paris<br>Service recouvrement CE 261/2004 · agit en son nom propre<br>66 av. des Champs-Élysées, 75008 Paris<br>contact@robindesairs.eu · +33 7 56 86 36 30</div></div>
 </div>
 <div class="c2-recap">
-  <div class="c2-recap-h">Le dossier, en clair</div>
+  <div class="c2-recap-h" data-t="recapH">Le dossier, en clair</div>
   <div class="c2-grid">
-    <div class="c2-rc"><div class="k">Trajet</div><div class="v" id="c-route">—</div></div>
-    <div class="c2-rc"><div class="k">Voyage commençant le</div><div class="v" id="c-tripdate">—</div></div>
-    <div class="c2-rc"><div class="k">Vol(s)</div><div class="v" id="c-vols">—</div></div>
-    <div class="c2-rc"><div class="k">Réservation</div><div class="v" id="c-pnr">—</div></div>
-    <div class="c2-rc"><div class="k">Incident</div><div class="v" id="c-incident">—</div></div>
-    <div class="c2-rc"><div class="k">Indemnité visée</div><div class="v" id="c-amount">—</div></div>
+    <div class="c2-rc"><div class="k" data-t="kTrajet">Trajet</div><div class="v" id="c-route">—</div></div>
+    <div class="c2-rc"><div class="k" data-t="kDate">Voyage commençant le</div><div class="v" id="c-tripdate">—</div></div>
+    <div class="c2-rc"><div class="k" data-t="kVol">Vol(s)</div><div class="v" id="c-vols">—</div></div>
+    <div class="c2-rc"><div class="k" data-t="kPnr">Réservation</div><div class="v" id="c-pnr">—</div></div>
+    <div class="c2-rc"><div class="k" data-t="kIncident">Incident</div><div class="v" id="c-incident">—</div></div>
+    <div class="c2-rc"><div class="k" data-t="kIndem">Indemnité visée</div><div class="v" id="c-amount">—</div></div>
   </div>
   <div class="c2-tbl">
-    <div class="tr th"><span>Passager</span><span>Naissance</span><span>Adresse / représentant</span></div>
+    <div class="tr th"><span data-t="kPax">Passager</span><span data-t="kNaiss">Naissance</span><span data-t="kAdr">Adresse / représentant</span></div>
     <div id="c-paxbody"></div>
   </div>
 </div>
 <div class="c2-note">🔒 Signature électronique certifiée Yousign (horodatage, adresse IP, document scellé, piste d'audit). Chaque cédant adulte signe ; la part d'un passager mineur n'est pas cédée mais recouvrée par mandat spécial (Article 9 bis), le parent/tuteur signant pour lui.</div>
 
 <div class="ac-wrap">
-  <div class="ac-art"><h2><span class="ac-num">1</span> Cession</h2>
+  <div class="ac-art" data-t="art1"><h2><span class="ac-num">1</span> Cession</h2>
     <p>Le Cédant cède à Robin des Airs, qui l'accepte, sa créance <strong>née ou à naître</strong> au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire, remboursement, prise en charge), résultant de l'<strong>irrégularité du vol ci-dessus &mdash; retard, annulation ou refus d'embarquement</strong>. Robin des Airs acquiert la créance <strong>en son nom propre et pour son propre compte</strong> (articles 1321 et suivants du Code civil).</p></div>
-  <div class="ac-art"><h2><span class="ac-num">2</span> Transfert de propriété et de risque</h2>
+  <div class="ac-art" data-t="art2"><h2><span class="ac-num">2</span> Transfert de propriété et de risque</h2>
     <p>Dès la signature, Robin des Airs est <strong>seul propriétaire</strong> de la créance, l'exerce en son nom, <strong>assume seul l'aléa du recouvrement et l'ensemble des frais</strong> (avocat, huissier, greffe), sans recours contre le Cédant. Le Cédant n'avance et ne supporte <strong>aucun frais</strong>.</p></div>
-  <div class="ac-art"><h2><span class="ac-num">3</span> Prix de cession</h2>
+  <div class="ac-art" data-t="art3"><h2><span class="ac-num">3</span> Prix de cession</h2>
     <p>Prix <strong>variable et aléatoire</strong>, indexé sur le montant effectivement recouvré : le Cédant reçoit <strong>75 %</strong> du montant recouvré à l'amiable, <strong>60 %</strong> en cas de recouvrement judiciaire. <strong>Rien récupéré, rien dû.</strong></p></div>
-  <div class="ac-art"><h2><span class="ac-num">4</span> Passagers mineurs</h2>
+  <div class="ac-art" data-t="art4"><h2><span class="ac-num">4</span> Passagers mineurs</h2>
     <p>La part d'un passager mineur n'est pas cédée ; elle est recouvrée par <strong>mandat spécial d'encaissement</strong> (Article 9 bis des CGV), le représentant légal signant pour l'enfant.</p></div>
-  <div class="ac-art"><h2><span class="ac-num">5</span> Notification au débiteur</h2>
+  <div class="ac-art" data-t="art5"><h2><span class="ac-num">5</span> Notification au débiteur</h2>
     <p>La cession est opposable au transporteur par sa <strong>notification</strong>, réalisée par l'envoi d'une copie du présent acte (article 1324 du Code civil) : à compter de sa réception, <strong>seul un paiement effectué à Robin des Airs est libératoire</strong>. Les clauses restreignant la cession des créances CE 261/2004 sont inopposables (CJUE, 29 fév. 2024, C-11/23).</p></div>
-  <div class="ac-art"><h2><span class="ac-num">6</span> Conditions Générales</h2>
+  <div class="ac-art" data-t="art6"><h2><span class="ac-num">6</span> Conditions Générales</h2>
     <p>Le présent acte est complété par les <strong>Conditions Générales</strong>, que le Cédant déclare avoir lues et acceptées et qui en font <strong>partie intégrante</strong> (exclusivité, correspondances, encaissement, protection des données, litiges&hellip;).</p>
-    <a class="ac-cgv" href="/cgv" target="_blank" rel="noopener">Lire les Conditions Générales &rarr;</a></div>
-  <div class="ac-art"><h2><span class="ac-num">7</span> Rétractation</h2>
+    <a class="ac-cgv" href="/cgv" target="_blank" rel="noopener"><span data-t="cgvLink">Lire les Conditions Générales &rarr;</span></a></div>
+  <div class="ac-art" data-t="art7"><h2><span class="ac-num">7</span> Rétractation</h2>
     <p>Le Cédant dispose d'un délai de <strong>14 jours</strong> pour se rétracter, sans frais.</p></div>
 </div></div>
 <script>
@@ -308,7 +309,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   $('c-ref').textContent=ref||'—';
   $('c-etabli').textContent=new Date().toLocaleDateString('fr-FR');
   document.querySelectorAll('details').forEach(function(x){x.open=true;}); // « lire le contrat » : tout visible
-  if(!ref){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">Lien incomplet.</p>');return;}
+  if(!ref){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">Lien incomplet. / Incomplete link.</p>');return;}
   fetch('/api/dossier-get?r='+encodeURIComponent(ref),{credentials:'omit'})
     .then(function(r){if(!r.ok)throw 0;return r.json();})
     .then(function(d){
@@ -335,6 +336,70 @@ details.mandat-full[open]>summary{margin-bottom:12px}
         rows+='<div class="tr td"><span>'+esc(nm)+(minor?' <span style="color:#9a6a00">· mineur·e</span>':'')+'</span><span>'+esc(dob||'—')+'</span><span>'+right+'</span></div>';}
       $('c-paxbody').innerHTML=rows;
     })
-    .catch(function(){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">😕 Dossier introuvable ou lien expiré. <a href="https://wa.me/33756863630">Reprendre sur WhatsApp</a>.</p>');});
+    .catch(function(){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">😕 Dossier introuvable ou lien expiré. / File not found or link expired. <a href="https://wa.me/33756863630">Reprendre sur WhatsApp / Resume on WhatsApp</a>.</p>');});
 })();
-</script></body></html>
+</script>
+<script>
+/* Bascule FR/EN de l'acte de cession.
+   Les libellés anglais sont ALIGNÉS MOT POUR MOT sur le PDF bilingue effectivement signé
+   (lib/acte-cession-pdf.js) : les deux documents doivent dire la même chose, sinon un litige
+   sur la rédaction opposerait l'écran au document.
+   La version française reste seule à faire foi : la réserve est affichée en mode EN. */
+(function () {
+  var EN = {
+    h1: 'Deed of assignment of claim',
+    sub: 'Regulation (EC) No 261/2004 · Articles 1321 et seq. of the French Civil Code',
+    kCedant: 'The Assignor', kCess: 'The Assignee',
+    recapH: 'Your file at a glance',
+    kTrajet: 'Route', kDate: 'Journey starting on', kVol: 'Flight(s)', kPnr: 'Booking',
+    kIncident: 'Disruption', kIndem: 'Compensation sought',
+    kPax: 'Passenger', kNaiss: 'Date of birth', kAdr: 'Address / representative',
+    cgvLink: 'Read the Terms and Conditions &rarr;',
+    mCess: 'A French simplified joint-stock company (SASU) being registered with the Paris Trade and Companies Register<br>EC 261/2004 claims recovery service · acting in its own name',
+    art1: '<h2><span class="ac-num">1</span> Assignment</h2><p>The Assignor assigns to Robin des Airs, which accepts, its claim <strong>present or future</strong> under Regulation (EC) No 261/2004 (fixed compensation, reimbursement, right to care), arising from the <strong>disruption of the flight identified above &mdash; delay, cancellation or denied boarding</strong>. Robin des Airs acquires the claim <strong>in its own name and on its own behalf</strong> (Articles 1321 et seq. of the French Civil Code).</p>',
+    art2: '<h2><span class="ac-num">2</span> Transfer of ownership and risk</h2><p>Upon signature, Robin des Airs is the <strong>sole owner</strong> of the claim, enforces it in its own name, <strong>bears alone the recovery risk and all costs</strong> (lawyer, enforcement officer, court registry), with no recourse against the Assignor. The Assignor advances and bears <strong>no cost whatsoever</strong>.</p>',
+    art3: '<h2><span class="ac-num">3</span> Assignment price</h2><p>A <strong>variable and contingent</strong> price, indexed on the amount actually recovered: the Assignor receives <strong>75 %</strong> of the amount recovered amicably, <strong>60 %</strong> where recovery requires court proceedings. <strong>Nothing recovered, nothing owed.</strong></p>',
+    art4: '<h2><span class="ac-num">4</span> Minor passengers</h2><p>A minor passenger’s share is not assigned; it is recovered under a <strong>special collection authority</strong> (Article 9 bis of the Terms and Conditions), the legal representative signing on the child’s behalf.</p>',
+    art5: '<h2><span class="ac-num">5</span> Notice to the debtor</h2><p>The assignment becomes enforceable against the carrier upon <strong>notice</strong>, given by sending a copy of this deed (Article 1324 of the French Civil Code): from receipt onwards, <strong>only payment made to Robin des Airs discharges the debtor</strong>. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (CJEU, 29 Feb. 2024, C-11/23).</p>',
+    art6: '<h2><span class="ac-num">6</span> Terms and Conditions</h2><p>This deed is supplemented by the <strong>Terms and Conditions</strong>, which the Assignor declares having read and accepted and which form an <strong>integral part</strong> of it (exclusivity, connecting flights, collection, data protection, disputes&hellip;).</p>',
+    art7: '<h2><span class="ac-num">7</span> Right of withdrawal</h2><p>The Assignor has <strong>fourteen days</strong> to withdraw, at no cost.</p>'
+  };
+  var FR = {}, cur = 'fr';
+  function nodes() { return document.querySelectorAll('[data-t]'); }
+  function snapshot() {
+    nodes().forEach(function (el) { if (!(el.dataset.t in FR)) FR[el.dataset.t] = el.innerHTML; });
+  }
+  function apply(lang) {
+    snapshot();
+    nodes().forEach(function (el) {
+      var k = el.dataset.t, v = lang === 'en' ? EN[k] : FR[k];
+      if (v != null) el.innerHTML = v;
+    });
+    var note = document.getElementById('langNote');
+    if (note) note.style.display = lang === 'en' ? 'block' : 'none';
+    document.documentElement.lang = lang;
+    var b = document.getElementById('langBtn');
+    if (b) { b.textContent = lang === 'en' ? 'FR' : 'EN'; b.setAttribute('aria-label', lang === 'en' ? 'Repasser en français' : 'Switch to English'); }
+    cur = lang;
+    try { localStorage.setItem('rda_acte_lang', lang); } catch (e) {}
+  }
+  function init() {
+    // Réserve de langue faisant foi, affichée uniquement en anglais.
+    var doc = document.querySelector('.doc') || document.body;
+    var n = document.createElement('div');
+    n.id = 'langNote'; n.style.cssText = 'display:none;margin:14px 0 0;padding:10px 14px;border-left:3px solid #00C87A;background:#EFF9F4;border-radius:0 8px 8px 0;font:400 12px/1.5 system-ui,sans-serif;color:#1a2436';
+    n.textContent = 'Courtesy translation. The French version is the only binding version; in the event of any discrepancy, the French text prevails.';
+    doc.appendChild(n);
+    var b = document.getElementById('langBtn');
+    if (b) b.addEventListener('click', function () { apply(cur === 'en' ? 'fr' : 'en'); });
+    // Présélection : ?lang= dans l'URL, puis choix mémorisé, puis langue du navigateur.
+    var q = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+    var saved = ''; try { saved = localStorage.getItem('rda_acte_lang') || ''; } catch (e) {}
+    var nav = (navigator.language || '').slice(0, 2).toLowerCase();
+    var want = q === 'en' || q === 'fr' ? q : (saved || (nav && nav !== 'fr' ? 'en' : 'fr'));
+    if (want === 'en') apply('en'); else snapshot();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</body></html>
