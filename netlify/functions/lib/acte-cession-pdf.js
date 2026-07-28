@@ -93,6 +93,7 @@ function genererActeCessionPdf(d) {
     // En presign, aucune date de signature n'existe encore : l'en-tête porte la date d'établissement (aujourd'hui).
     const _todayIso = new Date().toISOString();
     const headDateFr = presign ? fmtDate(_todayIso, 'fr') : sigFr;
+    const headDateEn = presign ? fmtDate(_todayIso, 'en') : sigEn;
     const routeTxt = [d.depAirport, d.arrAirport].filter(Boolean).join(' - ') || (d.route || '—');
 
     // ── En-tête épuré (document officiel, pas bannière web) : marque à gauche,
@@ -153,11 +154,19 @@ function genererActeCessionPdf(d) {
       `On the one hand, the passengers listed below (the "Assignors"); on the other hand, Robin des Airs, a French simplified joint-stock company (SASU) being registered with the Paris Trade & Companies Register, an air-passenger claims recovery service, registered office at 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (the "Assignee"), acting in its own name and on its own behalf.`
     );
 
+    // PRESIGN : l'acte est l'instrument SIGNÉ par le client, sa rédaction doit être performative
+    // (« les Cédants cèdent »), pas un récit d'un contrat antérieur. La créance est visée « née ou
+    // à naître » (art. 1323 al. 2) : la capture peut intervenir AVANT le vol, la créance n'existe
+    // alors pas encore. Hors presign, le document redevient le récapitulatif notifié à la compagnie.
     bilingual(
       '2. Cession',
-      `Par contrat signé électroniquement, les Cédants ont cédé au Cessionnaire, avec effet immédiat, toutes leurs créances et prétentions au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire art. 7, remboursement des frais art. 9) nées de l'irrégularité du vol ci-dessus. Le Cessionnaire agit en son nom propre (art. 1321 à 1324 C. civ.).`,
+      presign
+        ? `Par le présent acte, les Cédants cèdent au Cessionnaire, qui accepte, avec effet immédiat, l'intégralité de leurs créances, nées ou à naître, au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire art. 7, remboursement des frais art. 9) se rapportant à l'irrégularité du vol désigné ci-dessus, ainsi que tous droits et actions accessoires. Le Cessionnaire devient seul titulaire de ces créances et agit en son nom propre et pour son propre compte (art. 1321 à 1324 C. civ.). Le prix de cession et ses modalités figurent aux Conditions générales, acceptées par les Cédants et annexées au présent acte.`
+        : `Par contrat signé électroniquement, les Cédants ont cédé au Cessionnaire, avec effet immédiat, toutes leurs créances et prétentions, nées ou à naître, au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire art. 7, remboursement des frais art. 9) se rapportant à l'irrégularité du vol ci-dessus. Le Cessionnaire agit en son nom propre (art. 1321 à 1324 C. civ.).`,
       '2. Assignment',
-      `By an electronically signed agreement, the Assignors assigned to the Assignee, with immediate effect, all their claims and rights under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) arising from the disruption of the flight above. The Assignee acts in its own name (Art. 1321-1324 French Civil Code).`
+      presign
+        ? `By this deed, the Assignors assign to the Assignee, who accepts, with immediate effect, all of their claims, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) relating to the disruption of the flight identified above, together with all ancillary rights and actions. The Assignee becomes the sole holder of those claims and acts in its own name and on its own behalf (Art. 1321-1324 French Civil Code). The assignment price and its terms are set out in the Terms and Conditions, accepted by the Assignors and appended to this deed.`
+        : `By an electronically signed agreement, the Assignors assigned to the Assignee, with immediate effect, all their claims and rights, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) arising from the disruption of the flight above. The Assignee acts in its own name (Art. 1321-1324 French Civil Code).`
     );
 
     bilingual(
@@ -172,12 +181,25 @@ function genererActeCessionPdf(d) {
     );
 
     const contactEmail = `${String(d.ref || '').trim() || 'contact'}@robindesairs.eu`;
-    bilingual(
-      '4. Notification (art. 1324 C. civ.)',
-      `Le présent document vaut notification de la cession à la compagnie : à compter de sa réception, seul un paiement effectué au Cessionnaire est libératoire. Correspondance : ${contactEmail}. Les clauses restreignant la cession des créances CE 261/2004 sont inopposables (art. 15 du Règlement ; CJUE, 6 févr. 2025, C-11/23).`,
-      '4. Notice (Art. 1324 Civil Code)',
-      `This document is formal notice of the assignment to the carrier: upon receipt, only payment made to the Assignee discharges the debtor. Correspondence: ${contactEmail}. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23).`
-    );
+    // La section 4 diffère selon le destinataire réel du document :
+    //  - presign  → le CÉDANT signe : on lui rappelle son droit de rétractation (L.221-18 C. conso).
+    //    Une notification adressée à la compagnie n'a aucun sens sur l'acte qu'il signe.
+    //  - sinon    → le document part à la COMPAGNIE : il vaut notification (art. 1324 C. civ.).
+    if (presign) {
+      bilingual(
+        '4. Rétractation',
+        `Les Cédants disposent d'un délai de quatorze jours pour se rétracter sans motif ni frais (art. L.221-18 du Code de la consommation), selon les modalités et le formulaire figurant aux Conditions générales sur robindesairs.eu. Aucune somme n'est due par les Cédants, quelle que soit l'issue : la rémunération du Cessionnaire est prélevée sur les seules sommes effectivement récupérées.`,
+        '4. Right of withdrawal',
+        `The Assignors have fourteen days to withdraw without giving reasons and at no cost (Art. L.221-18 French Consumer Code), in accordance with the terms and form set out in the Terms and Conditions at robindesairs.eu. No sum is ever payable by the Assignors, whatever the outcome: the Assignee is remunerated solely out of amounts actually recovered.`
+      );
+    } else {
+      bilingual(
+        '4. Notification (art. 1324 C. civ.)',
+        `Le présent document vaut notification de la cession à la compagnie : à compter de sa réception, seul un paiement effectué au Cessionnaire est libératoire. Correspondance : ${contactEmail}. Les clauses restreignant la cession des créances CE 261/2004 sont inopposables (art. 15 du Règlement ; CJUE, 6 févr. 2025, C-11/23).`,
+        '4. Notice (Art. 1324 Civil Code)',
+        `This document is formal notice of the assignment to the carrier: upon receipt, only payment made to the Assignee discharges the debtor. Correspondence: ${contactEmail}. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23).`
+      );
+    }
 
     // ── Tableau des cédants (pleine largeur, entêtes bilingues)
     doc.y += 5;
@@ -219,7 +241,9 @@ function genererActeCessionPdf(d) {
     // ── Renvoi CGV (façon AirHelp)
     doc.y += 5;
     doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(
-      "* Les termes de ce document ont la signification définie dans les Conditions générales sur robindesairs.eu, acceptées par les Cédants. / * Terms herein have the meaning defined in the Terms & Conditions on robindesairs.eu, accepted by the Assignors.",
+      (presign
+        ? `* Les Conditions générales en vigueur au ${headDateFr}, publiées sur robindesairs.eu/cgv, font partie intégrante du présent acte et sont acceptées par les Cédants au moment de la signature. Elles définissent le prix de cession, ses modalités de versement et le droit de rétractation. / * The Terms and Conditions in force on ${headDateEn}, published at robindesairs.eu/cgv, form an integral part of this deed and are accepted by the Assignors upon signature. They set out the assignment price, payment terms and right of withdrawal.`
+        : "* Les termes de ce document ont la signification définie dans les Conditions générales sur robindesairs.eu, acceptées par les Cédants. / * Terms herein have the meaning defined in the Terms & Conditions on robindesairs.eu, accepted by the Assignors."),
       left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
     );
 
