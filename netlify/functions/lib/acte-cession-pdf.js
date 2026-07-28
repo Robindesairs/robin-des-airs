@@ -123,9 +123,9 @@ function genererActeCessionPdf(d) {
 
     doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(12).text('Robin des Airs', left + 47, 57);
     doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(19)
-      .text('Acte de cession de créance', left + 18, 78, { width: contentW - 36 });
+      .text('Contrat de cession de créance', left + 18, 78, { width: contentW - 36 });
     doc.fillColor('#9FB2CC').font('Helvetica').fontSize(9.5)
-      .text('Deed of assignment of claim · Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil',
+      .text('Assignment of claim agreement · Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil',
             left + 18, 100, { width: contentW - 36 });
     doc.fillColor('#C3D0E0').font('Courier').fontSize(8)
       .text(`Dossier ${d.ref || '—'} · établi le / issued on ${headDateFr}`, left + 18, 117, { width: contentW - 36 });

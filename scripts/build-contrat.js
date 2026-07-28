@@ -49,7 +49,7 @@ const myCss = `
 const headerHtml = `
 <div class="c2-head">
   <div class="c2-brand"><img src="/favicon.png" alt=""> Robin des Airs</div>
-  <h1>Acte de cession de créance</h1>
+  <h1>Contrat de cession de créance</h1>
   <div class="sub">Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil</div>
   <div class="refline">Dossier <span id="c-ref">—</span> · établi le <span id="c-etabli">—</span></div>
 </div>
@@ -140,7 +140,7 @@ const acteBody = `
 </div>`;
 
 const out = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-  + '<title>Acte de cession de créance — Robin des Airs</title>'
+  + '<title>Contrat de cession de créance — Robin des Airs</title>'
   + '<link rel="icon" href="/favicon.png" type="image/png">'
   + '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
   + '<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">'
