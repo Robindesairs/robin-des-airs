@@ -4106,9 +4106,21 @@ app.post('/api/mandat-signed', (req, res) => {
   // Confirmation « C'est signé » = message récapitulatif UNIQUE (contrat signé + pièces + frais + lien + expert).
   // Pas de bulle frais séparée (le bloc 💶 du récap la couvre) ; les reçus envoyés sont captés par le handler média.
   // Pas de question « comment recevoir votre argent ? » ici : trop tôt à la signature → captée à rib.html au paiement.
-  if (lead && lead.phone) {
-    sendSignedConfirmation(lead).catch(() => {});
-    armPiecesReminder(lead).catch(() => {}); // pose juste un flag (aucun envoi) → l'ordre n'importe pas
+  // Le client venu du PARCOURS WEB (depot-express, sans passer par WhatsApp) n'a AUCUN lead
+  // dans le bot : la condition « lead && lead.phone » le privait de toute confirmation, alors
+  // que son numéro nous est transmis par le webhook Yousign. On crée alors un lead minimal à
+  // partir de ce numéro, ce qui lui vaut la même confirmation et le même rappel de pièces.
+  let cible = lead;
+  if (!cible && b.phone) {
+    try {
+      upsertLead(b.phone, { phone: b.phone, ref: b.ref || '', source: 'web-signature' });
+      cible = findLead(b.phone) || { phone: b.phone, ref: b.ref || '' };
+      console.log('mandat signe : lead cree depuis le parcours web tel=' + b.phone);
+    } catch (e) { console.error('creation lead web', e.message); }
+  }
+  if (cible && cible.phone) {
+    sendSignedConfirmation(cible).catch(() => {});
+    armPiecesReminder(cible).catch(() => {}); // pose juste un flag (aucun envoi) → l'ordre n'importe pas
   }
   // « À la fin de la conversation » : le mandat signé = LE moment où l'on prévient qu'un conseiller natif doit
   // rappeler le client dans sa langue africaine (le bot a continué en français). Source = lead.langue (code menu).
