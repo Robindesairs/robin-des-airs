@@ -201,33 +201,6 @@ function genererActeCessionPdf(d) {
             left, doc.y, { width: contentW, align: 'justify', lineGap: 0.4 });
     doc.y += 30;
 
-    // ── PRESIGN : bandeau d'engagement. Le client doit voir CE QU'IL GAGNE avant le
-    // vocabulaire juridique. Trois chiffres, rien d'autre.
-    if (presign) {
-      const bT = doc.y, bH = 70, cw = (contentW - 16) / 3;
-      doc.roundedRect(left, bT, contentW, bH, 6).fillAndStroke(MINT, NEON);
-      // Le taux DÉPEND de la voie suivie : 75 % à l'amiable, 60 % si le tribunal est saisi.
-      // Afficher le seul 75 % sur le document contractuel serait une allégation trompeuse.
-      // Les deux taux sont donc annoncés, et la contrepartie du 60 % (frais de procédure à
-      // notre charge) est explicitée juste en dessous : la vérité reste un bon argument.
-      const tiles = [
-        ['75 %', "des sommes récupérées, à l'amiable", 'of amounts recovered, amicable stage'],
-        ['60 %', 'si le tribunal doit être saisi', 'if court proceedings are required'],
-        ['0 €', "à avancer, et 0 € si rien n'est récupéré", 'upfront, and 0 if nothing is recovered'],
-      ];
-      tiles.forEach((t, i) => {
-        const cx = left + i * (cw + 8);
-        doc.fillColor(GREEN_T).font('Helvetica-Bold').fontSize(20).text(t[0], cx + 8, bT + 9, { width: cw - 16, align: 'center' });
-        doc.fillColor(TEXT).font('Helvetica-Bold').fontSize(7.4).text(t[1], cx + 8, bT + 34, { width: cw - 16, align: 'center' });
-        doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(6.8).text(t[2], cx + 8, bT + 54, { width: cw - 16, align: 'center' });
-        if (i < 2) doc.moveTo(cx + cw + 4, bT + 12).lineTo(cx + cw + 4, bT + bH - 12).lineWidth(0.7).stroke(BORDER);
-      });
-      // Contrepartie du taux réduit, dite noir sur blanc juste sous les chiffres.
-      doc.fillColor(TEXT).font('Helvetica').fontSize(7.6).text(
-        "Le taux de 60 % s'applique uniquement si la compagnie nous contraint à saisir le tribunal. Les honoraires d'avocat et les frais de procédure sont alors à notre charge, jamais à la vôtre. / The 60 % rate applies only where the carrier forces us to go to court; legal fees and court costs are then borne by us, never by you.",
-        left, bT + bH + 6, { width: contentW, align: 'center', lineGap: 0.8 });
-      doc.y = bT + bH + 6 + doc.heightOfString("x", { width: contentW }) * 3 + 8;
-    }
 
     // ── En-têtes de colonnes
     doc.fillColor(GRAY).font('Helvetica-Bold').fontSize(7.2);
@@ -307,88 +280,13 @@ function genererActeCessionPdf(d) {
         : `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
     );
 
-    // ── Tableau des cédants (pleine largeur, entêtes bilingues)
-    doc.y += 5;
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9).text('Cédants / Assignors', left, doc.y, { width: contentW });
-    doc.y += 5;
-    const rowPad = 6;
-    // pdfkit pagine TOUT SEUL dès qu'un doc.text() dépasse la marge basse, mais les
-    // roundedRect() dessinés en absolu restent sur la page précédente : la ligne se retrouve
-    // coupée en deux. On neutralise la pagination auto le temps du tableau et on décide des
-    // sauts nous-mêmes, hauteur de ligne calculée AVANT de dessiner.
-    const _mb = doc.page.margins.bottom;
-    doc.page.margins.bottom = 0;
-    pax.forEach((p) => {
-      let yR = doc.y;
-      const nomTxt = p.name || '—';
-      const infoBits = [];
-      if (p.dob) infoBits.push(`né(e) le / born ${p.dob}${p.birth ? ` à / in ${p.birth}` : ''}`);
-      if (d.showAddress && p.adresse) infoBits.push(`domicile / address : ${String(p.adresse).replace(/\s*\n\s*/g, ', ')}`);
-      const sigTxt = p.minor
-        ? (presign
-            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · part non cédée, encaissement selon l'art. 9 bis des CGV / share not assigned, collected under Art. 9 bis of the T&C`
-            : `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · signature du représentant / signed by the representative`)
-        : (presign
-            ? `Signature électronique ci-dessous / Electronic signature below`
-            : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`);
-      doc.font('Helvetica').fontSize(7.8);
-      // Signature dessinée (mode post-signature) : tamponnée à droite de la ligne de l'adulte.
-      const sig = (!presign && !p.minor) ? sigBuffer(p.signatureImg) : null;
-      // PRESIGN : la zone de signature est POSÉE DANS LA LIGNE du cédant, pas dans un bloc séparé
-      // en fin de document. Le signataire voit son nom et l'endroit où signer au même endroit, et
-      // on économise la page entière que consommait l'ancienne bande de signatures.
-      const inlineSig = presign && !p.minor;
-      const SIGW = 168, SIGH = 44;
-      const textW = (sig || inlineSig) ? contentW - SIGW - 34 : contentW - 20;
-      const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join('   ·   ');
-      const h = Math.max(sig ? 46 : 0, inlineSig ? SIGH + 12 : 0, 12 + doc.heightOfString(line2, { width: textW }) + rowPad * 2 - 4);
-      if (yR + h > doc.page.height - 52) { doc.addPage(); yR = 46; doc.y = yR; }
-      doc.roundedRect(left, yR, contentW, h, 4).fillAndStroke(inlineSig ? MINT : '#FFFFFF', inlineSig ? NEON : BORDER);
-      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, left + 10, yR + rowPad, { width: textW });
-      doc.fillColor(GRAY).font('Helvetica').fontSize(7.8).text(line2, left + 10, yR + rowPad + 11, { width: textW });
-      if (sig) { try { doc.image(sig, left + contentW - 128, yR + (h - 30) / 2, { fit: [116, 30] }); } catch (_) {} }
-      if (inlineSig) {
-        const bx = left + contentW - SIGW - 12, by = yR + (h - SIGH) / 2;
-        doc.roundedRect(bx, by, SIGW, SIGH, 4).fillAndStroke('#FFFFFF', NEON);
-        doc.fillColor(GRAY).font('Helvetica').fontSize(6.8).text('Signez ici / Sign here', bx, by + SIGH - 11, { width: SIGW, align: 'center' });
-        sigZones.push({ name: p.name || '', page: pageNo, x: Math.round(bx), y: Math.round(by + 4), w: SIGW, h: SIGH - 14 });
-      }
-      doc.y = yR + h + 5;
-    });
-    doc.page.margins.bottom = _mb;
-
-    // ── Clause finale (langue faisant foi)
-    doc.y += 6;
-    if (!presign) doc.fillColor(TEXT).font('Helvetica-Oblique').fontSize(7.8).text(
-      "Fait à distance, par voie électronique. En cas de divergence d'interprétation, la version française prévaut sur la version anglaise. / Executed remotely by electronic means. In the event of any discrepancy, the French version shall prevail over the English version.",
-      left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
-    );
-    // ── Renvoi CGV (en presign : reporté en page 2 avec les garanties)
-    doc.y += 5;
-    if (!presign) doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(
-      (presign
-        ? `* Les Conditions générales en vigueur au ${headDateFr}, publiées sur robindesairs.eu/cgv, font partie intégrante du présent acte et sont acceptées par les Cédants au moment de la signature. Elles définissent le prix de cession, ses modalités de versement et le droit de rétractation. / * The Terms and Conditions in force on ${headDateEn}, published at robindesairs.eu/cgv, form an integral part of this deed and are accepted by the Assignors upon signature. They set out the assignment price, payment terms and right of withdrawal.`
-        : "* Les termes de ce document ont la signification définie dans les Conditions générales sur robindesairs.eu, acceptées par les Cédants. / * Terms herein have the meaning defined in the Terms & Conditions on robindesairs.eu, accepted by the Assignors."),
-      left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
-    );
-
-    // ── PRESIGN : bande de signatures (une zone par cédant ADULTE), coordonnées rapportées à yousign-init.
-    // Chaque zone = boîte étiquetée où Yousign posera le widget signature. Les mineurs ne signent pas
-    // (part non cédée, art. 9 bis) : leur parent adulte signataire couvre l'encaissement de leur part.
-    if (presign) {
-      // Une seule phrase à la place du pavé eIDAS.
-      doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(
-        "Signature électronique sécurisée via Yousign, qui en conserve la preuve. / Secure electronic signature via Yousign, which retains the evidence.",
-        left, doc.y + 2, { width: contentW, align: 'center' });
-    }
-
     {
       // ══════════ PAGE 2 : ce qui protège le client, dans les DEUX variantes.
       // Sur l'acte signé, la page 2 ne contenait que la clause finale : quelques lignes
       // perdues sur une feuille blanche. Les garanties la remplissent et donnent au
       // document sa raison d'être côté client.
       doc.addPage(); doc.y = 46;
-      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(13).text('Vos garanties', left, doc.y, { width: contentW });
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(12).text('Vos garanties', left, doc.y, { width: contentW });
       doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(9).text('Your safeguards', left, doc.y + 2, { width: contentW });
       doc.y += 12;
 
@@ -417,7 +315,7 @@ function genererActeCessionPdf(d) {
       gar.forEach((g) => {
         const hFr = doc.heightOfString(g[1], { width: gcW - 24, lineGap: 0.6 });
         const hEn = doc.heightOfString(g[3], { width: gcW - 24, lineGap: 0.6 });
-        const gh = 30 + Math.max(hFr, hEn);
+        const gh = 23 + Math.max(hFr, hEn);
         if (doc.y + gh > doc.page.height - 60) { doc.addPage(); doc.y = 46; }
         const gy = doc.y;
         doc.roundedRect(left, gy, contentW, gh, 6).fillAndStroke('#FFFFFF', BORDER);
@@ -427,13 +325,13 @@ function genererActeCessionPdf(d) {
         doc.fillColor(TEXT).font('Helvetica').fontSize(8).text(g[1], left + 12, gy + 24, { width: gcW - 24, align: 'justify', lineGap: 0.6 });
         doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.2).text(g[2], left + gcW + 26, gy + 10, { width: gcW - 26 });
         doc.fillColor(TEXT).font('Helvetica').fontSize(8).text(g[3], left + gcW + 26, gy + 24, { width: gcW - 26, align: 'justify', lineGap: 0.6 });
-        doc.y = gy + gh + 8;
+        doc.y = gy + gh + 5;
       });
 
       // Ce qui se passe maintenant
-      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(13).text('Ce qui se passe maintenant', left, doc.y, { width: contentW });
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(12).text('Ce qui se passe maintenant', left, doc.y, { width: contentW });
       doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(9).text('What happens next', left, doc.y + 2, { width: contentW });
-      doc.y += 16;
+      doc.y += 13;
       const etapes = [
         ['1', 'Nous réclamons', "Nous écrivons à la compagnie en notre nom et lui notifions la cession : elle ne peut plus payer qu'entre nos mains."],
         ['2', 'Nous relançons', "Si elle refuse ou garde le silence, nous contestons. Vous n'avez aucune démarche à faire."],
@@ -446,17 +344,110 @@ function genererActeCessionPdf(d) {
         doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(9).text(e[0], left + 5, ey + 5, { width: 10, align: 'center' });
         doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(e[1], left + 26, ey + 1, { width: contentW - 36 });
         doc.fillColor(TEXT).font('Helvetica').fontSize(8.2).text(e[2], left + 26, ey + 13, { width: contentW - 36, lineGap: 0.5 });
-        doc.y = ey + 13 + doc.heightOfString(e[2], { width: contentW - 36, lineGap: 0.5 }) + 9;
+        doc.y = ey + 12 + doc.heightOfString(e[2], { width: contentW - 36, lineGap: 0.5 }) + 4;
       });
 
       // Renvoi CGV horodaté + langue faisant foi
       doc.y += 4;
-      doc.roundedRect(left, doc.y, contentW, 46, 5).fillAndStroke(OFF, BORDER);
+      doc.roundedRect(left, doc.y, contentW, 40, 5).fillAndStroke(OFF, BORDER);
       doc.fillColor(TEXT).font('Helvetica').fontSize(7.6).text(
         `Les Conditions générales en vigueur au ${headDateFr}, publiées sur robindesairs.eu/cgv, font partie intégrante du présent acte et sont acceptées lors de la signature. Elles définissent le prix de cession, ses modalités de versement et le droit de rétractation. En cas de divergence, la version française prévaut sur la version anglaise.`,
         left + 12, doc.y + 8, { width: contentW - 24, align: 'justify', lineGap: 0.6 });
-      doc.y += 54;
+      doc.y += 48;
     }
+
+    // ══════════ SIGNATURES : reportees APRES les garanties pour que tout tienne
+    // sur deux pages. Le client lit l'acte, ses protections, puis signe. Au-dela de cinq ou
+    // six cedants, le tableau deborde naturellement sur une page supplementaire.
+    // ── Tableau des cédants (pleine largeur, entêtes bilingues)
+    doc.y += 5;
+    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9).text('Cédants / Assignors', left, doc.y, { width: contentW });
+    doc.y += 5;
+    const rowPad = 6;
+    // pdfkit pagine TOUT SEUL dès qu'un doc.text() dépasse la marge basse, mais les
+    // roundedRect() dessinés en absolu restent sur la page précédente : la ligne se retrouve
+    // coupée en deux. On neutralise la pagination auto le temps du tableau et on décide des
+    // sauts nous-mêmes, hauteur de ligne calculée AVANT de dessiner.
+    const _mb = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
+    // Au-dela de 2 cedants, les lignes passent sur DEUX COLONNES : une famille de 5 ou 6
+    // tient alors sur la meme page que les garanties, ce qui maintient l'acte a 2 pages.
+    const deuxCol = pax.filter((x) => !x.minor).length > 2;
+    let _yRow = 0;
+    pax.forEach((p, idx) => {
+      let yR = doc.y;
+      const nomTxt = p.name || '—';
+      const infoBits = [];
+      if (p.dob) infoBits.push(`né(e) le / born ${p.dob}${p.birth ? ` à / in ${p.birth}` : ''}`);
+      if (d.showAddress && p.adresse) infoBits.push(`domicile / address : ${String(p.adresse).replace(/\s*\n\s*/g, ', ')}`);
+      const sigTxt = p.minor
+        ? (presign
+            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · part non cédée, encaissement selon l'art. 9 bis des CGV / share not assigned, collected under Art. 9 bis of the T&C`
+            : `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · signature du représentant / signed by the representative`)
+        : (presign
+            ? `Signature électronique ci-dessous / Electronic signature below`
+            : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`);
+      doc.font('Helvetica').fontSize(deuxCol ? 7 : 7.8);
+      // Signature dessinée (mode post-signature) : tamponnée à droite de la ligne de l'adulte.
+      const sig = (!presign && !p.minor) ? sigBuffer(p.signatureImg) : null;
+      // PRESIGN : la zone de signature est POSÉE DANS LA LIGNE du cédant, pas dans un bloc séparé
+      // en fin de document. Le signataire voit son nom et l'endroit où signer au même endroit, et
+      // on économise la page entière que consommait l'ancienne bande de signatures.
+      const inlineSig = presign && !p.minor;
+      const SIGW = deuxCol ? 92 : 158, SIGH = deuxCol ? 30 : 36;
+      const rowW = deuxCol ? (contentW - 10) / 2 : contentW;
+      const textW = (sig || inlineSig) ? rowW - SIGW - 30 : rowW - 20;
+      const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join('   ·   ');
+      const h = Math.max(sig ? 46 : 0, inlineSig ? SIGH + 10 : 0, 11 + doc.heightOfString(line2, { width: textW, lineGap: deuxCol ? -0.3 : 0 }) + rowPad * 2 - 5);
+      // En deux colonnes, un cédant sur deux ouvre une nouvelle rangée ; l'autre se pose
+      // à sa droite, à la même hauteur (yRow figé, doc.y ne bougeant qu'en fin de rangée).
+      const col = deuxCol ? (idx % 2) : 0;
+      if (col === 0) {
+        if (yR + h > doc.page.height - 52) { doc.addPage(); yR = 46; doc.y = yR; }
+        _yRow = yR;
+      } else {
+        yR = _yRow;
+      }
+      const rx = left + col * (rowW + 10);
+      doc.roundedRect(rx, yR, rowW, h, 4).fillAndStroke(inlineSig ? MINT : '#FFFFFF', inlineSig ? NEON : BORDER);
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, rx + 10, yR + rowPad, { width: textW });
+      doc.fillColor(GRAY).font('Helvetica').fontSize(deuxCol ? 7 : 7.8).text(line2, rx + 10, yR + rowPad + 10, { width: textW, lineGap: -0.3 });
+      if (sig) { try { doc.image(sig, rx + rowW - 128, yR + (h - 30) / 2, { fit: [116, 30] }); } catch (_) {} }
+      if (inlineSig) {
+        const bx = rx + rowW - SIGW - 12, by = yR + (h - SIGH) / 2;
+        doc.roundedRect(bx, by, SIGW, SIGH, 4).fillAndStroke('#FFFFFF', NEON);
+        doc.fillColor(GRAY).font('Helvetica').fontSize(6.5).text('Signez ici / Sign here', bx, by + SIGH - 10, { width: SIGW, align: 'center' });
+        sigZones.push({ name: p.name || '', page: pageNo, x: Math.round(bx), y: Math.round(by + 4), w: SIGW, h: SIGH - 13 });
+      }
+      if (!deuxCol || col === 1 || idx === pax.length - 1) doc.y = yR + h + 5;
+    });
+    doc.page.margins.bottom = _mb;
+
+    // ── Clause finale (langue faisant foi)
+    doc.y += 6;
+    if (!presign) doc.fillColor(TEXT).font('Helvetica-Oblique').fontSize(7.8).text(
+      "Fait à distance, par voie électronique. En cas de divergence d'interprétation, la version française prévaut sur la version anglaise. / Executed remotely by electronic means. In the event of any discrepancy, the French version shall prevail over the English version.",
+      left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
+    );
+    // ── Renvoi CGV (en presign : reporté en page 2 avec les garanties)
+    doc.y += 5;
+    if (!presign) doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(
+      (presign
+        ? `* Les Conditions générales en vigueur au ${headDateFr}, publiées sur robindesairs.eu/cgv, font partie intégrante du présent acte et sont acceptées par les Cédants au moment de la signature. Elles définissent le prix de cession, ses modalités de versement et le droit de rétractation. / * The Terms and Conditions in force on ${headDateEn}, published at robindesairs.eu/cgv, form an integral part of this deed and are accepted by the Assignors upon signature. They set out the assignment price, payment terms and right of withdrawal.`
+        : "* Les termes de ce document ont la signification définie dans les Conditions générales sur robindesairs.eu, acceptées par les Cédants. / * Terms herein have the meaning defined in the Terms & Conditions on robindesairs.eu, accepted by the Assignors."),
+      left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
+    );
+
+    // ── PRESIGN : bande de signatures (une zone par cédant ADULTE), coordonnées rapportées à yousign-init.
+    // Chaque zone = boîte étiquetée où Yousign posera le widget signature. Les mineurs ne signent pas
+    // (part non cédée, art. 9 bis) : leur parent adulte signataire couvre l'encaissement de leur part.
+    if (presign) {
+      // Une seule phrase à la place du pavé eIDAS.
+      doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(
+        "Signature électronique sécurisée via Yousign, qui en conserve la preuve. / Secure electronic signature via Yousign, which retains the evidence.",
+        left, Math.min(doc.y + 2, doc.page.height - 58), { width: contentW, align: 'center', lineBreak: false });
+    }
+
 
     // Pied de page : margins.bottom = 0 pour dessiner sous la zone de texte SANS déclencher
     // la pagination automatique de pdfkit (sinon le footer part seul en page 2).
