@@ -166,8 +166,8 @@ function genererActeCessionPdf(d) {
       // Paris-Dakar vendu sous numero American Airlines mais opere par Air France a pour
       // debiteur Air France. Le libelle nomme donc la bonne qualite, ce qui protege l'acte
       // meme si la saisie a retenu le transporteur commercial.
-      ['TRANSPORTEUR EFFECTIF / OPERATING CARRIER',
-       d.airline ? `${d.airline} (indicatif)` : 'celui du vol ci-dessus / the one above'],
+      ['TRANSPORTEUR(S) EFFECTIF(S) / OPERATING CARRIER(S)',
+       d.airline ? `${d.airline} (indicatif)` : 'ceux du voyage ci-dessus / those of the journey above'],
       ['INDEMNITÉ VISÉE / SOUGHT', "jusqu'à 600 € / up to €600"],
     ];
     const cardH = 22 + cellH * (cells.length / 2);
@@ -194,7 +194,7 @@ function genererActeCessionPdf(d) {
     // l'opérateur réel : nommer une société à la signature reviendrait à figer une erreur
     // dans un acte qu'on ne peut plus corriger. Le nom affiché n'est donc qu'indicatif.
     doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.4)
-      .text("La créance cédée est celle détenue contre le transporteur ayant effectivement opéré le vol désigné ci-dessus, quel que soit le transporteur commercial figurant sur le billet (partage de code). Le nom mentionné est indicatif. / The assigned claim is the one held against the carrier that actually operated the flight identified above, whatever the marketing carrier shown on the ticket (codeshare). The name shown is indicative.",
+      .text("La créance cédée est celle détenue contre le ou les transporteurs ayant effectivement opéré le voyage désigné ci-dessus, quel que soit le transporteur commercial figurant sur le billet (partage de code) ; le nom mentionné est indicatif. Lorsque le voyage comporte une correspondance sous une réservation unique, la cession couvre l'ensemble du voyage, l'indemnité étant déterminée par la destination finale et la distance totale (CJUE, Folkerts, C-11/11), et peut être exercée contre le transporteur du premier segment (CJUE, 11 juill. 2019, C-502/18). / The assigned claim is the one held against the carrier or carriers that actually operated the journey identified above, whatever the marketing carrier shown on the ticket (codeshare); the name shown is indicative. Where the journey includes a connection under a single booking, the assignment covers the whole journey, compensation being determined by the final destination and total distance (CJEU, Folkerts, C-11/11), and may be enforced against the carrier of the first leg (CJEU, 11 July 2019, C-502/18).",
             left, doc.y, { width: contentW, align: 'justify', lineGap: 0.4 });
     doc.y += 22;
 
