@@ -33,6 +33,8 @@ const OFF = '#F7F8FA';
 const TEXT = '#1a2436';
 const GRAY = '#6B7A90';
 const BORDER = '#D8DEE8';
+const MINT   = '#EFF9F4';   // fond vert pale (encarts rassurants)
+const GREEN_T= '#047857';   // vert TEXTE lisible (contraste AA sur fond clair)
 
 // WinAnsi only (fontes standard pdfkit) : pas d'emoji ni de flèches unicode.
 function incidentLabels(code) {
@@ -123,7 +125,27 @@ function genererActeCessionPdf(d) {
     const volLine2 = `Compagnie / Air carrier : ${d.airline || '—'}   ·   Irrégularité / Disruption : retard, annulation ou refus d'embarquement / delay, cancellation or denied boarding`;
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(volLine1, left + 12, volTop + 9, { width: contentW - 24 });
     doc.fillColor(TEXT).font('Helvetica').fontSize(8.8).text(volLine2, left + 12, volTop + 23, { width: contentW - 24 });
-    doc.y = volTop + volH + 16;
+    doc.y = volTop + volH + 14;
+
+    // ── PRESIGN : bandeau d'engagement. Le client doit voir CE QU'IL GAGNE avant le
+    // vocabulaire juridique. Trois chiffres, rien d'autre.
+    if (presign) {
+      const bT = doc.y, bH = 70, cw = (contentW - 16) / 3;
+      doc.roundedRect(left, bT, contentW, bH, 6).fillAndStroke(MINT, NEON);
+      const tiles = [
+        ['75 %', 'des sommes récupérées vous reviennent', 'of amounts recovered are yours'],
+        ['0 €', "à avancer, aujourd'hui et jamais", 'to pay upfront, ever'],
+        ['0 €', 'si nous ne récupérons rien', 'if we recover nothing'],
+      ];
+      tiles.forEach((t, i) => {
+        const cx = left + i * (cw + 8);
+        doc.fillColor(GREEN_T).font('Helvetica-Bold').fontSize(20).text(t[0], cx + 8, bT + 9, { width: cw - 16, align: 'center' });
+        doc.fillColor(TEXT).font('Helvetica-Bold').fontSize(7.4).text(t[1], cx + 8, bT + 34, { width: cw - 16, align: 'center' });
+        doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(6.8).text(t[2], cx + 8, bT + 54, { width: cw - 16, align: 'center' });
+        if (i < 2) doc.moveTo(cx + cw + 4, bT + 12).lineTo(cx + cw + 4, bT + bH - 12).lineWidth(0.7).stroke(BORDER);
+      });
+      doc.y = bT + bH + 14;
+    }
 
     // ── En-têtes de colonnes
     doc.fillColor(GRAY).font('Helvetica-Bold').fontSize(7.2);
@@ -149,9 +171,13 @@ function genererActeCessionPdf(d) {
 
     bilingual(
       '1. Parties',
-      `D'une part, les passagers désignés ci-dessous (les « Cédants ») ; d'autre part, Robin des Airs, SASU en cours d'immatriculation au RCS de Paris, service de recouvrement d'indemnités aériennes, sise 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (le « Cessionnaire »), agissant en son nom propre et pour son propre compte.`,
+      presign
+        ? `D'une part, les passagers désignés ci-dessous (les « Cédants ») ; d'autre part, Robin des Airs, service de recouvrement d'indemnités aériennes basé à Paris, contact@robindesairs.eu (le « Cessionnaire »), agissant en son nom propre et pour son propre compte.`
+        : `D'une part, les passagers désignés ci-dessous (les « Cédants ») ; d'autre part, Robin des Airs, SASU en cours d'immatriculation au RCS de Paris, service de recouvrement d'indemnités aériennes, sise 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (le « Cessionnaire »), agissant en son nom propre et pour son propre compte.`,
       '1. Parties',
-      `On the one hand, the passengers listed below (the "Assignors"); on the other hand, Robin des Airs, a French simplified joint-stock company (SASU) being registered with the Paris Trade & Companies Register, an air-passenger claims recovery service, registered office at 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (the "Assignee"), acting in its own name and on its own behalf.`
+      presign
+        ? `On the one hand, the passengers listed below (the "Assignors"); on the other hand, Robin des Airs, an air-passenger claims recovery service based in Paris, contact@robindesairs.eu (the "Assignee"), acting in its own name and on its own behalf.`
+        : `On the one hand, the passengers listed below (the "Assignors"); on the other hand, Robin des Airs, a French simplified joint-stock company (SASU) being registered with the Paris Trade & Companies Register, an air-passenger claims recovery service, registered office at 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu (the "Assignee"), acting in its own name and on its own behalf.`
     );
 
     // PRESIGN : l'acte est l'instrument SIGNÉ par le client, sa rédaction doit être performative
@@ -169,12 +195,14 @@ function genererActeCessionPdf(d) {
         : `By an electronically signed agreement, the Assignors assigned to the Assignee, with immediate effect, all their claims and rights, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) arising from the disruption of the flight above. The Assignee acts in its own name (Art. 1321-1324 French Civil Code).`
     );
 
-    bilingual(
-      '3. Signature électronique',
+    // Le pavé eIDAS n'a aucune valeur pédagogique pour le signataire : il alourdit et refroidit.
+    // En presign il est remplacé par une phrase unique posée sous les zones de signature.
+    if (!presign) bilingual(
+      '4. Signature électronique',
       presign
         ? `Le présent acte est signé électroniquement par chaque cédant via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.). La date et le certificat de signature figurent dans le dossier de preuve Yousign, disponible sur demande.`
         : `Contrat signé électroniquement le ${sigFr} via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve et copie intégrale du contrat disponibles sur demande.`,
-      '3. Electronic signature',
+      '4. Electronic signature',
       presign
         ? `This deed is signed electronically by each assignor via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code). The signing date and certificate are recorded in the Yousign evidence file, available upon request.`
         : `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
@@ -185,18 +213,14 @@ function genererActeCessionPdf(d) {
     //  - presign  → le CÉDANT signe : on lui rappelle son droit de rétractation (L.221-18 C. conso).
     //    Une notification adressée à la compagnie n'a aucun sens sur l'acte qu'il signe.
     //  - sinon    → le document part à la COMPAGNIE : il vaut notification (art. 1324 C. civ.).
-    if (presign) {
+    // Section 4 : réservée au document envoyé à la COMPAGNIE. Sur l'acte que le client signe,
+    // une notification adressée au débiteur n'a pas sa place, et le droit de rétractation est
+    // exposé en page 2 (« Vos garanties ») dans une langue qu'il comprend.
+    if (!presign) {
       bilingual(
-        '4. Rétractation',
-        `Les Cédants disposent d'un délai de quatorze jours pour se rétracter sans motif ni frais (art. L.221-18 du Code de la consommation), selon les modalités et le formulaire figurant aux Conditions générales sur robindesairs.eu. Aucune somme n'est due par les Cédants, quelle que soit l'issue : la rémunération du Cessionnaire est prélevée sur les seules sommes effectivement récupérées.`,
-        '4. Right of withdrawal',
-        `The Assignors have fourteen days to withdraw without giving reasons and at no cost (Art. L.221-18 French Consumer Code), in accordance with the terms and form set out in the Terms and Conditions at robindesairs.eu. No sum is ever payable by the Assignors, whatever the outcome: the Assignee is remunerated solely out of amounts actually recovered.`
-      );
-    } else {
-      bilingual(
-        '4. Notification (art. 1324 C. civ.)',
+        '3. Notification (art. 1324 C. civ.)',
         `Le présent document vaut notification de la cession à la compagnie : à compter de sa réception, seul un paiement effectué au Cessionnaire est libératoire. Correspondance : ${contactEmail}. Les clauses restreignant la cession des créances CE 261/2004 sont inopposables (art. 15 du Règlement ; CJUE, 6 févr. 2025, C-11/23).`,
-        '4. Notice (Art. 1324 Civil Code)',
+        '3. Notice (Art. 1324 Civil Code)',
         `This document is formal notice of the assignment to the carrier: upon receipt, only payment made to the Assignee discharges the debtor. Correspondence: ${contactEmail}. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23).`
       );
     }
@@ -222,25 +246,36 @@ function genererActeCessionPdf(d) {
       doc.font('Helvetica').fontSize(7.8);
       // Signature dessinée (mode post-signature) : tamponnée à droite de la ligne de l'adulte.
       const sig = (!presign && !p.minor) ? sigBuffer(p.signatureImg) : null;
-      const textW = sig ? contentW - 150 : contentW - 20;
+      // PRESIGN : la zone de signature est POSÉE DANS LA LIGNE du cédant, pas dans un bloc séparé
+      // en fin de document. Le signataire voit son nom et l'endroit où signer au même endroit, et
+      // on économise la page entière que consommait l'ancienne bande de signatures.
+      const inlineSig = presign && !p.minor;
+      const SIGW = 168, SIGH = 44;
+      const textW = (sig || inlineSig) ? contentW - SIGW - 34 : contentW - 20;
       const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join('   ·   ');
-      const h = Math.max(sig ? 46 : 0, 12 + doc.heightOfString(line2, { width: textW }) + rowPad * 2 - 4);
-      doc.roundedRect(left, yR, contentW, h, 4).fillAndStroke('#FFFFFF', BORDER);
+      const h = Math.max(sig ? 46 : 0, inlineSig ? SIGH + 12 : 0, 12 + doc.heightOfString(line2, { width: textW }) + rowPad * 2 - 4);
+      doc.roundedRect(left, yR, contentW, h, 4).fillAndStroke(inlineSig ? MINT : '#FFFFFF', inlineSig ? NEON : BORDER);
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, left + 10, yR + rowPad, { width: textW });
       doc.fillColor(GRAY).font('Helvetica').fontSize(7.8).text(line2, left + 10, yR + rowPad + 11, { width: textW });
       if (sig) { try { doc.image(sig, left + contentW - 128, yR + (h - 30) / 2, { fit: [116, 30] }); } catch (_) {} }
+      if (inlineSig) {
+        const bx = left + contentW - SIGW - 12, by = yR + (h - SIGH) / 2;
+        doc.roundedRect(bx, by, SIGW, SIGH, 4).fillAndStroke('#FFFFFF', NEON);
+        doc.fillColor(GRAY).font('Helvetica').fontSize(6.8).text('Signez ici / Sign here', bx, by + SIGH - 11, { width: SIGW, align: 'center' });
+        sigZones.push({ name: p.name || '', page: pageNo, x: Math.round(bx), y: Math.round(by + 4), w: SIGW, h: SIGH - 14 });
+      }
       doc.y = yR + h + 5;
     });
 
     // ── Clause finale (langue faisant foi)
     doc.y += 6;
-    doc.fillColor(TEXT).font('Helvetica-Oblique').fontSize(7.8).text(
+    if (!presign) doc.fillColor(TEXT).font('Helvetica-Oblique').fontSize(7.8).text(
       "Fait à distance, par voie électronique. En cas de divergence d'interprétation, la version française prévaut sur la version anglaise. / Executed remotely by electronic means. In the event of any discrepancy, the French version shall prevail over the English version.",
       left, doc.y, { width: contentW, align: 'center', lineGap: 1.5 }
     );
-    // ── Renvoi CGV (façon AirHelp)
+    // ── Renvoi CGV (en presign : reporté en page 2 avec les garanties)
     doc.y += 5;
-    doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(
+    if (!presign) doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(
       (presign
         ? `* Les Conditions générales en vigueur au ${headDateFr}, publiées sur robindesairs.eu/cgv, font partie intégrante du présent acte et sont acceptées par les Cédants au moment de la signature. Elles définissent le prix de cession, ses modalités de versement et le droit de rétractation. / * The Terms and Conditions in force on ${headDateEn}, published at robindesairs.eu/cgv, form an integral part of this deed and are accepted by the Assignors upon signature. They set out the assignment price, payment terms and right of withdrawal.`
         : "* Les termes de ce document ont la signification définie dans les Conditions générales sur robindesairs.eu, acceptées par les Cédants. / * Terms herein have the meaning defined in the Terms & Conditions on robindesairs.eu, accepted by the Assignors."),
@@ -251,26 +286,62 @@ function genererActeCessionPdf(d) {
     // Chaque zone = boîte étiquetée où Yousign posera le widget signature. Les mineurs ne signent pas
     // (part non cédée, art. 9 bis) : leur parent adulte signataire couvre le mandat d'encaissement.
     if (presign) {
-      const adultes = pax.filter((p) => !p.minor);
-      const boxW = 210, boxH = 58, labelH = 12, blockH = labelH + boxH + 14;
-      doc.y += 14;
-      if (doc.y + 18 + blockH > doc.page.height - 46) { doc.addPage(); doc.y = 46; }
-      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text("Signatures des cédants / Assignors' signatures", left, doc.y, { width: contentW });
-      doc.y += 6;
-      let rowTop = doc.y; // top de la rangée courante, STABLE (doc.text ferait dériver doc.y entre colonnes)
-      adultes.forEach((p, k) => {
-        if (k % 2 === 0) { // début d'une nouvelle rangée
-          if (rowTop + blockH > doc.page.height - 40) { doc.addPage(); rowTop = 46; }
-        }
-        const bx = left + (k % 2) * (colW + gap);
-        const boxY = rowTop + labelH;
-        doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Signature de ${p.name || '—'}`, bx, rowTop, { width: boxW });
-        doc.roundedRect(bx, boxY, boxW, boxH, 5).lineWidth(1).stroke(BORDER);
-        // Coordonnées PDF (origine haut-gauche, points) rapportées telles quelles → Yousign v3.
-        sigZones.push({ name: p.name || '', page: pageNo, x: Math.round(bx), y: Math.round(boxY + 6), w: boxW, h: boxH - 12 });
-        // Fin de rangée (2e colonne ou dernier) → on descend d'un bloc.
-        if (k % 2 === 1 || k === adultes.length - 1) { rowTop = boxY + boxH + 12; doc.y = rowTop; }
+      // Une seule phrase à la place du pavé eIDAS.
+      doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(
+        "Signature électronique sécurisée via Yousign, qui en conserve la preuve. / Secure electronic signature via Yousign, which retains the evidence.",
+        left, doc.y + 2, { width: contentW, align: 'center' });
+
+      // ══════════ PAGE 2 : ce qui protège le client. Il la garde, elle ne sert pas à signer.
+      doc.addPage(); doc.y = 46;
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(13).text('Vos garanties', left, doc.y, { width: contentW });
+      doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(9).text('Your safeguards', left, doc.y + 2, { width: contentW });
+      doc.y += 12;
+
+      const gar = [
+        ['14 jours pour changer d\'avis', "Vous pouvez vous rétracter sans motif ni frais dans les quatorze jours (art. L.221-18 du Code de la consommation). Le formulaire figure dans les Conditions générales.", 'Fourteen days to withdraw, no reason, no cost.'],
+        ['Vous ne payez jamais de votre poche', "Aucune somme ne vous est demandée, ni à la signature, ni pendant la procédure, ni si l'affaire est perdue. Nous sommes rémunérés uniquement sur ce qui est effectivement récupéré.", 'You never pay out of pocket, whatever the outcome.'],
+        ['Votre argent est isolé', "Les sommes récupérées transitent par un compte dédié aux fonds clients, distinct de nos comptes d'exploitation, et vous sont reversées par virement ou mobile money.", 'Recovered funds are held in a dedicated client account.'],
+        ['Vos documents sont effacés', "Vos pièces d'identité et justificatifs sont supprimés automatiquement trente jours après la clôture du dossier, conformément au RGPD.", 'Your documents are erased 30 days after closure (GDPR).'],
+      ];
+      const gW = (contentW - 14) / 2;
+      const gTop = doc.y;   // base FIGÉE : doc.text() ci-dessous ferait dériver doc.y
+      gar.forEach((g, i) => {
+        const gx = left + (i % 2) * (gW + 14);
+        const gy = gTop + Math.floor(i / 2) * 92;
+        doc.roundedRect(gx, gy, gW, 84, 6).fillAndStroke('#FFFFFF', BORDER);
+        doc.circle(gx + 16, gy + 17, 6).fill(NEON);
+        doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(g[0], gx + 28, gy + 11, { width: gW - 38 });
+        doc.fillColor(TEXT).font('Helvetica').fontSize(8).text(g[1], gx + 12, gy + 32, { width: gW - 24, align: 'justify', lineGap: 0.6 });
+        doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(g[2], gx + 12, gy + 70, { width: gW - 24 });
       });
+      doc.y = gTop + 92 * Math.ceil(gar.length / 2) + 10;
+
+      // Ce qui se passe maintenant
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(13).text('Ce qui se passe maintenant', left, doc.y, { width: contentW });
+      doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(9).text('What happens next', left, doc.y + 2, { width: contentW });
+      doc.y += 16;
+      const etapes = [
+        ['1', 'Nous réclamons', "Nous écrivons à la compagnie en notre nom et lui notifions la cession : elle ne peut plus payer qu'entre nos mains."],
+        ['2', 'Nous relançons', "Si elle refuse ou garde le silence, nous contestons. Vous n'avez aucune démarche à faire."],
+        ['3', 'Nous saisissons le tribunal', "Si nécessaire, notre avocate engage la procédure. Les frais sont à notre charge, jamais à la vôtre."],
+        ['4', 'Vous recevez votre argent', "Dès encaissement, votre part vous est versée : 75 % à l'amiable, 60 % si le tribunal a dû être saisi."],
+      ];
+      etapes.forEach((e) => {
+        const ey = doc.y;
+        doc.circle(left + 10, ey + 9, 9).fill(NAVY);
+        doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(9).text(e[0], left + 5, ey + 5, { width: 10, align: 'center' });
+        doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(e[1], left + 26, ey + 1, { width: contentW - 36 });
+        doc.fillColor(TEXT).font('Helvetica').fontSize(8.2).text(e[2], left + 26, ey + 13, { width: contentW - 36, lineGap: 0.5 });
+        doc.y = ey + 13 + doc.heightOfString(e[2], { width: contentW - 36, lineGap: 0.5 }) + 9;
+      });
+
+      // Renvoi CGV horodaté + langue faisant foi
+      doc.y += 4;
+      doc.roundedRect(left, doc.y, contentW, 46, 5).fillAndStroke(OFF, BORDER);
+      doc.fillColor(TEXT).font('Helvetica').fontSize(7.6).text(
+        `Les Conditions générales en vigueur au ${headDateFr}, publiées sur robindesairs.eu/cgv, font partie intégrante du présent acte et sont acceptées lors de la signature. Elles définissent le prix de cession, ses modalités de versement et le droit de rétractation. En cas de divergence, la version française prévaut sur la version anglaise.`,
+        left + 12, doc.y + 8, { width: contentW - 24, align: 'justify', lineGap: 0.6 });
+      doc.y += 54;
     }
 
     // Pied de page : margins.bottom = 0 pour dessiner sous la zone de texte SANS déclencher
