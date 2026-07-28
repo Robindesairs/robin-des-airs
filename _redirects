@@ -296,3 +296,10 @@
 # Fusion declassement : orpheline vers le pilier (juillet 2026)
 /blog/classe-business-economique-indemnite-ce261.html   /blog/downgrade-involontaire-indemnite-ce261.html   301
 /blog/classe-business-economique-indemnite-ce261        /blog/downgrade-involontaire-indemnite-ce261.html   301
+
+# === GSC 28/07/2026 : motif « Introuvable (404) », 2 URL connues de Google ===
+# 1) la variante sans .html manquait (la version .html etait deja redirigee l.198)
+/blog/correspondance-ratee-a-qui-reclamer-ce261-folkerts   /blog/correspondance-manquee-indemnite-vol.html   301!
+# 2) ancienne URL des CGV : le fichier reel est /cgv.html a la racine
+/documents/cgv.html   /cgv.html   301!
+/documents/cgv        /cgv.html   301!
