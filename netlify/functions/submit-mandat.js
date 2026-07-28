@@ -12,6 +12,8 @@ const { clientEmailForRef } = require('./lib/airtable-robin');
 const { checkRateLimit: rateLimitCheck } = require('./lib/rate-limit');
 
 // Génération + envoi de la copie PDF signée (best-effort : ne doit jamais casser la signature)
+let genererActeCessionPdf = null;
+try { ({ genererActeCessionPdf } = require('./lib/acte-cession-pdf')); } catch (e) { console.error('submit-mandat: acte-cession-pdf indisponible:', e.message); }
 let genererMandatPdf = null, genererMandatBilinguePdf = null;
 try { ({ genererMandatPdf, genererMandatBilinguePdf } = require('./lib/mandat-pdf')); } catch (e) { console.error('submit-mandat: mandat-pdf indisponible:', e.message); }
 let watiSendFile = null, watiCfg = null;
@@ -855,9 +857,33 @@ exports.handler = async (event) => {
   }
 
   // Génère la copie PDF du mandat signé (best-effort)
+  // Le document archivé est l'ACTE DE CESSION, produit par le MÊME générateur que l'aperçu
+  // et que l'enveloppe de signature. Tant que submit-mandat utilisait lib/mandat-pdf.js, le
+  // client signait le nouvel acte mais recevait par mail l'ANCIEN contrat long : trois
+  // générateurs pour un seul document. Repli sur l'ancien si le nouveau échoue.
+  async function _acteDuRecord() {
+    if (!genererActeCessionPdf) return null;
+    const pax = Array.isArray(record.passengers) && record.passengers.length
+      ? record.passengers.map((x) => ({
+          name: x.name || '', dob: x.dob || '', birth: x.birth || x.lieuNaissance || '',
+          minor: !!x.minor, legalRepName: x.legalRepName || '',
+          adresse: x.adresse || x.address || '', signatureImg: x.signatureImg || record.signatureImg || '',
+        }))
+      : [{ name: record.name || '', adresse: record.address || '', signatureImg: record.signatureImg || '' }];
+    return genererActeCessionPdf({
+      presign: false, ref, certId, signedAt: ts, showAddress: true, passengers: pax,
+      name: record.name || '', airline: record.compagnie || record.airline || '',
+      flightNum: record.vol || record.flightNum || '', flightDate: record.date || record.flightDate || '',
+      pnr: record.pnr || '', depAirport: record.depAirport || '', arrAirport: record.arrAirport || '',
+      route: record.route || '', incident: record.incident || '',
+    });
+  }
+
   let pdfBuffer = null;
-  if (genererMandatPdf) {
-    try { pdfBuffer = await genererMandatPdf(record); }
+  try { pdfBuffer = await _acteDuRecord(); }
+  catch (e) { console.error('submit-mandat: génération acte échouée:', e.message); }
+  if (!pdfBuffer && genererMandatPdf) {
+    try { pdfBuffer = await genererMandatPdf(record); console.warn('submit-mandat: repli sur l\'ancien template'); }
     catch (e) { console.error('submit-mandat: génération PDF échouée:', e.message); }
   }
 
@@ -885,8 +911,10 @@ exports.handler = async (event) => {
     } catch (e) { console.error('submit-mandat: archive PDF échouée:', e.message); }
   }
   // Génère le PDF bilingue FR/EN (pour les compagnies étrangères) — joint à la notif équipe
-  let pdfBilingueBuffer = null;
-  if (genererMandatBilinguePdf) {
+  // L'acte est bilingue PAR CONSTRUCTION (colonnes FR|EN) : la version « bilingue » archivée
+  // est donc le même document, et non plus un second rendu qui pouvait diverger.
+  let pdfBilingueBuffer = pdfBuffer;
+  if (!pdfBilingueBuffer && genererMandatBilinguePdf) {
     try { pdfBilingueBuffer = await genererMandatBilinguePdf(record); }
     catch (e) { console.error('submit-mandat: génération PDF bilingue échouée:', e.message); }
   }
