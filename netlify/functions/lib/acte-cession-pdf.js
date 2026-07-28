@@ -102,7 +102,23 @@ function genererActeCessionPdf(d) {
     // a validée comme référence. Bandeau bleu nuit plein, marque, titre, sous-titre,
     // ligne de référence en mono. Le document imprimé et l'écran doivent se ressembler :
     // un client qui a lu l'écran doit reconnaître ce qu'il signe.
-    const HEAD_H = 134;
+    // Hauteur MESUREE : le sous-titre passe sur deux lignes selon la largeur utile, et une
+    // hauteur en dur laissait soit un vide, soit la ligne de reference a cheval sur le bord.
+    const SUB = 'Assignment of claim agreement · Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil';
+    doc.font('Helvetica').fontSize(9.5);
+    const hSub = doc.heightOfString(SUB, { width: contentW - 36 });
+    // Traduction en clair du titre juridique, demandee par le fondateur. Aucun taux ici :
+    // le detail (75 % amiable / 60 % contentieux) est ecrit en toutes lettres dans les
+    // garanties plus bas, donc la phrase n'annonce pas un chiffre qu'elle ne tient pas.
+    const CLR_FR = 'Vous nous vendez votre indemnité. Nous la récupérons à nos frais. Vous touchez votre argent.';
+    const CLR_EN = 'You sell us your compensation. We recover it at our own cost. You get your money.';
+    const yClair = 100 + hSub + 7;
+    doc.font('Helvetica-Bold').fontSize(8.8);
+    const hClr = doc.heightOfString(CLR_FR, { width: contentW - 36 });
+    doc.font('Helvetica-Oblique').fontSize(7.4);
+    const hClrEn = doc.heightOfString(CLR_EN, { width: contentW - 36 });
+    const yRefline = yClair + hClr + hClrEn + 6;
+    const HEAD_H = yRefline + 12 - 40;
     doc.roundedRect(left, 40, contentW, HEAD_H, 10).fill(NAVY);
 
     // Pastille de marque + chevron (même signe que l'écran)
@@ -125,21 +141,15 @@ function genererActeCessionPdf(d) {
     doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(19)
       .text('Contrat de cession de créance', left + 18, 78, { width: contentW - 36 });
     doc.fillColor('#9FB2CC').font('Helvetica').fontSize(9.5)
-      .text('Assignment of claim agreement · Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil',
-            left + 18, 100, { width: contentW - 36 });
-    // Traduction en clair du titre juridique. Les DEUX taux sont annonces : « vous recevez
-    // 75 % » seul serait trompeur des que le tribunal est saisi, et c'est precisement le
-    // defaut qui avait fait supprimer le bandeau des chiffres.
-    const _clairFr = "En clair : vous nous vendez votre indemnité, nous la récupérons à nos frais, vous recevez 75 % (60 % au tribunal).";
-    const _clairEn = "In short: you sell us your compensation, we recover it at our own cost, you receive 75 % (60 % in court).";
-    doc.font('Helvetica-Bold').fontSize(8.6);
-    const _hFr = doc.heightOfString(_clairFr, { width: contentW - 36 });
-    doc.fillColor(NEON_B).text(_clairFr, left + 18, 114, { width: contentW - 36 });
+      .text(SUB, left + 18, 100, { width: contentW - 36 });
+
+    doc.fillColor(NEON_B).font('Helvetica-Bold').fontSize(8.8)
+      .text(CLR_FR, left + 18, yClair, { width: contentW - 36 });
     doc.fillColor('#8FA3BE').font('Helvetica-Oblique').fontSize(7.4)
-      .text(_clairEn, left + 18, 114 + _hFr + 1, { width: contentW - 36 });
+      .text(CLR_EN, left + 18, yClair + hClr + 1, { width: contentW - 36 });
 
     doc.fillColor('#C3D0E0').font('Courier').fontSize(8)
-      .text(`Dossier ${d.ref || '—'} · établi le / issued on ${headDateFr}`, left + 18, 114 + _hFr + 13, { width: contentW - 36 });
+      .text(`Dossier ${d.ref || '—'} · établi le / issued on ${headDateFr}`, left + 18, yRefline, { width: contentW - 36 });
 
     // ── Les deux parties, côte à côte, séparées d'un filet (comme l'écran)
     let y = 40 + HEAD_H + 12;
