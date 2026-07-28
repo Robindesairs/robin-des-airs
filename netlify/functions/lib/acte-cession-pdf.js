@@ -246,7 +246,7 @@ function genererActeCessionPdf(d) {
       if (d.showAddress && p.adresse) infoBits.push(`domicile / address : ${String(p.adresse).replace(/\s*\n\s*/g, ', ')}`);
       const sigTxt = p.minor
         ? (presign
-            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · part non cédée (mandat, art. 9 bis)`
+            ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · part non cédée, encaissement selon l'art. 9 bis des CGV / share not assigned, collected under Art. 9 bis of the T&C`
             : `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} · signature du représentant / signed by the representative`)
         : (presign
             ? `Signature électronique ci-dessous / Electronic signature below`
@@ -292,7 +292,7 @@ function genererActeCessionPdf(d) {
 
     // ── PRESIGN : bande de signatures (une zone par cédant ADULTE), coordonnées rapportées à yousign-init.
     // Chaque zone = boîte étiquetée où Yousign posera le widget signature. Les mineurs ne signent pas
-    // (part non cédée, art. 9 bis) : leur parent adulte signataire couvre le mandat d'encaissement.
+    // (part non cédée, art. 9 bis) : leur parent adulte signataire couvre l'encaissement de leur part.
     if (presign) {
       // Une seule phrase à la place du pavé eIDAS.
       doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(

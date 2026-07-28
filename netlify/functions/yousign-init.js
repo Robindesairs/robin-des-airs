@@ -104,16 +104,71 @@ exports.handler = async (event) => {
   const dossierLabel = String(payload.label || "Dossier Robin des Airs").trim();
   const dossierRef = String(payload.ref || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
 
-  const pdfBase64 = String(payload.pdf_base64 || "").trim();
-  if (!pdfBase64) return json(400, { error: "pdf_base64 requis (PDF du mandat encodé base64)" });
+  // ── Quel document le client signe-t-il ?
+  //
+  // Historique (défaut) : le front rend mandat.html en PDF et le poste ici. Le client
+  // signe le CONTRAT LONG.
+  //
+  // Cible (YOUSIGN_PRIMARY_ACTE=1) : le serveur génère lui-même l'ACTE DE CESSION d'une
+  // page à partir du dossier, et c'est LUI que le client signe. Le contrat long sort du
+  // parcours : ses stipulations vivent désormais dans les CGV, acceptées à la signature
+  // et intégrées à l'acte par renvoi horodaté.
+  //
+  // Le drapeau est OFF par défaut, à dessein : la bascule ne doit intervenir qu'APRÈS
+  // validation de l'acte par l'avocate partenaire. Tant qu'il est absent, le
+  // comportement de production est strictement inchangé.
+  const PRIMARY_ACTE = process.env.YOUSIGN_PRIMARY_ACTE === "1";
 
-  let pdfBuffer;
-  try {
-    pdfBuffer = Buffer.from(pdfBase64, "base64");
-    if (pdfBuffer.length < 1000) throw new Error("PDF trop petit (< 1 Ko)");
-    if (pdfBuffer.length > 10 * 1024 * 1024) throw new Error("PDF trop volumineux (> 10 Mo)");
-  } catch (e) {
-    return json(400, { error: "PDF base64 invalide", details: String(e.message || e) });
+  let pdfBuffer = null;
+  let acteZones = null;   // zones de signature rapportées par le générateur, en mode acte
+
+  if (PRIMARY_ACTE) {
+    if (!genererActeCessionPdf) return json(500, { error: "générateur d'acte indisponible" });
+    if (!dossierRef) return json(400, { error: "ref requise pour générer l'acte de cession" });
+    try {
+      const mandats = getBlobStore(event, "mandats");
+      const dossier = (mandats && (await mandats.get("m/" + dossierRef, { type: "json" }))) || {};
+      const out = await genererActeCessionPdf({
+        presign: true,
+        ref: dossierRef,
+        showAddress: true,
+        passengers: Array.isArray(dossier.passengers) && dossier.passengers.length
+          ? dossier.passengers.map((p) => ({
+              name: p.name || "",
+              dob: p.dob || "",
+              birth: p.birth || p.lieuNaissance || "",
+              minor: !!p.minor,
+              legalRepName: p.legalRepName || "",
+              adresse: p.adresse || p.address || "",
+            }))
+          : [{ name: dossier.name || "", adresse: dossier.address || "" }],
+        name: dossier.name || "",
+        airline: dossier.compagnie || dossier.airline || "",
+        flightNum: dossier.vol || dossier.flightNum || "",
+        flightDate: dossier.date || dossier.flightDate || "",
+        pnr: dossier.pnr || "",
+        depAirport: dossier.depAirport || "",
+        arrAirport: dossier.arrAirport || "",
+        route: dossier.route || "",
+        incident: dossier.incident || "",
+      });
+      pdfBuffer = out.buffer;
+      acteZones = out.sigZones;
+      if (!pdfBuffer || pdfBuffer.length < 1000) throw new Error("acte généré vide");
+    } catch (e) {
+      console.error("yousign-init: génération acte échouée:", e.message);
+      return json(500, { error: "génération de l'acte de cession impossible", details: String(e.message || e) });
+    }
+  } else {
+    const pdfBase64 = String(payload.pdf_base64 || "").trim();
+    if (!pdfBase64) return json(400, { error: "pdf_base64 requis (PDF du contrat encodé base64)" });
+    try {
+      pdfBuffer = Buffer.from(pdfBase64, "base64");
+      if (pdfBuffer.length < 1000) throw new Error("PDF trop petit (< 1 Ko)");
+      if (pdfBuffer.length > 10 * 1024 * 1024) throw new Error("PDF trop volumineux (> 10 Mo)");
+    } catch (e) {
+      return json(400, { error: "PDF base64 invalide", details: String(e.message || e) });
+    }
   }
 
   // Nombre de pages du PDF (pdf-lib) → on place la signature sur la DERNIÈRE page,
@@ -432,17 +487,23 @@ exports.handler = async (event) => {
       }, "label signature");
 
       // Zone signature (obligatoire — bloquante si échoue)
+      // En mode acte (YOUSIGN_PRIMARY_ACTE=1), le générateur a rapporté les coordonnées EXACTES
+      // de la case de chaque cédant, posée dans sa propre ligne du tableau. On les utilise telles
+      // quelles plutôt que la position calculée pour le contrat long, dont la mise en page n'a
+      // rien à voir. Appariement par index : les signataires créés et les zones sont dans le
+      // même ordre (adultes uniquement, mineurs exclus des deux côtés).
+      const zone = (acteZones && acteZones[i]) || null;
       const fieldRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           type: "signature",
           signer_id: signerId,
-          page: sigPage,
-          x: sigX,
-          y: fieldY,
-          width: 200,
-          height: 60,
+          page: zone ? zone.page : sigPage,
+          x: zone ? zone.x : sigX,
+          y: zone ? zone.y : fieldY,
+          width: zone ? zone.w : 200,
+          height: zone ? zone.h : 60,
         }),
       });
       if (!fieldRes.ok) {

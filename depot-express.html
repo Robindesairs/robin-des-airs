@@ -1019,7 +1019,7 @@
     consent: function(sc){
       sc.innerHTML = '<h2>🔒 Avant de continuer, votre accord</h2><p class="sub">Pour monter votre dossier, on va vous demander votre <b>carte d\'embarquement / e-billet</b> puis une <b>pièce d\'identité</b> (passeport ou carte d\'identité). Ce sont des <b>données personnelles sensibles</b> : on vous demande votre accord avant de les collecter.</p>';
       var why = document.createElement('div'); why.className = 'why';
-      why.innerHTML = 'ℹ️ Vos documents sont <b>lus par une IA</b> pour remplir votre dossier (nom, vol, date), <b>transmis chiffrés</b> (HTTPS), <b>utilisés uniquement pour votre réclamation</b>, puis <b>effacés à la clôture</b> du dossier. Effacement possible à tout moment (RGPD).';
+      why.innerHTML = 'ℹ️ Vos documents sont <b>lus par une IA</b> pour remplir votre dossier (nom, vol, date), <b>transmis chiffrés</b> (HTTPS), <b>utilisés uniquement pour votre réclamation</b>, puis <b>effacés 30 jours après la clôture</b> du dossier. Effacement possible à tout moment (RGPD).';
       sc.appendChild(why);
       var l = document.createElement('label'); l.className = 'ck'; l.style.marginTop = '12px';
       l.innerHTML = '<input type="checkbox"><span>J\'accepte que Robin des Airs <b>collecte et traite</b> ma carte d\'embarquement et ma pièce d\'identité pour mon dossier, conformément à la <a href="/politique-confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span>';
