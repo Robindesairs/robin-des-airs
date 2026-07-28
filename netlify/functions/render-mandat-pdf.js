@@ -80,6 +80,9 @@ function buildMandatUrl(baseUrl, params) {
   return `${baseUrl}/${page}${qs.toString() ? sep + qs.toString() : ""}`;
 }
 
+let genererActeCessionPdf = null;
+try { ({ genererActeCessionPdf } = require("./lib/acte-cession-pdf")); } catch (_) {}
+
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers: HEADERS, body: "" };
   if (event.httpMethod !== "POST") return json(405, { error: "Méthode non autorisée" });
@@ -93,6 +96,48 @@ exports.handler = async (event) => {
     payload = JSON.parse(event.body || "{}");
   } catch {
     return json(400, { error: "Corps JSON invalide" });
+  }
+
+  // ── Chemin PRINCIPAL : le MÊME générateur que la signature.
+  //
+  // L'aperçu et le document signé doivent être le même fichier, produit par le même code.
+  // Tant qu'ils venaient de deux sources (Chromium rendant contrat.html d'un côté,
+  // genererActeCessionPdf de l'autre), ils divergeaient en silence : le client lisait une
+  // version d'une seule langue et signait une version bilingue à deux colonnes.
+  //
+  // Effet de bord bienvenu : plus de Chromium dans le parcours client, donc un aperçu
+  // quasi instantané et un point de panne en moins.
+  if (genererActeCessionPdf && process.env.RDA_RENDER_PAGE !== "html") {
+    try {
+      const nomComplet = [payload.fn, payload.n].filter(Boolean).join(" ").trim()
+        || payload.name || "";
+      const adresse = payload.adresse || payload.address || "";
+      const out = await genererActeCessionPdf({
+        presign: true,
+        ref: String(payload.r || payload.ref || "").slice(0, 64),
+        showAddress: true,
+        passengers: Array.isArray(payload.passengers) && payload.passengers.length
+          ? payload.passengers
+          : [{ name: nomComplet, adresse }],
+        name: nomComplet,
+        airline: payload.compagnie || payload.airline || "",
+        flightNum: payload.vol || payload.flightNum || "",
+        flightDate: payload.date || payload.flightDate || "",
+        pnr: payload.pnr || "",
+        depAirport: payload.dep || payload.depAirport || "",
+        arrAirport: payload.arr || payload.arrAirport || "",
+        route: payload.route || "",
+        incident: payload.incident || "",
+      });
+      const buf = out && out.buffer ? out.buffer : out;
+      if (buf && buf.length > 1000) {
+        return json(200, { ok: true, pdf_base64: Buffer.from(buf).toString("base64") });
+      }
+      console.warn("[render-mandat-pdf] acte vide, repli sur le rendu HTML");
+    } catch (e) {
+      // Repli silencieux sur Chromium : mieux vaut un aperçu que pas d'aperçu.
+      console.error("[render-mandat-pdf] generateur acte KO, repli HTML:", e.message);
+    }
   }
 
   const baseUrl = (process.env.MANDAT_BASE_URL || "https://robindesairs.eu").replace(/\/+$/, "");
