@@ -132,10 +132,14 @@ function genererActeCessionPdf(d) {
     if (presign) {
       const bT = doc.y, bH = 70, cw = (contentW - 16) / 3;
       doc.roundedRect(left, bT, contentW, bH, 6).fillAndStroke(MINT, NEON);
+      // Le taux DÉPEND de la voie suivie : 75 % à l'amiable, 60 % si le tribunal est saisi.
+      // Afficher le seul 75 % sur le document contractuel serait une allégation trompeuse.
+      // Les deux taux sont donc annoncés, et la contrepartie du 60 % (frais de procédure à
+      // notre charge) est explicitée juste en dessous : la vérité reste un bon argument.
       const tiles = [
-        ['75 %', 'des sommes récupérées vous reviennent', 'of amounts recovered are yours'],
-        ['0 €', "à avancer, aujourd'hui et jamais", 'to pay upfront, ever'],
-        ['0 €', 'si nous ne récupérons rien', 'if we recover nothing'],
+        ['75 %', "des sommes récupérées, à l'amiable", 'of amounts recovered, amicable stage'],
+        ['60 %', 'si le tribunal doit être saisi', 'if court proceedings are required'],
+        ['0 €', "à avancer, et 0 € si rien n'est récupéré", 'upfront, and 0 if nothing is recovered'],
       ];
       tiles.forEach((t, i) => {
         const cx = left + i * (cw + 8);
@@ -144,7 +148,11 @@ function genererActeCessionPdf(d) {
         doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(6.8).text(t[2], cx + 8, bT + 54, { width: cw - 16, align: 'center' });
         if (i < 2) doc.moveTo(cx + cw + 4, bT + 12).lineTo(cx + cw + 4, bT + bH - 12).lineWidth(0.7).stroke(BORDER);
       });
-      doc.y = bT + bH + 14;
+      // Contrepartie du taux réduit, dite noir sur blanc juste sous les chiffres.
+      doc.fillColor(TEXT).font('Helvetica').fontSize(7.6).text(
+        "Le taux de 60 % s'applique uniquement si la compagnie nous contraint à saisir le tribunal. Les honoraires d'avocat et les frais de procédure sont alors à notre charge, jamais à la vôtre. / The 60 % rate applies only where the carrier forces us to go to court; legal fees and court costs are then borne by us, never by you.",
+        left, bT + bH + 6, { width: contentW, align: 'center', lineGap: 0.8 });
+      doc.y = bT + bH + 6 + doc.heightOfString("x", { width: contentW }) * 3 + 8;
     }
 
     // ── En-têtes de colonnes
