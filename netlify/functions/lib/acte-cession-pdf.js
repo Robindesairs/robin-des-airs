@@ -110,7 +110,9 @@ function genererActeCessionPdf(d) {
     // reconnait depuis WhatsApp et le site. Repli sur la pastille verte si le fichier
     // manque (le PDF ne doit jamais echouer pour une image).
     try {
-      const _logo = require('path').join(__dirname, '..', '..', '..', 'favicon.png');
+      // Version DETOUREE : favicon.png a les coins du carre arrondi remplis de blanc opaque,
+      // ce qui dessinait quatre triangles blancs sur le bandeau bleu nuit.
+      const _logo = require('path').join(__dirname, '..', '..', '..', 'assets', 'images', 'robin-hibou-transparent.png');
       require('fs').accessSync(_logo);
       doc.image(_logo, left + 18, 50, { fit: [26, 26] });
     } catch (_) {
