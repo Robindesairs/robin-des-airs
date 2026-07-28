@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Montserrat, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="630" fill="#F7F8FA"/>
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Bon à valoir ou argent : ce que dit l'article 7 paragraphe 3</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">L'argent est le principe. Le bon est l'exception, et il suppose votre accord.</text>
+  <text x="1144" y="58" fill="rgba(255,255,255,.55)" font-size="13" font-weight="700" text-anchor="end">robindesairs.eu</text>
+
+  <!-- colonne gauche : le bon -->
+  <rect x="56" y="122" width="530" height="336" rx="14" fill="#FDF1F1" stroke="#C0392B" stroke-width="3"/>
+  <text x="321" y="158" fill="#C0392B" font-size="19" font-weight="900" text-anchor="middle">LE BON À VALOIR</text>
+  <text x="321" y="186" fill="#6B7280" font-size="14" font-weight="600" text-anchor="middle">l'exception, soumise à votre accord</text>
+  <text x="84" y="228" fill="#0B1F3A" font-size="16" font-weight="600">Il a une date de péremption</text>
+  <text x="84" y="262" fill="#0B1F3A" font-size="16" font-weight="600">Il ne s'utilise que chez la compagnie</text>
+  <text x="84" y="290" fill="#6B7280" font-size="14">qui vient de vous décevoir</text>
+  <text x="84" y="326" fill="#0B1F3A" font-size="16" font-weight="600">Billet moins cher ailleurs ?</text>
+  <text x="84" y="354" fill="#6B7280" font-size="14">vous devez quand même utiliser le bon</text>
+  <text x="84" y="390" fill="#0B1F3A" font-size="16" font-weight="600">Transmissible à un proche ?</text>
+  <text x="84" y="418" fill="#6B7280" font-size="14">selon les compagnies, souvent non</text>
+
+  <!-- colonne droite : l'argent -->
+  <rect x="614" y="122" width="530" height="336" rx="14" fill="#EFF9F4" stroke="#00C87A" stroke-width="3"/>
+  <text x="879" y="158" fill="#047857" font-size="19" font-weight="900" text-anchor="middle">L'INDEMNITÉ EN ARGENT</text>
+  <text x="879" y="186" fill="#6B7280" font-size="14" font-weight="600" text-anchor="middle">le régime normal du règlement</text>
+  <text x="642" y="228" fill="#0B1F3A" font-size="16" font-weight="600">Aucune date limite</text>
+  <text x="642" y="262" fill="#0B1F3A" font-size="16" font-weight="600">Paie un loyer, une facture, une école</text>
+  <text x="642" y="298" fill="#0B1F3A" font-size="16" font-weight="600">Peut aussi acheter un billet,</text>
+  <text x="642" y="326" fill="#6B7280" font-size="14">sur n'importe quelle compagnie</text>
+  <text x="642" y="362" fill="#0B1F3A" font-size="16" font-weight="600">250 €, 400 € ou 600 € par passager</text>
+  <text x="642" y="390" fill="#6B7280" font-size="14">selon la distance, sans justificatif à fournir</text>
+  <text x="642" y="424" fill="#047857" font-size="15" font-weight="800">Europe vers Afrique subsaharienne : 600 €</text>
+
+  <!-- bandeau bas : la vraie comparaison -->
+  <rect x="56" y="484" width="1088" height="104" rx="14" fill="#0B1F3A"/>
+  <text x="600" y="522" fill="#00E5A0" font-size="17" font-weight="800" text-anchor="middle">La vraie comparaison n'est pas le bon contre l'indemnité</text>
+  <text x="600" y="552" fill="#FFFFFF" font-size="16" font-weight="600" text-anchor="middle">c'est le bon contre le prix du billet que vous auriez réellement payé.</text>
+  <text x="600" y="576" fill="rgba(255,255,255,.75)" font-size="14" text-anchor="middle">Un bon plus élevé que ce trajet ne vous rapporte pas la différence : il vous la fait perdre.</text>
+</svg>
