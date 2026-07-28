@@ -303,3 +303,19 @@
 # 2) ancienne URL des CGV : le fichier reel est /cgv.html a la racine
 /documents/cgv.html   /cgv.html   301!
 /documents/cgv        /cgv.html   301!
+
+# === GSC 28/07/2026 : pages internes servies publiquement, jamais declarees au
+# sitemap, et liees UNIQUEMENT depuis navigation-interne.html (deja en 404).
+# Gabarits juridiques + jeux d'essai : aucun usage externe, blocage dur.
+/agency-commission-tiers-en.html      /404.html   404!
+/agency-commission-tiers-en           /404.html   404!
+/gabarit-mise-en-demeure-fr.html      /404.html   404!
+/gabarit-mise-en-demeure-fr           /404.html   404!
+/gabarit-mise-en-demeure-en.html      /404.html   404!
+/gabarit-mise-en-demeure-en           /404.html   404!
+/dossier-test-difficile.html          /404.html   404!
+/dossier-test-difficile               /404.html   404!
+/test-reservation-3pax.html           /404.html   404!
+/test-reservation-3pax                /404.html   404!
+/feed-mock.html                       /404.html   404!
+/feed-mock                            /404.html   404!

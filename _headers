@@ -69,6 +69,25 @@
 /formation/*
   X-Robots-Tag: noindex, nofollow
 
+# === GSC 28/07/2026 : conditions commerciales agences. Hors Google, mais URL
+# MAINTENUES : elles sont liees depuis le tunnel partenaires public
+# (partenaires-landing, partenaires-rejoindre, travel-agents-programme-gambia-en).
+# Un blocage dur casserait le parcours de recrutement des agences.
+/paliers-commission-agence-fr.html
+  X-Robots-Tag: noindex, nofollow
+
+/paliers-commission-agence-en.html
+  X-Robots-Tag: noindex, nofollow
+
+/partner-agreement-fr.html
+  X-Robots-Tag: noindex, nofollow
+
+/partner-agreement-en.html
+  X-Robots-Tag: noindex, nofollow
+
+/partenaires-agences-fcfa.html
+  X-Robots-Tag: noindex, nofollow
+
 # Parcours de signature (page en évolution rapide) : JAMAIS de cache navigateur,
 # sinon le client garde une ancienne version (in-app WhatsApp / Safari mobile).
 /depot-express.html
