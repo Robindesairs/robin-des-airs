@@ -166,8 +166,11 @@ function genererActeCessionPdf(d) {
       // Paris-Dakar vendu sous numero American Airlines mais opere par Air France a pour
       // debiteur Air France. Le libelle nomme donc la bonne qualite, ce qui protege l'acte
       // meme si la saisie a retenu le transporteur commercial.
+      // On n'inscrit JAMAIS de nom de societe : sur un partage de code, le systeme deduit la
+      // compagnie du numero de vol et retiendrait le transporteur COMMERCIAL. Un nom faux sur
+      // un acte signe se plaide ; un nom absent ne coute rien, la clause designant deja le vol.
       ['TRANSPORTEUR(S) EFFECTIF(S) / OPERATING CARRIER(S)',
-       d.airline ? `${d.airline} (indicatif)` : 'ceux du voyage ci-dessus / those of the journey above'],
+       'celui ou ceux du voyage identifié ci-dessus / of the journey identified above'],
       ['INDEMNITÉ VISÉE / SOUGHT', "jusqu'à 600 € / up to €600"],
     ];
     const cardH = 22 + cellH * (cells.length / 2);
@@ -194,7 +197,7 @@ function genererActeCessionPdf(d) {
     // l'opérateur réel : nommer une société à la signature reviendrait à figer une erreur
     // dans un acte qu'on ne peut plus corriger. Le nom affiché n'est donc qu'indicatif.
     doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.4)
-      .text("La créance cédée est celle détenue contre le ou les transporteurs ayant effectivement opéré le voyage désigné ci-dessus, quel que soit le transporteur commercial figurant sur le billet (partage de code) ; le nom mentionné est indicatif. Lorsque le voyage comporte une correspondance sous une réservation unique, la cession couvre l'ensemble du voyage, l'indemnité étant déterminée par la destination finale et la distance totale (CJUE, Folkerts, C-11/11), et peut être exercée contre le transporteur du premier segment (CJUE, 11 juill. 2019, C-502/18). / The assigned claim is the one held against the carrier or carriers that actually operated the journey identified above, whatever the marketing carrier shown on the ticket (codeshare); the name shown is indicative. Where the journey includes a connection under a single booking, the assignment covers the whole journey, compensation being determined by the final destination and total distance (CJEU, Folkerts, C-11/11), and may be enforced against the carrier of the first leg (CJEU, 11 July 2019, C-502/18).",
+      .text("La créance cédée est celle détenue contre le ou les transporteurs ayant effectivement opéré le voyage identifié ci-dessus par son ou ses numéros de vol, sa date et son trajet, quel que soit le transporteur commercial figurant sur le billet (partage de code) ; le nom mentionné est indicatif. Lorsque le voyage comporte une correspondance sous une réservation unique, la cession couvre l'ensemble du voyage, l'indemnité étant déterminée par la destination finale et la distance totale (CJUE, Folkerts, C-11/11), et peut être exercée contre le transporteur du premier segment (CJUE, 11 juill. 2019, C-502/18). / The assigned claim is the one held against the carrier or carriers that actually operated the journey identified above by its flight number or numbers, date and route, whatever the marketing carrier shown on the ticket (codeshare); the name shown is indicative. Where the journey includes a connection under a single booking, the assignment covers the whole journey, compensation being determined by the final destination and total distance (CJEU, Folkerts, C-11/11), and may be enforced against the carrier of the first leg (CJEU, 11 July 2019, C-502/18).",
             left, doc.y, { width: contentW, align: 'justify', lineGap: 0.4 });
     doc.y += 22;
 
@@ -266,11 +269,11 @@ function genererActeCessionPdf(d) {
     bilingual(
       '2. Cession',
       presign
-        ? `Par le présent acte, les Cédants cèdent au Cessionnaire, qui accepte, avec effet immédiat, l'intégralité de leurs créances, nées ou à naître, au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire art. 7, remboursement des frais art. 9) se rapportant à l'irrégularité du vol désigné ci-dessus, ainsi que tous droits et actions accessoires. Le Cessionnaire devient seul titulaire de ces créances et agit en son nom propre et pour son propre compte (art. 1321 à 1324 C. civ.). Le prix de cession et ses modalités figurent aux Conditions générales, acceptées par les Cédants et annexées au présent acte.`
+        ? `Par le présent acte, les Cédants cèdent au Cessionnaire, qui accepte, avec effet immédiat, l'intégralité de leurs créances, nées ou à naître, au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire art. 7, remboursement des frais art. 9) se rapportant à l'irrégularité du vol identifié ci-dessus (numéro, date, trajet), ainsi que tous droits et actions accessoires. Le Cessionnaire devient seul titulaire de ces créances et agit en son nom propre et pour son propre compte (art. 1321 à 1324 C. civ.). Le prix de cession et ses modalités figurent aux Conditions générales, acceptées par les Cédants et annexées au présent acte.`
         : `Par contrat signé électroniquement, les Cédants ont cédé au Cessionnaire, avec effet immédiat, toutes leurs créances et prétentions, nées ou à naître, au titre du Règlement (CE) n° 261/2004 (indemnité forfaitaire art. 7, remboursement des frais art. 9) se rapportant à l'irrégularité du vol ci-dessus. Le Cessionnaire agit en son nom propre (art. 1321 à 1324 C. civ.).`,
       '2. Assignment',
       presign
-        ? `By this deed, the Assignors assign to the Assignee, who accepts, with immediate effect, all of their claims, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) relating to the disruption of the flight identified above, together with all ancillary rights and actions. The Assignee becomes the sole holder of those claims and acts in its own name and on its own behalf (Art. 1321-1324 French Civil Code). The assignment price and its terms are set out in the Terms and Conditions, accepted by the Assignors and appended to this deed.`
+        ? `By this deed, the Assignors assign to the Assignee, who accepts, with immediate effect, all of their claims, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) relating to the disruption of the flight identified above (number, date, route), together with all ancillary rights and actions. The Assignee becomes the sole holder of those claims and acts in its own name and on its own behalf (Art. 1321-1324 French Civil Code). The assignment price and its terms are set out in the Terms and Conditions, accepted by the Assignors and appended to this deed.`
         : `By an electronically signed agreement, the Assignors assigned to the Assignee, with immediate effect, all their claims and rights, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) arising from the disruption of the flight above. The Assignee acts in its own name (Art. 1321-1324 French Civil Code).`
     );
 
