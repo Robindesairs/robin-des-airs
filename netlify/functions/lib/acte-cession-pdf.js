@@ -161,7 +161,12 @@ function genererActeCessionPdf(d) {
       ['VOYAGE COMMENÇANT LE / JOURNEY FROM', d.flightDate || '—'],
       ['VOL(S) / FLIGHT(S)', d.flightNum || '—'],
       ['RÉSERVATION / BOOKING', d.pnr || '—'],
-      ['COMPAGNIE / AIR CARRIER', d.airline || '—'],
+      // Le debiteur de la creance est le transporteur EFFECTIF (art. 2 b du reglement,
+      // arret Wirth C-532/17), pas celui qui a vendu le billet. Sur un partage de code, un
+      // Paris-Dakar vendu sous numero American Airlines mais opere par Air France a pour
+      // debiteur Air France. Le libelle nomme donc la bonne qualite, ce qui protege l'acte
+      // meme si la saisie a retenu le transporteur commercial.
+      ['TRANSPORTEUR AÉRIEN EFFECTIF / OPERATING AIR CARRIER', d.airline || '—'],
       ['INDEMNITÉ VISÉE / SOUGHT', "jusqu'à 600 € / up to €600"],
     ];
     const cardH = 22 + cellH * (cells.length / 2);
