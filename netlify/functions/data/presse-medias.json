@@ -566,7 +566,9 @@
   "statut_reponse": "publie",
   "date_publication": "2026-07-27",
   "url_publication": "https://www.mizane.info/vol-annule-le-bon-d-achat-n-est-pas-l-indemnite",
-  "note_reponse": "PUBLIE 27/07 - rubrique Tourisme - byline Saint-Yves Kodjo - backlink robindesairs.eu - bio navigant NON reprise"
+  "note_reponse": "PUBLIE 27/07 - rubrique Tourisme - byline Saint-Yves Kodjo - bio navigant NON reprise. VERIF 28/07 : AUCUN backlink SEO exploitable. (1) le lien robindesairs.eu/?utm_source=mizane est en rel=nofollow ugc, ancre = URL brute. (2) le site est une SPA React qui renvoie HTTP 404 sur toutes les routes hors racine (verifie aussi en UA Googlebot) : la page n'est pas indexable, donc le lien n'existe pas pour Google. Valeur restante = notoriete + trafic referent direct (tracker utm_source=mizane dans Umami). NE PAS compter dans l'objectif domaines referents.",
+  "backlink_seo": false,
+  "backlink_note": "nofollow ugc + page en 404 serveur (SPA sans SSR)"
  },
  {
   "id": "m050",
