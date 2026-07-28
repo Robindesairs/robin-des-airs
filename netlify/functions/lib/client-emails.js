@@ -28,12 +28,22 @@ function eur(n) {
   return v.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' €';
 }
 
+/** Code court affiche au client : les 6 derniers caracteres alphanumeriques, en majuscules.
+ * La reference complete (RDA-20260728-5MN9TJ7EVUNSMXA5MK9O5ML6E) est illisible dans un objet
+ * d'e-mail : elle le tronque et fait disparaitre le message utile. Le code court sert d'etiquette,
+ * la reference entiere reste dans le corps pour que le client puisse la citer et qu'on la retrouve.
+ */
+function refCourte(ref) {
+  const c = String(ref == null ? '' : ref).replace(/[^A-Za-z0-9]/g, '').slice(-6).toUpperCase();
+  return c || '—';
+}
+
 function suiviUrl(ref) {
   return `https://robindesairs.eu/suivi-dossier.html?r=${encodeURIComponent(ref || '')}`;
 }
 
 /** Coquille commune : en-tête hibou, corps, pied. `bodyHtml` = lignes <tr>. */
-function shell(bodyHtml) {
+function shell(bodyHtml, ref) {
   return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:0;background:#eef1f4;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#eef1f4;padding:24px 12px;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -47,6 +57,7 @@ function shell(bodyHtml) {
   <tr><td style="padding:16px 28px 6px;">
     <div style="font-size:12px;color:#8a94a6;line-height:1.6;">Une question&nbsp;? <a href="mailto:expert@robindesairs.eu" style="color:#047857;">expert@robindesairs.eu</a> · <a href="${WA}" style="color:#047857;">WhatsApp</a></div>
   </td></tr>
+  ${ref ? `<tr><td style="padding:0 28px 14px;" align="center"><div style="font-size:11px;color:#9aa8bc;">Référence complète de votre dossier : <span style="font-family:ui-monospace,Menlo,monospace;color:#6B7A90;">${esc(ref)}</span></div></td></tr>` : ''}
   <tr><td style="background:#0B1F3A;padding:15px 28px;" align="center"><div style="font-size:12px;color:#9fb0c4;">Robin des Airs — On prend aux compagnies, on rend aux familles.</div></td></tr>
 </table>
 </td></tr></table>
@@ -78,8 +89,8 @@ function reclamation(d) {
     p(`Vous n'avez <strong>rien à faire ni à avancer</strong>. La compagnie dispose d'un temps raisonnable pour se positionner ; si elle traîne ou refuse, on relance, puis on va au juge s'il le faut. On vous tient informé à chaque étape.`) +
     btn(suiviUrl(d.ref), 'Suivre mon dossier');
   return {
-    subject: `Votre dossier ${d.ref} — la réclamation est partie`,
-    html: shell(body),
+    subject: `Votre dossier ${refCourte(d.ref)} — la réclamation est partie`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, nous avons officiellement réclamé l'indemnité que ${d.compagnie || 'la compagnie'} vous doit. On s'occupe de tout, vous n'avancez rien. Suivi : ${suiviUrl(d.ref)}`,
   };
 }
@@ -110,8 +121,8 @@ function confirmation(d) {
     p(`On vous écrit à chaque étape importante. Une question d'ici là&nbsp;? On est là.`) +
     btn(suiviUrl(d.ref), 'Suivre mon dossier');
   return {
-    subject: `C'est enregistré, merci ${esc(d.prenom || '')} — votre dossier ${d.ref}`,
-    html: shell(body),
+    subject: `C'est enregistré, merci ${esc(d.prenom || '')} — votre dossier ${refCourte(d.ref)}`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, votre contrat est bien enregistré. On s'occupe de tout. Suivi : ${suiviUrl(d.ref)}`,
   };
 }
@@ -126,8 +137,8 @@ function relance(d) {
     p(`Il n'y a pas de délai imposé à la compagnie pour répondre, alors on ne lâche rien&nbsp;: on relance, puis on passe au juge s'il le faut. Vous n'avez toujours rien à faire ni à avancer.`) +
     btn(suiviUrl(d.ref), 'Suivre mon dossier');
   return {
-    subject: `Votre dossier ${d.ref} — on relance la compagnie`,
-    html: shell(body),
+    subject: `Votre dossier ${refCourte(d.ref)} — on relance la compagnie`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, la compagnie n'a pas encore répondu, on vient de la relancer. On ne lâche rien. Suivi : ${suiviUrl(d.ref)}`,
   };
 }
@@ -142,8 +153,8 @@ function rib(d) {
     p(`Ça prend une minute, c'est sécurisé, et les frais de transfert sont pour nous.`) +
     btn(ribUrl, 'Indiquer mon compte');
   return {
-    subject: `${d.ref} — où vous verser votre argent`,
-    html: shell(body),
+    subject: `${refCourte(d.ref)} — où vous verser votre argent`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, l'indemnité est obtenue. Indiquez le compte où recevoir votre argent : ${ribUrl}`,
   };
 }
@@ -158,8 +169,8 @@ function tribunal_saisi(d) {
     p(`À ce stade, les conditions évoluent&nbsp;: sur un dossier réglé au tribunal, <strong>vous recevez 60&nbsp;% du montant récupéré</strong> (au lieu de 75&nbsp;% à l'amiable). Et toujours&nbsp;: <strong>0&nbsp;€ à avancer, 0&nbsp;€ si on ne récupère rien</strong>.`) +
     btn(suiviUrl(d.ref), 'Suivre mon dossier');
   return {
-    subject: `Votre dossier ${d.ref} — on saisit le tribunal`,
-    html: shell(body),
+    subject: `Votre dossier ${refCourte(d.ref)} — on saisit le tribunal`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, la compagnie n'a pas réglé à l'amiable, on saisit le tribunal. Au tribunal vous recevez 60% du montant récupéré. On va au bout. Suivi : ${suiviUrl(d.ref)}`,
   };
 }
@@ -178,8 +189,8 @@ function tribunal_gagne(d) {
     p(`Merci de nous avoir fait confiance jusqu'au bout. C'est exactement pour ça qu'on existe.`) +
     avisParrainageTail();
   return {
-    subject: `${d.ref} — on a gagné au tribunal 🏆`,
-    html: shell(body),
+    subject: `${refCourte(d.ref)} — on a gagné au tribunal 🏆`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, on a gagné au tribunal${montant ? `, vous recevez ${montant}` : ''}. Merci de votre confiance. Un avis nous aiderait : ${TRUSTPILOT}`,
   };
 }
@@ -197,8 +208,8 @@ function paye(d) {
     ligneMontant +
     avisParrainageTail();
   return {
-    subject: `${d.ref} — votre argent est en route`,
-    html: shell(body),
+    subject: `${refCourte(d.ref)} — votre argent est en route`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, on a récupéré votre indemnité${montant ? `, vous recevez ${montant}` : ''}. Un avis nous aiderait : ${TRUSTPILOT}`,
   };
 }
@@ -212,8 +223,8 @@ function cloture(d) {
     p(`Concrètement pour vous&nbsp;: <strong>vous n'avez rien à payer</strong>, et <strong>nous vous restituons votre créance</strong> — vous restez donc libre de toute autre démarche de votre côté.`) +
     p(`On est désolé de ne pas avoir pu faire mieux sur celui-ci. Si un autre vol vous pose problème un jour, vous savez où nous trouver.`);
   return {
-    subject: `Votre dossier ${d.ref}`,
-    html: shell(body),
+    subject: `Votre dossier ${refCourte(d.ref)}`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, malgré nos efforts votre dossier n'aboutira pas. Vous n'avez rien à payer et nous vous restituons votre créance.`,
   };
 }
@@ -227,8 +238,8 @@ function tribunal_perdu(d) {
     p(`Concrètement pour vous&nbsp;: <strong>vous n'avez rien à payer</strong>. La décision étant celle d'un juge, elle met un point final au dossier.`) +
     p(`Merci de nous avoir fait confiance jusqu'au bout. Si un autre vol vous pose problème un jour, on sera là.`);
   return {
-    subject: `Votre dossier ${d.ref}`,
-    html: shell(body),
+    subject: `Votre dossier ${refCourte(d.ref)}`,
+    html: shell(body, d.ref),
     text: `Bonjour ${d.prenom || ''}, malgré nos efforts le tribunal a donné raison à la compagnie. Vous n'avez rien à payer. Merci de votre confiance.`,
   };
 }
