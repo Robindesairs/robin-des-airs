@@ -198,9 +198,14 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 @media print{
   /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
   body{background:#fff !important}
+  /* La page de l'acte n'a PAS de #mandatForm : cette regle heritee de mandat.html
+     masquait la totalite du document et produisait un PDF de deux pages BLANCHES
+     via render-mandat-pdf, qui imprime en emulateMediaType('print'). On reaffiche
+     le conteneur reel de l'acte. */
   body *{visibility:hidden !important}
-  #mandatForm,#mandatForm *{visibility:visible !important}
-  #mandatForm{display:block !important;position:absolute;left:0;top:0;width:100%;margin:0;padding:0}
+  .doc,.doc *{visibility:visible !important}
+  .doc{display:block !important;position:absolute;left:0;top:0;width:100%;margin:0;padding:0}
+  #langBtn{display:none !important}
   details.mandat-full{display:block !important}
   details.mandat-full>summary{display:none}
   #successScreen{display:none !important}
