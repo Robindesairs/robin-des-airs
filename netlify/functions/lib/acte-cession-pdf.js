@@ -98,34 +98,82 @@ function genererActeCessionPdf(d) {
     const headDateEn = presign ? fmtDate(_todayIso, 'en') : sigEn;
     const routeTxt = [d.depAirport, d.arrAirport].filter(Boolean).join(' - ') || (d.route || '—');
 
-    // ── En-tête épuré (document officiel, pas bannière web) : marque à gauche,
-    //    réf + date à droite, filet vert, beaucoup d'air.
-    doc.moveTo(left, 42).lineTo(left + 22, 52).lineWidth(2.5).stroke(NEON);
-    doc.polygon([left + 22, 52], [left + 15.5, 48], [left + 17, 55.5]).fill(NEON);
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(19).text('Robin des Airs', left + 30, 38);
-    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text("Cessionnaire / Assignee · Recouvrement d'indemnités aériennes (Règlement CE 261/2004)", left + 31, 62, { width: contentW - 150 });
-    doc.fillColor(GRAY).font('Helvetica').fontSize(7.5).text('RÉF. DOSSIER / FILE REF', left, 40, { width: contentW, align: 'right', characterSpacing: 0.5 });
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(10).text(`${d.ref || '—'}`, left, 50, { width: contentW, align: 'right' });
-    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Fait le / Date : ${headDateFr}`, left, 64, { width: contentW, align: 'right' });
-    doc.moveTo(left, 86).lineTo(W - left, 86).lineWidth(1.2).stroke(NEON);
+    // ── En-tête : reprise EXACTE de la présentation de contrat.html, que le fondateur
+    // a validée comme référence. Bandeau bleu nuit plein, marque, titre, sous-titre,
+    // ligne de référence en mono. Le document imprimé et l'écran doivent se ressembler :
+    // un client qui a lu l'écran doit reconnaître ce qu'il signe.
+    const HEAD_H = 96;
+    doc.roundedRect(left, 40, contentW, HEAD_H, 10).fill(NAVY);
 
-    // ── Titre
-    doc.y = 104;
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(15)
-      .text('CESSION DE CRÉANCES ET PRÉTENTIONS', left, doc.y, { width: contentW, align: 'center', characterSpacing: 0.3 });
-    doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(10.5)
-      .text('Assignment of claims and rights', left, doc.y + 3, { width: contentW, align: 'center' });
+    // Pastille de marque + chevron (même signe que l'écran)
+    doc.roundedRect(left + 18, 52, 22, 22, 6).fill(NEON);
+    doc.moveTo(left + 24, 59).lineTo(left + 32, 63).lineWidth(1.8).stroke(NAVY);
+    doc.polygon([left + 34, 64], [left + 28.5, 61], [left + 29.5, 68]).fill(NAVY);
 
-    // ── Encadré vol
-    doc.y += 14;
-    const volTop = doc.y;
-    const volH = 40;
-    doc.roundedRect(left, volTop, contentW, volH, 5).fillAndStroke(OFF, BORDER);
-    const volLine1 = `Vol / Flight ${d.flightNum || '—'}   ·   ${d.flightDate || '—'}   ·   ${routeTxt}${d.pnr ? `   ·   PNR ${d.pnr}` : ''}`;
-    const volLine2 = `Compagnie / Air carrier : ${d.airline || '—'}   ·   Irrégularité / Disruption : retard, annulation ou refus d'embarquement / delay, cancellation or denied boarding`;
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(volLine1, left + 12, volTop + 9, { width: contentW - 24 });
-    doc.fillColor(TEXT).font('Helvetica').fontSize(8.8).text(volLine2, left + 12, volTop + 23, { width: contentW - 24 });
-    doc.y = volTop + volH + 14;
+    doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(12).text('Robin des Airs', left + 47, 57);
+    doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(19)
+      .text('Acte de cession de créance', left + 18, 78, { width: contentW - 36 });
+    doc.fillColor('#9FB2CC').font('Helvetica').fontSize(9.5)
+      .text('Deed of assignment of claim · Règlement (CE) n° 261/2004 · Articles 1321 et suivants du Code civil',
+            left + 18, 100, { width: contentW - 36 });
+    doc.fillColor('#C3D0E0').font('Courier').fontSize(8)
+      .text(`Dossier ${d.ref || '—'} · établi le / issued on ${headDateFr}`, left + 18, 117, { width: contentW - 36 });
+
+    // ── Les deux parties, côte à côte, séparées d'un filet (comme l'écran)
+    let y = 40 + HEAD_H + 12;
+    const pcW = (contentW - 24) / 2;
+    const party = (x, label, labelEn, nom, lignes) => {
+      doc.fillColor(GRAY).font('Helvetica-Bold').fontSize(7.2)
+        .text(`${label} / ${labelEn}`, x, y, { width: pcW, characterSpacing: 0.6 });
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(12).text(nom, x, y + 12, { width: pcW });
+      doc.fillColor(GRAY).font('Helvetica').fontSize(8.2)
+        .text(lignes.filter(Boolean).join('\n'), x, y + 28, { width: pcW, lineGap: 1.2 });
+    };
+    const cedantNom = (pax[0] && pax[0].name) || d.name || '—';
+    const cedantAdr = d.showAddress && pax[0] && pax[0].adresse ? String(pax[0].adresse) : '';
+    party(left, 'LE CÉDANT', 'THE ASSIGNOR', cedantNom,
+      [cedantAdr, pax.length > 1 ? `et ${pax.length - 1} autre(s) passager(s) ci-dessous / and ${pax.length - 1} more below` : '']);
+    party(left + pcW + 24, 'LE CESSIONNAIRE', 'THE ASSIGNEE', 'Robin des Airs',
+      ["SASU en cours d'immatriculation au RCS de Paris",
+       'Service recouvrement CE 261/2004 · agit en son nom propre',
+       'contact@robindesairs.eu']);
+    const pH = Math.max(
+      doc.heightOfString([cedantAdr].filter(Boolean).join('\n'), { width: pcW }),
+      doc.heightOfString("SASU en cours d'immatriculation au RCS de Paris\nService recouvrement CE 261/2004 · agit en son nom propre\ncontact@robindesairs.eu", { width: pcW, lineGap: 1.2 })
+    );
+    doc.moveTo(left + pcW + 12, y - 2).lineTo(left + pcW + 12, y + 28 + pH).lineWidth(0.8).stroke(BORDER);
+    y += 28 + pH + 12;
+
+    // ── Carte « Le dossier, en clair » : grille de 6 cases, reprise de l'écran
+    const cardTop = y;
+    const cellW = (contentW - 2) / 2, cellH = 29;
+    const cells = [
+      ['TRAJET / ROUTE', routeTxt],
+      ['VOYAGE COMMENÇANT LE / JOURNEY FROM', d.flightDate || '—'],
+      ['VOL(S) / FLIGHT(S)', d.flightNum || '—'],
+      ['RÉSERVATION / BOOKING', d.pnr || '—'],
+      ['COMPAGNIE / AIR CARRIER', d.airline || '—'],
+      ['INDEMNITÉ VISÉE / SOUGHT', "jusqu'à 600 € / up to €600"],
+    ];
+    const cardH = 22 + cellH * (cells.length / 2);
+    doc.roundedRect(left, cardTop, contentW, cardH, 8).fillAndStroke(OFF, BORDER);
+    doc.fillColor(GRAY).font('Helvetica-Bold').fontSize(7.6)
+      .text('LE DOSSIER, EN CLAIR / YOUR FILE AT A GLANCE', left + 14, cardTop + 9, { width: contentW - 28, characterSpacing: 0.6 });
+    cells.forEach((c, k) => {
+      const cx = left + (k % 2) * cellW;
+      const cy = cardTop + 26 + Math.floor(k / 2) * cellH;
+      doc.rect(cx, cy, cellW, cellH).stroke(BORDER);
+      doc.fillColor(GRAY).font('Helvetica').fontSize(6.6).text(c[0], cx + 12, cy + 7, { width: cellW - 24, characterSpacing: 0.4 });
+      doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(c[1], cx + 12, cy + 17, { width: cellW - 24, lineBreak: false });
+    });
+    doc.y = cardTop + cardH + 10;
+
+    // Irrégularité : motif GÉNÉRIQUE, jamais le motif exact (la cause est souvent inconnue
+    // au moment de la signature, et une cause erronée sur l'acte se retourne contre nous).
+    doc.fillColor(TEXT).font('Helvetica').fontSize(8)
+      .text("Irrégularité / Disruption : retard, annulation ou refus d'embarquement / delay, cancellation or denied boarding",
+            left, doc.y, { width: contentW });
+    doc.y += 12;
 
     // ── PRESIGN : bandeau d'engagement. Le client doit voir CE QU'IL GAGNE avant le
     // vocabulaire juridique. Trois chiffres, rien d'autre.
@@ -238,8 +286,14 @@ function genererActeCessionPdf(d) {
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9).text('Cédants / Assignors', left, doc.y, { width: contentW });
     doc.y += 5;
     const rowPad = 6;
+    // pdfkit pagine TOUT SEUL dès qu'un doc.text() dépasse la marge basse, mais les
+    // roundedRect() dessinés en absolu restent sur la page précédente : la ligne se retrouve
+    // coupée en deux. On neutralise la pagination auto le temps du tableau et on décide des
+    // sauts nous-mêmes, hauteur de ligne calculée AVANT de dessiner.
+    const _mb = doc.page.margins.bottom;
+    doc.page.margins.bottom = 0;
     pax.forEach((p) => {
-      const yR = doc.y;
+      let yR = doc.y;
       const nomTxt = p.name || '—';
       const infoBits = [];
       if (p.dob) infoBits.push(`né(e) le / born ${p.dob}${p.birth ? ` à / in ${p.birth}` : ''}`);
@@ -262,6 +316,7 @@ function genererActeCessionPdf(d) {
       const textW = (sig || inlineSig) ? contentW - SIGW - 34 : contentW - 20;
       const line2 = [infoBits.join(' · '), sigTxt].filter(Boolean).join('   ·   ');
       const h = Math.max(sig ? 46 : 0, inlineSig ? SIGH + 12 : 0, 12 + doc.heightOfString(line2, { width: textW }) + rowPad * 2 - 4);
+      if (yR + h > doc.page.height - 52) { doc.addPage(); yR = 46; doc.y = yR; }
       doc.roundedRect(left, yR, contentW, h, 4).fillAndStroke(inlineSig ? MINT : '#FFFFFF', inlineSig ? NEON : BORDER);
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(8.8).text(nomTxt, left + 10, yR + rowPad, { width: textW });
       doc.fillColor(GRAY).font('Helvetica').fontSize(7.8).text(line2, left + 10, yR + rowPad + 11, { width: textW });
@@ -274,6 +329,7 @@ function genererActeCessionPdf(d) {
       }
       doc.y = yR + h + 5;
     });
+    doc.page.margins.bottom = _mb;
 
     // ── Clause finale (langue faisant foi)
     doc.y += 6;
