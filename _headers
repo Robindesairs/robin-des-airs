@@ -52,6 +52,23 @@
   X-Frame-Options: DENY
   Cache-Control: no-store, no-cache, must-revalidate, private
 
+# === GSC 28/07/2026 : servies publiquement, jamais declarees au sitemap, sans
+# aucun lien interne entrant. Creas publicitaires + academie interne : hors Google.
+# Les liens directs continuent de fonctionner (partage aux partenaires OK).
+# NE PAS ajouter de Disallow dans robots.txt tant que Google n'a pas vu ce noindex :
+# un Disallow l'empecherait de lire l'en-tete et figerait les pages dans l'index.
+/pubs-aissa
+  X-Robots-Tag: noindex, nofollow
+
+/pubs-aissa/*
+  X-Robots-Tag: noindex, nofollow
+
+/formation
+  X-Robots-Tag: noindex, nofollow
+
+/formation/*
+  X-Robots-Tag: noindex, nofollow
+
 # Parcours de signature (page en évolution rapide) : JAMAIS de cache navigateur,
 # sinon le client garde une ancienne version (in-app WhatsApp / Safari mobile).
 /depot-express.html
