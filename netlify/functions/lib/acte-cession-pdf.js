@@ -225,11 +225,17 @@ function genererActeCessionPdf(d) {
     const FS = 8.5;
     const LG = 0.8;
     function bilingual(frTitle, frBody, enTitle, enBody) {
-      const yStart = doc.y;
+      let yStart = doc.y;
       const titleH = 12;
       doc.font('Helvetica').fontSize(FS);
       const hFr = doc.heightOfString(frBody, { width: colW, align: 'justify', lineGap: LG });
       const hEn = doc.heightOfString(enBody, { width: colW, align: 'justify', lineGap: LG });
+      // Un bloc bilingue ne doit JAMAIS se couper : sinon pdfkit pagine au milieu et la
+      // colonne francaise se retrouve sur une page, l'anglaise sur la suivante. On decide
+      // du saut AVANT de dessiner, hauteur des deux colonnes connue.
+      if (yStart + titleH + Math.max(hFr, hEn) > doc.page.height - 46) {
+        doc.addPage(); doc.y = 46; yStart = doc.y;
+      }
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(FS + 0.5).text(frTitle, x1, yStart, { width: colW });
       doc.fillColor(TEXT).font('Helvetica').fontSize(FS).text(frBody, x1, yStart + titleH, { width: colW, align: 'justify', lineGap: LG });
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(FS + 0.5).text(enTitle, x2, yStart, { width: colW });
@@ -286,11 +292,11 @@ function genererActeCessionPdf(d) {
       '4. Signature électronique',
       presign
         ? `Le présent acte est signé électroniquement par chaque cédant via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.). La date et le certificat de signature figurent dans le dossier de preuve Yousign, disponible sur demande.`
-        : `Contrat signé électroniquement le ${sigFr} via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve et copie intégrale du contrat disponibles sur demande.`,
+        : `Signé électroniquement le ${sigFr} via Yousign (eIDAS art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve sur demande.`,
       '4. Electronic signature',
       presign
         ? `This deed is signed electronically by each assignor via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code). The signing date and certificate are recorded in the Yousign evidence file, available upon request.`
-        : `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
+        : `Signed electronically on ${sigEn} via Yousign (eIDAS Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file on request.`
     );
 
     {
