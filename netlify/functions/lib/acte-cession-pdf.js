@@ -106,9 +106,18 @@ function genererActeCessionPdf(d) {
     doc.roundedRect(left, 40, contentW, HEAD_H, 10).fill(NAVY);
 
     // Pastille de marque + chevron (même signe que l'écran)
-    doc.roundedRect(left + 18, 52, 22, 22, 6).fill(NEON);
-    doc.moveTo(left + 24, 59).lineTo(left + 32, 63).lineWidth(1.8).stroke(NAVY);
-    doc.polygon([left + 34, 64], [left + 28.5, 61], [left + 29.5, 68]).fill(NAVY);
+    // Le hibou de la marque, pas un chevron abstrait : c'est le signe que le client
+    // reconnait depuis WhatsApp et le site. Repli sur la pastille verte si le fichier
+    // manque (le PDF ne doit jamais echouer pour une image).
+    try {
+      const _logo = require('path').join(__dirname, '..', '..', '..', 'favicon.png');
+      require('fs').accessSync(_logo);
+      doc.image(_logo, left + 18, 50, { fit: [26, 26] });
+    } catch (_) {
+      doc.roundedRect(left + 18, 52, 22, 22, 6).fill(NEON);
+      doc.moveTo(left + 24, 59).lineTo(left + 32, 63).lineWidth(1.8).stroke(NAVY);
+      doc.polygon([left + 34, 64], [left + 28.5, 61], [left + 29.5, 68]).fill(NAVY);
+    }
 
     doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(12).text('Robin des Airs', left + 47, 57);
     doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(19)
@@ -251,19 +260,6 @@ function genererActeCessionPdf(d) {
         : `By an electronically signed agreement, the Assignors assigned to the Assignee, with immediate effect, all their claims and rights, present or future, under Regulation (EC) No 261/2004 (compensation Art. 7, expense reimbursement Art. 9) arising from the disruption of the flight above. The Assignee acts in its own name (Art. 1321-1324 French Civil Code).`
     );
 
-    // Le pavé eIDAS n'a aucune valeur pédagogique pour le signataire : il alourdit et refroidit.
-    // En presign il est remplacé par une phrase unique posée sous les zones de signature.
-    if (!presign) bilingual(
-      '4. Signature électronique',
-      presign
-        ? `Le présent acte est signé électroniquement par chaque cédant via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.). La date et le certificat de signature figurent dans le dossier de preuve Yousign, disponible sur demande.`
-        : `Contrat signé électroniquement le ${sigFr} via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve et copie intégrale du contrat disponibles sur demande.`,
-      '4. Electronic signature',
-      presign
-        ? `This deed is signed electronically by each assignor via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code). The signing date and certificate are recorded in the Yousign evidence file, available upon request.`
-        : `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
-    );
-
     const contactEmail = `${String(d.ref || '').trim() || 'contact'}@robindesairs.eu`;
     // La section 4 diffère selon le destinataire réel du document :
     //  - presign  → le CÉDANT signe : on lui rappelle son droit de rétractation (L.221-18 C. conso).
@@ -280,6 +276,19 @@ function genererActeCessionPdf(d) {
         `This document is formal notice of the assignment to the carrier: upon receipt, only payment made to the Assignee discharges the debtor. Correspondence: ${contactEmail}. Clauses restricting the assignment of EC 261/2004 claims are unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23).`
       );
     }
+
+    // Le pavé eIDAS n'a aucune valeur pédagogique pour le signataire : il alourdit et refroidit.
+    // En presign il est remplacé par une phrase unique posée sous les zones de signature.
+    if (!presign) bilingual(
+      '4. Signature électronique',
+      presign
+        ? `Le présent acte est signé électroniquement par chaque cédant via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.). La date et le certificat de signature figurent dans le dossier de preuve Yousign, disponible sur demande.`
+        : `Contrat signé électroniquement le ${sigFr} via Yousign, prestataire de services de confiance (Règlement eIDAS, art. 25 ; art. 1366 C. civ.).${d.certId ? ` Certificat n° ${d.certId}.` : ''} Dossier de preuve et copie intégrale du contrat disponibles sur demande.`,
+      '4. Electronic signature',
+      presign
+        ? `This deed is signed electronically by each assignor via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code). The signing date and certificate are recorded in the Yousign evidence file, available upon request.`
+        : `Agreement signed electronically on ${sigEn} via Yousign, a qualified trust service provider (eIDAS Regulation, Art. 25; Art. 1366 French Civil Code).${d.certId ? ` Certificate No ${d.certId}.` : ''} Evidence file and full copy of the agreement available upon request.`
+    );
 
     // ── Tableau des cédants (pleine largeur, entêtes bilingues)
     doc.y += 5;
@@ -354,31 +363,55 @@ function genererActeCessionPdf(d) {
       doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(
         "Signature électronique sécurisée via Yousign, qui en conserve la preuve. / Secure electronic signature via Yousign, which retains the evidence.",
         left, doc.y + 2, { width: contentW, align: 'center' });
+    }
 
-      // ══════════ PAGE 2 : ce qui protège le client. Il la garde, elle ne sert pas à signer.
+    {
+      // ══════════ PAGE 2 : ce qui protège le client, dans les DEUX variantes.
+      // Sur l'acte signé, la page 2 ne contenait que la clause finale : quelques lignes
+      // perdues sur une feuille blanche. Les garanties la remplissent et donnent au
+      // document sa raison d'être côté client.
       doc.addPage(); doc.y = 46;
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(13).text('Vos garanties', left, doc.y, { width: contentW });
       doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(9).text('Your safeguards', left, doc.y + 2, { width: contentW });
       doc.y += 12;
 
+      // Une garantie = un encadré pleine largeur, coupé en DEUX COLONNES : français à gauche,
+      // anglais à droite, exactement l'idiome du reste du document. Le client anglophone lit
+      // ses protections dans sa langue, et la compagnie destinataire aussi.
       const gar = [
-        ['14 jours pour changer d\'avis', "Vous pouvez vous rétracter sans motif ni frais dans les quatorze jours (art. L.221-18 du Code de la consommation). Le formulaire figure dans les Conditions générales.", 'Fourteen days to withdraw, no reason, no cost.'],
-        ['Vous ne payez jamais de votre poche', "Aucune somme ne vous est demandée, ni à la signature, ni pendant la procédure, ni si l'affaire est perdue. Nous sommes rémunérés uniquement sur ce qui est effectivement récupéré.", 'You never pay out of pocket, whatever the outcome.'],
-        ['Votre argent est isolé', "Les sommes récupérées transitent par un compte dédié aux fonds clients, distinct de nos comptes d'exploitation, et vous sont reversées par virement ou mobile money.", 'Recovered funds are held in a dedicated client account.'],
-        ['Vos documents sont effacés', "Vos pièces d'identité et justificatifs sont supprimés automatiquement trente jours après la clôture du dossier, conformément au RGPD.", 'Your documents are erased 30 days after closure (GDPR).'],
+        ['14 jours pour changer d\'avis',
+         "Vous pouvez vous rétracter sans motif ni frais dans les quatorze jours (art. L.221-18 du Code de la consommation). Le formulaire figure dans les Conditions générales.",
+         'Fourteen days to change your mind',
+         'You may withdraw within fourteen days, without giving reasons and at no cost (Art. L.221-18 French Consumer Code). The form is set out in the Terms and Conditions.'],
+        ['Vous ne payez jamais de votre poche',
+         "Aucune somme ne vous est demandée, ni à la signature, ni pendant la procédure, ni si l'affaire est perdue. Nous sommes rémunérés uniquement sur ce qui est effectivement récupéré.",
+         'You never pay out of pocket',
+         'No sum is ever asked of you: not at signature, not during the proceedings, not if the case is lost. We are paid solely out of what is actually recovered.'],
+        ['Votre argent est isolé',
+         "Les sommes récupérées transitent par un compte dédié aux fonds clients, distinct de nos comptes d'exploitation, et vous sont reversées par virement ou mobile money.",
+         'Your money is ring-fenced',
+         'Recovered sums pass through a dedicated client account, separate from our operating accounts, and are paid to you by bank transfer or mobile money.'],
+        ['Vos documents sont effacés',
+         "Vos pièces d'identité et justificatifs sont supprimés automatiquement trente jours après la clôture du dossier, conformément au RGPD.",
+         'Your documents are erased',
+         'Your identity papers and supporting documents are deleted automatically thirty days after the file is closed, in accordance with the GDPR.'],
       ];
-      const gW = (contentW - 14) / 2;
-      const gTop = doc.y;   // base FIGÉE : doc.text() ci-dessous ferait dériver doc.y
-      gar.forEach((g, i) => {
-        const gx = left + (i % 2) * (gW + 14);
-        const gy = gTop + Math.floor(i / 2) * 92;
-        doc.roundedRect(gx, gy, gW, 84, 6).fillAndStroke('#FFFFFF', BORDER);
-        doc.circle(gx + 16, gy + 17, 6).fill(NEON);
-        doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.5).text(g[0], gx + 28, gy + 11, { width: gW - 38 });
-        doc.fillColor(TEXT).font('Helvetica').fontSize(8).text(g[1], gx + 12, gy + 32, { width: gW - 24, align: 'justify', lineGap: 0.6 });
-        doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.2).text(g[2], gx + 12, gy + 70, { width: gW - 24 });
+      const gcW = (contentW - 26) / 2;
+      gar.forEach((g) => {
+        const hFr = doc.heightOfString(g[1], { width: gcW - 24, lineGap: 0.6 });
+        const hEn = doc.heightOfString(g[3], { width: gcW - 24, lineGap: 0.6 });
+        const gh = 30 + Math.max(hFr, hEn);
+        if (doc.y + gh > doc.page.height - 60) { doc.addPage(); doc.y = 46; }
+        const gy = doc.y;
+        doc.roundedRect(left, gy, contentW, gh, 6).fillAndStroke('#FFFFFF', BORDER);
+        doc.circle(left + 16, gy + 15, 5).fill(NEON);
+        doc.moveTo(left + gcW + 13, gy + 10).lineTo(left + gcW + 13, gy + gh - 10).lineWidth(0.7).stroke(BORDER);
+        doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.2).text(g[0], left + 28, gy + 10, { width: gcW - 40 });
+        doc.fillColor(TEXT).font('Helvetica').fontSize(8).text(g[1], left + 12, gy + 24, { width: gcW - 24, align: 'justify', lineGap: 0.6 });
+        doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(9.2).text(g[2], left + gcW + 26, gy + 10, { width: gcW - 26 });
+        doc.fillColor(TEXT).font('Helvetica').fontSize(8).text(g[3], left + gcW + 26, gy + 24, { width: gcW - 26, align: 'justify', lineGap: 0.6 });
+        doc.y = gy + gh + 8;
       });
-      doc.y = gTop + 92 * Math.ceil(gar.length / 2) + 10;
 
       // Ce qui se passe maintenant
       doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(13).text('Ce qui se passe maintenant', left, doc.y, { width: contentW });
