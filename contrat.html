@@ -309,10 +309,24 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   $('c-ref').textContent=ref||'—';
   $('c-etabli').textContent=new Date().toLocaleDateString('fr-FR');
   document.querySelectorAll('details').forEach(function(x){x.open=true;}); // « lire le contrat » : tout visible
-  if(!ref){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">Lien incomplet. / Incomplete link.</p>');return;}
-  fetch('/api/dossier-get?r='+encodeURIComponent(ref),{credentials:'omit'})
-    .then(function(r){if(!r.ok)throw 0;return r.json();})
-    .then(function(d){
+  // Sans référence, la page peut quand même être rendue à partir des paramètres d'URL.
+  // C'est le cas de l'APERÇU AVANT signature : le dossier n'existe pas encore, donc
+  // /api/dossier-get n'a rien à renvoyer. render-mandat-pdf poste ici les mêmes champs
+  // que l'ancien mandat.html (n, fn, vol, date, dep, arr, compagnie, adresse).
+  if(!ref){
+    var q=new URLSearchParams(location.search);
+    var nom=[q.get('fn')||'',q.get('n')||''].filter(Boolean).join(' ').trim();
+    if(!nom && !q.get('vol')){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">Lien incomplet. / Incomplete link.</p>');return;}
+    render({
+      name: nom, address: q.get('adresse')||q.get('address')||'',
+      passengers: nom?[{name:nom, adresse:q.get('adresse')||''}]:[],
+      vol:q.get('vol')||'', date:q.get('date')||'',
+      depAirport:q.get('dep')||'', arrAirport:q.get('arr')||'',
+      compagnie:q.get('compagnie')||'', pnr:q.get('pnr')||''
+    });
+    return;
+  }
+  function render(d){
       var pax=Array.isArray(d.passengers)?d.passengers:[];
       var n=d.pax||pax.length||1;
       var main=(pax[0]&&(pax[0].name||((pax[0].prenom||'')+' '+(pax[0].nom||'')).trim()))||d.name||((d.prenom||'')+' '+(d.nom||'')).trim();
@@ -335,7 +349,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
         var right=minor?('<b>Mineur·e</b> — part non cédée (mandat, art. 9 bis)'+(p.legalRepName?'<br>Représenté·e par '+esc(p.legalRepName):'')):esc(p.adresse||d.address||'');
         rows+='<div class="tr td"><span>'+esc(nm)+(minor?' <span style="color:#9a6a00">· mineur·e</span>':'')+'</span><span>'+esc(dob||'—')+'</span><span>'+right+'</span></div>';}
       $('c-paxbody').innerHTML=rows;
-    })
+  }
+
+  fetch('/api/dossier-get?r='+encodeURIComponent(ref),{credentials:'omit'})
+    .then(function(r){if(!r.ok)throw 0;return r.json();})
+    .then(render)
     .catch(function(){document.body.insertAdjacentHTML('afterbegin','<p class="c2-load">😕 Dossier introuvable ou lien expiré. / File not found or link expired. <a href="https://wa.me/33756863630">Reprendre sur WhatsApp / Resume on WhatsApp</a>.</p>');});
 })();
 </script>
