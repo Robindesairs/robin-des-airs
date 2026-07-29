@@ -1277,12 +1277,12 @@
     "note": "Média ivoirien diaspora (Malmö). Ranke déjà sur 'indemnisation vol Côte d'Ivoire'. Cible backlink.",
     "statut_reponse": "publie",
     "date_publication": "2026-07-25",
-    "note_reponse": "PUBLIE + backlink dofollow vers le guide - modele ressource | VERIF 2026-07-29 : lien TOUJOURS EN LIGNE, dofollow (rel=noopener), vers /blog/guide-ce261-droits-passagers-afrique.html. DEFAUT : le HTML est \"<a href=... rel=noopener></p>\" — la balise est vide et non fermee, donc AUCUN texte d ancre et RIEN a cliquer pour le lecteur. Google suit le lien, l humain non. A CORRIGER : demander d entourer les mots \"Robin des Airs\" ou le titre du guide.",
+    "note_reponse": "PUBLIE + backlink dofollow vers le guide - modele ressource | VERIF 29/07 (2e correction) : le lien EST fonctionnel. La balise <a> non fermee dans le source englobe le BANDEAU IMAGE qui suit (img.25.07.2026b.jpg, HTTP 200, JPEG 783x188, 44 Ko). Le lecteur voit donc un visuel cliquable menant a /blog/guide-ce261-droits-passagers-afrique.html. J avais conclu a tort a un lien mort : mon navigateur de test ne chargeait pas les images (naturalWidth=0), ce qui donnait une zone 0x0 trompeuse. SEUL DEFAUT REEL : l attribut alt de l image est VIDE, donc Google ne recoit aucun texte d ancre. Lien dofollow (rel=noopener) vers page profonde = BON backlink. Cible actuellement en Detectee-non-indexee dans GSC.",
     "url_article": "https://ivorian.net/vol-retarde-annule-ou-surbooke-jusqua-600-e-dindemnisation-pour-les-passagers-entre-leurope-et-lafrique/",
     "date_verif_backlink": "2026-07-29",
     "statut_envoi": "envoye_2026-07-24",
     "url_publication": "https://ivorian.net/vol-retarde-annule-ou-surbooke-jusqua-600-e-dindemnisation-pour-les-passagers-entre-leurope-et-lafrique/",
     "backlink_seo": true,
-    "backlink_note": "DOFOLLOW vers page profonde MAIS balise <a> VIDE et non fermee : aucun texte d ancre, lien invisible pour le lecteur"
+    "backlink_note": "DOFOLLOW vers page profonde, sur bandeau image cliquable 783x188. Seul defaut : alt vide, donc aucun texte d ancre."
   }
 ]
