@@ -53,9 +53,28 @@
   included_files = ["node_modules/@sparticuz/chromium/**"]
 
 # Malik réveillé — surveillance vols + alertes (Telegram/email/CallMeBot).
-# Cadence ciblée ~12 runs/jour (matin + après-midi EU + soirée Afrique) ≈ 700 req/j (plan ULTRA OK).
+#
+# 🔴 CRON CORRIGÉ le 29/07/2026. Les crons Netlify se déclenchent en UTC, alors que le
+# garde-fou interne de radar-monitor (detectSlot) raisonne en heure de PARIS. L'ancienne
+# ligne « 7,16..2 » arrivait donc à 9h, 18h…4h Paris :
+#   · 07:05 UTC = 09h05 Paris → hors créneau « morning » (8h)  → JAMAIS exécuté
+#   · 01:05 et 02:05 UTC = 03h et 04h Paris                     → hors créneau
+# Preuve dans les logs : ces trois réveils durent 45 ms pour 98 Mo (sortie immédiate),
+# contre 6 000 ms et 132 Mo pour un vrai scan.
+#
+# Conséquence : le créneau MATIN ne tournait plus, or c'est lui qui alimente le registre
+# via mergeFlightsIntoRegistry (runMorning) → le tableau du Bureau était figé depuis le
+# 02/07/2026. Trois réveils par jour étaient par ailleurs facturés pour rien.
+#
+# 6 UTC = 8h Paris (CEST) → créneau « morning ». 16→0 UTC = 18h→2h Paris → « africa-evening ».
+# Bilan quota : 12 réveils dont 9 utiles → 10 réveils tous utiles, soit −2/jour ET le matin
+# retrouvé. Le créneau « eu-afternoon » (16-17h Paris = 14,15 UTC) reste volontairement non
+# déclenché : le rebrancher coûterait 2 scans/jour de plus.
+#
+# ⚠️ Heure d'hiver (dernier dimanche d'octobre) : Paris repasse à UTC+1, 6 UTC devient 7h
+# Paris et retombe hors créneau. Décaler à 7 UTC à cette date, ou élargir detectSlot.
 [functions."radar-monitor"]
-  schedule = "5 7,16,17,18,19,20,21,22,23,0,1,2 * * *"
+  schedule = "5 6,16,17,18,19,20,21,22,23,0 * * *"
 
 # Scan rapproché « heures chaudes » TIER 1 (hubs prioritaires DSS/ABJ) : à :25 et :45
 # (le monitor couvre déjà :05) → cadence ~20 min → alertes annulation/retard ≥3h plus fraîches.
