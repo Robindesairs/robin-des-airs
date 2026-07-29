@@ -98,7 +98,12 @@ function genererNotificationCreancePdf(d) {
     // L'appelant DOIT le fournir ; à défaut on n'écrit aucun chiffre.
     const mpp = Number(d.montantPerPax);
     const hasMontant = !!mpp && !Number.isNaN(mpp) && mpp > 0;
-    const nbPax = pax.length;
+    // Art. 3 §3 du Reglement : les passagers voyageant GRATUITEMENT n'ouvrent aucun droit.
+    // Un bebe sur les genoux sans billet ni taxe est dans ce cas. Le compter reviendrait a
+    // reclamer 600 EUR de trop dans notre propre mise en demeure et a offrir a la compagnie
+    // une erreur chiffree. Le drapeau vient de l'extraction e-billet (railway/lib/extract-eticket.js).
+    const paxPayants = pax.filter((p) => p.gratuit !== true);
+    const nbPax = paxPayants.length;
     const montantTotal = hasMontant ? mpp * nbPax : 0;
     const montantPhrase = hasMontant
       ? (nbPax > 1
@@ -119,11 +124,20 @@ function genererNotificationCreancePdf(d) {
       ? `${bankTxt ? bankTxt + ' — ' : ''}IBAN ${ibanTxt}`
       : `coordonnées bancaires du compte dédié communiquées sur simple demande à l'adresse ci-dessus`;
 
-    // ── En-tête (identique à l'acte : marque à gauche, réf + date à droite, filet vert)
-    doc.moveTo(left, 42).lineTo(left + 22, 52).lineWidth(2.5).stroke(NEON);
-    doc.polygon([left + 22, 52], [left + 15.5, 48], [left + 17, 55.5]).fill(NEON);
-    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(19).text('Robin des Airs', left + 30, 38);
-    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text('Cessionnaire — Recouvrement d\'indemnités aériennes CE 261/2004', left + 31, 62, { width: contentW - 150 });
+    // ── En-tête. Volontairement un EN-TÊTE DE LETTRE, pas le bandeau bleu nuit plein du
+    // contrat : ce document part au service juridique d'une compagnie, un pavé de couleur
+    // le ferait lire comme du marketing. On aligne donc la MARQUE (le hibou, le même signe
+    // que le client et la compagnie voient partout) sans changer le registre du courrier.
+    try {
+      const _logo = require('path').join(__dirname, '..', '..', '..', 'assets', 'images', 'robin-hibou-transparent.png');
+      require('fs').accessSync(_logo);
+      doc.image(_logo, left, 38, { fit: [30, 30] });
+    } catch (_) {
+      doc.moveTo(left, 42).lineTo(left + 22, 52).lineWidth(2.5).stroke(NEON);
+      doc.polygon([left + 22, 52], [left + 15.5, 48], [left + 17, 55.5]).fill(NEON);
+    }
+    doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(19).text('Robin des Airs', left + 38, 38);
+    doc.fillColor(GRAY).font('Helvetica').fontSize(8).text('Cessionnaire — Recouvrement d\'indemnités aériennes CE 261/2004', left + 39, 62, { width: contentW - 150 });
     doc.fillColor(GRAY).font('Helvetica').fontSize(7.5).text('RÉF. DOSSIER', left, 40, { width: contentW, align: 'right', characterSpacing: 0.5 });
     doc.fillColor(NAVY).font('Helvetica-Bold').fontSize(10).text(`${d.ref || '—'}`, left, 50, { width: contentW, align: 'right' });
     doc.fillColor(GRAY).font('Helvetica').fontSize(8).text(`Fait le : ${sigFr}`, left, 64, { width: contentW, align: 'right' });
@@ -166,7 +180,7 @@ function genererNotificationCreancePdf(d) {
 
     para(`Nous vous rappelons que toute stipulation de vos conditions générales de transport qui restreindrait ou exclurait la cession des créances nées du Règlement (CE) n° 261/2004 vous est inopposable (art. 15 du Règlement ; CJUE, 29 février 2024, aff. C-11/23).`);
 
-    para(`Le contrat de cession de créance et le certificat de signature électronique sont joints à la présente, ou disponibles sur simple demande. Nous vous remercions de bien vouloir prendre acte de la présente cession et vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées.`);
+    para(`Le contrat de cession de créance et le certificat de signature électronique sont tenus à votre disposition et vous seront communiqués sur simple demande. Nous vous remercions de bien vouloir prendre acte de la présente cession et vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées.`);
 
     // ── Bloc signataire : une PERSONNE PHYSIQUE nommée, jamais un bloc institutionnel anonyme.
     // Avant immatriculation, l'art. L.210-6 al. 2 C. com. ne permet la reprise des actes par la société
@@ -191,7 +205,10 @@ function genererNotificationCreancePdf(d) {
     pax.forEach((p) => {
       const yR = doc.y;
       const bits = [];
-      if (p.dob) bits.push(`né(e) le ${p.dob}${p.birth ? ` à ${p.birth}` : ''}`);
+      // Minimisation : la date de naissance sert au rapprochement dans les systemes de la
+      // compagnie, le LIEU ne sert a rien. Il reste dans le contrat, pas dans ce qui sort.
+      if (p.dob) bits.push(`né(e) le ${p.dob}`);
+      if (p.gratuit === true) bits.push('voyage à titre gratuit — hors périmètre de l\'indemnité (art. 3 §3)');
       if (p.minor) bits.push(`mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'}`);
       const line2 = [bits.join(' · '), `contrat signé électroniquement le ${sigFr}`].filter(Boolean).join(' — ');
       doc.font('Helvetica').fontSize(7.6);
@@ -205,7 +222,7 @@ function genererNotificationCreancePdf(d) {
     // ── Résumé de courtoisie en anglais (compagnies anglophones)
     doc.y += 4;
     doc.fillColor(GRAY).font('Helvetica-Oblique').fontSize(7.6).text(
-      `English (courtesy summary): Robin des Airs hereby gives you formal notice that, by an electronically signed assignment agreement dated ${sigEn}, the passenger(s) listed above assigned to us all their claims under Regulation (EC) No 261/2004 (Art. 7 compensation, Art. 8 reimbursement/re-routing, Art. 9 care and expenses, Art. 12 further compensation, together with interest and all accessories) arising from the ${incEn} of flight ${d.flightNum || '—'} on ${d.flightDate || '—'} (${routeTxt})${hasMontant ? `, in a principal amount of EUR ${montantTotal}` : ''}. Under Art. 1321-1324 of the French Civil Code, from receipt of this notice only payment to Robin des Airs is discharging; this notice satisfies the conditions for enforceability against the debtor whichever law governs the contract of carriage. Any clause restricting the assignment of EC 261/2004 claims is unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23). Assignment deed and e-signature certificate enclosed or available on request.`,
+      `English (courtesy summary): Robin des Airs hereby gives you formal notice that, by an electronically signed assignment agreement dated ${sigEn}, the passenger(s) listed above assigned to us all their claims under Regulation (EC) No 261/2004 (Art. 7 compensation, Art. 8 reimbursement/re-routing, Art. 9 care and expenses, Art. 12 further compensation, together with interest and all accessories) arising from the ${incEn} of flight ${d.flightNum || '—'} on ${d.flightDate || '—'} (${routeTxt})${hasMontant ? `, in a principal amount of EUR ${montantTotal}` : ''}. Under Art. 1321-1324 of the French Civil Code, from receipt of this notice only payment to Robin des Airs is discharging; this notice satisfies the conditions for enforceability against the debtor whichever law governs the contract of carriage. Any clause restricting the assignment of EC 261/2004 claims is unenforceable (Art. 15; CJEU, 29 Feb. 2024, C-11/23). The assignment deed and the e-signature certificate are held at your disposal and will be provided on request.`,
       left, doc.y, { width: contentW, align: 'justify', lineGap: 1.3 }
     );
 

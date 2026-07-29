@@ -244,6 +244,30 @@ function tribunal_perdu(d) {
   };
 }
 
+/**
+ * Copie au client de la NOTIFICATION envoyee a la compagnie (art. 1324 C. civ.).
+ * Le client n'est plus creancier depuis la cession : il n'est donc pas partie a ce courrier.
+ * On lui en adresse malgre tout une copie, pour deux raisons. Ses donnees personnelles
+ * partent vers un tiers et il a le droit de savoir lesquelles ; et montrer mot pour mot ce
+ * qui a ete ecrit pour lui est le signal de confiance que nos concurrents n'envoient jamais.
+ */
+function notification_compagnie(d) {
+  const cie = esc(d.compagnie || 'la compagnie');
+  const vol = d.vol ? ` (vol ${esc(d.vol)})` : '';
+  const body =
+    h1('Nous avons notifié la compagnie') +
+    p(`Bonjour ${esc(d.prenom || '')},`) +
+    p(`Nous venons d'écrire à <strong>${cie}</strong>${vol} pour lui notifier officiellement que l'indemnité issue de ce vol nous a été cédée, et qu'elle ne peut désormais s'en acquitter valablement qu'entre nos mains.`) +
+    p(`Vous trouverez <strong>la copie exacte du courrier</strong> en pièce jointe : c'est le document que la compagnie a reçu, mot pour mot. Nous vous l'adressons pour que vous sachiez précisément ce qui a été écrit et quelles informations vous concernant ont été transmises.`) +
+    p(`Vous n'avez <strong>rien à faire</strong>. La suite nous revient : relance si elle ne répond pas, juge si elle refuse.`) +
+    btn(suiviUrl(d.ref), 'Suivre mon dossier');
+  return {
+    subject: `Votre dossier ${refCourte(d.ref)} — la compagnie a été notifiée`,
+    html: shell(body, d.ref),
+    text: `Bonjour ${d.prenom || ''}, nous avons notifié ${d.compagnie || 'la compagnie'} de la cession de l'indemnité issue de votre vol. La copie exacte du courrier est en pièce jointe. Vous n'avez rien à faire. Suivi : ${suiviUrl(d.ref)}`,
+  };
+}
+
 const TEMPLATES = {
   confirmation,
   reclamation,
@@ -254,6 +278,7 @@ const TEMPLATES = {
   paye,
   cloture,
   tribunal_perdu,
+  notification_compagnie,
 };
 
 /** Construit un e-mail. `type` ∈ Object.keys(TEMPLATES). Renvoie {subject,html,text} ou null. */

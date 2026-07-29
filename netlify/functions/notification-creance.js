@@ -19,6 +19,9 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { checkCrmAccess } = require('./lib/crm-access');
 const { corsHeaders } = require('./lib/auth-config');
 const { codeFromRef } = require('./lib/doc-filename');
+const { buildClientEmail } = require('./lib/client-emails');
+const { sendWhatsAppTextMessage, canSendWhatsApp } = require('./lib/whatsapp-send-core');
+const { appendWaMessage } = require('./lib/wa-convo-store');
 
 const J = (code, obj) => ({
   statusCode: code,
@@ -28,12 +31,18 @@ const J = (code, obj) => ({
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: corsHeaders(), body: '' };
-  if (event.httpMethod !== 'GET') return J(405, { error: 'GET uniquement' });
+  // POST = envoi de la COPIE AU CLIENT (cf. bloc « copie client » plus bas). Le GET reste
+  // l'aperçu/téléchargement opérateur. Aucun des deux n'envoie quoi que ce soit à la compagnie :
+  // cet envoi-là reste manuel et humain, tant que le pipeline aval n'est pas construit.
+  if (event.httpMethod !== 'GET' && event.httpMethod !== 'POST') return J(405, { error: 'GET ou POST' });
+  const isPost = event.httpMethod === 'POST';
+  let bodyIn = {};
+  if (isPost) { try { bodyIn = JSON.parse(event.body || '{}'); } catch (_) { return J(400, { error: 'JSON invalide' }); } }
 
   const auth = checkCrmAccess(event);
   if (!auth.ok) return J(401, { error: 'Accès CRM requis' });
 
-  const q = event.queryStringParameters || {};
+  const q = { ...(event.queryStringParameters || {}), ...(isPost ? bodyIn : {}) };
   const ref = String(q.r || q.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
   if (!ref) return J(400, { error: 'r requis' });
 
@@ -106,6 +115,11 @@ exports.handler = async (event) => {
             birth: p.birth || p.lieuNaissance || '',
             minor: !!p.minor,
             legalRepName: p.legalRepName || '',
+            // Art. 3 §3 : un passager voyageant a titre GRATUIT n'ouvre aucun droit. Le drapeau
+            // vient de l'extraction e-billet et DOIT traverser jusqu'au generateur, sinon le
+            // montant reclame compte un bebe sur les genoux comme un passager payant.
+            bebe: !!p.bebe,
+            gratuit: p.gratuit === true,
           }))
         : [{ name: dossier.name || '' }],
       name: dossier.name || '',
@@ -142,6 +156,71 @@ exports.handler = async (event) => {
         });
       }
     } catch (_) { /* archivage best-effort : ne bloque jamais la génération */ }
+
+    // ── COPIE AU CLIENT ───────────────────────────────────────────────────────
+    // Le client n'est plus créancier depuis la cession : il n'est pas partie à ce courrier.
+    // On lui en adresse malgré tout la copie exacte. Ses données personnelles partent vers un
+    // tiers, il a le droit de savoir lesquelles ; et aucun concurrent ne montre ce qu'il écrit.
+    // Verrous : jamais de BROUILLON envoyé à un client, et confirm:'SEND' explicite — un POST
+    // accidentel depuis le CRM ne doit pas écrire à un vrai client.
+    if (isPost) {
+      if (draftOk || !siren) return J(409, { error: "Copie client refusée sur un document BROUILLON." });
+      if (bodyIn.confirm !== 'SEND') return J(400, { error: "confirm:'SEND' requis." });
+
+      const out = { ref, email: null, whatsapp: null };
+      const prenom = String(dossier.prenom || String(dossier.name || '').split(' ')[0] || '').trim();
+      const clientEmail = String(dossier.contactEmail || dossier.email || '').trim();
+      const clientPhone = String(dossier.phone || dossier.telephone || dossier.wa || '').replace(/[^0-9]/g, '');
+
+      // 1) E-mail avec la copie en pièce jointe
+      const key = (process.env.RESEND_API_KEY || '').trim();
+      if (!clientEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(clientEmail)) {
+        out.email = { sent: false, reason: 'aucune adresse client exploitable' };
+      } else if (!key) {
+        out.email = { sent: false, reason: 'RESEND_API_KEY absente' };
+      } else {
+        const mail = buildClientEmail('notification_compagnie', {
+          prenom, ref, compagnie: dossier.compagnie || dossier.airline || '', vol: dossier.vol || dossier.flightNum || '',
+        });
+        const r = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: (process.env.RDA_MAIL_FROM || 'Robin des Airs <expert@robindesairs.eu>'),
+            to: [clientEmail], subject: mail.subject, html: mail.html, text: mail.text,
+            attachments: [{ filename, content: pdf.toString('base64') }],
+          }),
+        });
+        const data = await r.json().catch(() => ({}));
+        out.email = r.ok ? { sent: true, id: data.id, to: clientEmail } : { sent: false, reason: data.message || String(r.status) };
+      }
+
+      // 2) WhatsApp — best-effort, ne fait jamais échouer l'appel : l'e-mail porte la pièce.
+      //    Même chemin d'envoi que le CRM (whatsapp-send-core), et le message est journalisé
+      //    dans la conversation pour que l'opérateur voie ce que le client a reçu.
+      if (!clientPhone) {
+        out.whatsapp = { sent: false, reason: 'pas de numéro au dossier' };
+      } else if (!canSendWhatsApp()) {
+        out.whatsapp = { sent: false, reason: 'WhatsApp non configuré' };
+      } else {
+        const cieTxt = dossier.compagnie || dossier.airline || 'la compagnie';
+        const txt = `Bonjour ${prenom || ''}, nous venons de notifier ${cieTxt} : l'indemnité de votre vol nous a été cédée, elle ne peut plus être réglée qu'entre nos mains. La copie exacte du courrier vient de vous être envoyée par e-mail. Vous n'avez rien à faire.`.replace(/\s+/g, ' ').trim();
+        const sent = await sendWhatsAppTextMessage(clientPhone, txt);
+        out.whatsapp = sent.ok ? { sent: true } : { sent: false, reason: sent.error };
+        if (sent.ok) {
+          try {
+            await appendWaMessage(event, clientPhone, { role: 'assistant', text: txt, source: 'crm', by: 'notification-cession' });
+          } catch (_) { /* journalisation best-effort */ }
+        }
+      }
+
+      // 3) Trace au dossier : date de notification + copie client (idempotence côté CRM).
+      try {
+        if (mandats) await mandats.setJSON('m/' + ref, { ...dossier, notifiedAt: new Date().toISOString(), notifCopieClient: out });
+      } catch (_) { /* best-effort */ }
+
+      return J(200, out);
+    }
 
     return {
       statusCode: 200,
