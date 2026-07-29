@@ -83,3 +83,13 @@ PY
 Les correspondances tolérées sont uniquement celles des blocs
 `EMAIL D'ACCOMPAGNEMENT` et des bios. Toute correspondance dans un corps de
 tribune doit être réécrite.
+
+## Kit comparatifs (29/07/2026)
+
+`kit-comparatifs-afrique.md` contient deux blocs prêts à envoyer quand un site de
+comparatif répond : le paragraphe « vols Afrique » (publiable même sans citation) et
+la ligne de tableau comparatif. Cibles démarchées le 29/07 : euflightcompensation.com,
+philtr.fr, milesopedia.fr.
+
+🔴 Dans ces blocs, jamais le mot « commission » (modèle = cession, on écrit « part
+reversée au passager : 75 % »), et jamais « société immatriculée » avant le Kbis.
