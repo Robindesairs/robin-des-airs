@@ -136,8 +136,9 @@
   "note": "",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "accepte",
-  "note_reponse": "confirme par Diawo Barry, dir. publication"
+  "statut_reponse": "publie",
+  "note_reponse": "PUBLIE papier Le Lynx n°1789 p.6 - declassement - bio neutre OK",
+  "date_publication": "2026-07-27"
  },
  {
   "id": "m013",
@@ -241,8 +242,9 @@
   "note": "",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "accepte",
-  "note_reponse": "photo+PJ envoyees 20/07 - publication a venir"
+  "statut_reponse": "publie",
+  "note_reponse": "PUBLIE - photo envoyee le 20/07",
+  "date_publication": "2026-07-29"
  },
  {
   "id": "m022",
@@ -637,8 +639,8 @@
   "note": "Rubrique Débats & Opinions (C. Frammery). Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes. Exclusivité exigée, non rémunéré. Angle : la Suisse applique le CE 261 par accord bilatéral.",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "interesse_exclusif",
-  "note_reponse": "repondu 22/07 avec 2 PJ (doc+photo), exclusivite confirmee et verifiee; balle dans le camp du Temps, RAS"
+  "statut_reponse": "en_pourparlers",
+  "note_reponse": "en discussion - exclusivite confirmee, 2 PJ envoyees 22/07"
  },
  {
   "id": "m056",
@@ -651,8 +653,9 @@
   "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "en_review",
-  "note_reponse": "exclusivite promise 23/07"
+  "statut_reponse": "publie",
+  "note_reponse": "PUBLIE (confirme par le fondateur)",
+  "date_publication": "2026-07-29"
  },
  {
   "id": "m057",
@@ -1255,6 +1258,9 @@
   "url": "https://www.ivorian.net/",
   "type": "média diaspora",
   "tier": 2,
-  "note": "Média ivoirien diaspora (Malmö). Ranke déjà sur 'indemnisation vol Côte d'Ivoire'. Cible backlink."
+  "note": "Média ivoirien diaspora (Malmö). Ranke déjà sur 'indemnisation vol Côte d'Ivoire'. Cible backlink.",
+  "statut_reponse": "publie",
+  "date_publication": "2026-07-25",
+  "note_reponse": "PUBLIE 25/07 - article source du guide - BACKLINK DOFOLLOW (rel=noopener) vers /blog/guide-ce261-droits-passagers-afrique.html - sans reponse prealable, sans signature"
  }
 ]
