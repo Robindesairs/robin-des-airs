@@ -119,11 +119,41 @@ function mapAdbRow(row) {
   };
 }
 
+// ─── Cache des vols PASSÉS ───────────────────────────────────────────────────
+// Un vol de la veille ne bougera plus jamais : horaires réels, statut et route sont figés.
+// Or le même vol est interrogé plusieurs fois par dossier — saisie, verdict d'éligibilité,
+// collecte de preuves, réouverture, enquête — et chaque appel coûte une API Unit.
+// On ne met en cache QUE le passé : un vol du jour ou à venir change encore, le mettre en
+// cache ferait rater un retard ou une annulation, ce qui coûte infiniment plus cher qu'un appel.
+const ADB_CACHE_STORE = 'robin-adb-cache';
+let _blobs = null;
+try { _blobs = require('@netlify/blobs'); } catch (_) {}
+
+function adbCacheStore() {
+  if (!_blobs || process.env.ADB_CACHE === '0') return null;
+  try { return _blobs.getStore({ name: ADB_CACHE_STORE, consistency: 'strong' }); }
+  catch (_) { return null; }
+}
+/** true si la date du vol est STRICTEMENT antérieure à aujourd'hui (fuseau Paris). */
+function estPasse(dateYmd) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(dateYmd || '')) && String(dateYmd) < parisYmd();
+}
+
 async function fetchAerodatabox(flightNumber, dateYmd, rapidKey) {
   const num = String(flightNumber || '')
     .trim()
     .toUpperCase()
     .replace(/\s/g, '');
+
+  const cacheable = estPasse(dateYmd);
+  const cacheKey = `adb/${num}/${dateYmd}.json`;
+  if (cacheable) {
+    try {
+      const store = adbCacheStore();
+      const hit = store && (await store.get(cacheKey, { type: 'json' }));
+      if (hit && Array.isArray(hit.rows) && hit.rows.length) return hit.rows;
+    } catch (_) { /* cache illisible → on interroge l'API, jamais bloquant */ }
+  }
   const paths = [
     `/flights/number/${encodeURIComponent(num)}/${dateYmd}/${dateYmd}`,
     `/flights/number/${encodeURIComponent(num.toLowerCase())}/${dateYmd}/${dateYmd}`,
@@ -161,7 +191,15 @@ async function fetchAerodatabox(flightNumber, dateYmd, rapidKey) {
       }
       const rows = extractAdbRows(json);
       const mapped = rows.map(mapAdbRow).filter(Boolean);
-      if (mapped.length) return mapped;
+      if (mapped.length) {
+        if (cacheable) {
+          try {
+            const store = adbCacheStore();
+            if (store) await store.setJSON(cacheKey, { rows: mapped, at: new Date().toISOString() });
+          } catch (_) { /* écriture best-effort : ne casse jamais la réponse */ }
+        }
+        return mapped;
+      }
       lastErr = new Error('ADB: aucun vol mappé');
     } catch (e) {
       lastErr = e;

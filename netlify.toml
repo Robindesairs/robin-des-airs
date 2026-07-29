@@ -63,12 +63,16 @@
 [functions."radar-monitor-hot"]
   schedule = "25,45 18,19,20,21,22,23,0,1,2 * * *"
 
-# Scan TIER 2 (autres hubs diaspora, getSecondaryHubs) : à :10 et :55 → écart max ~45 min.
-# Décalé des scans tier 1 (:05/:25/:45) pour lisser la charge API. Couvre Accra, Lagos,
-# Casa, Bamako, Conakry… Coût ≈ 15 hubs × 18 scans/j ≈ +540 req/j (réglable : liste
-# MONITOR_HUBS_SECONDARY, ou cadence ci-dessous).
+# Scan TIER 2 (autres hubs diaspora, getSecondaryHubs). Couvre Accra, Lagos, Casa,
+# Bamako, Conakry… Décalé des scans tier 1 (:05/:25/:45) pour lisser la charge API.
+#
+# CADENCE DIVISÉE PAR DEUX le 29/07/2026 (quota AeroDataBox) : :10 et :55 → :10 seul.
+# 18 → 9 scans/j, soit ≈ 540 → 270 req/j (≈ 8 000 req/mois économisées, le plus gros
+# poste réductible du parc). L'écart max entre deux relevés passe de 45 à 90 min : sans
+# effet sur l'éligibilité, qui se juge sur l'heure d'arrivée réelle, pas sur la fraîcheur
+# du relevé — seule la vitesse d'alerte baisse. Revenir en arrière = remettre « 10,55 ».
 [functions."radar-monitor-hot2"]
-  schedule = "10,55 18,19,20,21,22,23,0,1,2 * * *"
+  schedule = "10 18,19,20,21,22,23,0,1,2 * * *"
 
 # Rapport matinal WhatsApp 9h15 Paris (= 7h15 UTC en été CEST).
 [functions."morning-report"]
