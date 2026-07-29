@@ -71,6 +71,6 @@ Não é uma subtileza processual. É muitas vezes tudo o que separa um valor ain
 **Nota biográfica**
 
 Saint-Yves Kodjo é fundador da Robin des Airs, serviço especializado na recuperação de indemnizações para passageiros aéreos no eixo Europa-África.
-Especialista do setor aéreo, passou quinze anos a voar como comissário e depois chefe de cabine, e vinte anos no transporte aéreo.
+
 Conhece por dentro a forma como as companhias qualificam atrasos, cancelamentos e circunstâncias extraordinárias.
 robindesairs.eu · +33 7 56 86 36 30

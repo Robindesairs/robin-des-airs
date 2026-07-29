@@ -62,5 +62,5 @@ Et pour un vol ancien parti hors d'Europe sur une compagnie non européenne, l'�
 **Bio**
 
 Saint-Yves Kodjo est fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique.
-Spécialiste du secteur aérien fort de vingt ans d'expérience, au contact direct de l'exploitation des vols, il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
+
 robindesairs.eu

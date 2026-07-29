@@ -110,5 +110,4 @@ C'est souvent tout ce qui sépare une créance encore recouvrable d'un droit dé
 
 Saint-Yves Kodjo est fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique.
 
-Il connaît de l'intérieur la façon dont les compagnies qualifient retards, annulations et circonstances extraordinaires.
 robindesairs.eu · +33 7 56 86 36 30
