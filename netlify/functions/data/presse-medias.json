@@ -137,8 +137,12 @@
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
     "statut_reponse": "publie",
-    "note_reponse": "PUBLIE papier Le Lynx n°1789 p.6 - declassement - bio neutre OK",
-    "date_publication": "2026-07-27"
+    "note_reponse": "PUBLIE papier Le Lynx n°1789 p.6 - declassement - bio neutre OK | VERIF 29/07 : version WEB decouverte (on ne connaissait que le papier n1789). Article 'Declasse en economie : l argent que la compagnie vous doit et ne vous dira jamais', angle art. 10 declassement, publie le 29/07 a 15h01 UTC. HTTP 200, indexable (pas de noindex), canonique correcte. Bio 100% CONFORME, aucune fuite du parcours navigant. Marque 'Robin des Airs' citee 1 fois AVEC la description d activite complete. MAIS aucun lien, et meme pas d URL en texte brut : elle a ete entierement supprimee. Le lecteur convaincu n a aucun moyen d arriver sur le site. A DEMANDER : ajouter robindesairs.eu en fin de bio.",
+    "date_publication": "2026-07-29",
+    "url_publication": "https://lelynx.net/2026/07/declasse-en-economie-largent-que-la-compagnie-vous-doit-et-ne-vous-dira-jamais/",
+    "backlink_seo": false,
+    "backlink_note": "VERSION WEB : citation de marque SANS AUCUN LIEN ni URL en texte brut",
+    "date_verif_backlink": "2026-07-29"
   },
   {
     "id": "m013",
