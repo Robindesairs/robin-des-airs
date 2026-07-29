@@ -242,8 +242,8 @@
   "note": "",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "publie",
-  "note_reponse": "PUBLIE - photo envoyee le 20/07",
+  "statut_reponse": "accepte_non_verifie",
+  "note_reponse": "ACCEPTE (photo envoyee 20/07) mais parution NON RETROUVEE au balayage du 29/07 - a reverifier",
   "date_publication": "2026-07-29"
  },
  {
@@ -279,8 +279,9 @@
   "note": "",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "accepte",
-  "note_reponse": "publie 29/07"
+  "statut_reponse": "publie",
+  "note_reponse": "PUBLIE 29/07 08h39 avec signature MAIS robindesairs.eu en TEXTE BRUT, aucun lien - la redaction ajoute elle-meme les liens, donc corrigeable par un mail",
+  "date_publication": "2026-07-29"
  },
  {
   "id": "m025",
@@ -653,8 +654,8 @@
   "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
   "statut_envoi": "envoye_vague_anterieure",
   "date_dedup": "2026-07-27",
-  "statut_reponse": "publie",
-  "note_reponse": "PUBLIE (confirme par le fondateur)",
+  "statut_reponse": "publie_non_verifie",
+  "note_reponse": "annonce publie par le fondateur - non verifiable (Cloudflare) - a confirmer manuellement",
   "date_publication": "2026-07-29"
  },
  {
@@ -1106,7 +1107,10 @@
   "tier": 1,
   "note": "Rubrique Opinion-Debat. Axe Kinshasa-Bruxelles, un de nos corridors",
   "statut_envoi": "envoye_2026-07-27",
-  "date_dedup": "2026-07-27"
+  "date_dedup": "2026-07-27",
+  "statut_reponse": "publie",
+  "date_publication": "2026-07-28",
+  "note_reponse": "PUBLIE 28/07 + BACKLINK DOFOLLOW (rel=noreferrer noopener) vers accueil - signature Saint-Yves Kodjo creditee - DECOUVERT 29/07, jamais annonce"
  },
  {
   "id": "m099",
