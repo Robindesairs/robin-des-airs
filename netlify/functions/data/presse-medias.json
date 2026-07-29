@@ -280,8 +280,12 @@
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
     "statut_reponse": "publie",
-    "note_reponse": "PUBLIE 29/07 08h39 avec signature MAIS robindesairs.eu en TEXTE BRUT, aucun lien - la redaction ajoute elle-meme les liens, donc corrigeable par un mail",
-    "date_publication": "2026-07-29"
+    "note_reponse": "PUBLIE 29/07 08h39 avec signature MAIS robindesairs.eu en TEXTE BRUT, aucun lien - la redaction ajoute elle-meme les liens, donc corrigeable par un mail | VERIF 2026-07-29 : article \"Transport aerien : votre vol du soir paie souvent la panne du matin\" EN LIGNE, HTTP 200. Lien dofollow vers https://robindesairs.eu (accueil). A DEMANDER : repointer vers la page compagnie/route (Camair-Co ou Douala) au lieu de l accueil.",
+    "date_publication": "2026-07-29",
+    "url_publication": "https://datacameroon.com/transport-aerien-votre-vol-du-soir-paie-souvent-la-panne-du-matin/",
+    "backlink_seo": true,
+    "backlink_note": "DOFOLLOW (rel=noopener seul) - ancre \"robindesairs\" - MAIS pointe vers l accueil, pas vers une page profonde",
+    "date_verif_backlink": "2026-07-29"
   },
   {
     "id": "m025",
@@ -313,7 +317,10 @@
     "url": "https://www.seneweb.com/news/contributions",
     "type": "tribune",
     "tier": 2,
-    "note": ""
+    "note": "",
+    "statut_envoi": "envoye_vague_anterieure",
+    "date_dedup": "2026-07-18",
+    "note_reponse": "marque ENVOYE 18/07 dans le README tribunes, a reverifier dans les Envoyes"
   },
   {
     "id": "m028",
@@ -566,13 +573,14 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "statut_reponse": "publie",
+    "statut_reponse": "depublie",
     "date_publication": "2026-07-27",
     "url_publication": "https://www.mizane.info/vol-annule-le-bon-d-achat-n-est-pas-l-indemnite",
-    "note_reponse": "PUBLIE 27/07 - rubrique Tourisme - byline Saint-Yves Kodjo - bio navigant NON reprise. VERIF 28/07 : AUCUN backlink SEO exploitable. (1) le lien robindesairs.eu/?utm_source=mizane est en rel=nofollow ugc, ancre = URL brute. (2) le site est une SPA React qui renvoie HTTP 404 sur toutes les routes hors racine (verifie aussi en UA Googlebot) : la page n'est pas indexable, donc le lien n'existe pas pour Google. Valeur restante = notoriete + trafic referent direct (tracker utm_source=mizane dans Umami). NE PAS compter dans l'objectif domaines referents.",
+    "note_reponse": "PUBLIE 27/07 - rubrique Tourisme - byline Saint-Yves Kodjo - bio navigant NON reprise. VERIF 28/07 : AUCUN backlink SEO exploitable. (1) le lien robindesairs.eu/?utm_source=mizane est en rel=nofollow ugc, ancre = URL brute. (2) le site est une SPA React qui renvoie HTTP 404 sur toutes les routes hors racine (verifie aussi en UA Googlebot) : la page n'est pas indexable, donc le lien n'existe pas pour Google. Valeur restante = notoriete + trafic referent direct (tracker utm_source=mizane dans Umami). NE PAS compter dans l'objectif domaines referents. | VERIF 2026-07-29 : l'article n'existe PLUS. L'URL renvoie \"Page non trouvee\" dans un navigateur reel (pas seulement en 404 serveur), et une recherche interne sur mizane.info pour \"indemnite\", \"vol annule\", \"bon d'achat\" et \"aerien\" ne remonte RIEN. La parution est donc perdue, pas seulement non indexable. Ne plus la compter comme parution.",
     "backlink_seo": false,
-    "backlink_note": "nofollow ugc + page en 404 serveur (SPA sans SSR)",
-    "relance_backlink": "demandee par le fondateur (indique le 28/07/2026) - NE PAS renvoyer de mail, attendre leur reponse"
+    "backlink_note": "ARTICLE SUPPRIME (verifie 29/07)",
+    "relance_backlink": "demandee par le fondateur (indique le 28/07/2026) - NE PAS renvoyer de mail, attendre leur reponse",
+    "date_verif_backlink": "2026-07-29"
   },
   {
     "id": "m050",
@@ -1108,11 +1116,13 @@
     "note": "Rubrique Opinion-Debat. Axe Kinshasa-Bruxelles, un de nos corridors",
     "statut_envoi": "envoye_2026-07-27",
     "date_dedup": "2026-07-27",
-    "statut_reponse": "publie",
+    "statut_reponse": "publie_non_verifie",
     "date_publication": "2026-07-28",
-    "note_reponse": "PUBLIE 28/07 - VERIFIE 29/07 : BACKLINK REEL ET DOFOLLOW. Page HTTP 200 en UA navigateur ET en UA Googlebot, meta robots sans noindex, canonique auto-referente. Lien <a href=\"http://robindesairs.eu/\" rel=\"noreferrer noopener\"> : noreferrer/noopener n'affectent PAS le PageRank, c'est bien du dofollow. Ancre = \"Robin des Airs\" (ancre de marque). Signature Saint-Yves Kodjo creditee. A COMPTER dans les domaines referents. RESERVE : le href est en http:// (saut de redirection inutile) et pointe l'ACCUEIL, pas une page profonde - demander la correction en https + page de route.",
+    "note_reponse": "PUBLIE 28/07 - VERIFIE 29/07 : BACKLINK REEL ET DOFOLLOW. Page HTTP 200 en UA navigateur ET en UA Googlebot, meta robots sans noindex, canonique auto-referente. Lien <a href=\"http://robindesairs.eu/\" rel=\"noreferrer noopener\"> : noreferrer/noopener n'affectent PAS le PageRank, c'est bien du dofollow. Ancre = \"Robin des Airs\" (ancre de marque). Signature Saint-Yves Kodjo creditee. A COMPTER dans les domaines referents. RESERVE : le href est en http:// (saut de redirection inutile) et pointe l'ACCUEIL, pas une page profonde - demander la correction en https + page de route. | VERIF 2026-07-29 : INTROUVABLE. Aucun lien vers robindesairs sur la page d accueil, aucun resultat dans la recherche interne (indemnisation, passagers aeriens, 600 euros, vol retarde), et balayage des 3630 URLs des sitemaps d articles sans aucun article sur le sujet. Soit l article a ete retire, soit il n a jamais ete publie. Statut retrograde.",
     "url_article": "https://www.congoindependant.com/quand-lavion-revient-dou-il-vient-ce-nest-pas-un-simple-contretemps/",
-    "date_verif_backlink": "2026-07-29"
+    "date_verif_backlink": "2026-07-29",
+    "backlink_seo": false,
+    "backlink_note": "NON RETROUVE le 29/07"
   },
   {
     "id": "m099",
@@ -1267,8 +1277,12 @@
     "note": "Média ivoirien diaspora (Malmö). Ranke déjà sur 'indemnisation vol Côte d'Ivoire'. Cible backlink.",
     "statut_reponse": "publie",
     "date_publication": "2026-07-25",
-    "note_reponse": "PUBLIE 25/07 - VERIFIE 29/07 : BACKLINK REEL ET DOFOLLOW. Page HTTP 200 en UA Googlebot, meta robots = \"index, follow\" EXPLICITE, canonique auto-referente. Lien <a href=\"https://robindesairs.eu/blog/guide-ce261-droits-passagers-afrique.html\" rel=\"noopener\"> : dofollow, en https, et LIEN PROFOND vers le guide - exactement la strategie visee. A COMPTER dans les domaines referents. RESERVE : l'ancre est VIDE, le lien enveloppe une image dont l'attribut alt est vide - le lien transmet l'autorite mais AUCUN signal d'ancre. Demander soit un alt sur l'image, soit d'envelopper le texte \"Source: Robin des Airs\" qui figure juste avant en clair non lie.",
+    "note_reponse": "PUBLIE + backlink dofollow vers le guide - modele ressource | VERIF 2026-07-29 : lien TOUJOURS EN LIGNE, dofollow (rel=noopener), vers /blog/guide-ce261-droits-passagers-afrique.html. DEFAUT : le HTML est \"<a href=... rel=noopener></p>\" — la balise est vide et non fermee, donc AUCUN texte d ancre et RIEN a cliquer pour le lecteur. Google suit le lien, l humain non. A CORRIGER : demander d entourer les mots \"Robin des Airs\" ou le titre du guide.",
     "url_article": "https://ivorian.net/vol-retarde-annule-ou-surbooke-jusqua-600-e-dindemnisation-pour-les-passagers-entre-leurope-et-lafrique/",
-    "date_verif_backlink": "2026-07-29"
+    "date_verif_backlink": "2026-07-29",
+    "statut_envoi": "envoye_2026-07-24",
+    "url_publication": "https://ivorian.net/vol-retarde-annule-ou-surbooke-jusqua-600-e-dindemnisation-pour-les-passagers-entre-leurope-et-lafrique/",
+    "backlink_seo": true,
+    "backlink_note": "DOFOLLOW vers page profonde MAIS balise <a> VIDE et non fermee : aucun texte d ancre, lien invisible pour le lecteur"
   }
 ]
