@@ -1866,7 +1866,7 @@ function toggleEscaleVol3() {
       fr: {
         foot: 'On parle votre langue · réponse en quelques minutes →',
         aria: 'Aperçu d\'une conversation WhatsApp avec Robin, cliquer pour ouvrir',
-        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € sans résultat, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Bamako, Conakry) et qu\'un conseiller peut rappeler en wolof, mandinka ou peul. Dernière étape : signer le mandat.'
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise que le passager perçoit 75 % des sommes récupérées, au succès seulement (0 € sans résultat, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Bamako, Conakry) et qu\'un conseiller peut rappeler en wolof, mandinka ou peul. Dernière étape : signer le mandat.'
       },
       en: {
         foot: 'We speak your language · reply in minutes →',
