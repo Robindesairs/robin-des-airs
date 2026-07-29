@@ -73,8 +73,14 @@
 #
 # ⚠️ Heure d'hiver (dernier dimanche d'octobre) : Paris repasse à UTC+1, 6 UTC devient 7h
 # Paris et retombe hors créneau. Décaler à 7 UTC à cette date, ou élargir detectSlot.
+#
+# 🔴 timeout = 26 (max plan standard). Il MANQUAIT. Le scan du soir tient en 6 s, mais le
+# scan du matin construit le bandeau sur 2 jours × tous les hubs : test du 29/07 en 502
+# apres 40 s, sur le timeout par defaut. Le creneau matin serait donc reste muet meme une
+# fois le cron corrige. Si 26 s ne suffisent pas, baisser maxDaysThisRun (buildMorningBanner).
 [functions."radar-monitor"]
   schedule = "5 6,16,17,18,19,20,21,22,23,0 * * *"
+  timeout = 26
 
 # Scan rapproché « heures chaudes » TIER 1 (hubs prioritaires DSS/ABJ) : à :25 et :45
 # (le monitor couvre déjà :05) → cadence ~20 min → alertes annulation/retard ≥3h plus fraîches.

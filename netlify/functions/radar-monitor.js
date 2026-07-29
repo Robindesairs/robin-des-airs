@@ -48,7 +48,13 @@ const {
 } = require('./lib/internal-auth');
 
 async function buildMorningBanner() {
-  const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: 2, hubRunIndex: 0 });
+  // 2 jours × tous les hubs ne tenait PAS dans la fenêtre d'exécution : test du 29/07/2026
+  // en 502 après 40 s, y compris avec timeout = 26. Le scan du matin ne rendait donc jamais
+  // la main et n'écrivait rien au registre — le tableau du Bureau restait vide.
+  // 1 jour par défaut : deux fois moins d'appels AeroDataBox, et la veille reste couverte par
+  // les scans du soir. RADAR_BANNER_DAYS=2 pour revenir en arrière une fois le quota desserré.
+  const jours = Math.max(1, parseInt(process.env.RADAR_BANNER_DAYS || '1', 10) || 1);
+  const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: jours, hubRunIndex: 0 });
   const bannerFlights = payload.flights || [];
   return {
     flights: bannerFlights,
