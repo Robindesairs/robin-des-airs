@@ -16,6 +16,25 @@
 /proofs/*    /404.html    404!
 /robin-dossiers/*    /404.html    404!
 /feedmock/*    /404.html    404!
+# --- ajout 2026-07-30 : interfaces internes, maquettes, tests et apercus ---
+# Servis publiquement a cause de publish='.' et indexables : gaspillent le budget de crawl.
+/crm/*    /404.html    404!
+/crm    /404.html    404!
+/public/*    /404.html    404!
+/pubs-aissa/*    /404.html    404!
+/apercu-*    /404.html    404!
+/preview-*    /404.html    404!
+/test-*    /404.html    404!
+/e-billet-*    /404.html    404!
+/carte-embarquement-*    /404.html    404!
+/feed-mock.html    /404.html    404!
+/generateur-pub-stories.html    /404.html    404!
+/pub-meta-af-eu.html    /404.html    404!
+/scan-airport-v8.html    /404.html    404!
+/radar-direct.html    /404.html    404!
+/verification-fonctions.html    /404.html    404!
+/VOLS-EUROPE-AFRIQUE.html    /404.html    404!
+
 # --- brief partenaire interne (commissions, stratégie) déplacé vers docs/ (2026-07-22) ---
 /brief-aziz-seyman.html    /404.html    404!
 # --- pages agence gelées le 22/07/2026 (maquette + page partenaire) — priment sur les rewrites plus bas ---
