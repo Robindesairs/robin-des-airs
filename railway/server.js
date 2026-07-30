@@ -2019,7 +2019,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     }
     // Photo envoyée AVANT le tunnel (client qui tend son billet dès le début) : on ne l'ignore pas.
     // On la mémorise (état persisté, non réinitialisé sur ces steps) pour la lire dès qu'on atteint le scan, et on accuse réception.
-    else if (!s.pax && !s._earlyMedia && s.step && ['langue', 'consent_cgu', 'consent_rgpd', 'route', 'route_zone', 'incident', 'duree', 'annul_delai', 'q_corr'].includes(s.step)) {
+    // 'accueil' EST inclus (état par défaut de getState) : le geste le plus fréquent est d'ouvrir la
+    // conversation et d'envoyer la photo du billet AVANT tout dialogue. Sans lui, la pièce était
+    // archivée mais jamais lue, et le message partait au filet IA (« tapez menu ») → dossier perdu.
+    // `s.step || 'accueil'` couvre aussi le cas où l'étape serait absente.
+    else if (!s.pax && !s._earlyMedia && ['accueil', 'langue', 'consent_cgu', 'consent_rgpd', 'route', 'route_zone', 'incident', 'duree', 'annul_delai', 'q_corr'].includes(s.step || 'accueil')) {
       s._earlyMedia = mediaUrl; await setState(phone, s);
       await send(phone, L(s, `📸 Got your document — I'll read it automatically in a moment. First, a couple of quick questions 👇`, `📸 J'ai bien votre document — je le lis automatiquement dans un instant. D'abord, deux questions rapides 👇`), cfg);
       // on continue le flux normal (la photo est gardée pour le scan)
