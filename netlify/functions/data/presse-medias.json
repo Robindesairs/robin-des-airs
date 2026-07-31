@@ -156,7 +156,10 @@
     "tier": 1,
     "note": "",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m014",
@@ -169,7 +172,10 @@
     "note": "",
     "statut_envoi": "envoye_2026-07-27",
     "date_dedup": "2026-07-27",
-    "statut_livraison": "rebond_2026-07-27"
+    "statut_livraison": "rebond_2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m015",
@@ -201,7 +207,10 @@
     "tier": 1,
     "note": "",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m018",
@@ -382,7 +391,10 @@
     "tier": 1,
     "note": "",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m033",
@@ -598,7 +610,10 @@
     "tier": 2,
     "note": "",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m051",
@@ -668,9 +683,13 @@
     "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "statut_reponse": "publie_non_verifie",
-    "note_reponse": "annonce publie par le fondateur - non verifiable (Cloudflare) - a confirmer manuellement",
-    "date_publication": "2026-07-29"
+    "statut_reponse": "publie",
+    "note_reponse": "annonce publie par le fondateur - non verifiable (Cloudflare) - a confirmer manuellement | VERIFIE 30/07 : PUBLIE. 'Flight Delayed, Rights Denied: How codeshare loopholes leave Ethiopian travelers without compensation', 2763 mots, angle CODE-SHARE. PREMIERE PARUTION EN ANGLAIS. Encart redactionnel : 'AS Editor's Note: Saint-Yves Kodjo is the founder of Robin des Airs, a service specialising in the recovery of air passenger compensation on the Europe-Africa routes. He can be reached at expert@robindesairs.eu'. Le SEUL lien est un mailto, aucun lien web : pas de backlink. Site protege par Cloudflare, verification automatique impossible (403), lecture faite au navigateur.",
+    "date_publication": "2026-07-30",
+    "url_publication": "https://addisstandard.com/flight-delayed-rights-denied-how-codeshare-loopholes-leave-ethiopian-travelers-without-compensation/",
+    "backlink_seo": false,
+    "backlink_note": "Citation de marque + AS Editor Note, mais SEUL lien = mailto:expert@robindesairs.eu (aucun lien web)",
+    "date_verif_backlink": "2026-07-30"
   },
   {
     "id": "m057",
@@ -872,7 +891,10 @@
     "tier": 1,
     "note": "Titre du Nord nigerian, tres lu par la diaspora. Section Letters en navigation. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m076",
@@ -884,7 +906,10 @@
     "tier": 1,
     "note": "Adresse de l'Online Editor, nomme. Meilleure chance de reponse humaine qu'une boite generique. General : info@thenationonlineng.net. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m077",
@@ -1024,7 +1049,10 @@
     "tier": 1,
     "note": "Rubrique « Analysis & Opinion ». Email redaction distinct de la regie",
     "statut_envoi": "envoye_2026-07-27",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m090",
@@ -1037,7 +1065,10 @@
     "note": "Publication quasi quotidienne. Rubrique « Comfort & Crew », colle au sujet passager",
     "statut_envoi": "envoye_2026-07-27",
     "date_dedup": "2026-07-27",
-    "statut_livraison": "rebond_2026-07-27"
+    "statut_livraison": "rebond_2026-07-27",
+    "statut_reponse": "verifie_sans_publication",
+    "date_verif": "2026-07-31",
+    "note_reponse": "Recherche web (site:domaine 'Robin des Airs') le 31/07 : aucune trace de publication a ce jour. A reverifier plus tard (silence != echec)."
   },
   {
     "id": "m091",
