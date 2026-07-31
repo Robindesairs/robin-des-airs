@@ -272,7 +272,7 @@ function renderArticlePage(
     datePublished: meta.datePublished,
     dateModified: meta.dateModified,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-    author: { '@type': 'Person', '@id': SITE_URL + '/a-propos.html#climbie', name: 'Saint-Yves', url: SITE_URL + '/a-propos.html' },
+    author: { '@type': 'Person', '@id': SITE_URL + '/a-propos.html#climbie', name: 'Saint-Yves', description: 'Fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique, spécialiste du règlement CE 261/2004.', url: SITE_URL + '/a-propos.html' },
     publisher: {
       '@type': 'Organization',
       name: 'Robin des Airs',
@@ -354,7 +354,7 @@ function renderArticlePage(
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/favicon.png" type="image/png">
   <title>${escapeHtml(post.meta_title)}</title>
-  <meta name="description" content="${escapeHtml(post.meta_description)}">
+  <meta name="description" content="${escapeHtml(post.meta_description)}">${(post as any).noindex ? '\n  <meta name="robots" content="noindex, follow">' : ''}
   <link rel="canonical" href="${canonical}">${hreflangHtml}
   <meta property="og:title" content="${escapeHtml(post.meta_title)}">
   <meta property="og:description" content="${escapeHtml(post.meta_description)}">

@@ -1,7 +1,7 @@
 ---
-title: "Le règlement CE 261 décrypté, article par article, par un ancien navigant"
+title: "Le règlement CE 261 décrypté, article par article"
 meta_title: "Règlement CE 261/2004 : les 19 articles décryptés simplement"
-meta_description: "Chaque article du règlement européen sur les droits des passagers, expliqué en clair et vérifié sur le texte officiel, par un ancien chef de cabine."
+meta_description: "Chaque article du règlement européen sur les droits des passagers, expliqué en clair et vérifié sur le texte officiel du Journal officiel de l'Union européenne."
 slug: reglement-ce261-decrypte-article-par-article
 image_url: /og-blog.png
 faq:
@@ -29,7 +29,7 @@ faq:
 
 Le règlement CE 261/2004 est le texte qui protège les passagers aériens en Europe. On en cite toujours les mêmes bribes, « 600 € », « 3 heures », sans jamais dire où elles se trouvent ni ce qui les entoure. Résultat, chacun retient une phrase et se trompe sur le reste.
 
-Voici le texte entier, article par article, dans l'ordre. Pour chacun, ce que dit vraiment le règlement, et ce que ça change pour vous. Avec, çà et là, ce que j'ai vu de l'intérieur pendant vingt ans en cabine, parce que le texte et la réalité de la porte d'embarquement ne se ressemblent pas toujours.
+Voici le texte entier, article par article, dans l'ordre. Pour chacun, ce que dit vraiment le règlement, et ce que ça change pour vous. Avec, çà et là, l'écart entre le texte et ce qui se passe réellement à la porte d'embarquement, parce que les deux ne se ressemblent pas toujours.
 
 <nav class="sommaire" aria-label="Sommaire de l'article">
   <p class="sommaire-t">Les 19 articles</p>

@@ -3,6 +3,7 @@ title: "Vol retardé Madrid-Dakar ou Dakar-Madrid : indemnité jusqu'à 600 €"
 meta_title: "Vol Madrid-Dakar ou Dakar-Madrid retardé : jusqu'à 600 € d'indemnité par passager"
 meta_description: "Vol Madrid-Dakar ou Dakar-Madrid retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-madrid-dakar-indemnite
+noindex: true
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Madrid-Dakar a plus de 3h de retard. Combien puis-je réclamer ?"

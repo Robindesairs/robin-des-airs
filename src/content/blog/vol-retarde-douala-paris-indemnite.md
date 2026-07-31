@@ -40,7 +40,7 @@ Le règlement [CE 261/2004](https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-## Ce que voit un ancien chef de cabine sur la ligne Douala-Paris
+## Ce que révèle la structure des horaires sur la ligne Douala-Paris
 
 Avant de fonder Robin des Airs, j'ai passé vingt ans dans le transport aérien, dont quinze comme navigant puis chef de cabine sur des lignes Afrique-Europe. De l'intérieur, on voit comment un retard est « classé » à bord et au sol, et deux réalités que les passagers de Douala-Paris ignorent presque toujours :
 

@@ -51,7 +51,7 @@ Un même vol peut donc franchir une horloge et pas l'autre. Parti avec 3 heures 
 
 ## Pourquoi le retard au départ fond souvent avant l'arrivée
 
-Ce n'est pas un hasard, et un ancien navigant vous le dira : la marge est intégrée dès l'horaire.
+Ce n'est pas un hasard : la marge est intégrée dès la construction de l'horaire.
 
 Les compagnies publient un temps de vol prudent, calculé pour un vent de face défavorable. Un trajet qui se fait réellement en une heure dix peut être affiché à une heure trente. Il y a donc, avant même de décoller, une vingtaine de minutes de retard déjà « rattrapables » sur le papier.
 

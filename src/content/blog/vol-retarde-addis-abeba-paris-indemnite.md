@@ -3,6 +3,7 @@ title: "Vol retardé Paris-Addis-Abeba ou Addis-Abeba-Paris : indemnité jusqu'�
 meta_title: "Vol Paris-Addis-Abeba ou Addis-Abeba-Paris retardé : 600 € d'indemnité par passager"
 meta_description: "Vol Paris-Addis-Abeba ou Addis-Abeba-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-addis-abeba-paris-indemnite
+noindex: true
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Addis-Abeba a plus de 3h de retard. Combien puis-je réclamer ?"
