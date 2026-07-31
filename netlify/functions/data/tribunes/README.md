@@ -44,11 +44,27 @@ limite la cadence de la routine hebdomadaire `presse-vague-hebdo`.
 - 🔴 L'URL s'écrit en TEXTE BRUT, jamais en `<a href>` : sinon Gmail la réécrit
   en redirection `google.com/url?q=` et le lien perd tout intérêt.
 - Signature 3 lignes : nom, fonction, puis `robindesairs.eu · +33 7 56 86 36 30`.
-- 🔴 NE JAMAIS mentionner le parcours navigant du fondateur (chef de cabine,
-  steward, « X ans en vol / dans le transport aérien »), ni aucune tournure
-  d'initié qui le laisse deviner. Bio neutre uniquement : « fondateur de Robin
-  des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers
-  aériens sur l'axe Europe-Afrique ». Un article publié reste en ligne.
+- 🔴 **Parcours navigant : AU PASSÉ, jamais au présent, jamais l'employeur.**
+  Décision du 31/07/2026, qui remplace l'interdiction précédente. Le parcours
+  est l'argument de légitimité qui fait répondre les rédactions, on le remet.
+  Bio de référence, à reprendre telle quelle :
+  > Saint-Yves Kodjo est le fondateur de Robin des Airs, service spécialisé dans
+  > le recouvrement d'indemnités pour les passagers aériens sur l'axe
+  > Europe-Afrique. Il a passé quinze ans en cabine, dont plusieurs années comme
+  > chef de cabine.
+
+  Ce qui reste strictement interdit :
+  - le **temps présent** (« je suis navigant », « je vole »), qui met par écrit
+    qu'un salarié de compagnie aérienne dirige un service qui assigne des
+    compagnies aériennes ;
+  - le **nom de l'employeur**, en toutes lettres ou par allusion reconnaissable ;
+  - **toute route ou zone géographique**. Ne pas écrire « lignes Afrique-Europe »
+    (faux : le fondateur n'a pas volé au sud du Sahara), ni « Cap-Vert et Afrique
+    du Nord » (exact mais trop identifiant, l'Afrique du Nord pointe vers
+    l'employeur actuel). La durée et la fonction suffisent.
+
+  Un article publié reste en ligne : au moindre doute sur une formulation,
+  s'en tenir mot pour mot à la bio de référence ci-dessus.
 - Expéditeur : `expert@robindesairs.eu`. Signature : Saint-Yves Kodjo.
 - Ne JAMAIS se présenter comme juriste (loi 71-1130).
 
