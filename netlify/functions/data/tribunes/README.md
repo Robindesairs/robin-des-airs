@@ -93,3 +93,30 @@ philtr.fr, milesopedia.fr.
 
 🔴 Dans ces blocs, jamais le mot « commission » (modèle = cession, on écrit « part
 reversée au passager : 75 % »), et jamais « société immatriculée » avant le Kbis.
+
+## Ce qu'on demande AVANT publication (ajouté le 31/07/2026)
+
+Corriger après parution coûte du capital relationnel pour un gain minime. Tout se
+négocie dans le mail de proposition, en une phrase, sans insister.
+
+**Formule à insérer en fin de proposition :**
+> « Si le texte vous convient, merci de le publier sous ma signature (Saint-Yves Kodjo,
+> fondateur de Robin des Airs) et de renseigner mon nom comme auteur dans votre CMS. »
+
+Les deux choses sont distinctes et il faut les demander toutes les deux :
+- la **signature visible** en fin d'article, pour le lecteur ;
+- le **champ auteur du CMS**, pour la machine. C'est lui que Google et les moteurs IA
+  lisent pour établir qui fait autorité sur un sujet.
+
+🔴 **Cas Addis Standard, 31/07/2026** : tribune publiée avec un encart rédactionnel
+complet (nom, fonction, axe Europe-Afrique), mais les données structurées attribuent
+l'article à `"author": { "name": "Addis Standard2" }`. L'autorité va donc au média et
+non au fondateur. Invisible à l'œil nu, décisif pour l'E-E-A-T.
+
+**Médias sans AUCUN lien sortant (politique éditoriale, ne jamais réclamer) :**
+- **Le Lynx** (Guinée) — accord explicite du 22/07, signature sans URL.
+- **Addis Standard** (Éthiopie) — l'article ne contient aucun lien externe, pas même un.
+
+Sur ces médias, l'objectif se déplace : à défaut de lien, obtenir **le nom de la marque
+ET la description d'activité** dans la bio. C'est le signal de co-occurrence qui nourrit
+les citations IA. Les deux l'ont fait, c'est déjà l'essentiel.
