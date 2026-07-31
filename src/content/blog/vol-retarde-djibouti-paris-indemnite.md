@@ -7,7 +7,7 @@ noindex: true
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Djibouti a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance CDG-JIB est d'environ 5,600 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance CDG-JIB est d'environ 5 600 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Djibouti-Paris est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie, et à Djibouti le choix pèse très lourd. Au départ de Djibouti (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France est couverte. Avec une compagnie non européenne (Turkish Airlines via Istanbul), le forfait n'est pas dû sur ce sens. Et Djibouti n'étant partie **ni à la Convention de Montréal, ni à celle de Varsovie**, aucune convention internationale ne prend le relais : il ne vous reste que le contrat de transport. Sur Air France, le droit européen impose Montréal quelle que soit la route : [comprendre quel texte s'applique](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)."
   - q: "Mon vol Djibouti-Paris sur Turkish Airlines a été très retardé. Je n'ai droit à rien ?"
@@ -22,7 +22,7 @@ faq:
 
 **Votre vol Paris-Djibouti ou Djibouti-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Djibouti est toujours couvert, quelle que soit la compagnie. Le sens Djibouti vers Paris est couvert uniquement avec une compagnie européenne (Air France). Vérification gratuite, 0 € d'avance.
 
-Distance CDG-JIB : environ 5,600 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Djibouti-Paris est un axe important de la diaspora djiboutienne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance CDG-JIB : environ 5 600 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Djibouti-Paris est un axe important de la diaspora djiboutienne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

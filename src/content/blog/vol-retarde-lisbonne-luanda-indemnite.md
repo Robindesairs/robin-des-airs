@@ -6,7 +6,7 @@ slug: vol-retarde-lisbonne-luanda-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lisbonne-Luanda a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance LIS-LAD est d'environ 7,300 km (vol de plus de 3 500 km) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance LIS-LAD est d'environ 7 300 km (vol de plus de 3 500 km) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Luanda-Lisbonne est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Luanda (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : TAP Air Portugal est couverte. Avec une compagnie non européenne (TAAG Angola Airlines), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Luanda-Lisbonne sur TAAG a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Lisbonne-Luanda ou Luanda-Lisbonne a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Lisbonne vers Luanda est toujours couvert, quelle que soit la compagnie. Le sens Luanda vers Lisbonne est couvert uniquement avec une compagnie européenne (TAP Air Portugal). Vérification gratuite, 0 € d'avance.
 
-Distance LIS-LAD : environ 7,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Luanda-Lisbonne est l'axe principal de la diaspora angolaise vers l'Europe, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance LIS-LAD : environ 7 300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Luanda-Lisbonne est l'axe principal de la diaspora angolaise vers l'Europe, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

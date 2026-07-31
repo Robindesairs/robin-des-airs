@@ -6,11 +6,11 @@ slug: vol-retarde-libreville-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Libreville a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance CDG-LBV est d'environ 5,300 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance CDG-LBV est d'environ 5 300 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Libreville-Paris est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Libreville (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : seul le vol direct d'Air France l'est. Avec une compagnie non européenne (Turkish Airlines, Royal Air Maroc, Air Algérie ou Kenya Airways, toutes accessibles via une correspondance), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
-  - q: "Mon vol Libreville-Paris sur Afrijet a été très retardé. Je n'ai droit à rien ?"
-    a: "Pas au forfait CE 261 sur ce sens (Afrijet est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Paris-Libreville, lui, reste indemnisable à 600 €."
+  - q: "Je pars de Port-Gentil ou de Franceville sur Afrijet avant de rejoindre Paris. Suis-je couvert ?"
+    a: "Afrijet ne dessert pas la France : son réseau est régional, elle n'intervient que sur un tronçon d'apport vers Libreville. Si l'ensemble figure sur une **réservation unique**, le retard se mesure à votre destination finale, Paris, et non à l'escale (arrêt Folkerts, CJUE 2013) : vous êtes couvert. Si vous avez acheté **deux billets séparés**, chaque vol s'apprécie isolément et le tronçon régional n'ouvre aucun forfait CE 261."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
     a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Libreville-Paris retardé de 3h+ : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable."
   - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Paris-Libreville ou Libreville-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Libreville est toujours couvert, quelle que soit la compagnie. Le sens Libreville vers Paris est couvert uniquement avec une compagnie européenne (Air France). Vérification gratuite, 0 € d'avance.
 
-Distance CDG-LBV : environ 5,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Libreville-Paris relie le Gabon à la France, sur un vol long-courrier direct, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance CDG-LBV : environ 5 300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Libreville-Paris relie le Gabon à la France, sur un vol long-courrier direct, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 
@@ -34,9 +34,9 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 
 | Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
 |---|---|---|
-| Paris vers Libreville | Air France, Afrijet | Oui : **600 € par passager** |
-| Libreville vers Paris | Air France | Oui : **600 € par passager** |
-| Libreville vers Paris | Afrijet | Non : frais réels via Convention de Montréal |
+| Paris vers Libreville | Air France (direct), Turkish, Royal Air Maroc, Air Algérie, Kenya Airways (correspondance) | Oui : **600 € par passager**, quelle que soit la compagnie |
+| Libreville vers Paris | Air France (direct) | Oui : **600 € par passager** |
+| Libreville vers Paris | Turkish, Royal Air Maroc, Air Algérie, Kenya Airways | Non : frais réels via Convention de Montréal |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 

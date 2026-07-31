@@ -6,7 +6,7 @@ slug: vol-retarde-cotonou-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Cotonou a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance CDG-COO est d'environ 4,800 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance CDG-COO est d'environ 4 800 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Cotonou-Paris est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Cotonou (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France et Brussels Airlines (via Bruxelles) sont couvertes. Avec une compagnie non européenne (ASKY (via Lomé) et Ethiopian Airlines (via Addis-Abeba)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Cotonou-Paris sur ASKY a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Paris-Cotonou ou Cotonou-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Cotonou est toujours couvert, quelle que soit la compagnie. Le sens Cotonou vers Paris est couvert uniquement avec une compagnie européenne (Air France et Brussels Airlines (via Bruxelles)). Vérification gratuite, 0 € d'avance.
 
-Distance CDG-COO : environ 4,800 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Cotonou, poumon économique du Bénin, est reliée à l'Europe via Paris, Bruxelles et les hubs africains, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance CDG-COO : environ 4 800 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Cotonou, poumon économique du Bénin, est reliée à l'Europe via Paris, Bruxelles et les hubs africains, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

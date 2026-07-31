@@ -6,7 +6,7 @@ slug: vol-retarde-conakry-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Conakry a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance CDG-CKY est d'environ 4,350 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance CDG-CKY est d'environ 4 350 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Conakry-Paris est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Conakry (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France et Brussels Airlines (via Bruxelles) sont couvertes. Avec une compagnie non européenne (Air Sénégal (via Dakar)), le forfait n'est pas dû sur ce sens, et la Guinée n'étant **pas partie à la Convention de Montréal**, ce sont les règles plus anciennes de la Convention de Varsovie qui s'appliquent à vos frais et à vos bagages : [quel texte protège votre vol ?](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)"
   - q: "Mon vol Conakry-Paris sur Air Sénégal a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Paris-Conakry ou Conakry-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Conakry est toujours couvert, quelle que soit la compagnie. Le sens Conakry vers Paris est couvert uniquement avec une compagnie européenne (Air France et Brussels Airlines (via Bruxelles)). Vérification gratuite, 0 € d'avance.
 
-Distance CDG-CKY : environ 4,350 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Conakry-Paris est l'axe principal de la diaspora guinéenne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance CDG-CKY : environ 4 350 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Conakry-Paris est l'axe principal de la diaspora guinéenne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

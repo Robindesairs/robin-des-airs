@@ -6,7 +6,7 @@ slug: vol-retarde-lyon-abidjan-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lyon-Abidjan a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance LYS-ABJ est d'environ 5,000 km (vol de plus de 3 500 km) et tout vol au départ de Lyon est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance LYS-ABJ est d'environ 5 000 km (vol de plus de 3 500 km) et tout vol au départ de Lyon est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Abidjan-Lyon est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Abidjan (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France via Paris sont couvertes. Avec une compagnie non européenne (Air Côte d'Ivoire via Paris), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Abidjan-Lyon sur Air Côte d'Ivoire via Paris a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Lyon-Abidjan ou Abidjan-Lyon a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Lyon vers Abidjan est toujours couvert, quelle que soit la compagnie. Le sens Abidjan vers Lyon est couvert uniquement avec une compagnie européenne (Air France via Paris). Vérification gratuite, 0 € d'avance.
 
-Distance LYS-ABJ : environ 5,000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. La communauté ivoirienne de Lyon voyage souvent via Paris, mais ses droits se calculent au départ de Lyon, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance LYS-ABJ : environ 5 000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. La communauté ivoirienne de Lyon voyage souvent via Paris, mais ses droits se calculent au départ de Lyon, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

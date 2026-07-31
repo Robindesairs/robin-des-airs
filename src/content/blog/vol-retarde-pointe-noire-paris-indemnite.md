@@ -6,7 +6,7 @@ slug: vol-retarde-pointe-noire-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Pointe-Noire a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance CDG-PNR est d'environ 5,900 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance CDG-PNR est d'environ 5 900 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Pointe-Noire-Paris est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Pointe-Noire (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France est couverte. Avec une compagnie non européenne (Royal Air Maroc (via Casablanca), Ethiopian Airlines (via Addis-Abeba)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Pointe-Noire-Paris sur une compagnie africaine a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Paris-Pointe-Noire ou Pointe-Noire-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Pointe-Noire est toujours couvert, quelle que soit la compagnie. Le sens Pointe-Noire vers Paris est couvert uniquement avec une compagnie européenne (Air France). Vérification gratuite, 0 € d'avance.
 
-Distance CDG-PNR : environ 5,900 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Pointe-Noire, capitale économique du Congo-Brazzaville, est un axe majeur de la diaspora congolaise, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance CDG-PNR : environ 5 900 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Pointe-Noire, capitale économique du Congo-Brazzaville, est un axe majeur de la diaspora congolaise, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

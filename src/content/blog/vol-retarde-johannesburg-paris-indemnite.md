@@ -8,7 +8,7 @@ hreflang_en: johannesburg-paris-flight-delay-compensation
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Johannesburg a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance CDG-JNB est d'environ 8,700 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance CDG-JNB est d'environ 8 700 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Johannesburg-Paris est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Johannesburg (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France est couverte. Avec une compagnie non européenne (South African Airways), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Johannesburg-Paris sur South African Airways a été très retardé. Je n'ai droit à rien ?"
@@ -23,7 +23,7 @@ faq:
 
 **Votre vol Paris-Johannesburg ou Johannesburg-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Johannesburg est toujours couvert, quelle que soit la compagnie. Le sens Johannesburg vers Paris est couvert uniquement avec une compagnie européenne (Air France). Vérification gratuite, 0 € d'avance.
 
-Distance CDG-JNB : environ 8,700 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Johannesburg-Paris est un axe majeur reliant l'Afrique australe à l'Europe, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance CDG-JNB : environ 8 700 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Johannesburg-Paris est un axe majeur reliant l'Afrique australe à l'Europe, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

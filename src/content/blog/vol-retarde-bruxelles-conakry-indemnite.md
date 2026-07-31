@@ -6,7 +6,7 @@ slug: vol-retarde-bruxelles-conakry-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Bruxelles-Conakry a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance BRU-CKY est d'environ 4,600 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance BRU-CKY est d'environ 4 600 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Conakry-Bruxelles est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Conakry (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines est couverte, y compris sur ce sens Conakry vers Bruxelles. Avec une compagnie non européenne, le forfait n'est pas dû sur ce sens, et la Guinée n'étant **pas partie à la Convention de Montréal**, c'est la Convention de Varsovie (1929) qui prend le relais, avec des plafonds bagage nettement plus bas. Sur Brussels Airlines, le droit européen impose Montréal quelle que soit la route : [comprendre quel texte s'applique](/blog/montreal-varsovie-ce261-quel-texte-sapplique-vol.html)."
   - q: "Mon vol Conakry-Bruxelles sur une compagnie africaine a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Bruxelles-Conakry ou Conakry-Bruxelles a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Bruxelles vers Conakry est toujours couvert, quelle que soit la compagnie. Le sens Conakry vers Bruxelles est couvert dès lors que la compagnie est européenne (Brussels Airlines). Vérification gratuite, 0 € d'avance.
 
-Distance BRU-CKY : environ 4,600 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Bruxelles-Conakry est un axe majeur de la diaspora guinéenne en Belgique, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance BRU-CKY : environ 4 600 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Bruxelles-Conakry est un axe majeur de la diaspora guinéenne en Belgique, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

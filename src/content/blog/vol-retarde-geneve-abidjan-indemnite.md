@@ -6,7 +6,7 @@ slug: vol-retarde-geneve-abidjan-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Genève-Abidjan a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance GVA-ABJ est d'environ 5,000 km (vol de plus de 3 500 km) et tout vol au départ de Genève est couvert par le CE 261/2004 (que la Suisse applique via son accord aérien avec l'UE), quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance GVA-ABJ est d'environ 5 000 km (vol de plus de 3 500 km) et tout vol au départ de Genève est couvert par le CE 261/2004 (que la Suisse applique via son accord aérien avec l'UE), quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Abidjan-Genève est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ d'Abidjan (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France (via Paris) et Brussels Airlines (via Bruxelles) sont couvertes. Avec une compagnie non européenne (les compagnies africaines desservant la ligne, dont Air Côte d'Ivoire), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Abidjan-Genève sur une compagnie africaine a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Genève-Abidjan ou Abidjan-Genève a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Genève vers Abidjan est toujours couvert, quelle que soit la compagnie. Le sens Abidjan vers Genève est couvert uniquement avec une compagnie européenne (Air France (via Paris) et Brussels Airlines (via Bruxelles)). Vérification gratuite, 0 € d'avance.
 
-Distance GVA-ABJ : environ 5,000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Genève-Abidjan est un axe important de la diaspora ivoirienne en Suisse, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance GVA-ABJ : environ 5 000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Genève-Abidjan est un axe important de la diaspora ivoirienne en Suisse, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

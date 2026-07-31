@@ -7,7 +7,7 @@ noindex: true
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Amsterdam-Lagos a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance AMS-LOS est d'environ 5,000 km (vol de plus de 3 500 km) et tout vol au départ d'Amsterdam est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance AMS-LOS est d'environ 5 000 km (vol de plus de 3 500 km) et tout vol au départ d'Amsterdam est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Lagos-Amsterdam est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Lagos (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : KLM, qui opère la liaison directe, est couverte dans les deux sens, donc un Lagos-Amsterdam KLM retardé de 3h+ ouvre bien droit à 600 €. Avec une compagnie non européenne, le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Lagos-Amsterdam sur une compagnie non européenne a été très retardé. Je n'ai droit à rien ?"
@@ -22,7 +22,7 @@ faq:
 
 **Votre vol Amsterdam-Lagos ou Lagos-Amsterdam a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Amsterdam vers Lagos est toujours couvert, quelle que soit la compagnie. Le sens Lagos vers Amsterdam est couvert avec une compagnie européenne : KLM, qui opère la liaison directe, ouvre droit à l'indemnité dans les deux sens. Vérification gratuite, 0 € d'avance.
 
-Distance AMS-LOS : environ 5,000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Lagos-Amsterdam est un axe majeur de la diaspora nigériane, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance AMS-LOS : environ 5 000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Lagos-Amsterdam est un axe majeur de la diaspora nigériane, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

@@ -6,7 +6,7 @@ slug: vol-retarde-bruxelles-yaounde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Bruxelles-Yaoundé a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance BRU-NSI est d'environ 5,400 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance BRU-NSI est d'environ 5 400 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Yaoundé-Bruxelles est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Yaoundé (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines est couverte. Avec une compagnie non européenne (Royal Air Maroc (via Casablanca), Ethiopian Airlines (via Addis-Abeba), Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Yaoundé-Bruxelles sur une compagnie non européenne a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Bruxelles-Yaoundé ou Yaoundé-Bruxelles a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Bruxelles vers Yaoundé est toujours couvert, quelle que soit la compagnie. Le sens Yaoundé vers Bruxelles est couvert uniquement avec une compagnie européenne (Brussels Airlines). Vérification gratuite, 0 € d'avance.
 
-Distance BRU-NSI : environ 5,400 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Bruxelles-Yaoundé est un axe majeur de la diaspora camerounaise, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance BRU-NSI : environ 5 400 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Bruxelles-Yaoundé est un axe majeur de la diaspora camerounaise, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

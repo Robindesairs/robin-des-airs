@@ -6,7 +6,7 @@ slug: vol-retarde-geneve-douala-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Genève-Douala a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance GVA-DLA est d'environ 5,300 km (vol de plus de 3 500 km) et tout vol au départ de Genève est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance GVA-DLA est d'environ 5 300 km (vol de plus de 3 500 km) et tout vol au départ de Genève est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Douala-Genève est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Douala (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France (via Paris), Brussels Airlines (via Bruxelles) et Swiss (via Zurich) sont couvertes. Avec une compagnie non européenne (Royal Air Maroc (via Casablanca), Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Douala-Genève sur une compagnie non européenne a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Genève-Douala ou Douala-Genève a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Genève vers Douala est toujours couvert, quelle que soit la compagnie. Le sens Douala vers Genève est couvert uniquement avec une compagnie européenne (Air France (via Paris), Brussels Airlines (via Bruxelles) et Swiss (via Zurich)). Vérification gratuite, 0 € d'avance.
 
-Distance GVA-DLA : environ 5,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Douala est la porte d'entrée économique du Cameroun et un axe important de la diaspora camerounaise, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance GVA-DLA : environ 5 300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Douala est la porte d'entrée économique du Cameroun et un axe important de la diaspora camerounaise, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

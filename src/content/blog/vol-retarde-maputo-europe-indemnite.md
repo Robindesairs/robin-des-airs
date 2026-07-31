@@ -6,7 +6,7 @@ slug: vol-retarde-maputo-europe-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lisbonne-Maputo a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance Lisbonne-Maputo est d'environ 8,400 km (vol très largement au-dessus de 3 500 km) et tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance Lisbonne-Maputo est d'environ 8 400 km (vol très largement au-dessus de 3 500 km) et tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Maputo-Europe est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Maputo (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : TAP Air Portugal (via Lisbonne) est couverte. Avec une compagnie non européenne (LAM Mozambique, Ethiopian (via Addis-Abeba), Qatar Airways (via Doha), Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Maputo-Europe sur LAM a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Maputo-Europe ou Europe-Maputo a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Europe vers Maputo est toujours couvert, quelle que soit la compagnie. Le sens Maputo vers Europe est couvert uniquement avec une compagnie européenne (TAP Air Portugal (via Lisbonne)). Vérification gratuite, 0 € d'avance.
 
-Distance Lisbonne-Maputo : environ 8,400 km, soit un vol long-courrier très largement au-dessus de 3 500 km, donc le palier maximal de **600 €**. Maputo-Europe est un axe majeur de la diaspora mozambicaine, souvent parcouru via un hub (Lisbonne, Addis-Abeba, Doha, Istanbul, Johannesburg), et les retards de correspondance y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance Lisbonne-Maputo : environ 8 400 km, soit un vol long-courrier très largement au-dessus de 3 500 km, donc le palier maximal de **600 €**. Maputo-Europe est un axe majeur de la diaspora mozambicaine, souvent parcouru via un hub (Lisbonne, Addis-Abeba, Doha, Istanbul, Johannesburg), et les retards de correspondance y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 

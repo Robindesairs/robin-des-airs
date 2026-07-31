@@ -6,7 +6,7 @@ slug: taag-angola-vol-retarde-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Lisbonne-Luanda sur TAAG a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance Lisbonne-Luanda est d'environ 7,400 km (vol de plus de 3 500 km) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, TAAG comprise, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance Lisbonne-Luanda est d'environ 7 400 km (vol de plus de 3 500 km) et tout vol au départ de Lisbonne est couvert par le CE 261/2004, quelle que soit la compagnie, TAAG comprise, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Luanda-Lisbonne sur TAAG est retardé. Suis-je couvert ?"
     a: "Au départ de Luanda (hors UE) sur TAAG, une compagnie **non européenne**, le forfait CE 261 n'est **pas** dû. Mais la **Convention de Montréal** permet de réclamer vos frais réels (repas, hôtel, transport) sur justificatifs. Si le même trajet retour est opéré par une compagnie européenne (TAP Air Portugal), le forfait de 600 € redevient possible."
   - q: "Mon vol Luanda-Lisbonne sur TAAG a été très retardé. Je n'ai droit à rien ?"
@@ -39,7 +39,7 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 | Luanda vers Lisbonne | TAP Air Portugal | Oui : **600 € par passager** (compagnie UE) |
 | Luanda vers Lisbonne | TAAG | Non : frais réels via Convention de Montréal |
 
-Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ. La distance Lisbonne-Luanda, environ 7,400 km, est un long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**.
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ. La distance Lisbonne-Luanda, environ 7 400 km, est un long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**.
 
 ## TAAG est une compagnie non européenne : ce que cela change
 

@@ -6,7 +6,7 @@ slug: vol-retarde-bruxelles-kinshasa-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Bruxelles-Kinshasa a plus de 3h de retard. Combien puis-je réclamer ?"
-    a: "**600 € par passager.** La distance BRU-FIH est d'environ 6,300 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+    a: "**600 € par passager.** La distance BRU-FIH est d'environ 6 300 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Kinshasa-Bruxelles est retardé. Suis-je couvert ?"
     a: "Cela dépend de la compagnie. Au départ de Kinshasa (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines (vol direct) est couverte, tout comme Air France (via Paris) et KLM (via Amsterdam). Avec une compagnie non européenne (Ethiopian (via Addis-Abeba), Turkish Airlines (via Istanbul)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Kinshasa-Bruxelles sur une compagnie non européenne a été très retardé. Je n'ai droit à rien ?"
@@ -21,7 +21,7 @@ faq:
 
 **Votre vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Bruxelles vers Kinshasa est toujours couvert, quelle que soit la compagnie. Le sens Kinshasa vers Bruxelles est couvert uniquement avec une compagnie européenne (Brussels Airlines, qui opère le vol direct, Air France via Paris et KLM via Amsterdam). Vérification gratuite, 0 € d'avance.
 
-Distance BRU-FIH : environ 6,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Kinshasa-Bruxelles est l'axe historique de la diaspora belgo-congolaise, opéré en direct par Brussels Airlines, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+Distance BRU-FIH : environ 6 300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Kinshasa-Bruxelles est l'axe historique de la diaspora belgo-congolaise, opéré en direct par Brussels Airlines, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
 ## Êtes-vous éligible ? La règle en 30 secondes
 
