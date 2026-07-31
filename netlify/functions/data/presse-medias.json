@@ -257,9 +257,10 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "statut_reponse": "accepte_non_verifie",
-    "note_reponse": "ACCEPTE (photo envoyee 20/07) mais parution NON RETROUVEE au balayage du 29/07 - a reverifier",
-    "date_publication": "2026-07-29"
+    "statut_reponse": "accepte_photo_envoyee",
+    "note_reponse": "ACCEPTE le 19/07 : 'Nous allons publier la tribune, il nous manque juste une photo de vous.' La photo n'avait JAMAIS ete envoyee (verifie dans les Envoyes le 31/07, un seul mail au 18/07). Relance envoyee le 31/07 a 20h49 avec les deux portraits, la bio definitive sans parcours navigant, la demande de lien actif sur robindesairs.eu et la demande de champ auteur CMS au nom du fondateur.",
+    "date_publication": "",
+    "date_relance": "2026-07-31"
   },
   {
     "id": "m022",
