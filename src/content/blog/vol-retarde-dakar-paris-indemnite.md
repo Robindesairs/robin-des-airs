@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Paris-Dakar ou Dakar-Paris : indemnité jusqu'à 600 €"
-meta_title: "Vol Paris-Dakar ou Dakar-Paris retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Paris-Dakar et retour retardé : 600 € par passager"
 meta_description: "Vol Paris-Dakar ou Dakar-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Air France, Transavia, Air Sénégal : qui doit payer, comment réclamer."
 slug: vol-retarde-dakar-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

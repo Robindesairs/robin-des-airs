@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Lisbonne-Bissau ou Bissau-Lisbonne : indemnité jusqu'à 400 €"
-meta_title: "Vol Lisbonne-Bissau ou Bissau-Lisbonne retardé : 400 € d'indemnité par passager"
+meta_title: "Vol Lisbonne-Bissau et retour retardé : 400 € par passager"
 meta_description: "Vol Lisbonne-Bissau ou Bissau-Lisbonne retardé de 3h ou annulé ? Jusqu'à 400 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-lisbonne-bissau-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

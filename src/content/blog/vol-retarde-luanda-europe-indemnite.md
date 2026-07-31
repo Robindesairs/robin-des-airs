@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Luanda-Europe (Lisbonne, Paris) : indemnité jusqu'à 600 €"
-meta_title: "Vol Luanda-Lisbonne ou Luanda-Paris retardé : 600 € d'indemnité par passager"
+meta_title: "Luanda-Lisbonne ou Luanda-Paris retardé : 600 € par passager"
 meta_description: "Vol Luanda-Europe (Lisbonne, Paris) retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-luanda-europe-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

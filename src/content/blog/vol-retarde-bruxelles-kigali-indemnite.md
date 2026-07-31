@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Bruxelles-Kigali ou Kigali-Bruxelles : indemnité jusqu'à 600 €"
-meta_title: "Vol Bruxelles-Kigali ou Kigali-Bruxelles retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Bruxelles-Kigali et retour retardé : 600 € par passager"
 meta_description: "Vol Bruxelles-Kigali ou Kigali-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-bruxelles-kigali-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Amsterdam-Nairobi ou Nairobi-Amsterdam : indemnité jusqu'à 600 €"
-meta_title: "Vol Amsterdam-Nairobi ou Nairobi-Amsterdam retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Amsterdam-Nairobi et retour retardé : 600 € par passager"
 meta_description: "Vol Amsterdam-Nairobi ou Nairobi-Amsterdam retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-amsterdam-nairobi-indemnite
 noindex: true

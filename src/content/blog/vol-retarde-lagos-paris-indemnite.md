@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Paris-Lagos ou Lagos-Paris : indemnité jusqu'à 600 €"
-meta_title: "Vol Paris-Lagos ou Lagos-Paris retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Paris-Lagos et retour retardé : 600 € par passager"
 meta_description: "Vol Paris-Lagos ou Lagos-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-lagos-paris-indemnite
 hreflang_en: lagos-paris-flight-delay-compensation

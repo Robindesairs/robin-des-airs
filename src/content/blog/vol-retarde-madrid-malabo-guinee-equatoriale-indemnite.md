@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Madrid-Malabo ou Malabo-Madrid : indemnité jusqu'à 600 €"
-meta_title: "Vol Madrid-Malabo ou Malabo-Madrid retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Madrid-Malabo et retour retardé : 600 € par passager"
 meta_description: "Vol Madrid-Malabo ou Malabo-Madrid retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-madrid-malabo-guinee-equatoriale-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Paris-Yaoundé ou Yaoundé-Paris : indemnité jusqu'à 600 €"
-meta_title: "Vol Paris-Yaoundé ou Yaoundé-Paris retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Paris-Yaoundé et retour retardé : 600 € par passager"
 meta_description: "Vol Paris-Yaoundé ou Yaoundé-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-yaounde-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

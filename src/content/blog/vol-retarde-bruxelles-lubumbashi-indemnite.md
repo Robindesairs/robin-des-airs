@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles : indemnité jusqu'à 600 €"
-meta_title: "Vol Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles retardé : 600 € d'indemnité par passager"
+meta_title: "Bruxelles-Lubumbashi et retour retardé : 600 € par passager"
 meta_description: "Vol Bruxelles-Lubumbashi ou Lubumbashi-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-bruxelles-lubumbashi-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

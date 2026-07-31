@@ -1,6 +1,6 @@
 ---
 title: "Vol retardé Harare-Europe ou Europe-Harare : indemnité jusqu'à 600 €"
-meta_title: "Vol Harare-Europe ou Europe-Harare retardé : 600 € d'indemnité par passager"
+meta_title: "Vol Harare-Europe et retour retardé : 600 € par passager"
 meta_description: "Vol Harare-Europe ou Europe-Harare retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-harare-europe-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png

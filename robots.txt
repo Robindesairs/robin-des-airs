@@ -58,25 +58,25 @@ Disallow: /api/
 # indicatif (les robots respectueux obeissent) et n'affecte NI Google, NI Bing,
 # NI les IA ci-dessus. Chaque robot est un groupe nomme : rappel que ces groupes
 # n'heritent de rien du "*", donc le Disallow: / est bien leur regle entiere.
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: SemrushBot
-Disallow: /
-
+#
+# 🔴 REVISION DU 31/07/2026. Les crawlers dont NOUS exploitons les donnees ont
+# ete debloques. Les bloquer revenait surtout a nous aveugler nous-memes : la
+# base Semrush ne contenait rien sur le domaine, ce qui explique le faux negatif
+# de visibilite constate le 17/07, et les mesures de backlinks Moz et DataForSeo
+# etaient faussees a la source. Sur un domaine a autorite 0 que personne ne
+# surveille, l'intelligence qu'on perd depasse largement celle qu'on protege.
+# A rediscuter le jour ou le domaine aura une position a defendre.
+#
+# Debloques : SemrushBot (base mots-cles et backlinks Semrush), AhrefsBot,
+# rogerbot et DotBot (Moz), DataForSeoBot. Note : SiteAuditBot, le crawler de
+# l'audit technique Semrush, n'a jamais figure ici et n'a jamais ete bloque.
+#
+# Restent bloques : scrapers sans contrepartie pour nous, dont nous
+# n'exploitons aucune donnee.
 User-agent: MJ12bot
 Disallow: /
 
-User-agent: DotBot
-Disallow: /
-
-User-agent: rogerbot
-Disallow: /
-
 User-agent: BLEXBot
-Disallow: /
-
-User-agent: DataForSeoBot
 Disallow: /
 
 User-agent: Barkrowler
