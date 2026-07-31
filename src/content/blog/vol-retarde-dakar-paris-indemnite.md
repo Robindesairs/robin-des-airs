@@ -1,14 +1,14 @@
 ---
 title: "Vol retardé Paris-Dakar ou Dakar-Paris : indemnité jusqu'à 600 €"
 meta_title: "Vol Paris-Dakar ou Dakar-Paris retardé : 600 € d'indemnité par passager"
-meta_description: "Vol Paris-Dakar ou Dakar-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Air France, Corsair, Transavia, Air Sénégal : qui doit payer, comment réclamer."
+meta_description: "Vol Paris-Dakar ou Dakar-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Air France, Transavia, Air Sénégal : qui doit payer, comment réclamer."
 slug: vol-retarde-dakar-paris-indemnite
 image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
   - q: "Mon vol Paris-Dakar a 4h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance CDG-DSS est d'environ 4 200 km (vol > 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Dakar-Paris sur Air France a 3h30 de retard. Éligible ?"
-    a: "**Oui, 600 € par passager.** Au départ de Dakar (hors UE), le CE 261 s'applique si la compagnie est européenne : Air France, Corsair et Transavia sont couvertes. Seule Air Sénégal (compagnie non-UE) échappe au forfait sur le sens Dakar vers Paris."
+    a: "**Oui, 600 € par passager.** Au départ de Dakar (hors UE), le CE 261 s'applique si la compagnie est européenne : Air France et Transavia sont couvertes. Seule Air Sénégal (compagnie non-UE) échappe au forfait sur le sens Dakar vers Paris."
   - q: "Mon Dakar-Paris sur Air Sénégal a 5h de retard. Je n'ai droit à rien ?"
     a: "Pas au forfait CE 261 (compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** permet de réclamer vos frais réels justifiés (repas, hôtel, achats de première nécessité). Et le vol aller Paris-Dakar d'Air Sénégal reste, lui, couvert à 600 €."
   - q: "Nous étions 5, dont 2 enfants. L'indemnité est par personne ?"
@@ -19,7 +19,7 @@ faq:
     a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un Paris-Dakar retardé en 2023 est donc encore indemnisable."
 ---
 
-**Votre vol Paris-Dakar ou Dakar-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Dakar est toujours couvert, quelle que soit la compagnie. Le sens Dakar vers Paris est couvert avec Air France, Corsair ou Transavia (compagnies européennes), mais pas avec Air Sénégal. Vérification gratuite, 0 € d'avance.
+**Votre vol Paris-Dakar ou Dakar-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Dakar est toujours couvert, quelle que soit la compagnie. Le sens Dakar vers Paris est couvert avec Air France ou Transavia (compagnies européennes), mais pas avec Air Sénégal. Vérification gratuite, 0 € d'avance.
 
 La route Paris ↔ Dakar (CDG/ORY ↔ aéroport Blaise-Diagne, DSS) est l'une des plus fréquentées par la diaspora sénégalaise, et les retards y sont loin d'être rares. Voici précisément qui doit payer, combien, et comment réclamer.
 
@@ -34,8 +34,8 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 
 | Trajet | Compagnie | Indemnité CE 261 si retard ≥ 3h |
 |---|---|---|
-| Paris → Dakar | Air France, Corsair, Transavia, Air Sénégal | ✅ **600 € par passager** |
-| Dakar → Paris | Air France (AF719), Corsair, Transavia | ✅ **600 € par passager** |
+| Paris → Dakar | Air France, Transavia, Air Sénégal | ✅ **600 € par passager** |
+| Dakar → Paris | Air France (AF719), Transavia | ✅ **600 € par passager** |
 | Dakar → Paris | Air Sénégal (HC401) | ❌ Forfait non dû (frais réels via Convention de Montréal) |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ. Distance CDG-DSS ≈ 4 200 km, donc palier maximal : 600 €.
@@ -43,7 +43,6 @@ Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ. Dis
 ## Les compagnies sur la ligne
 
 - **Air France** : AF718/AF719 (quotidien CDG ↔ DSS), couverte dans les deux sens
-- **Corsair** : SS892 et suivants (ORY ↔ DSS), couverte dans les deux sens
 - **Transavia** : vols saisonniers ORY ↔ DSS, couverte dans les deux sens
 - **Air Sénégal** : HC400/HC401 (CDG ↔ DSS), couverte uniquement au départ de Paris
 

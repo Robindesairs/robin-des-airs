@@ -33,7 +33,7 @@ Il existe deux régimes d'indemnisation distincts :
 
 **Le CE 261/2004 (règlement européen)** : forfait fixe de 250€, 400€ ou 600€ selon la distance. S'applique uniquement si :
 - Le vol départ d'un aéroport de l'UE (Paris, Bruxelles, etc.) **quelle que soit la compagnie**
-- OU la compagnie est enregistrée dans l'UE (Air France, Corsair, Brussels Airlines…)
+- OU la compagnie est enregistrée dans l'UE (Air France, Transavia, Brussels Airlines…)
 
 **La Convention de Montréal** : remboursement des frais réels (plafonné). S'applique sur tous les vols internationaux, indépendamment du pays de départ.
 
@@ -42,7 +42,7 @@ Il existe deux régimes d'indemnisation distincts :
 | Paris CDG → Dakar DSS (Air Sénégal) | ✅ Oui, départ UE | ✅ Oui |
 | Dakar DSS → Paris CDG (Air Sénégal retour) | ❌ Non | ✅ Oui |
 
-**Différence clé avec Air France ou Corsair :** ces compagnies françaises couvrent les deux sens. Air Sénégal n'est couverte par le CE261 que sur le vol aller depuis Paris.
+**Différence clé avec Air France ou Transavia :** ces compagnies françaises couvrent les deux sens. Air Sénégal n'est couverte par le CE261 que sur le vol aller depuis Paris.
 
 ---
 

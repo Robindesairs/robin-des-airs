@@ -8,7 +8,7 @@ faq:
   - q: "Mon vol Paris-Libreville a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance CDG-LBV est d'environ 5,300 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Libreville-Paris est retardé. Suis-je couvert ?"
-    a: "Cela dépend de la compagnie. Au départ de Libreville (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France et Corsair sont couvertes. Avec une compagnie non européenne (Afrijet), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Cela dépend de la compagnie. Au départ de Libreville (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : seul le vol direct d'Air France l'est. Avec une compagnie non européenne (Turkish Airlines, Royal Air Maroc, Air Algérie ou Kenya Airways, toutes accessibles via une correspondance), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Libreville-Paris sur Afrijet a été très retardé. Je n'ai droit à rien ?"
     a: "Pas au forfait CE 261 sur ce sens (Afrijet est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Paris-Libreville, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
@@ -19,7 +19,7 @@ faq:
     a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Libreville-Paris retardé il y a deux ans reste indemnisable."
 ---
 
-**Votre vol Paris-Libreville ou Libreville-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Libreville est toujours couvert, quelle que soit la compagnie. Le sens Libreville vers Paris est couvert uniquement avec une compagnie européenne (Air France et Corsair). Vérification gratuite, 0 € d'avance.
+**Votre vol Paris-Libreville ou Libreville-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Libreville est toujours couvert, quelle que soit la compagnie. Le sens Libreville vers Paris est couvert uniquement avec une compagnie européenne (Air France). Vérification gratuite, 0 € d'avance.
 
 Distance CDG-LBV : environ 5,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Libreville-Paris relie le Gabon à la France, sur un vol long-courrier direct, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
@@ -34,16 +34,17 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 
 | Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
 |---|---|---|
-| Paris vers Libreville | Air France et Corsair, Afrijet | Oui : **600 € par passager** |
-| Libreville vers Paris | Air France et Corsair | Oui : **600 € par passager** |
+| Paris vers Libreville | Air France, Afrijet | Oui : **600 € par passager** |
+| Libreville vers Paris | Air France | Oui : **600 € par passager** |
 | Libreville vers Paris | Afrijet | Non : frais réels via Convention de Montréal |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 ## Les compagnies sur la ligne
 
-- **Compagnies européennes** (couvertes dans les deux sens) : Air France et Corsair
-- **Compagnies non européennes** (couvertes uniquement au départ de Paris) : Afrijet
+- **Air France**, seule compagnie européenne sur la ligne, et seule à opérer un vol direct Paris-Libreville : quatre rotations par semaine. Elle est **couverte dans les deux sens**, à l'aller comme au retour.
+- **Turkish Airlines** (via Istanbul), **Royal Air Maroc** (via Casablanca), **Air Algérie** (via Alger) et **Kenya Airways** (via Nairobi) desservent Libreville avec une correspondance. Ce sont des compagnies **non européennes** : au départ de Libreville, elles ne doivent **pas** le forfait CE 261. Le vol aller au départ de Paris, lui, reste couvert quelle que soit la compagnie.
+- **Afrijet** ne dessert pas la France. Son réseau est régional (Port-Gentil, Franceville, Douala, Pointe-Noire, Bangui, São Tomé) : elle n'intervient que sur un tronçon d'apport vers Libreville.
 
 ## Vol avec correspondance
 

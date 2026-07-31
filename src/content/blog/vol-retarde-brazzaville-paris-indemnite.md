@@ -8,7 +8,7 @@ faq:
   - q: "Mon vol Paris-Brazzaville a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**600 € par passager.** La distance CDG-BZV est d'environ 6,000 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
   - q: "Mon vol retour Brazzaville-Paris est retardé. Suis-je couvert ?"
-    a: "Cela dépend de la compagnie. Au départ de Brazzaville (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France et Corsair sont couvertes. Avec une compagnie non européenne (Ethiopian Airlines (via Addis-Abeba)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Cela dépend de la compagnie. Au départ de Brazzaville (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : seule Air France est couverte. Avec une compagnie non européenne (Ethiopian Airlines (via Addis-Abeba)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon vol Brazzaville-Paris sur Ethiopian Airlines a été très retardé. Je n'ai droit à rien ?"
     a: "Pas au forfait CE 261 sur ce sens (Ethiopian Airlines est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Paris-Brazzaville, lui, reste indemnisable à 600 €."
   - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
@@ -19,7 +19,7 @@ faq:
     a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Brazzaville-Paris retardé il y a deux ans reste indemnisable."
 ---
 
-**Votre vol Paris-Brazzaville ou Brazzaville-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Brazzaville est toujours couvert, quelle que soit la compagnie. Le sens Brazzaville vers Paris est couvert uniquement avec une compagnie européenne (Air France et Corsair). Vérification gratuite, 0 € d'avance.
+**Votre vol Paris-Brazzaville ou Brazzaville-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Brazzaville est toujours couvert, quelle que soit la compagnie. Le sens Brazzaville vers Paris est couvert uniquement avec une compagnie européenne (Air France). Vérification gratuite, 0 € d'avance.
 
 Distance CDG-BZV : environ 6,000 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Brazzaville-Paris est l'axe direct de la diaspora congolaise (Congo-Brazzaville), et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
@@ -34,15 +34,15 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 
 | Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
 |---|---|---|
-| Paris vers Brazzaville | Air France et Corsair, Ethiopian Airlines (via Addis-Abeba) | Oui : **600 € par passager** |
-| Brazzaville vers Paris | Air France et Corsair | Oui : **600 € par passager** |
+| Paris vers Brazzaville | Air France, Ethiopian Airlines (via Addis-Abeba) | Oui : **600 € par passager** |
+| Brazzaville vers Paris | Air France | Oui : **600 € par passager** |
 | Brazzaville vers Paris | Ethiopian Airlines (via Addis-Abeba) | Non : frais réels via Convention de Montréal |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 ## Les compagnies sur la ligne
 
-- **Compagnies européennes** (couvertes dans les deux sens) : Air France et Corsair
+- **Compagnies européennes** (couvertes dans les deux sens) : Air France
 - **Compagnies non européennes** (couvertes uniquement au départ de Paris) : Ethiopian Airlines (via Addis-Abeba)
 
 ## Vol avec correspondance

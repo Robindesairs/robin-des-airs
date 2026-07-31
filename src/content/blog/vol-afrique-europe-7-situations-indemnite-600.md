@@ -6,7 +6,7 @@ slug: vol-afrique-europe-7-situations-indemnite-600
 image_url: /og-blog.png
 faq:
   - q: "Un vol Dakar-Paris retardé de 3h donne droit à combien ?"
-    a: "**Jusqu'à 600 € par passager** si la compagnie est européenne (Air France, Corsair, Transavia) ou si le vol part d'Europe. La distance dépasse 3 500 km, donc c'est la tranche haute. Au départ de Dakar sur une compagnie non-UE (Air Sénégal), le forfait CE 261 ne s'applique pas, mais le vol aller depuis Paris reste couvert."
+    a: "**Jusqu'à 600 € par passager** si la compagnie est européenne (Air France, Transavia, TAP) ou si le vol part d'Europe. La distance dépasse 3 500 km, donc c'est la tranche haute. Au départ de Dakar sur une compagnie non-UE (Air Sénégal), le forfait CE 261 ne s'applique pas, mais le vol aller depuis Paris reste couvert."
   - q: "Est-ce que chaque passager de la famille touche l'indemnité ?"
     a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un vol Abidjan-Paris retardé de 3h, c'est jusqu'à 4 × 600 = 2 400 € bruts."
   - q: "Ma correspondance à Casablanca ou Addis-Abeba était ratée à cause du premier vol. J'ai droit à quoi ?"

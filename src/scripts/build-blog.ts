@@ -272,7 +272,7 @@ function renderArticlePage(
     datePublished: meta.datePublished,
     dateModified: meta.dateModified,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
-    author: { '@type': 'Person', '@id': SITE_URL + '/a-propos.html#climbie', name: 'Saint-Yves', description: 'Fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique, spécialiste du règlement CE 261/2004.', url: SITE_URL + '/a-propos.html' },
+    author: { '@type': 'Person', '@id': SITE_URL + '/a-propos.html#climbie', name: 'Saint-Yves', description: "Fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique, spécialiste du règlement CE 261/2004.", url: SITE_URL + '/a-propos.html' },
     publisher: {
       '@type': 'Organization',
       name: 'Robin des Airs',

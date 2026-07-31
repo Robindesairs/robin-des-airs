@@ -42,7 +42,7 @@ Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 ## Ce que révèle la structure des horaires sur la ligne Douala-Paris
 
-Avant de fonder Robin des Airs, j'ai passé vingt ans dans le transport aérien, dont quinze comme navigant puis chef de cabine sur des lignes Afrique-Europe. De l'intérieur, on voit comment un retard est « classé » à bord et au sol, et deux réalités que les passagers de Douala-Paris ignorent presque toujours :
+Les dossiers que nous traitons sur l'axe Afrique-Europe font ressortir deux réalités que les passagers de Douala-Paris ignorent presque toujours, parce qu'elles tiennent à la façon dont un retard est qualifié et non à ce qui est annoncé en salle d'embarquement :
 
 - Un retard annoncé comme « problème technique » à l'embarquement n'est, en principe, **pas** une circonstance extraordinaire au sens du règlement (arrêt Wallentin-Hermann). La compagnie le sait, et mise surtout sur le fait que vous ne réclamerez pas.
 - Sur le retour Douala vers Paris, c'est le **pavillon** de la compagnie qui décide, pas la qualité du service. Le même retard de 4 heures ouvre 600 € sur Air France et rien sur une compagnie non européenne. Personne ne vous l'explique au comptoir.
