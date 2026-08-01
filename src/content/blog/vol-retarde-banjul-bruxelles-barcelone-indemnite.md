@@ -1,92 +1,95 @@
 ---
-title: "Vol retardé Banjul (Gambie) depuis Bruxelles, Barcelone ou Londres"
-meta_title: "Vol retardé Banjul Gambie : indemnité CE 261 jusqu'à 600€"
-meta_description: "Retard ou annulation sur votre vol Banjul (Gambie) depuis Bruxelles, Barcelone, Lisbonne ou Londres ? Indemnité CE 261 jusqu'à 600€ par passager."
+title: "Vol retardé Banjul (Gambie) : Bruxelles, Barcelone, Lisbonne — indemnité jusqu'à 600 €"
+meta_title: "Vol Banjul retardé (Bruxelles, Barcelone) : 600 € CE 261"
+meta_description: "Vol Banjul (Gambie) vers Bruxelles, Barcelone ou Lisbonne retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Compagnies éligibles et démarche."
 slug: vol-retarde-banjul-bruxelles-barcelone-indemnite
 hreflang_en: banjul-flight-delay-compensation-gambia
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
-  - q: "Pourquoi pas de vol direct Paris-Banjul ?"
-    a: "Air France ne dessert plus Banjul depuis plusieurs années. La diaspora gambienne passe par **Bruxelles** (Brussels Airlines), **Lisbonne** (TAP), **Barcelone** (Vueling, saisonnier) ou **Londres** (British Airways)."
-  - q: "Mon billet CDG → BRU → BJL est en deux compagnies. Qui paie ?"
-    a: "Si c'est un **billet unique** (un seul code de réservation), la compagnie qui opère le tronçon retardé est responsable. Si ce sont **deux billets séparés** (low-cost + Brussels Airlines), pas de correspondance protégée — risque à éviter."
-  - q: "Brussels Airlines BJL-BRU retardé : indemnité due ?"
-    a: "Oui. Brussels Airlines est compagnie **UE** → CE 261 éligible **dans les deux sens**. Distance ~4 700 km > 3 500 km → **600€ par passager**."
+  - q: "Pourquoi n'y a-t-il pas de vol direct Paris-Banjul ?"
+    a: "Air France ne dessert pas Banjul. Depuis la France, la diaspora gambienne transite généralement par **Bruxelles** (Brussels Airlines, TUI fly Belgium), **Barcelone** (Vueling) ou **Lisbonne** (TAP Air Portugal), les trois portes d'entrée européennes vers la Gambie."
+  - q: "Mon vol Bruxelles-Banjul (Brussels Airlines) a plus de 3h de retard. Ai-je droit à une indemnité ?"
+    a: "Oui. Brussels Airlines est une compagnie **européenne** : le CE 261 s'applique **dans les deux sens**, y compris au départ de Banjul. Distance BRU-BJL : environ 4 600 km (plus de 3 500 km), donc **600 € par passager**."
+  - q: "Mon billet Paris-Bruxelles-Banjul est réservé en deux billets séparés. Qui doit payer en cas de retard ?"
+    a: "Si c'est une **réservation unique** (un seul numéro de dossier), le tronçon responsable du retard engage la compagnie qui l'opère, sur la base de la distance totale du trajet. Si ce sont **deux billets distincts** achetés séparément, la correspondance n'est pas protégée : mieux vaut réserver un billet unique."
+  - q: "Mon vol Banjul-Londres a été retardé. Suis-je couvert par le CE 261 ?"
+    a: "Non, pas par le CE 261. Depuis le Brexit, un vol au départ du Royaume-Uni relève du **UK Regulation 261**, l'équivalent britannique du règlement européen (jusqu'à 520 £ pour un vol long-courrier), un texte distinct de celui que nous traitons sur les routes vers l'UE."
+  - q: "La compagnie invoque une panne technique pour refuser l'indemnité. C'est valable ?"
+    a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due, quel que soit l'âge de l'appareil utilisé sur ces liaisons long-courrier vers l'Afrique de l'Ouest."
+  - q: "Nous étions en famille sur ce vol. L'indemnité est-elle due pour chaque passager ?"
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 5 sur un Bruxelles-Banjul retardé de 4h : 5 x 600 € = **3 000 € récupérés**, dont vous recevez **2 250 €** (75 %) en phase amiable."
 ---
 
-**Jusqu'à 600 € par passager** peuvent vous revenir après un retard de 3 h sur vos vols Banjul–Bruxelles ou Banjul–Barcelone. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+**Votre vol entre Banjul (Gambie) et Bruxelles, Barcelone ou Lisbonne a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Banjul n'a aucun vol direct depuis Paris : la diaspora gambienne en Europe transite par une poignée de compagnies, dont seulement trois sont européennes et donc systématiquement couvertes dans les deux sens. Vérification gratuite, 0 € d'avance.
 
-Banjul (BJL) est la capitale de la Gambie et n'a **aucun vol direct depuis Paris**. La diaspora gambienne en Europe rejoint le pays principalement par **Bruxelles**, **Barcelone**, **Lisbonne** ou **Londres**. Voici les routes et vos droits CE 261 selon votre point de départ européen.
+Distance Bruxelles-Banjul : environ 4 600 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Voici, compagnie par compagnie, qui doit payer, dans quel sens, et comment réclamer.
 
-## Pas de vol direct Paris-Banjul
+## Êtes-vous éligible ? La règle en 30 secondes
 
-Air France ne dessert pas Banjul. Les voyageurs français passent généralement par :
-- **Bruxelles (BRU)** sur Brussels Airlines
-- **Barcelone (BCN)** sur Vueling (saisonnier)
-- **Lisbonne (LIS)** sur TAP Portugal
-- **Londres (LHR / LGW)** sur British Airways ou correspondance
-- **Casablanca (CMN)** sur Royal Air Maroc (vol indirect)
-- **Istanbul (IST)** sur Turkish Airlines
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
-## Bruxelles ↔ Banjul (BRU → BJL)
+Le règlement CE 261/2004 s'applique dans deux cas :
 
-**Compagnie principale** : Brussels Airlines (UE)
-**Distance** : ~4 700 km > 3 500 km → **600€ par passager**
-**CE 261** : éligible dans les **deux sens** (compagnie UE) → indemnité due au départ Banjul aussi
-**Vol type** : SN201/SN202 — Brussels Airlines, parfois via Dakar ou Conakry
+- **Le vol part d'un aéroport de l'UE** (Bruxelles, Barcelone, Lisbonne) : couvert quelle que soit la compagnie, même non européenne.
+- **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Banjul.
 
-## Barcelone ↔ Banjul (BCN → BJL)
+| Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
+|---|---|---|
+| Europe vers Banjul (Bruxelles, Barcelone, Lisbonne) | Toutes compagnies, le vol part de l'UE | Oui : **600 € par passager** |
+| Banjul vers Bruxelles | Brussels Airlines, TUI fly Belgium | Oui : **600 € par passager** |
+| Banjul vers Barcelone | Vueling | Oui : **600 € par passager** |
+| Banjul vers Lisbonne | TAP Air Portugal | Oui : **600 € par passager** |
+| Banjul vers Casablanca ou Istanbul (correspondance) | Royal Air Maroc, Turkish Airlines | Non sur ce tronçon : frais réels via Convention de Montréal |
 
-**Compagnie principale** : Vueling (UE, saisonnier)
-**Distance** : ~4 100 km > 3 500 km → **600€ par passager**
-**CE 261** : éligible dans les deux sens
-**À noter** : vol saisonnier, fréquence variable selon période
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-## Lisbonne ↔ Banjul (LIS → BJL)
+## Les compagnies sur la ligne
 
-**Compagnie principale** : TAP Air Portugal (UE)
-**Distance** : ~3 800 km > 3 500 km → **600€ par passager**
-**CE 261** : éligible dans les deux sens
+Banjul n'a pas de compagnie nationale desservant l'Europe : la ligne est partagée entre compagnies européennes et compagnies étrangères qui font escale en cours de route.
 
-## Londres ↔ Banjul
+- **Compagnies européennes** (couvertes dans les deux sens) : **Brussels Airlines** et **TUI fly Belgium** au départ de Bruxelles, **Vueling** au départ de Barcelone, **TAP Air Portugal** au départ de Lisbonne. Certains vols Bruxelles-Banjul font escale à Dakar ou Conakry, cela ne change rien à l'éligibilité.
+- **Compagnies non européennes** (couvertes uniquement au départ d'un aéroport de l'UE) : **Royal Air Maroc** (via Casablanca) et **Turkish Airlines** (via Istanbul), ainsi que des compagnies régionales ouest-africaines comme **Air Senegal**, **ASKY Airlines** ou **Air Peace**.
+- **Cas particulier Royaume-Uni** : la compagnie charter **Euroairlines** dessert Londres-Gatwick en saisonnier (avril à septembre). Un vol au départ du Royaume-Uni relève du **UK Regulation 261**, pas du CE 261 : le principe est le même, mais le texte et l'interlocuteur diffèrent.
 
-**Compagnies** : British Airways (UK Reg. 261 équivalent post-Brexit)
-**Distance** : ~4 700 km
-**Note Brexit** : depuis 2021, c'est l'**UK Reg. 261** qui s'applique pour les vols au départ du Royaume-Uni. Le montant équivalent est de **520 GBP** (~600€) pour les vols longs.
+## Vol avec correspondance
 
-## Casablanca ↔ Banjul (via Royal Air Maroc)
+Si votre billet est une **réservation unique** avec correspondance (par exemple Paris-Bruxelles-Banjul), le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013), sur la distance totale du trajet, même si l'un des tronçons est opéré par une autre compagnie que celle qui a vendu le billet.
 
-**Compagnie** : Royal Air Maroc (non-UE)
-**Cas particulier** : voir [Royal Air Maroc vol retardé](/blog/royal-air-maroc-vol-retarde-indemnite.html). Le CE 261 s'applique au départ de l'UE (Paris → CMN → BJL), mais pas au retour depuis Banjul.
+Attention au **piège du billet en deux réservations séparées** : certaines agences vendent un vol low-cost Paris-Bruxelles et un billet Brussels Airlines Bruxelles-Banjul comme deux achats distincts. Dans ce cas, la correspondance n'est pas protégée : un retard sur le premier vol peut vous faire manquer le second sans recours sur l'ensemble du trajet. Un **billet unique**, avec un seul numéro de dossier, protège la correspondance et couvre tout le trajet en cas de retard.
 
-## Banjul → Europe : la compagnie est clé
+## Vol annulé : vos droits
 
-- **Brussels Airlines** BJL → BRU → éligible (compagnie UE)
-- **TAP** BJL → LIS → éligible (compagnie UE)
-- **Vueling** BJL → BCN → éligible (compagnie UE)
-- **Royal Air Maroc** BJL → CMN → CDG → cas particulier
-- **Turkish Airlines** BJL → IST → CDG → **non éligible** retour (non-UE)
+Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
-## Si vous transitez par Paris
+## Les excuses des compagnies : valables ou non
 
-Beaucoup de Gambiens vivant en France prennent un billet combiné CDG → BRU → BJL ou CDG → BCN → BJL. Si le retard vient :
-- du **segment CDG → BRU** (Air France ou Brussels Airlines) → CE 261 applicable
-- du **segment BRU → BJL** (Brussels Airlines) → CE 261 applicable
-- → indemnité due dans les deux cas
+La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
 
-## Famille gambienne — exemple
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens, oiseau ou débris sur la piste, vice caché du constructeur. Même dans ces cas, la compagnie doit encore prouver qu'elle a pris **toutes les mesures raisonnables** pour limiter le retard.
 
-Famille de 6 sur Bruxelles-Banjul retardé de 5h pour mariage à Brikama :
-- 6 × 600€ = **3 600€ brut**
-- **2 700€ nets** en phase amiable (vous recevez 75 %)
+**Excuses non valables** (l'indemnité reste due) :
 
-Service en français, anglais, wolof (Gambie a une diaspora wolof), mandinka, peul.
+- panne technique de l'appareil, même imprévue et même avec un entretien à jour (arrêts Wallentin-Hermann et van der Lans, CJUE)
+- [retard de l'avion sur la rotation précédente](/blog/retard-rotation-avion-vol-precedent-indemnisation.html), sauf si la compagnie prouve une cause extraordinaire en amont
+- grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
 
-## Le piège du billet "low cost" via Bruxelles
+Robin des Airs conteste systématiquement les refus fondés sur de fausses circonstances extraordinaires.
 
-Certaines agences vendent CDG → BRU sur une compagnie low-cost + BRU → BJL sur Brussels Airlines **comme billets séparés**. Dans ce cas, si le premier vol (low-cost) est en retard, vous risquez de manquer le second sans recours sur le billet entier — c'est un **billet auto-correspondance** non protégé. Mieux : prendre un **billet unique Air France + Brussels Airlines** où la correspondance est garantie.
+## Combien de temps pour réclamer ?
 
-Voir : [Brussels Airlines vol retardé](/blog/brussels-airlines-vol-retarde-indemnite.html), [TAP Air Portugal](/blog/tap-air-portugal-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html).
+**5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Banjul-Bruxelles retardé il y a un ou deux ans reste indemnisable aujourd'hui.
 
-→ [Vérifier mon vol Banjul](https://robindesairs.eu/#funnel-box)
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 5 sur un Bruxelles-Banjul arrivé avec 4h de retard, pour un mariage à Brikama : 5 x 600 € = **3 000 € récupérés**, dont vous recevez **2 250 €** (75 %) en phase amiable.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en wolof ou mandingue.
+
+→ [Déposer mon dossier Banjul en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

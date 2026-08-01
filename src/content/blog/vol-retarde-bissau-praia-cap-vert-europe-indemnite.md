@@ -1,71 +1,93 @@
 ---
-title: "Vol Bissau ou Praia vers Lisbonne retardé : indemnisation"
-meta_title: "Vol Bissau/Praia → Lisbonne retardé : jusqu'à 600€ d'indemnité"
-meta_description: "Vol Bissau ou Praia vers Lisbonne retardé ou annulé ? La diaspora lusophone peut avoir droit jusqu'à 600€ par passager. Vérification gratuite, 0€ d'avance."
+title: "Vol retardé Bissau ou Praia vers Lisbonne : indemnité jusqu'à 400 €"
+meta_title: "Vol Bissau/Praia vers Lisbonne retardé : jusqu'à 400 €"
+meta_description: "Vol Bissau (OXB) ou Praia (RAI) vers Lisbonne retardé de 3h ou annulé ? Jusqu'à 400 € par passager (CE 261/2004), plus si correspondance vers Paris ou Bruxelles."
 slug: vol-retarde-bissau-praia-cap-vert-europe-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
 faq:
-  - q: "Mon vol Praia ou Bissau vers Lisbonne était sur TAP. J'ai droit à quelque chose ?"
-    a: "Vous pouvez y avoir droit. TAP Air Portugal est une compagnie de l'Union européenne : selon les cas, un vol au départ **ou** à l'arrivée dans l'UE opéré par un transporteur communautaire peut ouvrir droit à une indemnité forfaitaire, sous réserve des conditions du règlement (CE) 261/2004. On vérifie votre éligibilité gratuitement."
-  - q: "Le retard s'est produit sur ma correspondance à Lisbonne, pas au départ. Ça compte ?"
-    a: "Cela peut compter. Ce qui est souvent examiné, c'est le retard à l'arrivée à votre **destination finale** sur une réservation unique. Un retard pris à Praia ou Bissau qui vous fait manquer la correspondance vers votre ville européenne finale peut, selon éligibilité, entrer dans le calcul."
-  - q: "Combien de temps pour être indemnisé et combien ça me coûte ?"
-    a: "0€ d'avance : la vérification est gratuite et vous ne payez rien si l'on n'obtient rien. En cas de succès, vous recevez **75 % en phase amiable** et **40 % si le dossier passe au tribunal** (vous gardez 60 %), frais de procédure avancés par nos soins. Aucune garantie de délai ferme."
+  - q: "Mon vol Bissau-Lisbonne sur TAP a plus de 3h de retard. Combien puis-je réclamer ?"
+    a: "**400 € par passager.** La distance OXB-LIS est d'environ 3 060 km, dans la fourchette 1 500-3 500 km du règlement CE 261/2004. TAP Air Portugal est une compagnie européenne, couverte dans les deux sens."
+  - q: "Mon vol Praia-Lisbonne est retardé. Suis-je couvert ?"
+    a: "Cela dépend de la compagnie. Au départ de Praia (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : TAP et easyJet sont couvertes. Avec Cabo Verde Airlines (compagnie non européenne), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+  - q: "Mon billet continue au-delà de Lisbonne, vers Paris ou Bruxelles. Le montant change-t-il ?"
+    a: "Oui, potentiellement. Sur une **réservation unique**, le retard se mesure à la destination finale et l'indemnité se calcule sur la distance totale du trajet (arrêt Folkerts, CJUE 2013). Bissau ou Praia + Lisbonne + Paris dépasse souvent 3 500 km : la fourchette **600 €** peut alors s'appliquer au lieu de 400 €."
+  - q: "Je suis passé par Casablanca sur Royal Air Maroc entre Bissau et l'Europe. J'ai droit à quelque chose ?"
+    a: "Pas au forfait CE 261 sur ce vol : ni Casablanca ni Bissau ne sont dans l'UE, et Royal Air Maroc est une compagnie non européenne. Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et si un autre segment de votre billet part de l'UE ou est opéré par une compagnie européenne, celui-là reste indemnisable."
+  - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Bissau-Lisbonne ou Praia-Lisbonne retardé de 3h+ : 4 x 400 € = **1 600 € récupérés**, dont vous recevez **1 200 €** (75 %) en phase amiable."
+  - q: "Mon vol date d'il y a deux ans. Est-ce trop tard ?"
+    a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Bissau-Lisbonne ou Praia-Lisbonne retardé il y a deux ans reste indemnisable."
 ---
 
-**Jusqu'à 600 € par passager** peuvent vous revenir si votre vol Bissau (OXB) ou Praia (RAI) vers Lisbonne a été fortement retardé ou annulé. Vérification gratuite, 0 € d'avance, et vous ne payez que si l'on obtient un résultat.
+**Votre vol Bissau-Lisbonne ou Praia-Lisbonne a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 400 € par passager (règlement CE 261/2004), et jusqu'à 600 € si votre billet unique se poursuit au-delà de Lisbonne.** Le sens Lisbonne vers Bissau ou Praia est toujours couvert, quelle que soit la compagnie. Le sens retour n'est couvert qu'avec une compagnie européenne. Vérification gratuite, 0 € d'avance.
 
-Pour la diaspora bissau-guinéenne et cap-verdienne, la liaison vers Lisbonne est le cordon ombilical avec l'Europe. Retards de plusieurs heures, correspondances manquées à Humberto Delgado, nuits imprévues à l'aéroport : ces galères sont fréquentes. La bonne nouvelle, c'est que votre position est souvent **plus solide** que celle d'autres voyageurs de la diaspora africaine. Voici pourquoi.
+Distance Lisbonne-Bissau : environ 3 060 km. Distance Lisbonne-Praia : environ 3 000 km. Les deux routes se situent dans la fourchette **1 500-3 500 km**, donc le palier **400 €**, et non 600 € comme sur les longs-courriers directs vers Paris. Pour la diaspora bissau-guinéenne et cap-verdienne, la liaison vers Lisbonne est le cordon ombilical avec l'Europe, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
-## Pourquoi votre dossier peut être renforcé
+## Êtes-vous éligible ? La règle en 30 secondes
 
-La plupart des vols entre l'Afrique subsaharienne et l'Europe sont opérés par des compagnies non européennes, ce qui complique parfois l'éligibilité. Pour Bissau et Praia, la donne change : la liaison vers Lisbonne est très majoritairement opérée par **TAP Air Portugal**, compagnie de l'Union européenne.
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
-Deux éléments peuvent jouer en votre faveur, sous réserve de l'analyse de votre cas :
+Le règlement CE 261/2004 s'applique dans deux cas :
 
-- **Un transporteur communautaire.** Le règlement (CE) 261/2004 protège notamment les passagers d'un vol opéré par une compagnie de l'UE. TAP en fait partie.
-- **Une arrivée dans l'UE.** Lisbonne est un aéroport de l'Union. Un vol à destination de l'UE, selon les cas, peut ouvrir droit à indemnisation lorsque les conditions du règlement sont réunies.
+- **Le vol part d'un aéroport de l'UE** (Lisbonne) : couvert quelle que soit la compagnie, même non européenne.
+- **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Bissau ou de Praia.
 
-Autrement dit, un passager Praia → Lisbonne ou Bissau → Lisbonne sur TAP peut se trouver, selon éligibilité, dans une situation où le règlement européen s'applique. Rien n'est automatique, mais le terrain est souvent favorable.
+| Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
+|---|---|---|
+| Lisbonne vers Bissau | TAP Air Portugal, EuroAtlantic Airways | Oui : **400 € par passager** |
+| Bissau vers Lisbonne | TAP Air Portugal, EuroAtlantic Airways | Oui : **400 € par passager** |
+| Casablanca vers Bissau (ou retour) | Royal Air Maroc | Non : ni aéroport ni compagnie UE, frais réels via Convention de Montréal |
+| Lisbonne vers Praia | TAP Air Portugal, easyJet, Cabo Verde Airlines | Oui : **400 € par passager** |
+| Praia vers Lisbonne | TAP Air Portugal, easyJet | Oui : **400 € par passager** |
+| Praia vers Lisbonne | Cabo Verde Airlines | Non : compagnie non-UE au départ d'un pays non-UE |
 
-## Les montants possibles
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-Le règlement CE 261/2004 prévoit une indemnité **forfaitaire**, indépendante du prix du billet, en cas de retard important à l'arrivée (à partir de 3 heures) ou d'annulation, sous réserve des conditions applicables :
+## Les compagnies sur ces lignes
 
-| Distance du vol | Indemnité possible par passager |
-|---|---|
-| Jusqu'à 1 500 km | 250 € |
-| 1 500 à 3 500 km | 400 € |
-| Plus de 3 500 km | 600 € |
+- **Compagnies européennes** (couvertes dans les deux sens) : TAP Air Portugal, qui opère Lisbonne-Bissau et Lisbonne-Praia (et depuis juillet 2026 aussi Porto-Praia), EuroAtlantic Airways sur Bissau, et easyJet sur Praia.
+- **Compagnies non européennes** (couvertes uniquement au départ de Lisbonne) : Cabo Verde Airlines, la compagnie nationale cap-verdienne, sur Lisbonne-Praia.
+- **Compagnies non européennes hors périmètre UE** : Royal Air Maroc, qui relie Bissau à l'Europe via son hub de Casablanca. Cette escale ne touchant pas l'UE, le vol Casablanca-Bissau n'entre pas dans le champ du CE 261.
 
-Praia → Lisbonne, c'est environ 2 900 km, et Bissau → Lisbonne environ 3 400 km : la fourchette **400 €** est souvent en jeu. Si votre billet unique se poursuit au-delà de Lisbonne (Paris, Bruxelles, Genève…), la distance totale peut dépasser 3 500 km et faire entrer la fourchette **600 €** dans le calcul. Pour une famille de quatre personnes, l'addition peut vite atteindre plusieurs milliers d'euros — d'où l'intérêt de tout vérifier.
+## Vol avec correspondance
 
-## La correspondance à Lisbonne compte
+Si votre billet est une **réservation unique** avec correspondance, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013). C'est le cas de figure le plus fréquent sur ces lignes : beaucoup de voyageurs bissau-guinéens et cap-verdiens ne s'arrêtent pas à Lisbonne, ils poursuivent vers Paris, Bruxelles, Genève ou une autre ville européenne.
 
-Beaucoup de voyageurs bissau-guinéens et cap-verdiens ne s'arrêtent pas à Lisbonne : ils poursuivent vers Paris, Bruxelles, Genève ou une autre ville européenne. Ce qui est souvent examiné, c'est le retard à l'arrivée à votre **destination finale**, sur une réservation unique.
+Une correspondance manquée à Lisbonne qui vous fait arriver avec 3h+ de retard à destination finale ouvre droit à l'indemnité, calculée sur la **distance totale du trajet**, même si l'une des étapes est opérée par une autre compagnie. Bissau ou Praia, plus Lisbonne, plus Paris ou Bruxelles, dépasse fréquemment 3 500 km : le palier passe alors de 400 € à **600 €**.
 
-Un retard pris au départ de Praia ou Bissau qui vous fait rater votre correspondance à Humberto Delgado, et vous fait arriver avec plusieurs heures de retard à destination, peut — selon éligibilité — être pris en compte. Ne concluez pas trop vite que « ce n'était qu'un petit retard au départ » : c'est l'heure d'arrivée finale qui est déterminante.
+## Vol annulé : vos droits
 
-## Ce que la compagnie vous doit aussi sur place
+Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité** (400 € ou 600 € selon la distance totale de votre trajet) par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
-Au-delà de l'indemnité forfaitaire, en cas de long retard ou d'annulation, la compagnie a généralement des obligations de **prise en charge** : boissons et repas selon l'attente, hébergement si une nuit est nécessaire, et communication. Conservez tous vos justificatifs (reçus repas, hôtel, taxi) : ils peuvent s'ajouter à votre dossier. Gardez aussi votre carte d'embarquement et toute preuve du retard.
+## Les excuses des compagnies : valables ou non
 
-## Ce qui n'ouvre pas de droit
+La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
 
-Soyons transparents : certaines situations écartent l'indemnité forfaitaire, notamment lorsque la compagnie démontre des **circonstances extraordinaires** réellement inévitables (par exemple certaines conditions météo majeures dûment prouvées). Un simple motif vague invoqué par la compagnie ne suffit toutefois pas : c'est à elle d'apporter la preuve précise. C'est justement le cœur de notre travail de contestation.
+**Excuses valables** : météo extrême (harmattan et tempêtes de sable sur l'Atlantique peuvent compter, sous réserve de preuve précise), fermeture d'espace aérien, grève des contrôleurs aériens, oiseau ou débris sur la piste, vice caché du constructeur. Même dans ces cas, la compagnie doit encore prouver qu'elle a pris **toutes les mesures raisonnables** pour limiter le retard.
 
-## Comment Robin des Airs s'occupe de tout
+**Excuses non valables** (l'indemnité reste due) :
 
-Robin des Airs est spécialisé dans la **diaspora Afrique ↔ Europe**, et la ligne lusophone Bissau/Praia → Lisbonne en fait pleinement partie. Notre fonctionnement :
+- panne technique de l'appareil, même imprévue et même avec un entretien à jour (arrêts Wallentin-Hermann et van der Lans, CJUE)
+- [retard de l'avion sur la rotation précédente](/blog/retard-rotation-avion-vol-precedent-indemnisation.html), sauf si la compagnie prouve une cause extraordinaire en amont
+- grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
 
-- **Vérification gratuite** de votre éligibilité à partir de votre numéro de vol et de votre date.
-- **0 € d'avance.** Vous n'avancez aucun frais d'avocat, d'huissier ou de procédure : nous les prenons en charge.
-- **Commission au résultat :** 25 % en phase amiable (vous gardez 75 %), 40 % si le dossier doit passer au tribunal (vous gardez 60 %). Vous ne payez rien si nous n'obtenons rien.
-- **Suivi humain**, par WhatsApp, dans un langage clair — sans jargon.
+Robin des Airs conteste systématiquement les refus fondés sur de fausses circonstances extraordinaires.
 
-Nous ne promettons ni résultat garanti ni délai ferme : chaque dossier dépend des faits et des preuves. Mais quand la ligne est opérée par une compagnie de l'UE comme TAP, le dossier mérite très souvent d'être défendu.
+## Combien de temps pour réclamer ?
 
-Voir aussi : [Montants d'indemnité : 250, 400 ou 600 €](/blog/indemnite-vol-montants-250-400-600.html), [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), et notre [pourquoi choisir Robin des Airs](/blog/pourquoi-choisir-robin-des-airs-difference.html).
+**5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Bissau-Lisbonne ou Praia-Lisbonne retardé il y a deux ou trois ans reste indemnisable aujourd'hui.
 
-→ [Vérifier mon vol Bissau / Praia](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp — mon vol vers Lisbonne était retardé](https://wa.me/33756863630?text=Bonjour%20Robin%2C%20mon%20vol%20Bissau%20ou%20Praia%20vers%20Lisbonne%20a%20%C3%A9t%C3%A9%20retard%C3%A9.)
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Bissau-Lisbonne ou Praia-Lisbonne arrivé avec 4h de retard : 4 x 400 € = **1 600 € récupérés**, dont vous recevez **1 200 €** (75 %) en phase amiable. Si le trajet se poursuivait au-delà de Lisbonne et dépassait 3 500 km au total, ce serait 4 x 600 € = **2 400 € récupérés**.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec suivi en français ou en portugais.
+
+→ [Déposer mon dossier Bissau ou Praia en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
+→ [WhatsApp direct](https://wa.me/33756863630)

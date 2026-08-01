@@ -27,14 +27,12 @@ CATEGORIES = {
         "vol-retarde-dakar-paris",
         "vol-retarde-douala-paris",
         "vol-retarde-kinshasa-bruxelles",
-        "vol-retarde-lyon-marseille-nice",
     ],
     "compagnie": [
         "corsair-vol-retarde",
         "royal-air-maroc-vol-retarde",
         "transavia-vol-retarde",
         "vol-air-france-retarde",
-        "vol-retarde-ryanair",
     ],
     "procedure": [
         "bon-achat-compagnie-aerienne-piege",
@@ -269,7 +267,6 @@ ROUTE_MAP = {
     "vol-retarde-dakar-paris": "Dakar-Paris",
     "vol-retarde-douala-paris": "Douala-Paris",
     "vol-retarde-kinshasa-bruxelles": "Kinshasa-Bruxelles",
-    "vol-retarde-lyon-marseille-nice": "Lyon / Marseille / Nice",
 }
 
 COMPAGNIE_MAP = {
@@ -277,7 +274,6 @@ COMPAGNIE_MAP = {
     "royal-air-maroc-vol-retarde": "Royal Air Maroc",
     "transavia-vol-retarde": "Transavia",
     "vol-air-france-retarde": "Air France",
-    "vol-retarde-ryanair": "Ryanair",
 }
 
 

@@ -150,7 +150,7 @@ def categorize(slug: str) -> str:
         return "frais"
     routes_hors_afrique = [
         "montreal", "new-york", "cayenne", "antilles", "reunion",
-        "ile-maurice", "lyon-marseille-nice",
+        "ile-maurice",
     ]
     if any(f"vol-retarde-{r}" in s for r in routes_hors_afrique) or "vol-depart-usa" in s:
         return "routes_int"
@@ -166,9 +166,7 @@ def categorize(slug: str) -> str:
         "air-senegal", "air-cote-divoire", "tap-air-portugal", "south-african",
         "rwandair", "uganda-airlines", "transavia", "taag-angola", "kenya-airways",
     ]
-    if any(k in s for k in compagnies_kw) or s in (
-        "vol-air-france-retarde-indemnite", "vol-retarde-ryanair-indemnite",
-    ):
+    if any(k in s for k in compagnies_kw) or s == "vol-air-france-retarde-indemnite":
         return "compagnies"
     if (s.startswith("vol-retarde-") and s.endswith("-indemnite")) or s == "vol-retarde-abidjan-dakar-comparatif":
         return "routes_afrique"

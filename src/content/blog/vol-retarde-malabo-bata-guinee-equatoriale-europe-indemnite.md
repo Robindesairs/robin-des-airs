@@ -1,67 +1,100 @@
 ---
-title: "Vol Malabo ou Bata (Guinée équatoriale) retardé vers l'Europe : vos droits"
-meta_title: "Vol Malabo / Bata retardé vers l'Europe : jusqu'à 600€ selon éligibilité"
-meta_description: "Vol Malabo (SSG) ou Bata (BSG) vers l'Europe retardé ou annulé ? Selon la compagnie, vous pourriez avoir droit jusqu'à 600€ par passager. On vérifie gratuitement, 0€ d'avance."
+title: "Vol retardé Malabo ou Bata (Guinée équatoriale) vers l'Europe : jusqu'à 600 €"
+meta_title: "Vol Malabo-Bata et Europe retardé : 600 € par passager"
+meta_description: "Vol Malabo (SSG) ou Bata (BSG) vers l'Europe retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies paient, comment réclamer."
 slug: vol-retarde-malabo-bata-guinee-equatoriale-europe-indemnite
-image_url: /og-blog.png
+image_url: /assets/images/schema-ce261-sens-compagnie.png
+faq:
+  - q: "Mon vol Malabo-Madrid, Malabo-Paris ou Malabo-Frankfurt a plus de 3h de retard. Combien puis-je réclamer ?"
+    a: "**600 € par passager**, si le vol est opéré par une compagnie européenne (Iberia, Air France ou Lufthansa). La distance entre l'Europe et Malabo dépasse 3 500 km, donc le palier maximal de 600 € s'applique dès 3h de retard à l'arrivée."
+  - q: "Mon vol Europe-Malabo est retardé et c'est Royal Air Maroc ou Ethiopian Airlines. Suis-je couvert ?"
+    a: "Oui, dans ce sens. **Tout vol au départ d'un aéroport de l'UE** (Madrid, Paris, Frankfurt...) est couvert par le CE 261/2004, quelle que soit la compagnie qui l'opère, même non européenne."
+  - q: "Mon vol retour Malabo-Europe est retardé sur Royal Air Maroc, Ethiopian ou Ceiba Intercontinental. J'ai droit à quoi ?"
+    a: "Pas au forfait CE 261 sur ce sens : ce sont des compagnies non européennes au départ d'un pays hors UE. Mais la **Convention de Montréal** couvre vos frais réels justifiés (repas, hôtel, achats de première nécessité). Et si votre vol aller depuis l'Europe a lui aussi été retardé, il reste indemnisable à 600 €."
+  - q: "Je pars de Bata (BSG), pas de Malabo. Est-ce différent ?"
+    a: "Bata n'a pas de liaison directe vers l'Europe : il faut passer par Malabo ou par un hub régional (Douala, Libreville). L'éligibilité dépend alors de la compagnie qui opère le segment vers l'Europe, et le retard s'apprécie à l'arrivée à destination finale, pas à chaque escale."
+  - q: "La compagnie parle d'une panne technique ou d'une grève interne. C'est une excuse valable ?"
+    a: "Non, en principe. La CJUE (arrêts Wallentin-Hermann et van der Lans) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires, et l'arrêt Krüsemann exclut aussi la grève du personnel de la compagnie elle-même. L'indemnité reste due dans ces deux cas."
+  - q: "Mon vol date d'il y a deux ans. Est-ce trop tard pour réclamer ?"
+    a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Malabo ou Bata vers l'Europe retardé il y a deux ans reste indemnisable."
 ---
 
-**Jusqu'à 600 € par passager** pourraient rester à réclamer si votre vol au départ de Malabo (SSG) ou de Bata (BSG), en Guinée équatoriale, vers l'Europe a été fortement retardé ou annulé. On vérifie gratuitement votre éligibilité, 0 € d'avance.
+**Votre vol entre l'Europe et Malabo (SSG) ou Bata (BSG), en Guinée équatoriale, a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Europe vers Malabo est toujours couvert, quelle que soit la compagnie. Le sens Malabo vers Europe n'est couvert que si la compagnie est européenne (Iberia, Air France, Lufthansa). Vérification gratuite, 0 € d'avance.
 
-La Guinée équatoriale est une route diaspora rarement traitée par les concurrents, et pourtant des milliers de familles relient chaque année Malabo ou Bata à Madrid, Paris ou d'autres villes européennes. La question qui revient toujours : **un vol qui part d'un pays hors Union européenne peut-il ouvrir droit à indemnisation ?** La réponse est plus nuancée qu'un simple oui ou non — et elle dépend d'un détail que beaucoup ignorent.
+Selon la ville de départ, la distance entre l'Europe et Malabo va d'environ 4 700 km (Madrid) à plus de 5 000 km (Paris, Frankfurt) : un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Malabo-Europe reste l'axe principal de la diaspora équato-guinéenne ; Bata, deuxième ville du pays, n'a pas de liaison directe vers l'Europe et impose presque toujours une correspondance. Voici précisément qui doit payer, combien, et comment réclamer.
 
-## La règle clé : qui opère le vol, pas seulement d'où il part
+La Guinée équatoriale est une route rarement traitée en profondeur, alors que des milliers de familles relient chaque année Malabo ou Bata à Madrid, Paris ou Frankfurt pour des vacances, des études ou des obligations familiales. La question qui revient le plus souvent : « mon vol part d'un pays hors Union européenne, ai-je vraiment droit à quelque chose ? » La réponse dépend d'abord du sens du trajet, puis de la compagnie qui l'opère.
 
-Le règlement européen **CE 261/2004** ne s'applique pas automatiquement à tout vol vers l'Europe. Deux situations doivent être distinguées avec soin.
+## Êtes-vous éligible ? La règle en 30 secondes
 
-**1. Départ hors UE vers l'UE, sur une compagnie NON européenne.** Un vol Malabo → une escale africaine → Europe opéré intégralement par une compagnie non européenne se trouve, en principe, **hors du champ** du règlement CE 261. Le point de départ est hors UE et le transporteur n'est pas communautaire.
+![Schéma CE 261 : un vol au départ de l'UE est couvert quelle que soit la compagnie ; au départ hors UE, seule une compagnie européenne ouvre droit au forfait](/assets/images/schema-ce261-sens-compagnie.png)
 
-**2. Le segment opéré par une compagnie européenne.** C'est ici que beaucoup de familles passent à côté de leurs droits. Si une partie de votre trajet — ou l'ensemble — est **opérée par une compagnie européenne** (par exemple un transporteur communautaire assurant Malabo/Bata vers l'Europe, ou un segment de correspondance depuis un hub européen), alors ce segment **pourrait relever du règlement CE 261**, même si le voyage a commencé hors de l'UE.
+Le règlement CE 261/2004 s'applique dans deux cas :
 
-Autrement dit : ce n'est pas seulement le point de départ qui compte, mais **l'identité de la compagnie qui opère réellement chaque segment**. Un billet unique peut mélanger un segment non éligible et un segment potentiellement éligible.
+- **Le vol part d'un aéroport de l'UE** (Madrid, Paris, Frankfurt) : couvert quelle que soit la compagnie, même non européenne.
+- **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Malabo ou de Bata.
 
-## Le cas du billet à correspondance
+| Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
+|---|---|---|
+| Europe vers Malabo | Iberia, Air France, Lufthansa, Royal Air Maroc, Ethiopian Airlines, Ceiba Intercontinental | Oui : **600 € par passager** |
+| Malabo vers Europe | Iberia, Air France, Lufthansa | Oui : **600 € par passager** |
+| Malabo vers Europe | Royal Air Maroc, Ethiopian Airlines, Ceiba Intercontinental | Non : frais réels via Convention de Montréal |
 
-Beaucoup de trajets depuis la Guinée équatoriale passent par une escale. Trois configurations reviennent souvent :
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-- **Malabo/Bata → hub africain → Europe**, le tout sur compagnie non européenne : en principe hors CE 261.
-- **Malabo/Bata → hub européen → destination finale UE** : le segment opéré depuis l'UE par une compagnie européenne pourrait, selon l'éligibilité, ouvrir droit à indemnisation.
-- **Réservation unique combinant plusieurs transporteurs** : chaque segment s'analyse séparément selon la compagnie qui l'opère et le lieu de départ.
+## Les compagnies sur ces lignes : Malabo et Bata
 
-Le retard s'apprécie **à l'arrivée à la destination finale** du billet, pas escale par escale. Un retard de correspondance qui vous fait rater votre vol suivant peut donc être déterminant. C'est un point technique que nous détaillons dans notre article sur la [correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html).
+- **Compagnies européennes** (couvertes dans les deux sens) : Iberia relie Madrid à Malabo à raison de plusieurs vols par semaine et reste la liaison la plus fréquentée de la diaspora ; Air France relie Paris à Malabo ; Lufthansa relie Frankfurt à Malabo.
+- **Compagnies non européennes** (couvertes uniquement au départ d'Europe) : Royal Air Maroc dessert Malabo via son hub de Casablanca, Ethiopian Airlines via son hub d'Addis-Abeba, et Ceiba Intercontinental, la compagnie nationale équato-guinéenne, opère elle-même la liaison vers Madrid.
+- **Bata** n'a aucune liaison internationale directe vers l'Europe. Les passagers rejoignent d'abord Malabo, ou un hub régional comme Douala ou Libreville, avec des compagnies régionales (Ceiba, Cronos Airlines, Afrijet), avant d'enchaîner sur le segment international vers l'Europe. C'est cette étape de correspondance, souvent mal comprise, qui détermine en réalité vos droits.
 
-## Les conditions générales à réunir
+Cette combinaison de compagnies européennes et non européennes, sur une route peu documentée, explique pourquoi beaucoup de familles reçoivent une réponse trop rapide (« départ hors UE, rien à faire ») de la part de plateformes généralistes qui ne connaissent pas le détail des trajets Afrique centrale-Europe. Notre expertise sur ces corridors consiste précisément à distinguer, vol par vol, ce qui est indemnisable de ce qui ne l'est pas.
 
-Pour qu'un vol potentiellement éligible puisse donner droit à l'indemnisation forfaitaire, plusieurs conditions doivent en général être réunies :
+## Vol avec correspondance
 
-- **Un retard d'au moins 3 heures** à l'arrivée à destination finale, ou une **annulation**, ou un refus d'embarquement pour surréservation.
-- **La responsabilité de la compagnie** : un retard dû à des circonstances vraiment extraordinaires (météo exceptionnelle, instabilité politique, événement de sécurité) peut exonérer le transporteur. Nous expliquons ces limites dans notre article sur les [circonstances extraordinaires](/blog/vol-annule-meteo-circonstances-extraordinaires-recours.html).
-- **Un segment relevant du champ d'application** du règlement, selon la compagnie et le trajet.
+Si votre billet est une **réservation unique** avec correspondance, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013), pas escale par escale. C'est particulièrement important pour Bata : un trajet Bata → Malabo → Madrid, ou Bata → Douala → Paris, s'analyse comme un seul voyage. Une correspondance manquée qui vous fait arriver avec 3h+ de retard ouvre droit à l'indemnité, calculée sur la distance totale, même si l'une des étapes est opérée par une compagnie différente de celle du segment international.
 
-Le montant, s'il est dû, dépend de la distance : jusqu'à **600 € par passager** pour les longues distances comme Guinée équatoriale ↔ Europe.
+Trois configurations reviennent le plus souvent sur ces routes :
 
-## Un exemple qui parle aux familles
+- **Malabo → Europe, vol direct** : un seul segment, une seule compagnie à identifier (Iberia, Air France, Lufthansa, Royal Air Maroc, Ethiopian ou Ceiba).
+- **Bata → Malabo → Europe, réservation unique** : le segment régional (Ceiba, Cronos, Afrijet) et le segment international s'analysent ensemble, mais c'est la compagnie du segment international qui détermine l'éligibilité au départ d'un pays hors UE.
+- **Bata → Douala ou Libreville → Europe** : même logique, avec un hub différent selon les disponibilités au moment de la réservation.
 
-Prenons une famille de quatre personnes reliant l'Europe à Malabo pour des vacances, sur un billet dont le segment principal vers l'Europe est **opéré par une compagnie européenne**. Le vol arrive avec près de 5 heures de retard.
+Rassembler votre **billet électronique complet** (avec le nom de chaque compagnie opérant chaque segment) et vos **cartes d'embarquement** est la première étape pour que nous puissions identifier précisément quel segment ouvre droit à indemnisation.
 
-Si l'éligibilité est confirmée, l'indemnité pourrait atteindre **4 × 600 € = 2 400 €**. Sur ce montant :
+## Vol annulé : vos droits
 
-- En **phase amiable**, vous recevez **75 %**, soit environ **1 800 €**.
-- Si la compagnie refuse et qu'il faut passer en **phase contentieuse** (tribunal), vous recevez **60 %** —, les frais d'avocat, d'huissier et de procédure étant **avancés par Robin des Airs**.
+Si la compagnie annule votre vol Malabo-Europe ou Bata-Europe et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité** (jusqu'à 600 € par passager, selon l'éligibilité de la compagnie), **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
-Dans tous les cas : **0 € d'avance**, et le versement de votre part intervient sous **5 jours ouvrés** après encaissement. Nous ne pouvons garantir ni le résultat ni un délai d'obtention auprès de la compagnie — chaque dossier dépend de son éligibilité et de la réaction du transporteur.
+## Les excuses des compagnies : valables ou non
 
-## Pourquoi cette route est mal traitée ailleurs
+La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
 
-La Guinée équatoriale ne figure quasiment jamais dans les grilles des grandes plateformes d'indemnisation. Les familles se voient souvent répondre « départ hors UE, rien à faire ». C'est une réponse trop rapide : elle ignore le cas du **segment opéré par une compagnie européenne**, qui peut changer entièrement l'analyse. Notre expertise sur les routes Afrique ↔ Europe consiste précisément à ne pas laisser passer ces situations.
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens, oiseau ou débris sur la piste, vice caché du constructeur. Même dans ces cas, la compagnie doit encore prouver qu'elle a pris **toutes les mesures raisonnables** pour limiter le retard.
 
-## Ce que vous pouvez faire dès maintenant
+**Excuses non valables** (l'indemnité reste due) :
 
-Rassemblez votre **billet électronique** (avec les numéros de vol et le nom des compagnies), toute **attestation de retard** remise à l'aéroport, et vos **cartes d'embarquement**. Ces éléments nous permettent d'identifier quelle compagnie opérait chaque segment — la clé de l'analyse.
+- panne technique de l'appareil, même imprévue et même avec un entretien à jour (arrêts Wallentin-Hermann et van der Lans, CJUE)
+- [retard de l'avion sur la rotation précédente](/blog/retard-rotation-avion-vol-precedent-indemnisation.html), sauf si la compagnie prouve une cause extraordinaire en amont
+- grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
 
-Nous vérifions gratuitement, sans engagement, si votre vol au départ de Malabo ou Bata **pourrait** ouvrir droit à une indemnité.
+Robin des Airs conteste systématiquement les refus fondés sur de fausses circonstances extraordinaires.
 
-Pour aller plus loin : [Que faire si la compagnie refuse de payer](/blog/compagnie-refuse-payer-indemnite-que-faire.html) et [Vol annulé : jusqu'à 600 €](/blog/vol-annule-indemnite-600-euros.html).
+## Combien de temps pour réclamer ?
 
-→ [Vérifier mon vol Guinée équatoriale ↔ Europe](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct : +33 7 56 86 36 30](https://wa.me/33756863630)
+**5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Malabo ou Bata vers l'Europe retardé il y a deux ou trois ans reste indemnisable aujourd'hui.
+
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : une famille de 4 sur un Malabo-Madrid arrivé avec 4h de retard sur un vol Iberia : 4 x 600 € = **2 400 € récupérés**, dont vous recevez **1 800 €** (75 %) en phase amiable.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, correspondance, cause), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré.** Robin des Airs vous **achète votre créance** : vous recevez **75 %** des sommes récupérées en phase amiable, et **60 %** si la compagnie nous oblige à saisir le tribunal, l'avocat et les frais de procédure restant à notre charge.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en espagnol.
+
+→ [Déposer mon dossier Malabo ou Bata en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
+→ [WhatsApp direct](https://wa.me/33756863630)
