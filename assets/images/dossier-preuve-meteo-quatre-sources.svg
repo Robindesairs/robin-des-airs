@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" font-family="Montserrat, Helvetica, Arial, sans-serif" role="img" aria-label="Les quatre sources de preuve utilisees pour verifier une excuse meteo : METAR, TAF, carte TEMSI et vols comparables, puis le verdict sur l'exoneration de la compagnie">
+  <rect width="1200" height="720" fill="#F7F8FA"/>
+
+  <!-- header -->
+  <rect x="0" y="0" width="1200" height="92" fill="#0B1F3A"/>
+  <text x="56" y="44" fill="#FFFFFF" font-size="26" font-weight="800">Le dossier de preuve météo</text>
+  <text x="56" y="73" fill="#00E5A0" font-size="16" font-weight="600">Quatre sources publiques, horodatées, opposables. Aucune ne suffit seule.</text>
+
+  <!-- colonne 1 : ce qui s'est passe -->
+  <text x="56" y="140" fill="#6B7A90" font-size="13" font-weight="700" letter-spacing="1.2">CE QUI S'EST RÉELLEMENT PASSÉ</text>
+
+  <rect x="56" y="156" width="248" height="128" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="56" y="156" width="6" height="128" rx="3" fill="#00C87A"/>
+  <text x="80" y="188" fill="#0B1F3A" font-size="19" font-weight="800">METAR</text>
+  <text x="80" y="214" fill="#1a2436" font-size="13">Observation relevée sur</text>
+  <text x="80" y="234" fill="#1a2436" font-size="13">l'aéroport, actualisée</text>
+  <text x="80" y="254" fill="#1a2436" font-size="13">toutes les 30 minutes.</text>
+  <text x="80" y="274" fill="#047857" font-size="12" font-weight="700">Vent, visibilité, phénomènes</text>
+
+  <rect x="56" y="304" width="248" height="128" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="56" y="304" width="6" height="128" rx="3" fill="#00C87A"/>
+  <text x="80" y="336" fill="#0B1F3A" font-size="19" font-weight="800">Carte TEMSI</text>
+  <text x="80" y="362" fill="#1a2436" font-size="13">Orages, givre et</text>
+  <text x="80" y="382" fill="#1a2436" font-size="13">turbulences sur le trajet,</text>
+  <text x="80" y="402" fill="#1a2436" font-size="13">pas seulement au sol.</text>
+  <text x="80" y="422" fill="#047857" font-size="12" font-weight="700">La route était-elle fermée ?</text>
+
+  <!-- colonne 2 : ce que la compagnie savait -->
+  <text x="344" y="140" fill="#6B7A90" font-size="13" font-weight="700" letter-spacing="1.2">CE QUE LA COMPAGNIE SAVAIT</text>
+
+  <rect x="344" y="156" width="248" height="128" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="344" y="156" width="6" height="128" rx="3" fill="#0B1F3A"/>
+  <text x="368" y="188" fill="#0B1F3A" font-size="19" font-weight="800">TAF</text>
+  <text x="368" y="214" fill="#1a2436" font-size="13">Prévision publiée jusqu'à</text>
+  <text x="368" y="234" fill="#1a2436" font-size="13">30 heures à l'avance,</text>
+  <text x="368" y="254" fill="#1a2436" font-size="13">puis réactualisée.</text>
+  <text x="368" y="274" fill="#047857" font-size="12" font-weight="700">Elle pouvait anticiper</text>
+
+  <rect x="344" y="304" width="248" height="128" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="344" y="304" width="6" height="128" rx="3" fill="#0B1F3A"/>
+  <text x="368" y="336" fill="#0B1F3A" font-size="19" font-weight="800">Vols comparables</text>
+  <text x="368" y="362" fill="#1a2436" font-size="13">Les autres départs du</text>
+  <text x="368" y="382" fill="#1a2436" font-size="13">même aéroport, dans la</text>
+  <text x="368" y="402" fill="#1a2436" font-size="13">même fenêtre horaire.</text>
+  <text x="368" y="422" fill="#047857" font-size="12" font-weight="700">L'aéroport était-il paralysé ?</text>
+
+  <!-- fleche -->
+  <path d="M 616 294 L 664 294" stroke="#6B7A90" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 656 286 L 666 294 L 656 302" fill="none" stroke="#6B7A90" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- colonne 3 : verdict -->
+  <text x="688" y="140" fill="#6B7A90" font-size="13" font-weight="700" letter-spacing="1.2">CE QUE ÇA DÉCIDE</text>
+
+  <rect x="688" y="156" width="456" height="128" rx="12" fill="#FFFFFF" stroke="#00C87A" stroke-width="2"/>
+  <text x="712" y="188" fill="#0B1F3A" font-size="19" font-weight="800">Météo ordinaire</text>
+  <text x="712" y="216" fill="#1a2436" font-size="14">Rien d'exceptionnel au relevé, d'autres vols sont partis.</text>
+  <text x="712" y="240" fill="#1a2436" font-size="14">L'exonération ne tient pas.</text>
+  <text x="712" y="268" fill="#047857" font-size="15" font-weight="800">Indemnité forfaitaire due</text>
+
+  <rect x="688" y="304" width="456" height="128" rx="12" fill="#FFFFFF" stroke="#E2E6EE" stroke-width="2"/>
+  <rect x="688" y="304" width="6" height="128" rx="3" fill="#cc0000"/>
+  <text x="712" y="336" fill="#0B1F3A" font-size="19" font-weight="800">Météo réellement extrême</text>
+  <text x="712" y="364" fill="#1a2436" font-size="14">Le forfait n'est pas dû, mais la prise en charge reste</text>
+  <text x="712" y="388" fill="#1a2436" font-size="14">obligatoire et sans plafond : repas, hôtel, transport.</text>
+  <text x="712" y="416" fill="#047857" font-size="15" font-weight="800">Article 9, arrêt McDonagh</text>
+
+  <!-- bandeau bas : la nuance -->
+  <rect x="56" y="466" width="1088" height="104" rx="12" fill="#0B1F3A"/>
+  <text x="80" y="506" fill="#00E5A0" font-size="15" font-weight="800">La nuance que les compagnies passent sous silence</text>
+  <text x="80" y="534" fill="#FFFFFF" font-size="14">Une circonstance extraordinaire n'exonère jamais automatiquement. Le transporteur doit encore prouver qu'il a pris</text>
+  <text x="80" y="556" fill="#FFFFFF" font-size="14">toutes les mesures raisonnables pour éviter le retard, et que la météo touchait bien VOTRE vol, pas un vol précédent.</text>
+
+  <text x="56" y="608" fill="#6B7A90" font-size="13">Le seuil se mesure à l'arrivée, à l'ouverture des portes, jamais au départ.</text>
+  <text x="56" y="632" fill="#6B7A90" font-size="13">Sources : relevés METAR et TAF des services météorologiques d'aérodrome, cartes TEMSI, données publiques de trafic.</text>
+
+  <text x="56" y="686" fill="#0B1F3A" font-size="14" font-weight="800">Robin des Airs</text>
+  <text x="160" y="686" fill="#6B7A90" font-size="14">robindesairs.eu</text>
+</svg>

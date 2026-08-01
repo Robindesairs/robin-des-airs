@@ -7,8 +7,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/favicon.png" type="image/png">
-  <title>Météo et indemnisation : comment Robin démonte l'excuse n°1 des compagnies | Robin des Airs</title>
-  <meta name="description" content="La compagnie invoque la météo pour refuser votre indemnité ? Robin vérifie les bulletins officiels et les autres vols : voici comment on démonte l'excuse météo, preuves officielles à l'appui.">
+  <title>Preuve météo d'un vol retardé : comment on monte le dossier</title>
+  <meta name="description" content="La compagnie invoque la météo ? Quatre sources publiques et horodatées permettent de le vérifier : METAR, TAF, carte TEMSI et vols comparables. Voici comment on construit la preuve, et ce que la compagnie doit encore démontrer.">
+  <link rel="canonical" href="https://robindesairs.eu/meteo-dossier-indemnite">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Preuve météo d'un vol retardé : comment on monte le dossier">
+  <meta property="og:description" content="Quatre sources publiques et horodatées pour vérifier une excuse météo : METAR, TAF, carte TEMSI et vols comparables.">
+  <meta property="og:url" content="https://robindesairs.eu/meteo-dossier-indemnite">
+  <meta property="og:image" content="https://robindesairs.eu/assets/images/dossier-preuve-meteo-quatre-sources.svg">
+  <meta name="twitter:card" content="summary_large_image">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -31,6 +38,13 @@
     li{margin-bottom:8px;font-size:14px}
     a{color:var(--neon-dark);font-weight:600}a:hover{text-decoration:underline}
     strong{color:var(--navy)}
+    figure{margin:20px 0}
+    figure img{width:100%;height:auto;border:1px solid var(--border);border-radius:10px;background:var(--white)}
+    figcaption{font-size:12px;color:var(--gray);margin-top:8px;text-align:center}
+    table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+    th,td{border:1px solid var(--border);padding:10px;text-align:left;vertical-align:top}
+    th{background:var(--navy);color:#fff;font-weight:700}
+    .meta-line{font-size:12px;color:var(--gray);margin-bottom:24px}
     .cta-block{text-align:center;padding:28px 24px;background:var(--navy);color:white;border-radius:12px;margin-top:32px}
     .cta-block a{color:#00E5A0;text-decoration:none;font-weight:700}
     .cta-block a:hover{text-decoration:underline}
@@ -45,71 +59,197 @@
     <a href="/" class="back">← Retour</a>
   </div>
   <div class="wrap">
-    <h1>Météo et indemnisation : comment Robin démonte l'excuse n°1 des compagnies</h1>
-    <p class="subtitle">La compagnie invoque la météo ? On a les outils pour vérifier si c'est vrai. Voici comment on fait, preuves officielles à l'appui.</p>
+    <h1>Comment on prouve que la météo n'explique pas votre retard</h1>
+    <p class="subtitle">La compagnie écrit « conditions météorologiques défavorables » et clôt le dossier. Quatre sources publiques permettent de vérifier si c'est exact, et une règle de droit oblige la compagnie à en démontrer bien plus qu'elle ne le croit.</p>
+    <p class="meta-line">Par Saint-Yves Kodjo, fondateur de Robin des Airs. Mis à jour le 31 juillet 2026.</p>
 
     <div class="legal-block">
-      <h2>Leur argument favori : « circonstances extraordinaires »</h2>
-      <p>Quand votre vol a plus de 3 heures de retard, la compagnie a une carte à jouer pour ne pas payer : invoquer la météo. « Tempête », « brouillard », « conditions météorologiques exceptionnelles » : ces mots reviennent dans environ 80&nbsp;% des refus d'indemnisation.</p>
-      <p>Le problème, c'est que dans la majorité des cas, la météo n'était pas exceptionnelle. La compagnie le sait. Mais elle compte sur le fait que vous n'avez aucun moyen de vérifier.</p>
+      <h2>Pourquoi la météo est l'argument le plus commode</h2>
+      <p>Un refus d'indemnisation fondé sur la météo a une qualité rare pour la compagnie : il est invérifiable par le passager. Vous n'avez ni le relevé de l'aéroport à l'heure du vol, ni la liste des autres départs, ni la carte des phénomènes en route. La compagnie, elle, dispose des trois.</p>
+      <p>Cette asymétrie est le vrai sujet. Elle se corrige, parce que les documents qui font foi sont publics, horodatés, et produits par des services météorologiques d'aérodrome qui n'ont aucun intérêt dans votre dossier.</p>
       <div class="highlight-green">
-        <p><strong>Nous, on vérifie.</strong></p>
+        <p><strong>Le point de droit qui change tout :</strong> même lorsque la météo est réellement extraordinaire, elle n'exonère jamais automatiquement. Le transporteur doit encore prouver qu'il a pris toutes les mesures raisonnables pour éviter le retard. C'est la seconde condition de l'article 5.3 du règlement CE 261/2004, et c'est celle qu'on oublie de vous opposer.</p>
       </div>
     </div>
 
     <div class="legal-block">
-      <h2>Les 4 preuves météo qu'on utilise</h2>
-      <p>Pour chaque dossier, notre équipe consulte les bulletins météo officiels utilisés par les pilotes et les contrôleurs aériens eux-mêmes. Ce sont des documents publics, objectifs, et difficiles à contester devant un médiateur ou un tribunal.</p>
+      <h2>Quelles preuves peut-on réunir, et que prouve chacune ?</h2>
+      <figure>
+        <img src="/assets/images/dossier-preuve-meteo-quatre-sources.svg" width="1200" height="720" loading="lazy" decoding="async" alt="Les quatre sources de preuve d'une excuse météo : METAR et carte TEMSI pour ce qui s'est passé, TAF et vols comparables pour ce que la compagnie savait, puis le verdict sur l'exonération">
+        <figcaption>Les quatre sources du dossier de preuve, et ce que chacune permet d'établir.</figcaption>
+      </figure>
 
-      <h3>Le METAR : ce qui s'est réellement passé</h3>
-      <p>C'est une observation météo relevée toutes les 30 minutes sur chaque aéroport. Vent, visibilité, nuages, phénomènes dangereux : tout est consigné. Si le METAR de votre aéroport au moment du vol ne mentionne rien d'exceptionnel, l'excuse météo tombe.</p>
-
-      <h3>Le TAF : ce que la compagnie savait à l'avance</h3>
-      <p>C'est la prévision météo de l'aéroport, publiée 24&nbsp;heures avant (et actualisée ensuite). Si le TAF ne prévoyait aucun phénomène majeur, la compagnie ne peut pas dire « on ne pouvait pas prévoir ». Elle savait. Elle aurait dû anticiper.</p>
-
-      <h3>La carte TEMSI : la route était-elle vraiment impraticable ?</h3>
-      <p>Cette carte montre les orages, le givre et les turbulences sur l'ensemble du trajet. Si votre vol a été retardé « à cause du temps en route » mais que la carte TEMSI ne montre rien de significatif sur votre couloir aérien, l'argument ne tient pas.</p>
-
-      <h3>Les autres vols : l'arme fatale</h3>
-      <p>Ce n'est pas un bulletin météo, mais c'est souvent la preuve la plus parlante. On vérifie les vols qui ont décollé du même aéroport dans la même fenêtre horaire. Si 15 avions sont partis normalement pendant que le vôtre accumulait des heures de retard, la météo n'est clairement pas la seule explication.</p>
+      <table>
+        <thead>
+          <tr><th>Source</th><th>Ce qu'elle établit</th><th>Ce qu'elle ne suffit pas à prouver</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>METAR</strong></td>
+            <td>L'état réel du ciel sur l'aéroport à l'heure du vol : vent, visibilité, plafond nuageux, phénomènes dangereux. Relevé toutes les 30 minutes.</td>
+            <td>Il décrit le sol, pas la route. Un METAR clément n'exclut pas un orage en croisière.</td>
+          </tr>
+          <tr>
+            <td><strong>TAF</strong></td>
+            <td>Ce que la compagnie savait à l'avance. La prévision d'aérodrome est publiée jusqu'à 30 heures avant et réactualisée ensuite.</td>
+            <td>Une prévision juste ne rend pas le retard fautif à elle seule. Elle sert à mesurer l'anticipation.</td>
+          </tr>
+          <tr>
+            <td><strong>Carte TEMSI</strong></td>
+            <td>Les orages, le givre et les turbulences sur l'ensemble du trajet, pas seulement aux deux extrémités.</td>
+            <td>Un phénomène sur la carte ne veut pas dire couloir fermé. Le contournement est la règle, pas l'exception.</td>
+          </tr>
+          <tr>
+            <td><strong>Vols comparables</strong></td>
+            <td>Les autres départs du même aéroport dans la même fenêtre horaire. C'est la pièce la plus parlante devant un juge.</td>
+            <td>Des types d'appareils et des destinations différents ne sont pas toujours comparables entre eux.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Aucune de ces quatre sources ne tranche seule. C'est leur recoupement qui fait la preuve, et c'est aussi ce qui la rend difficile à écarter : il faudrait contester quatre documents indépendants au lieu d'un.</p>
     </div>
 
     <div class="legal-block">
-      <h2>Comment on construit votre dossier</h2>
-      <p>Quand vous nous confiez votre vol, voici ce qu'on fait en coulisses :</p>
+      <h2>Comment le dossier est construit, étape par étape</h2>
       <ul>
-        <li><strong>D'abord</strong> on vérifie le retard réel à l'arrivée (c'est le retard à l'arrivée qui compte pour la loi européenne), avec les données de trafic aérien officielles.</li>
-        <li><strong>Ensuite</strong> on récupère le METAR des aéroports de départ et d'arrivée aux heures de votre vol. Si la météo était normale (vent modéré, bonne visibilité, pas de phénomène majeur), l'excuse tombe vite.</li>
-        <li><strong>Puis</strong> on vérifie le TAF pour montrer ce que la compagnie savait à l'avance. Si elle invoque la météo alors que les prévisions étaient favorables, c'est incohérent.</li>
-        <li><strong>Enfin</strong> on liste les vols qui ont opéré normalement depuis le même aéroport. C'est souvent ce qui fait plier les compagnies : difficile de prétendre que « l'aéroport était paralysé » quand on montre que beaucoup d'avions sont partis sans problème.</li>
+        <li><strong>Le retard réel à l'arrivée d'abord.</strong> Le seuil des trois heures se mesure à l'ouverture des portes, jamais au décollage. Un vol parti avec quatre heures de retard mais arrivé avec deux heures cinquante n'ouvre aucun droit forfaitaire, et l'inverse est vrai.</li>
+        <li><strong>Le relevé des deux aéroports ensuite</strong>, aux heures exactes de votre vol, départ comme arrivée.</li>
+        <li><strong>La prévision publiée la veille</strong>, pour établir ce qui était anticipable.</li>
+        <li><strong>Les départs comparables</strong> depuis le même aéroport, dans la même tranche horaire.</li>
+        <li><strong>L'origine du retard enfin</strong>, qui est le point le plus souvent décisif et le moins regardé. Voir plus bas.</li>
+      </ul>
+      <p>Ce travail se fait avant d'accepter un dossier, pas après. C'est la raison pour laquelle tous les dossiers ne sont pas acceptés : quand les relevés donnent raison à la compagnie, le dire tout de suite vous évite des mois d'attente.</p>
+    </div>
+
+    <div class="legal-block">
+      <h2>Le piège : la météo d'hier, sur un autre vol que le vôtre</h2>
+      <p>C'est le cas le plus fréquent, et le plus mal compris. Votre vol au départ de Dakar, d'Abidjan ou de Douala part avec cinq heures de retard. Le ciel local est parfait. La compagnie invoque pourtant la météo, et elle ne ment pas tout à fait : la neige était à Paris, la veille au soir, sur le vol qui devait amener votre appareil.</p>
+      <p>La Cour de justice de l'Union européenne a jugé qu'une circonstance extraordinaire survenue sur un vol précédent du même appareil peut exonérer le transporteur, mais à des conditions strictes, et jamais de façon automatique. Le transporteur doit démontrer le lien de causalité et l'impossibilité d'éviter la propagation par une mesure raisonnable, un appareil de remplacement ou un équipage de réserve par exemple.</p>
+      <p>Autrement dit : « c'était la météo » ne dit rien tant qu'on n'a pas établi <em>quelle</em> météo, <em>quel jour</em> et sur <em>quel vol</em>. Le détail de ce mécanisme est traité dans <a href="/blog/retard-rotation-avion-vol-precedent-indemnisation.html">le retard de rotation, quand le retard vient du vol précédent</a>.</p>
+    </div>
+
+    <div class="legal-block">
+      <h2>Et si la météo était réellement extrême ?</h2>
+      <p>Cela arrive : fermeture d'aéroport, cyclone, cendres volcaniques. Dans ce cas l'indemnité forfaitaire n'est pas due, et il faut le dire clairement plutôt que d'entretenir une illusion.</p>
+      <p><strong>Mais vos droits ne disparaissent pas pour autant.</strong> L'obligation de prise en charge de l'article 9 survit à la circonstance extraordinaire, et elle est sans plafond de montant ni de durée. Repas, hébergement, transport entre l'hôtel et l'aéroport : la compagnie doit les fournir, ou vous rembourser sur justificatifs si elle ne l'a pas fait. La Cour de justice l'a affirmé dans l'arrêt McDonagh, rendu après l'éruption du volcan islandais de 2010, en refusant expressément de plafonner cette obligation.</p>
+      <div class="highlight">
+        <p>Concrètement : le passager bloqué trois jours qui a payé son hôtel et ses repas récupère ces frais sur justificatifs, même quand aucune indemnité forfaitaire n'est due. Beaucoup l'ignorent et ne réclament rien.</p>
+      </div>
+      <p>Le détail des seuils et des pièces à conserver figure dans <a href="/blog/arret-mcdonagh-cendres-volcaniques-cjue.html">l'arrêt McDonagh, pas de limite à l'assistance</a>.</p>
+    </div>
+
+    <div class="legal-block">
+      <h2>Questions fréquentes</h2>
+
+      <h3>La compagnie doit-elle me prouver que la météo était exceptionnelle ?</h3>
+      <p>Oui. La charge de la preuve pèse sur le transporteur, pas sur vous. C'est à lui d'établir la circonstance extraordinaire et les mesures raisonnables qu'il a prises. Une phrase type dans un courriel de refus ne constitue pas une preuve, et vous pouvez lui demander les éléments sur lesquels il se fonde.</p>
+
+      <h3>Où puis-je consulter le METAR de mon vol moi-même ?</h3>
+      <p>Les relevés d'observation et les prévisions d'aérodrome sont diffusés publiquement par les services météorologiques nationaux et par l'aviation civile. Ils sont archivés, donc consultables après coup. La difficulté n'est pas d'y accéder mais de les lire : le format est codé et une mention isolée ne prouve rien hors contexte.</p>
+
+      <h3>Un orage annoncé la veille joue-t-il en ma faveur ou en ma défaveur ?</h3>
+      <p>En votre faveur, le plus souvent. Un phénomène annoncé trente heures à l'avance est un phénomène que la compagnie pouvait anticiper, en avançant un départ, en prévoyant du carburant supplémentaire ou en positionnant un équipage. C'est précisément là que la seconde condition de l'article 5.3 se joue.</p>
+
+      <h3>Combien de temps ai-je pour agir ?</h3>
+      <p>Devant les juridictions françaises, cinq ans pour une indemnité CE 261, au titre de l'article 2224 du Code civil. Attention en revanche si votre situation relève de la Convention de Montréal, pour des frais réels : le délai y est de deux ans et c'est une forclusion, que ni une lettre recommandée ni une mise en demeure n'interrompent.</p>
+
+      <h3>Que se passe-t-il si votre vérification me donne tort ?</h3>
+      <p>On vous le dit, et le dossier s'arrête là. Vous n'avancez rien et vous ne devez rien. En cas de succès en phase amiable, vous recevez 75 % de la somme récupérée.</p>
+    </div>
+
+    <div class="legal-block">
+      <h2>Pour aller plus loin</h2>
+      <ul>
+        <li><a href="/blog/excuse-meteo-vol-retarde-verifier-autres-vols.html">« C'est la météo » : l'excuse de la compagnie tient-elle ?</a>, le guide complet, avec la lecture d'un METAR ligne par ligne.</li>
+        <li><a href="/blog/circonstances-extraordinaires-ce261.html">Circonstances extraordinaires : la liste et la faille</a>, ce qui exonère réellement et ce qui n'exonère pas.</li>
+        <li><a href="/blog/vol-annule-meteo-circonstances-extraordinaires-recours.html">Vol annulé pour météo : recours et preuves</a>, si votre vol a été annulé et non retardé.</li>
+        <li><a href="/blog/attente-piste-avion-immobilise-tarmac-droits-passager.html">Immobilisé sur le tarmac : vos droits pendant l'attente</a>.</li>
       </ul>
     </div>
 
-    <div class="legal-block">
-      <h2>Un exemple concret</h2>
-      <p>Votre vol Paris-Dakar du 15 janvier devait décoller à 22h30. Il est parti à 03h45. Air France dit « conditions météorologiques exceptionnelles ».</p>
-      <p>On vérifie. Le METAR de Paris-CDG à 22h30 : vent 8 nœuds, visibilité supérieure à 10 km, quelques nuages à 4&nbsp;000 pieds. Conditions normales.</p>
-      <p>On vérifie les autres vols. Entre 22h et minuit, 12 vols ont décollé de CDG sans retard significatif.</p>
-      <div class="highlight-green">
-        <p><strong>Verdict :</strong> la météo n'était pas exceptionnelle. Air France doit payer 600&nbsp;€ par passager éligible (vol long-courrier, cadre CE&nbsp;261/2004).</p>
-      </div>
-      <p style="font-size:13px;color:var(--gray);margin-bottom:0;">Exemple illustratif ; chaque dossier est analysé sur ses faits précis.</p>
-    </div>
-
-    <div class="legal-block">
-      <h2>Et si la météo était vraiment mauvaise ?</h2>
-      <p>Ça arrive. Parfois il y a une vraie tempête, un vrai brouillard dense, une vraie fermeture d'aéroport. Dans ces cas-là, on vous le dit honnêtement : votre dossier n'est pas viable, et on ne le prend pas. C'est une des raisons pour lesquelles on ne prend que les dossiers sur lesquels on est confiants.</p>
-      <p><strong>Même quand la météo était mauvaise ailleurs, l'indemnité peut être due.</strong> Par exemple : votre vol retour depuis Dakar est retardé parce que l'avion est arrivé en retard de Paris à cause de la neige. La météo à Dakar était parfaite : le retard vient de la rotation de l'appareil, pas du temps local. Dans ce type de situation, vous pouvez être éligible alors que la compagnie met en avant « la météo » sans tout expliquer.</p>
-    </div>
-
-    <p class="closing-line">La météo est leur excuse. Les bulletins sont notre réponse.</p>
+    <p class="closing-line">La météo est leur argument. Les relevés sont la réponse.</p>
 
     <div class="cta-block">
-      <p style="margin-bottom:8px;color:rgba(255,255,255,0.95);font-size:15px;">Vous avez eu un vol retardé ou annulé ? Envoyez-nous votre numéro de vol et la date : on vérifie la météo et votre éligibilité gratuitement en quelques minutes.</p>
+      <p style="margin-bottom:8px;color:rgba(255,255,255,0.95);font-size:15px;">Vous avez eu un vol retardé ou annulé ? Envoyez votre numéro de vol et la date : on vérifie les relevés et votre éligibilité gratuitement.</p>
       <p><a class="cta-main" href="https://wa.me/33756863630?text=Bonjour%2C%20je%20voudrais%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9%20%28vol%20retard%C3%A9%20%2F%20annul%C3%A9%29.">Vérifier mon éligibilité sur WhatsApp →</a></p>
-      <p style="font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:0;">On ne prend notre part (25&nbsp;%) qu'une fois votre argent récupéré. Si vous n'êtes pas indemnisé, vous ne payez rien.</p>
+      <p style="font-size:13px;color:rgba(255,255,255,0.85);margin-bottom:0;">Aucune avance de votre part. En cas de succès en phase amiable, vous recevez 75 % de la somme récupérée.</p>
       <p style="margin-top:16px;font-size:13px;"><a href="/">Ou vérifier depuis le site →</a></p>
     </div>
   </div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Comment on prouve que la météo n'explique pas votre retard",
+  "description": "Quatre sources publiques et horodatées permettent de vérifier une excuse météo : METAR, TAF, carte TEMSI et vols comparables. Ce que chacune établit, et ce que la compagnie doit encore démontrer.",
+  "url": "https://robindesairs.eu/meteo-dossier-indemnite",
+  "image": "https://robindesairs.eu/assets/images/dossier-preuve-meteo-quatre-sources.svg",
+  "datePublished": "2026-07-02",
+  "dateModified": "2026-07-31",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://robindesairs.eu/meteo-dossier-indemnite" },
+  "author": {
+    "@type": "Person",
+    "@id": "https://robindesairs.eu/a-propos.html#climbie",
+    "name": "Saint-Yves Kodjo",
+    "description": "Fondateur de Robin des Airs, service spécialisé dans le recouvrement d'indemnités pour passagers aériens sur l'axe Europe-Afrique, spécialiste du règlement CE 261/2004.",
+    "url": "https://robindesairs.eu/a-propos.html"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Robin des Airs",
+    "logo": { "@type": "ImageObject", "url": "https://robindesairs.eu/robin-des-airs-logo-texte-profil.png" }
+  },
+  "inLanguage": "fr-FR",
+  "about": [
+    { "@type": "Thing", "name": "Règlement CE 261/2004" },
+    { "@type": "Thing", "name": "Circonstances extraordinaires" },
+    { "@type": "Thing", "name": "METAR" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Robin des Airs", "item": "https://robindesairs.eu/" },
+    { "@type": "ListItem", "position": 2, "name": "Preuve météo d'un vol retardé", "item": "https://robindesairs.eu/meteo-dossier-indemnite" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "La compagnie doit-elle me prouver que la météo était exceptionnelle ?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Oui. La charge de la preuve pèse sur le transporteur, pas sur le passager. C'est à lui d'établir la circonstance extraordinaire et les mesures raisonnables qu'il a prises. Une phrase type dans un courriel de refus ne constitue pas une preuve, et vous pouvez lui demander les éléments sur lesquels il se fonde." }
+    },
+    {
+      "@type": "Question",
+      "name": "Où puis-je consulter le METAR de mon vol moi-même ?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Les relevés d'observation et les prévisions d'aérodrome sont diffusés publiquement par les services météorologiques nationaux et par l'aviation civile, et ils sont archivés donc consultables après coup. La difficulté n'est pas d'y accéder mais de les lire : le format est codé et une mention isolée ne prouve rien hors contexte." }
+    },
+    {
+      "@type": "Question",
+      "name": "Un orage annoncé la veille joue-t-il en ma faveur ou en ma défaveur ?",
+      "acceptedAnswer": { "@type": "Answer", "text": "En votre faveur le plus souvent. Un phénomène annoncé trente heures à l'avance est un phénomène que la compagnie pouvait anticiper, en avançant un départ, en prévoyant du carburant supplémentaire ou en positionnant un équipage. C'est là que se joue la seconde condition de l'article 5.3 du règlement CE 261/2004." }
+    },
+    {
+      "@type": "Question",
+      "name": "Combien de temps ai-je pour réclamer après un vol retardé pour météo ?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Devant les juridictions françaises, cinq ans pour une indemnité CE 261 au titre de l'article 2224 du Code civil. Si votre situation relève de la Convention de Montréal, pour des frais réels, le délai est de deux ans et c'est une forclusion : ni une lettre recommandée ni une mise en demeure ne l'interrompent." }
+    },
+    {
+      "@type": "Question",
+      "name": "Ai-je droit à quelque chose si la météo était réellement extrême ?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Oui. L'indemnité forfaitaire n'est pas due, mais l'obligation de prise en charge de l'article 9 survit à la circonstance extraordinaire et elle est sans plafond de montant ni de durée : repas, hébergement et transport doivent être fournis, ou remboursés sur justificatifs. La Cour de justice l'a affirmé dans l'arrêt McDonagh en refusant expressément de plafonner cette obligation." }
+    }
+  ]
+}
+</script>
 </body>
 </html>
