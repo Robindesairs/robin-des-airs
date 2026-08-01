@@ -1,0 +1,1132 @@
+[
+ {
+  "id": "m001",
+  "nom": "L'Alternative",
+  "pays": "Togo",
+  "email": "contact@lalternative.info",
+  "url": "https://lalternative.info/category/tribune/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m002",
+  "nom": "Burkina24",
+  "pays": "Burkina Faso",
+  "email": "redchef@burkina24.com",
+  "url": "https://burkina24.com/category/actualite/opinion/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m003",
+  "nom": "Togobreakingnews",
+  "pays": "Togo",
+  "email": "contact@togobreakingnews.info",
+  "url": "https://togobreakingnews.info/category/opinions/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m004",
+  "nom": "Lefaso.net",
+  "pays": "Burkina Faso",
+  "email": "contact@lefaso.net",
+  "url": "https://lefaso.net/spip.php?rubrique21",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m005",
+  "nom": "ActuNiger",
+  "pays": "Niger",
+  "email": "contact@actuniger.com",
+  "url": "https://www.actuniger.com/tribune-opinion.html",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m006",
+  "nom": "Journal du Mali",
+  "pays": "Mali",
+  "email": "redaction@journaldumali.com",
+  "url": "https://journaldumali.com/category/idees/tribune/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m007",
+  "nom": "Malijet",
+  "pays": "Mali",
+  "email": "malijet@malijet.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m008",
+  "nom": "Connectionivoirienne",
+  "pays": "Côte d'Ivoire",
+  "email": "info@connectionivoirienne.net",
+  "url": "https://connectionivoirienne.net/category/libre-opinion/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m009",
+  "nom": "Le Point Sur",
+  "pays": "Côte d'Ivoire",
+  "email": "pointsurcom@gmail.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m010",
+  "nom": "Koaci",
+  "pays": "Côte d'Ivoire",
+  "email": "contact@koaci.com",
+  "url": "https://www.koaci.com/theme/tribune",
+  "type": "tribune",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m011",
+  "nom": "Banouto",
+  "pays": "Bénin",
+  "email": "redaction@banouto.bj",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m012",
+  "nom": "Le Lynx / La Lance",
+  "pays": "Guinée",
+  "email": "redaction@lelynx.net",
+  "url": "",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m013",
+  "nom": "Le Djely",
+  "pays": "Guinée",
+  "email": "Contact@ledjely.com",
+  "url": "https://ledjely.com/category/tribune/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m014",
+  "nom": "Mosaïque Guinée",
+  "pays": "Guinée",
+  "email": "contact@mosaiqueguinee.com",
+  "url": "https://mosaiqueguinee.com/chroniques/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m015",
+  "nom": "Vision Guinée",
+  "pays": "Guinée",
+  "email": "boussouriou.bah@visionguinee.info",
+  "url": "",
+  "type": "tribune",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m016",
+  "nom": "Mediaguinee",
+  "pays": "Guinée",
+  "email": "mediaguinee@gmail.com",
+  "url": "",
+  "type": "tribune",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m017",
+  "nom": "Nigerdiaspora",
+  "pays": "Niger + diaspora",
+  "email": "nigerdiaspora@gmail.com",
+  "url": "https://www.nigerdiaspora.net/magazine/idees-et-opinions",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m018",
+  "nom": "Les Échos du Niger",
+  "pays": "Niger",
+  "email": "lesechosduniger@yahoo.com",
+  "url": "https://lesechosduniger.com/category/opinion-tribune/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m019",
+  "nom": "Sahelien.com",
+  "pays": "Mali / Sahel",
+  "email": "info@sahelien.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 3,
+  "note": ""
+ },
+ {
+  "id": "m020",
+  "nom": "ADIAC / Dépêches de Brazzaville",
+  "pays": "Congo + RDC",
+  "email": "redaction@lesdepechesdebrazzaville.fr",
+  "url": "https://www.adiac-congo.com/opinion_rubrique/Tribune%20libre",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m021",
+  "nom": "Gabonreview",
+  "pays": "Gabon",
+  "email": "redaction.gabonreview@gmail.com",
+  "url": "https://www.gabonreview.com/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m022",
+  "nom": "Zoom Eco",
+  "pays": "RDC",
+  "email": "courriel@zoom-eco.net",
+  "url": "https://zoom-eco.net/category/tribune/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m023",
+  "nom": "7sur7.cd",
+  "pays": "RDC",
+  "email": "redaction@7sur7.cd",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m024",
+  "nom": "DataCameroon",
+  "pays": "Cameroun",
+  "email": "info@datacameroon.com",
+  "url": "https://datacameroon.com/category/tribune/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m025",
+  "nom": "Le Jour",
+  "pays": "Cameroun",
+  "email": "contact@lejour.cm",
+  "url": "",
+  "type": "redaction",
+  "tier": 3,
+  "note": ""
+ },
+ {
+  "id": "m026",
+  "nom": "Dakaractu",
+  "pays": "Sénégal",
+  "email": "dakaractu@gmail.com",
+  "url": "https://www.dakaractu.com/submit/",
+  "type": "formulaire",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m027",
+  "nom": "Seneweb",
+  "pays": "Sénégal",
+  "email": "redaction@seneweb.com",
+  "url": "https://www.seneweb.com/news/contributions",
+  "type": "tribune",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m028",
+  "nom": "PressAfrik",
+  "pays": "Sénégal",
+  "email": "redchef@pressafrik.com",
+  "url": "https://www.pressafrik.com/Opinion_r12.html",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m029",
+  "nom": "Sud Quotidien",
+  "pays": "Sénégal",
+  "email": "sudquotidien@yahoo.fr",
+  "url": "",
+  "type": "redaction",
+  "tier": 3,
+  "note": ""
+ },
+ {
+  "id": "m030",
+  "nom": "Xalima",
+  "pays": "Sénégal + diaspora",
+  "email": "redaction@xalimasn.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m031",
+  "nom": "Madagascar Tribune",
+  "pays": "Madagascar",
+  "email": "redaction@madagascar-tribune.com",
+  "url": "https://www.madagascar-tribune.com/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m032",
+  "nom": "Madagascar Tribune Europe",
+  "pays": "France",
+  "email": "contact@vahiny.com",
+  "url": "",
+  "type": "diaspora",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m033",
+  "nom": "Mayotte Hebdo",
+  "pays": "Mayotte (France)",
+  "email": "redaction@mayottehebdo.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m034",
+  "nom": "Le Mauricien",
+  "pays": "Maurice",
+  "email": "lemauricien.redaction@gmail.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m035",
+  "nom": "Premium Times",
+  "pays": "Nigeria",
+  "email": "opinion@premiumtimesng.com",
+  "url": "https://www.premiumtimesng.com/contact",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m036",
+  "nom": "The Cable",
+  "pays": "Nigeria",
+  "email": "opinion@thecable.ng",
+  "url": "https://www.thecable.ng/contact-us/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m037",
+  "nom": "B&FT Online",
+  "pays": "Ghana",
+  "email": "editor@thebftonline.com",
+  "url": "https://thebftonline.com/contact/",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m038",
+  "nom": "Daily Maverick",
+  "pays": "Afrique du Sud",
+  "email": "letters@dailymaverick.co.za",
+  "url": "https://www.dailymaverick.co.za/contact-us",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m039",
+  "nom": "The Voice",
+  "pays": "Diaspora UK",
+  "email": "newsdesk@thevoicemediagroup.co.uk",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m040",
+  "nom": "African Voice",
+  "pays": "Diaspora UK",
+  "email": "info@africanvoiceonline.co.uk",
+  "url": "",
+  "type": "redaction",
+  "tier": 2,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m041",
+  "nom": "Aviation Ghana",
+  "pays": "Ghana (aviation)",
+  "email": "aviationghana.info@gmail.com",
+  "url": "",
+  "type": "redaction",
+  "tier": 3,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m042",
+  "nom": "Financial Afrik",
+  "pays": "Panafricain",
+  "email": "redaction@financialafrik.com",
+  "url": "https://www.financialafrik.com/author/contribution/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m043",
+  "nom": "Jeune Afrique",
+  "pays": "Panafricain",
+  "email": "redaction@jeuneafrique.com",
+  "url": "https://www.jeuneafrique.com/idees/opinion/",
+  "type": "tribune",
+  "tier": 4,
+  "note": ""
+ },
+ {
+  "id": "m044",
+  "nom": "Afrik.com",
+  "pays": "Panafricain",
+  "email": "contact@afrik.com",
+  "url": "https://www.afrik.com/contact-ours",
+  "type": "tribune",
+  "tier": 3,
+  "note": ""
+ },
+ {
+  "id": "m045",
+  "nom": "Le Quotidien du Tourisme",
+  "pays": "France (pro)",
+  "email": "redaction@i-tourisme.fr",
+  "url": "https://www.quotidiendutourisme.com/statics/contacts.html",
+  "type": "redaction",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m046",
+  "nom": "Tour Hebdo",
+  "pays": "France (pro)",
+  "email": "remi@i-tourisme.fr",
+  "url": "https://www.tourhebdo.fr/",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m047",
+  "nom": "TourMaG",
+  "pays": "France (pro)",
+  "email": "redaction@tourmag.com",
+  "url": "https://www.tourmag.com/",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m048",
+  "nom": "Air Journal",
+  "pays": "France (aviation)",
+  "email": "contact@air-journal.fr",
+  "url": "https://www.air-journal.fr/contact",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m049",
+  "nom": "Mizane.info",
+  "pays": "France (diaspora)",
+  "email": "contact@mizane.info",
+  "url": "https://www.mizane.info/contact/",
+  "type": "tribune",
+  "tier": 1,
+  "note": ""
+ },
+ {
+  "id": "m050",
+  "nom": "La Libre",
+  "pays": "Belgique",
+  "email": "llb.debats@lalibre.be",
+  "url": "https://www.lalibre.be/debats/opinions/",
+  "type": "tribune",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m051",
+  "nom": "Le Griot",
+  "pays": "France (panafricain)",
+  "email": "steven.addamah@legriot.info",
+  "url": "https://www.legriot.info/qui-sommes-nous",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m052",
+  "nom": "Amina Magazine",
+  "pays": "France (diaspora)",
+  "email": "info@aminamag.com",
+  "url": "https://aminamag.com/contact/",
+  "type": "redaction",
+  "tier": 2,
+  "note": ""
+ },
+ {
+  "id": "m053",
+  "nom": "Bondy Blog",
+  "pays": "France",
+  "email": "sarah@lebb.fr",
+  "url": "https://www.bondyblog.fr/qui-sommes-nous/",
+  "type": "redaction",
+  "tier": 3,
+  "note": ""
+ },
+ {
+  "id": "m054",
+  "nom": "Afrique XXI",
+  "pays": "France (panafricain)",
+  "email": "afriquexxi@afriquexxi.info",
+  "url": "https://afriquexxi.info/proposer-des-articles",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Consignes publiées : 8 000 à 12 000 signes. Association sans but lucratif, zéro signal commercial. Lire leur charte avant d'écrire."
+ },
+ {
+  "id": "m055",
+  "nom": "Le Temps",
+  "pays": "Suisse",
+  "email": "Opinions@letemps.ch",
+  "url": "https://www.letemps.ch/opinions/publie-pages-debats-temps",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Rubrique Débats & Opinions (C. Frammery). Critères écrits, publie des professionnels du terrain. ~30 propositions/semaine pour 15 publiées. Viser 4 000 signes. Exclusivité exigée, non rémunéré. Angle : la Suisse applique le CE 261 par accord bilatéral."
+ },
+ {
+  "id": "m056",
+  "nom": "Addis Standard",
+  "pays": "Éthiopie",
+  "email": "newsalert.English@addisstandard.com",
+  "url": "https://addisstandard.com/contact/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Adresse couvrant explicitement Opinion, OP/ED et Commentary. Angle : Addis-Abeba vers Europe sur transporteur communautaire. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m057",
+  "nom": "Daily Monitor",
+  "pays": "Ouganda",
+  "email": "editorial@ug.nationmedia.com",
+  "url": "https://www.monitor.co.ug/uganda/oped",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Groupe Nation Media. letters@ug.nationmedia.com pour le format court. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m058",
+  "nom": "News Diggers",
+  "pays": "Zambie",
+  "email": "editor@diggers.news",
+  "url": "https://diggers.news/opinion/",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Indépendant, rubriques Opinion et Letters distinctes, aucun signal payant. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m059",
+  "nom": "NewsDay",
+  "pays": "Zimbabwe",
+  "email": "feedback@newsday.co.zw",
+  "url": "https://www.newsday.co.zw/category/9/opinion-analysis",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m060",
+  "nom": "New Vision",
+  "pays": "Ouganda",
+  "email": "news@newvision.co.ug",
+  "url": "",
+  "type": "redaction",
+  "tier": 3,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m061",
+  "nom": "New African Magazine",
+  "pays": "Royaume-Uni / France",
+  "email": "editorial@icpublications.com",
+  "url": "https://newafricanmagazine.com/contact-us/",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m062",
+  "nom": "Expresso das Ilhas",
+  "pays": "Cap-Vert",
+  "email": "jornal@expressodasilhas.cv",
+  "url": "https://expressodasilhas.cv/opiniao",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Lusophone. Diaspora cap-verdienne dense en Europe, trafic réel vers Lisbonne et Paris."
+ },
+ {
+  "id": "m063",
+  "nom": "O Pais",
+  "pays": "Mozambique",
+  "email": "opais@soico.co.mz",
+  "url": "https://opais.co.mz/opiniao-2/",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Lusophone. Commercial séparé (comercial@soico.co.mz), écrire uniquement à la rédaction."
+ },
+ {
+  "id": "m064",
+  "nom": "Times of Eswatini",
+  "pays": "Eswatini",
+  "email": "news@times.co.sz",
+  "url": "",
+  "type": "redaction",
+  "tier": 4,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m065",
+  "nom": "Atlantico",
+  "pays": "France",
+  "email": "touslescontacts@atlantico.fr",
+  "url": "https://atlantico.fr/contact",
+  "type": "redaction",
+  "tier": 2,
+  "note": "Média d'opinion, aucune barrière professionnelle."
+ },
+ {
+  "id": "m066",
+  "nom": "La Provence",
+  "pays": "France (Marseille)",
+  "email": "redaction-web@laprovence.com",
+  "url": "https://www.laprovence.com/contact",
+  "type": "redaction",
+  "tier": 2,
+  "note": "Marseille et Marignane, forte diaspora comorienne et maghrébine."
+ },
+ {
+  "id": "m067",
+  "nom": "HuffPost France",
+  "pays": "France",
+  "email": "contributions@huffpost.fr",
+  "url": "",
+  "type": "tribune",
+  "tier": 2,
+  "note": "EMAIL À VÉRIFIER. ~5 000 signes, exige expertise avérée ou témoignage vécu : angle dossiers traités adapté."
+ },
+ {
+  "id": "m068",
+  "nom": "La Tribune",
+  "pays": "France",
+  "email": "latribunelibre@latribune.fr",
+  "url": "https://www.latribune.fr/opinions/",
+  "type": "tribune",
+  "tier": 3,
+  "note": "EMAIL À VÉRIFIER. Angle économique : coût réel du CE 261 pour les compagnies."
+ },
+ {
+  "id": "m069",
+  "nom": "Contrepoints",
+  "pays": "France",
+  "email": "redaction@contrepoints.org",
+  "url": "https://www.contrepoints.org/nous-contacter",
+  "type": "tribune",
+  "tier": 3,
+  "note": "EMAIL À VÉRIFIER. Contributions spontanées acceptées."
+ },
+ {
+  "id": "m070",
+  "nom": "Slate.fr",
+  "pays": "France",
+  "email": "infos@slate.fr",
+  "url": "",
+  "type": "tribune",
+  "tier": 3,
+  "note": "EMAIL À VÉRIFIER. Accepte tribunes et témoignages."
+ },
+ {
+  "id": "m071",
+  "nom": "Ouest-France",
+  "pays": "France",
+  "email": "courrierdeslecteurs@ouest-france.fr",
+  "url": "",
+  "type": "courrier",
+  "tier": 3,
+  "note": "EMAIL À VÉRIFIER. 1re PQR de France, format court. Nantes et Rennes ont des communautés africaines."
+ },
+ {
+  "id": "m072",
+  "nom": "20 Minutes",
+  "pays": "France",
+  "email": "redaction@20minutes.fr",
+  "url": "",
+  "type": "redaction",
+  "tier": 3,
+  "note": "EMAIL À VÉRIFIER. Lectorat jeune et urbain."
+ },
+ {
+  "id": "m073",
+  "nom": "Agoravox",
+  "pays": "France",
+  "email": "",
+  "url": "https://www.agoravox.fr/qui-sommes-nous/faq-et-conseils/article/devenir-redacteur-124",
+  "type": "formulaire",
+  "tier": 4,
+  "note": "Inscription requise, pas d'email. Publication quasi assurée après modération, mais faible autorité : utiliser pour tester un angle, pas pour la notoriété."
+ },
+ {
+  "id": "m074",
+  "nom": "Blueprint",
+  "pays": "Nigeria",
+  "email": "chambasimeh@gmail.com",
+  "url": "https://blueprint.ng/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Desk 'Letters, Opinions & Pages' nomme dans l'ours. Contact le plus qualifie du lot anglophone. Adresse generale de secours : blueprintdaily2011@gmail.com. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m075",
+  "nom": "Daily Trust",
+  "pays": "Nigeria",
+  "email": "dtonline@dailytrust.com",
+  "url": "https://dailytrust.com/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Titre du Nord nigerian, tres lu par la diaspora. Section Letters en navigation. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m076",
+  "nom": "The Nation",
+  "pays": "Nigeria",
+  "email": "akinola.w@thenationonlineng.net",
+  "url": "https://thenationonlineng.net/contact-us",
+  "type": "redaction",
+  "tier": 1,
+  "note": "Adresse de l'Online Editor, nomme. Meilleure chance de reponse humaine qu'une boite generique. General : info@thenationonlineng.net. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m077",
+  "nom": "Leadership",
+  "pays": "Nigeria",
+  "email": "editor@leadership.ng",
+  "url": "https://leadership.ng/",
+  "type": "tribune",
+  "tier": 2,
+  "note": "editor@ direct, rare. Publicite sur adresse separee (adverts@), canal editorial propre. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m078",
+  "nom": "ThisDay",
+  "pays": "Nigeria",
+  "email": "hello@thisdaylive.com",
+  "url": "https://www.thisdaylive.com/contact-us",
+  "type": "redaction",
+  "tier": 2,
+  "note": "Titre haut de gamme, lectorat business et institutionnel. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m079",
+  "nom": "Ripples Nigeria",
+  "pays": "Nigeria",
+  "email": "info@ripples.com.ng",
+  "url": "https://www.ripplesnigeria.com/",
+  "type": "redaction",
+  "tier": 3,
+  "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m080",
+  "nom": "The Whistler",
+  "pays": "Nigeria",
+  "email": "info@thewhistler.ng",
+  "url": "https://thewhistler.ng/",
+  "type": "redaction",
+  "tier": 3,
+  "note": "Section 'Opinion & Interviews'. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m081",
+  "nom": "Daily Graphic",
+  "pays": "Ghana",
+  "email": "webcontact@graphic.com.gh",
+  "url": "https://www.graphic.com.gh/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Quotidien de reference. Rubriques Opinion, Features et Editorials distinctes. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m082",
+  "nom": "Ghanaian Times",
+  "pays": "Ghana",
+  "email": "ghanaiantimes@gmail.com",
+  "url": "https://www.ghanaiantimes.com.gh/contact/",
+  "type": "redaction",
+  "tier": 3,
+  "note": "Quotidien d'Etat, forte diffusion. Cible d'appoint. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m083",
+  "nom": "3News",
+  "pays": "Ghana",
+  "email": "editorial@mg.com.gh",
+  "url": "https://3news.com/",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Adresse editorial@ du groupe Media General, canal clairement redactionnel. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m084",
+  "nom": "Capital FM",
+  "pays": "Kenya",
+  "email": "capital@capitalfm.co.ke",
+  "url": "https://www.capitalfm.co.ke/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Rubrique 'Op-Eds' affichee en navigation = politique de tribunes assumee. Seule vraie porte kenyane. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m085",
+  "nom": "The Standard",
+  "pays": "Kenya",
+  "email": "corporate@standardmedia.co.ke",
+  "url": "https://www.standardmedia.co.ke/corporate/contact-us",
+  "type": "redaction",
+  "tier": 3,
+  "note": "Adresse corporate, pas un desk opinion. Reponse incertaine. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m086",
+  "nom": "The Citizen",
+  "pays": "Afrique du Sud",
+  "email": "letters@citizen.co.za",
+  "url": "https://www.citizen.co.za/",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Adresse letters@ DEDIEE aux contributions de lecteurs. Aucune friction. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m087",
+  "nom": "Nation Media Group",
+  "pays": "Kenya",
+  "email": "customercare@ke.nationmedia.com",
+  "url": "https://nation.africa/kenya/blogs-opinion",
+  "type": "redaction",
+  "tier": 4,
+  "note": "ATTENTION : adresse service lecteurs, PAS un desk opinion. Toutes les pages nation.africa bloquees en 403, a qualifier a la main. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre."
+ },
+ {
+  "id": "m088",
+  "nom": "NewsAero",
+  "pays": "Cameroun",
+  "email": "redaction@newsaero.info",
+  "url": "https://newsaero.info",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Seul media aviation francophone d'Afrique subsaharienne. Rubrique « Tribune libre ». Bilingue FR/EN. CIBLE N.1"
+ },
+ {
+  "id": "m089",
+  "nom": "Nigeria Aviation Report",
+  "pays": "Nigeria",
+  "email": "editorial@nigeriaaviationreport.com.ng",
+  "url": "https://nigeriaaviationreport.com.ng",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Rubrique « Analysis & Opinion ». Email redaction distinct de la regie"
+ },
+ {
+  "id": "m090",
+  "nom": "NigerianFLIGHTDECK",
+  "pays": "Nigeria",
+  "email": "editor@nigerianflightdeck.com",
+  "url": "https://nigerianflightdeck.com",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Publication quasi quotidienne. Rubrique « Comfort & Crew », colle au sujet passager"
+ },
+ {
+  "id": "m091",
+  "nom": "Aviation & Allied Business Journal",
+  "pays": "Panafricain",
+  "email": "publication@landover.aero",
+  "url": "https://aviationbusinessjournal.aero",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Bimestriel institutionnel, lu par les regulateurs ouest-africains"
+ },
+ {
+  "id": "m092",
+  "nom": "African Travel Times",
+  "pays": "Nigeria",
+  "email": "editor@africantraveltimes.com",
+  "url": "https://africantraveltimes.com",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Voyage et transport aerien, Lagos"
+ },
+ {
+  "id": "m093",
+  "nom": "VoyagesAfriq",
+  "pays": "Ghana",
+  "email": "info@voyagesafriq.com",
+  "url": "https://voyagesafriq.com",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Tourisme panafricain, couvre la connectivite aerienne. Anglophone"
+ },
+ {
+  "id": "m094",
+  "nom": "Airspace Africa",
+  "pays": "Panafricain",
+  "email": "derek@airspace-africa.com",
+  "url": "https://airspace-africa.com",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Email direct du redacteur en chef"
+ },
+ {
+  "id": "m095",
+  "nom": "African Pilot Magazine",
+  "pays": "Afrique du Sud",
+  "email": "editor@africanpilot.africa",
+  "url": "https://africanpilot.africa",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Aviation australe, lectorat pilotes et professionnels"
+ },
+ {
+  "id": "m096",
+  "nom": "AeroTrail",
+  "pays": "Kenya",
+  "email": "info@aero-trail.com",
+  "url": "https://aero-trail.com",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Veille aviation Afrique de l'Est"
+ },
+ {
+  "id": "m097",
+  "nom": "AfricaPresse.Paris",
+  "pays": "France (diaspora)",
+  "email": "contact@africapresse.paris",
+  "url": "https://africapresse.paris",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Rubrique /-Tribunes- vivante, signataires nommes. Publie deja sur l'aviation africaine. Gratuit"
+ },
+ {
+  "id": "m098",
+  "nom": "Congo Independant",
+  "pays": "Belgique",
+  "email": "redaction@congoindependant.com",
+  "url": "https://congoindependant.com",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Rubrique Opinion-Debat. Axe Kinshasa-Bruxelles, un de nos corridors"
+ },
+ {
+  "id": "m099",
+  "nom": "MiGAZIN",
+  "pays": "Allemagne",
+  "email": "redaktion@migazin.de",
+  "url": "https://migazin.de",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Programme contributeurs MiGMACHEN, guide auteur publie, explicitement benevole"
+ },
+ {
+  "id": "m100",
+  "nom": "The African Courier",
+  "pays": "Allemagne",
+  "email": "info@theafricancourier.de",
+  "url": "https://theafricancourier.de",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Diaspora panafricaine en Allemagne. Angle Francfort et Munich vers l'Afrique"
+ },
+ {
+  "id": "m101",
+  "nom": "BUALA",
+  "pays": "Portugal",
+  "email": "buala@buala.org",
+  "url": "https://buala.org",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Section Mukanda, essais. Ouvre le lusophone : Cap-Vert, Bissau, Angola"
+ },
+ {
+  "id": "m102",
+  "nom": "NegroNews",
+  "pays": "France",
+  "email": "contact@negronews.fr",
+  "url": "https://negronews.fr",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Rubrique « Tribune libre » au menu"
+ },
+ {
+  "id": "m103",
+  "nom": "IvoireDiaspo",
+  "pays": "France",
+  "email": "info@ivoirediaspo.net",
+  "url": "https://ivoirediaspo.net",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Diaspora ivoirienne, rubrique Edito"
+ },
+ {
+  "id": "m104",
+  "nom": "Diasporas-News",
+  "pays": "France",
+  "email": "contact@diasporas-news.com",
+  "url": "https://diasporas-news.com",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Magazine historique de la diaspora africaine en France"
+ },
+ {
+  "id": "m105",
+  "nom": "Nigerian Watch",
+  "pays": "Royaume-Uni",
+  "email": "editor@nigerianwatch.com",
+  "url": "https://nigerianwatch.com",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Communaute nigeriane UK. Angle UK261 contre CE261 selon le pavillon"
+ },
+ {
+  "id": "m106",
+  "nom": "Continent Premier",
+  "pays": "Suisse",
+  "email": "info@continentpremier.com",
+  "url": "https://continentpremier.com",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Panafricain, Geneve"
+ },
+ {
+  "id": "m107",
+  "nom": "Nigrizia",
+  "pays": "Italie",
+  "email": "redazione@nigrizia.it",
+  "url": "https://nigrizia.it",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Mensuel Afrique, Verone. Ouverture aux externes a confirmer"
+ },
+ {
+  "id": "m108",
+  "nom": "Piuculture",
+  "pays": "Italie",
+  "email": "redazionepiuculture@gmail.com",
+  "url": "https://piuculture.it",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Section « Per collaborare », redaction benevole donc accessible"
+ },
+ {
+  "id": "m109",
+  "nom": "Mensagem de Lisboa",
+  "pays": "Portugal",
+  "email": "geral@amensagem.pt",
+  "url": "https://amensagem.pt",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Communautes afro-lusophones de Lisbonne. Rubrique tribunes incertaine"
+ },
+ {
+  "id": "m110",
+  "nom": "Agence Ecofin",
+  "pays": "Panafricain",
+  "email": "redaction@agenceecofin.com",
+  "url": "https://agenceecofin.com",
+  "type": "tribune",
+  "tier": 1,
+  "note": "Rubrique Transports dediee. Un seul pitch couvre aussi Investir au Cameroun, meme maison"
+ },
+ {
+  "id": "m111",
+  "nom": "Investir au Cameroun",
+  "pays": "Cameroun",
+  "email": "info@investiraucameroun.com",
+  "url": "https://investiraucameroun.com",
+  "type": "tribune",
+  "tier": 2,
+  "note": "Groupe Ecofin, fil Transports"
+ },
+ {
+  "id": "m112",
+  "nom": "EcoMatin",
+  "pays": "Cameroun",
+  "email": "contact@ecomatin.net",
+  "url": "https://ecomatin.net",
+  "type": "tribune",
+  "tier": 3,
+  "note": "Transport et logistique"
+ },
+ {
+  "id": "m113",
+  "nom": "Ivorian.net",
+  "pays": "Côte d'Ivoire",
+  "email": "presse@ivorian.net",
+  "url": "https://www.ivorian.net/",
+  "type": "média diaspora",
+  "tier": 2,
+  "note": "Média ivoirien diaspora (Malmö). Ranke déjà sur 'indemnisation vol Côte d'Ivoire'. Cible backlink."
+ }
+]

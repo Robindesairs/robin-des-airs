@@ -30,11 +30,11 @@ Since Brexit, the United Kingdom applies its own retained version of the same ru
 
 | Flight distance | UK261 | EC 261 |
 |---|---|---|
-| Up to 1,500 km | £220 | €250 |
-| 1,500 to 3,500 km | £350 | €400 |
-| Over 3,500 km | £520 | €600 |
+| Up to 1 500 km | £220 | €250 |
+| 1,500 to 3 500 km | £350 | €400 |
+| Over 3 500 km | £520 | €600 |
 
-Lagos to London and Accra to London are both well over 3,500 km, so the figure is **£520**, reduced to £260 where rerouting keeps the arrival delay under four hours.
+Lagos to London and Accra to London are both well over 3 500 km, so the figure is **£520**, reduced to £260 where rerouting keeps the arrival delay under four hours.
 
 The same flag rule applies. Lagos to London on British Airways or Virgin Atlantic is covered by UK261. Nairobi to London on British Airways is covered. The identical route on an African carrier is covered by neither UK261 nor EC 261.
 

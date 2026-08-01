@@ -58,6 +58,8 @@ Concrètement, sur nos lignes : un Paris vers Abidjan est protégé même sur un
 
 À quoi s'ajoutent deux cas moins connus : le [demi-tour ou le déroutement](/blog/demi-tour-avion-deroutement-retour-indemnisation.html), et le déclassement, quand on vous fait voyager dans une classe inférieure à celle que vous avez payée.
 
+<span class="src">Ces quatre situations, et les seuils qui s'y appliquent, sont détaillées par la <a href="https://droits-passagers-aeriens.aviation-civile.gouv.fr/public/je-m-informe" rel="nofollow noopener" target="_blank">FAQ officielle de la DGAC sur les droits des passagers aériens</a>, la référence de l'administration française sur le sujet, ainsi que par la fiche <a href="https://www.service-public.fr/particuliers/vosdroits/N84" rel="nofollow noopener" target="_blank">Service-Public.fr consacrée au voyage en avion</a>.</span>
+
 ## Vos trois droits, et ils se cumulent
 
 C'est la confusion la plus coûteuse du règlement, et les compagnies en profitent.
@@ -119,6 +121,11 @@ On vérifie votre éligibilité gratuitement, vous n'avancez rien, et si on ne r
   <p class="cta-inline-p">La vérification est gratuite et sans engagement. Si votre dossier est simple, on vous le dira et vous le ferez seul.</p>
   <p><a class="cta-inline-a" href="https://robindesairs.eu/#funnel-box">Vérifier mon éligibilité</a></p>
 </aside>
+
+<style>
+#blog-body .src{display:block;margin-top:.35rem;font-size:.8125rem;color:#62718A}
+#blog-body .src a{color:#047857;font-weight:600}
+</style>
 
 <style>
 #blog-body .copy-etat{font-size:.8125rem;font-weight:700;color:#047857}

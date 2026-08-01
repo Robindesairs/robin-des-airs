@@ -44,6 +44,8 @@ Une précision qui change tout pour la diaspora : **les liaisons entre l'Europe 
 
 Seul le Maghreb reste en dessous. Un Paris-Casablanca ou un Paris-Alger relève des 400 €.
 
+<span class="src">Ces trois paliers sont aussi ceux que rappelle la <a href="https://droits-passagers-aeriens.aviation-civile.gouv.fr/public/je-m-informe" rel="nofollow noopener" target="_blank">FAQ officielle de la DGAC sur les droits des passagers aériens</a>, ainsi que la fiche <a href="https://www.service-public.fr/particuliers/vosdroits/F10977" rel="nofollow noopener" target="_blank">Service-Public.fr sur le vol retardé</a>.</span>
+
 <img src="/assets/images/indemnite-paliers-reduction-moitie.svg" alt="Schéma : les trois paliers d'indemnité selon la distance, et les deux conditions cumulatives permettant à la compagnie de n'en verser que la moitié" width="1200" height="630" loading="lazy" decoding="async">
 
 ## Le montant est le même pour tout le monde à bord

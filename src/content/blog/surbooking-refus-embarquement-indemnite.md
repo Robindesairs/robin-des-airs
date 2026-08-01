@@ -49,6 +49,8 @@ Concrètement, un appareil de 300 sièges peut être vendu à 310 ou 315. Tant q
 
 Aucun texte européen n'interdit cette pratique. Le règlement CE 261/2004 ne l'attaque pas de front : il en organise les conséquences. La compagnie peut survendre, à condition d'assumer la facture.
 
+<span class="src">Pour la référence officielle complète, voir la FAQ de la <a href="https://droits-passagers-aeriens.aviation-civile.gouv.fr/public/je-m-informe" rel="nofollow noopener" target="_blank">DGAC sur les droits des passagers aériens</a>, ainsi que la fiche <a href="https://www.service-public.fr/particuliers/vosdroits/F11001" rel="nofollow noopener" target="_blank">Service-Public.fr sur l'indemnisation en cas de surbooking</a>.</span>
+
 ## Ce qui se passe vraiment à la porte
 
 Avant de refuser qui que ce soit, la compagnie a une obligation : **faire appel à des volontaires**. Ce n'est pas une politesse commerciale, c'est écrit dans le règlement, et l'appel est réellement fait en salle d'embarquement.

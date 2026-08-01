@@ -59,6 +59,8 @@ L'article 10 du règlement prévoit un remboursement dont le taux dépend de la 
 
 Toutes les liaisons entre l'Europe et l'Afrique subsaharienne dépassent 3 500 kilomètres et ne sont pas intracommunautaires. Le taux applicable est donc **75 %**, le plus élevé.
 
+<span class="src">Ce mécanisme de déclassement figure aussi dans la FAQ officielle de la <a href="https://droits-passagers-aeriens.aviation-civile.gouv.fr/public/je-m-informe" rel="nofollow noopener" target="_blank">DGAC sur les droits des passagers aériens</a>, qui traite le déclassement comme une situation distincte de l'indemnité de retard ou d'annulation.</span>
+
 <img src="/assets/images/declassement-assiette-75-pourcent.svg" alt="Schéma expliquant l'assiette du remboursement pour déclassement : 75 pour cent du prix du seul vol déclassé, taxes exclues, et non du billet entier, selon l'arrêt Mennens de la Cour de justice" width="1200" height="630" loading="lazy" decoding="async">
 
 ## 75 % de quoi ? Le piège que presque tout le monde manque

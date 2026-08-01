@@ -218,9 +218,9 @@
 
 | Distance | Compensation | Typical Africa case |
 |----------|--------------|---------------------|
-| ≤ 1,500 km | **€250** | Rare |
-| 1,500 – 3,500 km | **€400** | **Maghreb** (Morocco, Algeria, Tunisia) |
-| > 3,500 km (EU ↔ non-EU) | **€600** | **Sub-Saharan Africa** (Dakar, Abidjan, Lagos…) |
+| ≤ 1 500 km | **€250** | Rare |
+| 1,500 – 3 500 km | **€400** | **Maghreb** (Morocco, Algeria, Tunisia) |
+| > 3 500 km (EU ↔ non-EU) | **€600** | **Sub-Saharan Africa** (Dakar, Abidjan, Lagos…) |
 
 **The 50% reduction.** If the airline offers **re-routing** and the arrival delay stays limited, compensation can be **halved** (€125 / €200 / €300). Know it exists; the legal team decides.
 

@@ -37,7 +37,7 @@ Site when online: https://robindesairs.eu
 
 ## 3. Commercial split (long-haul example, CE 261 = €600)
 
-Europe–Africa, distance **> 3,500 km**:
+Europe–Africa, distance **> 3 500 km**:
 
 | Party | Amount |
 |-------|--------|
