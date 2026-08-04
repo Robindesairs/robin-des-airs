@@ -11,8 +11,12 @@
  *  - anti-spam léger : honeypot + champs minimaux requis.
  *
  * POST { flightNum?, route?, compagnie?, dep?, arr?, date?, incident?, pax?, passengers?,
- *        pnr?, indemnite?, name, phone?, email?, website? (honeypot) }
+ *        pnr?, indemnite?, name?, phone?, email?, website? (honeypot) }
  * → 200 { ok:true, ref } ; le client enchaîne sur /api/submit-mandat avec ce ref.
+ *
+ * `name` est FACULTATIF : capture précoce depuis l'écran « téléphone » du tunnel web, avant
+ * la pièce d'identité qui fournit le nom. Le dossier squelette (téléphone + vol, sans nom) est
+ * déjà récupérable en Airtable ; /api/submit-mandat le complète au moment de la signature.
  */
 const crypto = require('crypto');
 const { getBlobStore } = require('./lib/netlify-blobs-store');
@@ -51,7 +55,6 @@ exports.handler = async (event) => {
   const phone = String(b.phone || '').trim().slice(0, 40);
   const email = String(b.email || '').trim().slice(0, 160);
   if (!flightNum && !route) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'Indiquez votre vol ou votre trajet.' }) };
-  if (!name) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'Indiquez votre nom.' }) };
   if (!phone && !email) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'Indiquez un téléphone ou un email pour vous joindre.' }) };
 
   // VEILLE SUR VOL FUTUR (page /verifier-mes-anciens-vols.html).

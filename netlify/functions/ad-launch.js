@@ -157,7 +157,7 @@ function montantCe261(distanceKm) {
   return 600; // défaut niche Afrique↔Europe long-courrier
 }
 
-function getMsg(lang, city, body) {
+function getMsg(lang, city, body, useWhatsApp) {
   const vol      = body.vol      || '';
   const dep      = body.dep      || '';
   const arr      = body.arr      || '';
@@ -171,12 +171,14 @@ function getMsg(lang, city, body) {
   if (lang === 'EN') {
     const enVol   = cie ? `Your ${cie} flight` : (vol ? `Flight ${vol}` : 'Your flight');
     const enDelay = annule ? ' has been cancelled' : (retard ? ` is delayed by ${retard}` : ' is impacted');
-    return `✈️ ${enVol}${routeLine}${enDelay}? EU Regulation EC 261 may entitle you to up to €${montant} per passenger. Free 2-minute check on WhatsApp — €0 if we recover nothing.`;
+    const enCheck = useWhatsApp ? 'Free 2-minute check on WhatsApp' : 'Free 2-minute check online';
+    return `✈️ ${enVol}${routeLine}${enDelay}? EU Regulation EC 261 may entitle you to up to €${montant} per passenger. ${enCheck} — €0 if we recover nothing.`;
   }
   // FR : mène par la compagnie quand connue (« Vol Air France annulé ? »).
   const frVol   = cie ? `Vol ${cie}` : (vol ? `Vol ${vol}` : 'Votre vol');
   const delayLine = annule ? ' annulé' : (retard ? ` retardé de ${retard}` : ' impacté');
-  return `✈️ ${frVol}${routeLine}${delayLine} ? Le règlement CE 261 peut vous donner droit à jusqu'à ${montant} € par passager. Vérification gratuite en 2 min sur WhatsApp — 0 € si on ne récupère rien.`;
+  const frCheck = useWhatsApp ? 'Vérification gratuite en 2 min sur WhatsApp' : 'Vérification gratuite en 2 min en ligne';
+  return `✈️ ${frVol}${routeLine}${delayLine} ? Le règlement CE 261 peut vous donner droit à jusqu'à ${montant} € par passager. ${frCheck} — 0 € si on ne récupère rien.`;
 }
 
 exports.handler = async (event) => {
@@ -247,7 +249,10 @@ exports.handler = async (event) => {
 
   const lang    = getLang(airport);
   const hashes  = getHashes(lang, hashEnv());
-  const msgText = getMsg(lang, coords.city, body);
+  // Destination par défaut = depot-express.html (capture le contact plus tôt, mesurable via le
+  // pixel Meta déjà posé sur le site). WhatsApp reste possible en opt-in explicite (body.destination).
+  const useWhatsApp = String(body.destination || '').toLowerCase() === 'whatsapp';
+  const msgText = getMsg(lang, coords.city, body, useWhatsApp);
 
   if (!hashes.feedSite && !hashes.squareWa && !hashes.storyWa) {
     return { statusCode: 500, body: JSON.stringify({ error: 'Aucun hash image configuré dans Netlify (META_AD_HASH_FR_FEED etc.)' }) };
@@ -266,10 +271,14 @@ exports.handler = async (event) => {
   const endSec      = nowSec + Math.round(durationHours * 3600);
 
   const siteUrl = 'https://robindesairs.eu';
+  const depotUrl = siteUrl + '/depot-express.html?' + new URLSearchParams({
+    ...(lang === 'EN' ? { lang: 'en' } : {}),
+    ...(coords.city ? { city: coords.city } : {}),
+  }).toString();
   const waMsg   = lang === 'EN'
     ? `Hello, my flight from ${coords.city} was delayed. I'd like to check my compensation.`
     : `Bonjour, mon vol depuis ${coords.city} a été retardé. Je voudrais vérifier mon indemnité.`;
-  const waLink  = waNumber
+  const waLink  = (useWhatsApp && waNumber)
     ? `https://wa.me/${waNumber}?text=${encodeURIComponent(waMsg)}`
     : null;
 
@@ -318,7 +327,8 @@ exports.handler = async (event) => {
     // 1. Campagne
     const campaign = await metaPost(`/${accountId}/campaigns`, token, {
       name: `RDA-${body.vol || 'GEO'}-${airport}-${lang}-${new Date().toISOString().slice(0, 10)}`,
-      // Click-to-WhatsApp si numéro configuré (objectif Engagement/Messages), sinon trafic site
+      // Trafic vers depot-express.html par défaut (mesurable, capture précoce) ; Click-to-WhatsApp
+      // seulement si explicitement demandé (body.destination === 'whatsapp').
       objective: waLink ? 'OUTCOME_ENGAGEMENT' : 'OUTCOME_TRAFFIC',
       status: 'ACTIVE',
       special_ad_categories: [],
@@ -333,7 +343,8 @@ exports.handler = async (event) => {
       start_time: nowSec,
       end_time: endSec,
       billing_event: 'IMPRESSIONS',
-      // Click-to-WhatsApp : optimise pour les conversations démarrées + destination WhatsApp
+      // LINK_CLICKS vers depot-express.html par défaut ; CONVERSATIONS + destination WhatsApp
+      // uniquement en opt-in explicite (body.destination === 'whatsapp').
       optimization_goal: waLink ? 'CONVERSATIONS' : 'LINK_CLICKS',
       ...(waLink ? { destination_type: 'WHATSAPP', promoted_object: { page_id: pageId } } : {}),
       bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
@@ -345,18 +356,18 @@ exports.handler = async (event) => {
     // 3. Créer les 4 creatives selon les slots
     const creatives = [];
 
-    // Click-to-WhatsApp : toutes les créas ouvrent WhatsApp avec message pré-rempli.
-    // Sinon (pas de numéro configuré) : repli sur le site avec LEARN_MORE.
+    // Défaut : toutes les créas pointent vers depot-express.html (LEARN_MORE).
+    // Opt-in WhatsApp (body.destination === 'whatsapp') : ouvre WhatsApp avec message pré-rempli.
     const slots = waLink ? [
       { label: 'story-wa',   hash: hashes.storyWa,    link: waLink,  cta: 'WHATSAPP_MESSAGE' },
       { label: 'feed-wa',    hash: hashes.feedSite,   link: waLink,  cta: 'WHATSAPP_MESSAGE' },
       { label: 'square-wa',  hash: hashes.squareWa,   link: waLink,  cta: 'WHATSAPP_MESSAGE' },
       { label: 'square-wa2', hash: hashes.squareSite, link: waLink,  cta: 'WHATSAPP_MESSAGE' },
     ] : [
-      { label: 'story-site',  hash: hashes.storyWa,    link: siteUrl, cta: 'LEARN_MORE' },
-      { label: 'feed-site',   hash: hashes.feedSite,   link: siteUrl, cta: 'LEARN_MORE' },
-      { label: 'square-wa',   hash: hashes.squareWa,   link: siteUrl, cta: 'LEARN_MORE' },
-      { label: 'square-site', hash: hashes.squareSite, link: siteUrl, cta: 'LEARN_MORE' },
+      { label: 'story-site',  hash: hashes.storyWa,    link: depotUrl, cta: 'LEARN_MORE' },
+      { label: 'feed-site',   hash: hashes.feedSite,   link: depotUrl, cta: 'LEARN_MORE' },
+      { label: 'square-wa',   hash: hashes.squareWa,   link: depotUrl, cta: 'LEARN_MORE' },
+      { label: 'square-site', hash: hashes.squareSite, link: depotUrl, cta: 'LEARN_MORE' },
     ];
 
     for (const slot of slots) {

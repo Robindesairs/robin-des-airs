@@ -49,6 +49,16 @@ p{line-height:1.65;font-size:15px}
 .res a{color:#0B6BA3;font-weight:600;text-decoration:none}
 .res li{margin-bottom:.4rem;font-size:14.5px}
 .muted{color:#6B7280;font-size:13.5px}
+.press-ticker{margin:0 0 1.2rem;display:flex;flex-direction:column;gap:1.1rem;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.press-ticker-row{display:flex;align-items:center;gap:2.4rem;width:max-content;will-change:transform}
+.press-ticker-row.dir-left{animation:pressTickerLeft 26s linear infinite}
+.press-ticker-row.dir-right{animation:pressTickerRight 26s linear infinite}
+.press-ticker-row a{display:inline-flex;align-items:center;line-height:0;flex:0 0 auto}
+.press-ticker-row img{height:30px;width:auto;max-width:130px;object-fit:contain;filter:grayscale(100%);opacity:.7;transition:filter .2s ease,opacity .2s ease}
+.press-ticker-row img:hover,.press-ticker-row img:focus{filter:grayscale(0%);opacity:1}
+@keyframes pressTickerLeft{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes pressTickerRight{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@media (prefers-reduced-motion: reduce){.press-ticker-row.dir-left,.press-ticker-row.dir-right{animation:none}}
 footer{background:#0B1F3A;color:rgba(255,255,255,.6);text-align:center;padding:1.4rem;font-size:12.5px}
 @media(max-width:640px){.hero h1{font-size:1.55rem}}
 </style>
@@ -124,6 +134,24 @@ footer{background:#0B1F3A;color:rgba(255,255,255,.6);text-align:center;padding:1
 
     <section>
       <h2>Nos tribunes dans la presse</h2>
+      <div class="press-ticker" aria-label="Médias où nos tribunes ont été publiées">
+        <div class="press-ticker-row dir-left" aria-hidden="false">
+          <a href="/tribunes/transport-aerien-vol-du-soir-panne-du-matin.html"><img src="/assets/press-logos/datacameroon.webp" alt="DataCameroon" loading="lazy" width="130" height="27"></a>
+          <a href="/tribunes/vol-revient-dou-il-vient.html"><img src="/assets/press-logos/congo-independant.png" alt="Congo Indépendant" loading="lazy" width="105" height="30"></a>
+          <a href="/tribunes/vol-retarde-annule-surbooke-600-euros.html"><img src="/assets/press-logos/ivorian-net.jpg" alt="Ivorian.net" loading="lazy" width="57" height="30"></a>
+          <a href="/tribunes/transport-aerien-vol-du-soir-panne-du-matin.html" aria-hidden="true" tabindex="-1"><img src="/assets/press-logos/datacameroon.webp" alt="" loading="lazy" width="130" height="27"></a>
+          <a href="/tribunes/vol-revient-dou-il-vient.html" aria-hidden="true" tabindex="-1"><img src="/assets/press-logos/congo-independant.png" alt="" loading="lazy" width="105" height="30"></a>
+          <a href="/tribunes/vol-retarde-annule-surbooke-600-euros.html" aria-hidden="true" tabindex="-1"><img src="/assets/press-logos/ivorian-net.jpg" alt="" loading="lazy" width="57" height="30"></a>
+        </div>
+        <div class="press-ticker-row dir-right" aria-hidden="false">
+          <a href="/tribunes/declasse-en-economie-argent-compagnie-doit.html"><img src="/assets/press-logos/le-lynx.png" alt="Le Lynx (Guinée)" loading="lazy" width="90" height="30"></a>
+          <a href="/en/tribunes/flight-delayed-rights-denied-codeshare.html"><img src="/assets/press-logos/addis-standard.jpg" alt="Addis Standard" loading="lazy" width="72" height="30"></a>
+          <a href="https://www.mizane.info/vol-annule-le-bon-d-achat-n-est-pas-l-indemnite" target="_blank" rel="noopener"><img src="/assets/press-logos/mizane.png" alt="Mizane.info" loading="lazy" width="84" height="30"></a>
+          <a href="/tribunes/declasse-en-economie-argent-compagnie-doit.html" aria-hidden="true" tabindex="-1"><img src="/assets/press-logos/le-lynx.png" alt="" loading="lazy" width="90" height="30"></a>
+          <a href="/en/tribunes/flight-delayed-rights-denied-codeshare.html" aria-hidden="true" tabindex="-1"><img src="/assets/press-logos/addis-standard.jpg" alt="" loading="lazy" width="72" height="30"></a>
+          <a href="https://www.mizane.info/vol-annule-le-bon-d-achat-n-est-pas-l-indemnite" target="_blank" rel="noopener" aria-hidden="true" tabindex="-1"><img src="/assets/press-logos/mizane.png" alt="" loading="lazy" width="84" height="30"></a>
+        </div>
+      </div>
       <ul class="res">
         <li><a href="/en/tribunes/flight-delayed-rights-denied-codeshare.html">Addis Standard (Éthiopie) — Flight Delayed, Rights Denied: How codeshare loopholes leave Ethiopian travelers without compensation</a> · <a href="https://addisstandard.com/flight-delayed-rights-denied-how-codeshare-loopholes-leave-ethiopian-travelers-without-compensation/" target="_blank" rel="noopener">Lire sur Addis Standard (original)</a></li>
         <li><a href="/tribunes/transport-aerien-vol-du-soir-panne-du-matin.html">DataCameroon — Transport aérien : votre vol du soir paie souvent la panne du matin</a> · <a href="https://www.datacameroon.com/transport-aerien-votre-vol-du-soir-paie-souvent-la-panne-du-matin/" target="_blank" rel="noopener">Lire sur DataCameroon (original)</a></li>

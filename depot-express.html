@@ -428,6 +428,29 @@
   // lent bloquerait l'UI à l'infini (« il se passe plus rien »). Au-delà du délai, le fetch échoue → erreur + repli WhatsApp.
   function _sig(ms){ var c = new AbortController(); setTimeout(function(){ try { c.abort(); } catch (_) {} }, ms); return c.signal; }
 
+  // Capture précoce du lead : dossier squelette créé dès que le téléphone est saisi, AVANT la pièce
+  // d'identité (nom pas encore connu, depot-create.js l'accepte vide) — pour qu'un abandon en cours
+  // de tunnel laisse quand même un numéro exploitable en CRM, comme un clic WhatsApp envoyé.
+  // Fire-and-forget : ne bloque jamais next(), aucune erreur affichée (la création finale reprendra si besoin).
+  var _earlyCaptureInFlight = false;
+  function earlyCapture(){
+    if (REF || _earlyCaptureInFlight || !S.phone) return;
+    _earlyCaptureInFlight = true;
+    var pax = (S.names || []).map(function(nm){ return { name: nm || '' }; }).filter(function(p){ return p.name; });
+    fetch('/api/depot-create', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: S.names[0] || '', phone: S.phone, email: S.email || '',
+        flightNum: S.flightNum, route: (S.dep && S.arr) ? (S.dep + ' → ' + S.arr) : '',
+        dep: S.dep, arr: S.arr, date: S.date, incident: S.incident,
+        thirdPartyFree: S.tiers === 'non',
+        pax: S.pax, passengers: pax, website: ($('website') || {}).value || '',
+      }),
+    }).then(function(r){ return r.json(); }).catch(function(){ return null; })
+      .then(function(j){ if (j && j.ref) REF = j.ref; })
+      .then(function(){ _earlyCaptureInFlight = false; });
+  }
+
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
@@ -1343,6 +1366,7 @@
         i.classList.remove('bad');
         S.phoneCountry = cc.value.trim(); S.phoneCc = ccode; S.phoneNat = i.value.trim();
         S.phone = ccode + nat; // format international unique pour le contrat et le rappel
+        earlyCapture();
         next();
       }
       ok.addEventListener('click', go);
@@ -2218,6 +2242,20 @@
         render();
       });
   }
+
+  // Notification temps réel : signale au fondateur qu'un visiteur vient d'arriver sur la page,
+  // avant même toute saisie. Best-effort, dédupliqué par onglet (pas de spam au reload).
+  try {
+    if (!sessionStorage.getItem('_depotPinged')) {
+      sessionStorage.setItem('_depotPinged', '1');
+      var _pingCity = (new URLSearchParams(location.search).get('city') || '').trim();
+      var _pingLang = (new URLSearchParams(location.search).get('lang') || '').toLowerCase() === 'en' ? 'en' : 'fr';
+      fetch('/api/depot-arrival-ping', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ city: _pingCity, lang: _pingLang }),
+      }).catch(function(){});
+    }
+  } catch (_) {}
 
   if (new URLSearchParams(location.search).get('signed') === '1') {
     $('crumbs').innerHTML = ''; $('fill').style.width = '100%'; stage.innerHTML = '';
