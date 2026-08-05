@@ -60,6 +60,8 @@ Attention : si vous avez acheté **deux billets séparés**, la protection est b
 
 Quand le forfait CE 261 s'applique (départ de l'UE, ou réservation unique couverte) et que la compagnie annule votre vol en vous prévenant **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 Au départ de la RDC sur Congo Airways seule, l'annulation n'ouvre pas le forfait, mais vos frais réels (hébergement, repas, réacheminement) doivent être pris en charge au titre de la Convention de Montréal.
 
 ## Les excuses de la compagnie : valables ou non

@@ -18,6 +18,8 @@ Le règlement CE 261 ne prévoit **aucune indemnité spécifique** pour le deuil
 - Vol annulé moins de 14 jours avant : **600€ par passager**
 - Famille de 4 = 4 × 600€ = 2 400€ brut
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 Ces 600€ sont dus **automatiquement**, indépendamment du préjudice moral. Vous n'avez à prouver ni votre deuil ni les funérailles ratées.
 
 ## Le préjudice moral en plus (Convention de Montréal)

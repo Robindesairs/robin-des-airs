@@ -22,6 +22,8 @@ Les situations couvertes, selon éligibilité, sont notamment :
 - une **annulation** sans préavis suffisant (moins de 14 jours) ;
 - un **refus d'embarquement** pour surréservation.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## L'autorité compétente en Allemagne : la LBA
 
 Chaque pays de l'UE désigne un organisme national chargé de faire appliquer le CE 261. En Allemagne, c'est le **Luftfahrt-Bundesamt (LBA)**, l'office fédéral de l'aviation. C'est l'autorité de référence pour les vols au départ du sol allemand.

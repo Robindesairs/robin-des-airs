@@ -14,6 +14,8 @@ Transavia (France et Holland) est soumis au règlement européen CE 261 pour les
 
 **Vos droits** : Si votre vol Transavia arrive avec plus de 3 heures de retard (selon la distance), vous pouvez prétendre à 250€, 400€ ou 600€ par passager. Même règle en cas d'annulation moins de 14 jours avant le départ sans circonstances extraordinaires, ou de correspondance manquée imputable à Transavia.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 **Réclamer** : Transavia propose un formulaire en ligne. Conservez votre numéro de vol, carte d'embarquement et preuves du retard. En cas de refus ou de silence, vous pouvez saisir la médiation ou un service spécialisé. Utilisez notre calculateur pour vérifier votre éligibilité avant de réclamer.
 
 ## Pourquoi Robin des Airs ?

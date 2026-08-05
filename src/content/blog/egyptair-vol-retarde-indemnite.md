@@ -61,6 +61,8 @@ Attention : si vous avez acheté **deux billets séparés** (un vol jusqu'au Cai
 
 Si EgyptAir annule votre vol et vous prévient **moins de 14 jours** avant le départ, et que le vol est couvert par le CE 261 (départ de l'UE), vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Escale de nuit forcée au Caire : l'hôtel et les repas vous sont dus
 
 Quand une nuit imprévue au Caire résulte d'un retard ou d'une annulation **imputable à la compagnie** (et non d'une escale longue prévue dès l'achat), EgyptAir doit vous prendre en charge : **hôtel, repas, transferts, moyen de communiquer**. Si la compagnie refuse et que vous payez de votre poche, gardez **toutes vos factures** : elles sont remboursables au titre de la Convention de Montréal (art. 19), quel que soit le sens du voyage.

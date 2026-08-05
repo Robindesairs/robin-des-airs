@@ -18,6 +18,8 @@ faq:
     a: "Elle peut l'invoquer, mais un problème technique ou une grève de son propre personnel **ne comptent pas** comme circonstances extraordinaires : l'indemnité reste due. Seuls des événements réellement extérieurs, comme une météo exceptionnelle ou une grève des contrôleurs aériens externes, en dispensent la compagnie, et même alors l'assistance (repas, hôtel) reste due."
 ---
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 **Jusqu'à 600 € par passager** sont à réclamer quand votre vol est annulé sans préavis suffisant. On vérifie gratuitement votre éligibilité, 0 € d'avance.
 
 Une annulation de vol est stressante. Mais la loi européenne vous protège et vous donne droit à une compensation.

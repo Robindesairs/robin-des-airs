@@ -27,6 +27,8 @@ C'est ce seuil que presque personne ne connaît : tout le monde pense que seuls 
 
 Comme pour une annulation, l'indemnité dépend du **délai de prévenance**. Si la compagnie vous a informé du nouvel horaire **moins de 14 jours avant le départ** (sans solution de remplacement compatible), l'indemnité est due.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 Et si l'avancement vous a fait **rater le vol** — vous vous êtes présenté pour l'ancien horaire — c'est un motif supplémentaire en votre faveur.
 
 ## L'éligibilité dépend du point de départ

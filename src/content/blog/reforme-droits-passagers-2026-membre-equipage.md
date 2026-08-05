@@ -10,7 +10,7 @@ faq:
   - q: "Un retard pour raison de sécurité donne-t-il droit à une indemnité ?"
     a: "Ça dépend de la **cause**. Une panne technique ou un équipage en fin d'heures reste à la charge de la compagnie et ouvre droit à indemnité. La météo extrême ou une grève des contrôleurs aériens sont des circonstances extraordinaires qui exonèrent la compagnie."
   - q: "Si mon vol est annulé, ai-je toujours droit à 600 € ?"
-    a: "Non, pas systématiquement. Le montant dépend de la distance : **250 €** (moins de 1 500 km), **400 €** (1 500 à 3 500 km), **600 €** (plus de 3 500 km). Et le délai compte : prévenu **plus de 14 jours** avant le départ, aucune indemnité ; **moins de 14 jours** avant (ou un retard de 3h et plus), l'indemnité est due, sauf circonstance extraordinaire."
+    a: "Non, pas systématiquement. Le montant dépend de la distance : **250 €** (moins de 1 500 km), **400 €** (1 500 à 3 500 km), **600 €** (plus de 3 500 km). Et le délai compte : prévenu **plus de 14 jours** avant le départ, aucune indemnité ; **moins de 14 jours** avant (ou un retard de 3h et plus), l'indemnité est due, sauf circonstance extraordinaire. La compagnie peut toutefois échapper à l'indemnité si elle propose un réacheminement à des horaires très proches du vol initial."
   - q: "Comment prouver la vraie cause de mon retard ?"
     a: "Vous pouvez **demander une attestation de retard** à l'aéroport (chaque compagnie a sa politique). Notez aussi l'heure réelle d'ouverture des portes à l'arrivée : c'est elle qui compte pour le seuil des 3h."
 ---

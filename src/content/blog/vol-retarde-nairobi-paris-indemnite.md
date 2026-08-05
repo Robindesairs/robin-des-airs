@@ -58,6 +58,8 @@ Si votre billet est une **réservation unique** avec correspondance (via Amsterd
 
 Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Entre 7 et 14 jours de préavis, l'indemnité reste due sauf si le nouvel horaire proposé ne vous fait pas partir plus de 2h plus tôt ni arriver plus de 4h plus tard que prévu ; en deçà de 7 jours, les marges tolérées sont encore plus étroites. Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Les excuses des compagnies : valables ou non
 
 La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.

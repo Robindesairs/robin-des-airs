@@ -60,6 +60,8 @@ Exemple concret : vous décollez de Paris à l'heure sur un billet KLM unique, m
 
 Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 Sur une route à correspondance comme Paris-Accra, l'annulation peut frapper n'importe quel tronçon : le vol Paris-Amsterdam, le vol Amsterdam-Accra, ou les deux. Dans tous les cas, c'est la date à laquelle vous avez été informé de l'annulation par rapport à l'heure de départ initialement prévue qui compte, pas la raison invoquée par la compagnie à ce stade.
 
 ## Les excuses des compagnies : valables ou non

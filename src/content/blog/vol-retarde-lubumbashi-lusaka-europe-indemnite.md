@@ -68,6 +68,8 @@ Exemples de configurations fréquentes :
 
 Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager (si le vol part d'un aéroport UE ou est opéré par une compagnie européenne), **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Les excuses des compagnies : valables ou non
 
 La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.

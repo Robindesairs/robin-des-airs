@@ -59,6 +59,8 @@ Un mineur ne peut pas réclamer seul. C'est le **parent ou le représentant lég
 
 Si votre vol est annulé et que la compagnie vous prévient moins de 14 jours avant le départ, le bébé a droit, comme les autres passagers, à l'indemnité **plus** le remboursement de son billet ou un réacheminement. Ne vous laissez pas dire que "le bébé ne compte pas" : c'est faux.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Les documents pour la famille
 
 - Billets ou confirmation de réservation de **chaque passager, bébé compris**

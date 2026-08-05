@@ -12,12 +12,14 @@ faq:
   - q: "Mon billet a une correspondance, par exemple via un autre DOM ou un hub métropolitain. Comment se calcule le retard ?"
     a: "Si votre billet est une **réservation unique**, le retard se mesure à la **destination finale**, et non à chaque étape prise isolément (arrêt Folkerts, CJUE 2013), même si l'un des segments est opéré par une autre compagnie."
   - q: "Mon vol vers les Antilles a été annulé, pas seulement retardé. Ai-je droit à autre chose ?"
-    a: "Oui. Si la compagnie annule et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 400 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8)."
+    a: "Oui. Si la compagnie annule et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 400 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). La compagnie peut toutefois échapper à l'indemnité si elle propose un réacheminement à des horaires très proches du vol initial."
   - q: "La compagnie invoque une panne technique ou une grève de son personnel. Est-ce valable ?"
     a: "Non, en principe. La CJUE juge que les pannes techniques (arrêts Wallentin-Hermann, van der Lans) et les grèves internes à la compagnie (arrêt Krüsemann) ne sont **pas** des circonstances extraordinaires : l'indemnité de 400 € reste due."
   - q: "Mon vol vers les Antilles date d'il y a deux ans. Est-ce trop tard ?"
     a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol vers la Guadeloupe ou la Martinique retardé il y a deux ou trois ans reste indemnisable aujourd'hui."
 ---
+
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
 
 **400 € par passager** sont à réclamer sur vos vols Antilles (Guadeloupe, Martinique) retardés de 3 h et plus, ou annulés, départ France couvert dans les deux sens. Vérification gratuite, 0 € d'avance.
 

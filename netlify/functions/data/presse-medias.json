@@ -22,7 +22,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m003",
@@ -49,7 +51,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m005",
@@ -62,7 +66,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m006",
@@ -97,7 +103,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m009",
@@ -227,7 +235,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m019",
@@ -250,7 +260,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m021",
@@ -278,7 +290,10 @@
     "tier": 1,
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
   },
   {
     "id": "m023",
@@ -330,7 +345,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m027",
@@ -356,7 +373,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m029",
@@ -389,7 +408,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m032",
@@ -417,7 +438,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m034",
@@ -429,7 +452,10 @@
     "tier": 2,
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
   },
   {
     "id": "m035",
@@ -441,7 +467,9 @@
     "tier": 1,
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "EXCLU",
+    "relance_1_note": "RETIRE de la vague le 05/08/2026. DEJA CONTACTE DEUX FOIS : 20/07 (Opinion submission: Two passengers, one delay, different rights) puis 23/07 (Op-Ed submission: two passengers...), le second etait un doublon non repere. Une relance serait le 3e message en 15 jours sur le meme sujet. Laisser reposer."
   },
   {
     "id": "m036",
@@ -453,7 +481,10 @@
     "tier": 1,
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m037",
@@ -465,7 +496,10 @@
     "tier": 2,
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m038",
@@ -491,7 +525,10 @@
     "tier": 2,
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m040",
@@ -524,7 +561,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m043",
@@ -534,7 +573,9 @@
     "url": "https://www.jeuneafrique.com/idees/opinion/",
     "type": "tribune",
     "tier": 4,
-    "note": ""
+    "note": "Texte dedie : tribune-jeuneafrique.md (angle prix/flotte/concurrence, sources IATA+AFRAA+Forum africain concurrence). PLAN EN 2 TEMPS decide le 05/08 : (1) ENVOI A BARRY SEUL (Le Lynx, correspondant JA, diawobarry06@yahoo.fr) pour relais/recommandation ; (2) SI silence 7-10j ou refus, envoi direct redaction@jeuneafrique.com avec la version formelle (brouillon r4368894493552616391 deja pret, sans mention de Barry). 🔴 NE JAMAIS envoyer les deux le meme jour : Barry verrait qu'il a ete double et la redaction recevrait 2x le meme texte.",
+    "statut_envoi": "brouillon_pret_via_barry",
+    "date_dedup": "2026-08-05"
   },
   {
     "id": "m044",
@@ -547,7 +588,12 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01",
+    "statut_reponse": "positive_interview_en_cours",
+    "date_reponse": "2026-08-04",
+    "note_reponse": "Antoine Ganne (antoine.ganne@gmail.com, en cc de contact@afrik.com) a transforme la tribune en INTERVIEW. Reponses envoyees le 03/08. 🔴 LE 04/08 IL DEMANDE UNE PHOTO FORMAT RECTANGLE, sans reponse a ce jour. Utiliser le portrait valide ~/Downloads/saint-yves-kodjo-portrait.jpg (1200x1600), PAS une photo en uniforme ou en cabine."
   },
   {
     "id": "m045",
@@ -560,7 +606,12 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee_refus_recu",
+    "relance_1_date": "2026-08-01",
+    "statut_reponse": "refus",
+    "date_reponse": "2026-08-03",
+    "note_reponse": "REFUS EXPLICITE : \"nous ne sommes pas interesses par vos tribunes. Nous gardons votre contact si besoin.\" NE PLUS CONTACTER, dossier clos."
   },
   {
     "id": "m046",
@@ -593,7 +644,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)"
+    "relance_2026-08-01": "Relance envoyee avec preuve de traction (DataCameroon, Addis Standard, Congo Independant, Ivorian.net, Le Lynx)",
+    "relance_1_statut": "envoyee",
+    "relance_1_date": "2026-08-01"
   },
   {
     "id": "m049",
@@ -671,7 +724,10 @@
     "note": "Consignes publiées : 8 000 à 12 000 signes. Association sans but lucratif, zéro signal commercial. Lire leur charte avant d'écrire.",
     "statut_envoi": "envoye_vague_anterieure",
     "statut_reponse": "accuse_auto",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
   },
   {
     "id": "m055",
@@ -715,8 +771,10 @@
     "type": "tribune",
     "tier": 1,
     "note": "Groupe Nation Media. letters@ug.nationmedia.com pour le format court. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
-    "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "statut_envoi": "echec_distribution_adresse_morte",
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "EXCLU",
+    "relance_1_note": "RETIRE de la vague le 05/08/2026. editorial@ug.nationmedia.com : 2 avis de retard (24 et 25/07) puis ECHEC DEFINITIF de distribution le 26/07. Le 1er envoi du 23/07 n est jamais arrive. Ne rien renvoyer sur cette adresse. Pour reactiver le titre, trouver une autre adresse de redaction chez Nation Media Group."
   },
   {
     "id": "m058",
@@ -728,7 +786,10 @@
     "tier": 2,
     "note": "Indépendant, rubriques Opinion et Letters distinctes, aucun signal payant. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m059",
@@ -740,7 +801,10 @@
     "tier": 2,
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m060",
@@ -794,7 +858,10 @@
     "tier": 4,
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m065",
@@ -976,7 +1043,10 @@
     "tier": 1,
     "note": "Quotidien de reference. Rubriques Opinion, Features et Editorials distinctes. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m082",
@@ -1008,7 +1078,10 @@
     "tier": 1,
     "note": "Rubrique 'Op-Eds' affichee en navigation = politique de tribunes assumee. Seule vraie porte kenyane. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m085",
@@ -1030,7 +1103,10 @@
     "tier": 1,
     "note": "Adresse letters@ DEDIEE aux contributions de lecteurs. Aucune friction. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
   },
   {
     "id": "m087",
@@ -1052,7 +1128,10 @@
     "tier": 1,
     "note": "Seul media aviation francophone d'Afrique subsaharienne. Rubrique « Tribune libre ». Bilingue FR/EN. CIBLE N.1",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
   },
   {
     "id": "m089",
@@ -1155,7 +1234,10 @@
     "tier": 1,
     "note": "Rubrique /-Tribunes- vivante, signataires nommes. Publie deja sur l'aviation africaine. Gratuit",
     "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "A_FAIRE",
+    "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
+    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
   },
   {
     "id": "m098",
@@ -1296,8 +1378,10 @@
     "type": "tribune",
     "tier": 1,
     "note": "Rubrique Transports dediee. Un seul pitch couvre aussi Investir au Cameroun, meme maison",
-    "statut_envoi": "envoye_vague_anterieure",
-    "date_dedup": "2026-07-27"
+    "statut_envoi": "exclu_media_payant",
+    "date_dedup": "2026-07-27",
+    "relance_1_statut": "EXCLU",
+    "relance_1_note": "RETIRE de la vague de relance le 05/08/2026, decision du fondateur. Motif : media payant deguise (page /publier-vos-communiques, media kit tarife en PDF, page Paid services sur ecofinagency.com). Une tribune y serait un achat d espace. NE PLUS INCLURE dans aucune vague."
   },
   {
     "id": "m111",
@@ -1337,5 +1421,16 @@
     "url_publication": "https://ivorian.net/vol-retarde-annule-ou-surbooke-jusqua-600-e-dindemnisation-pour-les-passagers-entre-leurope-et-lafrique/",
     "backlink_seo": true,
     "backlink_note": "DOFOLLOW vers page profonde, sur bandeau image cliquable 783x188. Seul defaut : alt vide, donc aucun texte d ancre."
+  },
+  {
+    "id": "m114",
+    "nom": "Forbes Africa",
+    "pays": "Panafricain",
+    "email": "",
+    "url": "https://www.forbesafrica.com",
+    "type": "tribune",
+    "tier": 1,
+    "note": "BLOQUE 05/08/2026 : aucune adresse editoriale/tribune verifiee publiquement. Site structure autour de 'Brand Voice' (sponsorise) et 'Africa: Undiscovered' (programme paye) - aucune rubrique tribune gratuite identifiee. Managing Editor = Methil Renuka (nom trouve via recherche, email non confirme, format probable prenom.nom@forbesafrica.com mais NON verifie). Piste : contact LinkedIn direct plutot qu email devine.",
+    "statut_envoi": "bloque_email_non_verifie"
   }
 ]

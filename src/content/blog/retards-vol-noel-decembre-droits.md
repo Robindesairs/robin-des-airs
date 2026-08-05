@@ -46,6 +46,8 @@ Seules les **fermetures totales d'aéroport** par neige exceptionnelle (jamais v
 
 Si la compagnie annule votre vol **moins de 14 jours avant**, vous avez droit à :
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 - **L'indemnité forfaitaire** (250/400/600€ selon distance)
 - **Le réacheminement gratuit** vers votre destination
 - **OU le remboursement intégral** si vous renoncez

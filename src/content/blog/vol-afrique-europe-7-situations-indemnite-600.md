@@ -34,6 +34,8 @@ C'est le cas le plus fréquent. Si vous arrivez à votre **destination finale av
 
 Si la compagnie **annule** votre vol et vous prévient **moins de 14 jours** avant le départ, l'indemnité forfaitaire (jusqu'à 600 €) est due, en plus du **remboursement du billet ou du réacheminement**. Ce qui compte, c'est la **date de la notification** : gardez le SMS ou l'email d'annulation, avec la date bien visible.
 
+Une réserve toutefois : à moins de 14 jours, la compagnie peut encore échapper à l'indemnité si elle propose un réacheminement à des horaires très proches du vol initial. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## 3. Refus d'embarquement (surbooking)
 
 Si on vous **refuse l'embarquement** alors que votre billet est valide et que vous vous êtes présenté à l'heure, c'est un refus d'embarquement involontaire : **jusqu'à 600 €** par passager, en plus de la prise en charge. Fréquent sur les vols pleins de fin d'année vers l'Afrique. Demandez un document écrit de la compagnie, ou notez le nom de l'agent et l'heure.

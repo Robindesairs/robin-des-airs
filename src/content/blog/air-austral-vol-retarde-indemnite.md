@@ -49,6 +49,8 @@ Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 Si Air Austral annule votre vol Réunion-Paris ou Mayotte-Paris et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 400 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez expressément.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Les excuses de la compagnie : valables ou non
 
 **Excuses valables** : cyclone ou météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens, oiseau ou débris sur la piste, vice caché du constructeur. Même dans ces cas, la compagnie doit encore prouver qu'elle a pris **toutes les mesures raisonnables** pour limiter le retard.

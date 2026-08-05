@@ -10,7 +10,7 @@ faq:
   - q: "J'ai perdu ma carte d'embarquement. Je peux quand même réclamer ?"
     a: "Oui, dans la plupart des cas. Votre **e-billet ou confirmation de réservation** + votre **pièce d'identité** + le **numéro PNR** suffisent à prouver que vous étiez sur le vol. Ne renoncez pas pour autant."
   - q: "Pour une annulation, quel document est le plus important ?"
-    a: "Le **SMS ou l'email d'annulation, avec la date bien visible**. C'est crucial : votre droit à l'indemnité dépend du **délai** entre la notification et le vol (l'indemnité est due si vous êtes prévenu moins de 14 jours avant). Sans preuve de la date, la compagnie peut prétendre vous avoir prévenu à temps."
+    a: "Le **SMS ou l'email d'annulation, avec la date bien visible**. C'est crucial : votre droit à l'indemnité dépend du **délai** entre la notification et le vol (l'indemnité est due si vous êtes prévenu moins de 14 jours avant, sauf si la compagnie propose un réacheminement à des horaires très proches du vol initial). Sans preuve de la date, la compagnie peut prétendre vous avoir prévenu à temps."
   - q: "Faut-il garder les originaux des reçus (hôtel, repas) ?"
     a: "Oui. Photographiez-les, mais **conservez les originaux** : en cas de procédure judiciaire, ils peuvent être exigés. Vérifiez que le reçu porte la **date, le montant, la devise** et si possible un **tampon** du commerçant."
   - q: "La compagnie me propose un bon d'achat. Je l'accepte ?"
@@ -48,7 +48,7 @@ L'indemnité (jusqu'à 600 €) est due si vous arrivez avec **3h ou plus de ret
 
 ## Cas 2 : vol annulé
 
-Ici, **la date de la notification est reine**. L'indemnité est due si la compagnie vous a prévenu **moins de 14 jours** avant le départ. Il faut donc prouver **quand** vous avez été prévenu. Gardez :
+Ici, **la date de la notification est reine**. L'indemnité est due si la compagnie vous a prévenu **moins de 14 jours** avant le départ, sauf si elle propose un réacheminement à des horaires très proches du vol initial ([le détail des trois cas](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html)). Il faut donc prouver **quand** vous avez été prévenu. Gardez :
 
 - **Le SMS ou l'email d'annulation, avec la date bien visible** (ne le supprimez surtout pas).
 - L'**email où la compagnie donne la raison** de l'annulation (météo, technique, grève) : il servira à **contester** un refus, car une panne technique n'est pas une excuse valable (arrêt Wallentin-Hermann).

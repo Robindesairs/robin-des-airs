@@ -50,6 +50,8 @@ Kenya Airways connecte l'Afrique de l'Est et australe depuis son hub de Nairobi.
 
 Si Kenya Airways annule votre vol au départ de l'UE et vous prévient **moins de 14 jours** avant, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Les excuses des compagnies : valables ou non
 
 **Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens, oiseau ou débris sur la piste, vice caché du constructeur. Même dans ces cas, la compagnie doit encore prouver qu'elle a pris **toutes les mesures raisonnables** pour limiter le retard.

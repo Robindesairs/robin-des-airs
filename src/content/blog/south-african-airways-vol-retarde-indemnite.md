@@ -56,6 +56,8 @@ Attention : si vous avez acheté **deux billets séparés**, la protection est b
 
 Si South African Airways annule votre vol et vous prévient **moins de 14 jours** avant le départ, et que le vol part de l'UE, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
+À noter : être prévenu à moins de 14 jours ne suffit pas toujours. Si la compagnie propose en plus un réacheminement à des horaires très proches du vol initial, elle peut échapper à l'indemnité. [Le détail des trois cas de figure](/blog/vol-annule-moins-14-jours-avant-depart-indemnite-ce261.html).
+
 ## Les excuses de la compagnie : valables ou non
 
 Sur un sens couvert par le CE 261 (départ d'Europe), la compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.

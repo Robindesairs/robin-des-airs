@@ -74,16 +74,29 @@ Avant d'ajouter un texte, vérifier qu'il ne partage aucune phrase de corps avec
 les autres. Google déclasse le contenu dupliqué, et une rédaction qui repère le
 même paragraphe chez un confrère ne republie pas.
 
+🔴 **Le script a été corrigé le 05/08/2026. L'ancienne version était trompeuse** : elle
+découpait sur `split('---', 2)[-1]`, ce qui ne gardait le corps que pour les fichiers ayant
+un bloc d'en-tête. Sur un fichier sans en-tête, ou dont la bio est séparée par un second
+`---`, elle ne comparait QUE la bio et affichait donc « aucun doublon » sans avoir lu une
+seule phrase du texte. Deux textes ont été validés à tort par cette version.
+Deux autres pièges corrigés au passage : les lignes commençant par `*` (donc tout chapô en
+italique) étaient ignorées, et les lignes `**` aussi.
+
 ```bash
 cd netlify/functions/data/tribunes && python3 - <<'PY'
 import re,glob,collections
-BIO=("Saint-Yves Kodjo est fondateur","Spécialiste du secteur aérien","Il connaît de l'intérieur","robindesairs.eu")
+BIOMARK=("Saint-Yves Kodjo est","Spécialiste du secteur aérien","Il connaît de l'intérieur",
+         "robindesairs.eu","Saint-Yves Kodjo is the founder","Saint-Yves Kodjo é fundador")
 def sents(p):
-    t=open(p,encoding='utf-8').read().split('---',2)[-1]
+    raw=open(p,encoding='utf-8').read()
+    parts=raw.split('\n---\n')
+    # retire le bloc d'en-tete SEULEMENT s'il en est vraiment un
+    head_is_meta = len(parts)>1 and ('**Angle' in parts[0] or '**Cible' in parts[0])
+    body='\n---\n'.join(parts[1:]) if head_is_meta else raw
     out=[]
-    for line in t.split('\n'):
+    for line in body.split('\n'):
         line=line.strip()
-        if not line or line.startswith(('#','*','**','|')) or any(b in line for b in BIO): continue
+        if not line or line.startswith(('#','|','>')) or any(b in line for b in BIOMARK): continue
         for s in re.split(r'(?<=[.!?])\s+',line):
             s=re.sub(r'[*_`]','',s).strip()
             if len(s)>45: out.append(s)
@@ -91,8 +104,11 @@ def sents(p):
 d=collections.defaultdict(list)
 for f in sorted(glob.glob('tribune-*.md')):
     for s in sents(f): d[s].append(f)
+n=0
 for s,v in d.items():
-    if len(set(v))>1: print(f"[{', '.join(sorted(set(v)))}]\n  {s[:150]}\n")
+    if len(set(v))>1:
+        n+=1; print(f"[{', '.join(sorted(set(v)))}]\n  {s[:160]}\n")
+print(f"=> {n} collision(s)")
 PY
 ```
 
