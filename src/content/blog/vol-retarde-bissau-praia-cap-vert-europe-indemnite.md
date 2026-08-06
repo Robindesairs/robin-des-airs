@@ -8,7 +8,7 @@ faq:
   - q: "Mon vol Bissau-Lisbonne sur TAP a plus de 3h de retard. Combien puis-je réclamer ?"
     a: "**400 € par passager.** La distance OXB-LIS est d'environ 3 060 km, dans la fourchette 1 500-3 500 km du règlement CE 261/2004. TAP Air Portugal est une compagnie européenne, couverte dans les deux sens."
   - q: "Mon vol Praia-Lisbonne est retardé. Suis-je couvert ?"
-    a: "Cela dépend de la compagnie. Au départ de Praia (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : TAP et easyJet sont couvertes. Avec Cabo Verde Airlines (compagnie non européenne), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+    a: "Cela dépend de la compagnie. Au départ de Praia (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : TAP Air Portugal est couverte. Avec Cabo Verde Airlines (compagnie non européenne), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
   - q: "Mon billet continue au-delà de Lisbonne, vers Paris ou Bruxelles. Le montant change-t-il ?"
     a: "Oui, potentiellement. Sur une **réservation unique**, le retard se mesure à la destination finale et l'indemnité se calcule sur la distance totale du trajet (arrêt Folkerts, CJUE 2013). Bissau ou Praia + Lisbonne + Paris dépasse souvent 3 500 km : la fourchette **600 €** peut alors s'appliquer au lieu de 400 €."
   - q: "Je suis passé par Casablanca sur Royal Air Maroc entre Bissau et l'Europe. J'ai droit à quelque chose ?"
@@ -37,15 +37,15 @@ Le règlement CE 261/2004 s'applique dans deux cas :
 | Lisbonne vers Bissau | TAP Air Portugal, EuroAtlantic Airways | Oui : **400 € par passager** |
 | Bissau vers Lisbonne | TAP Air Portugal, EuroAtlantic Airways | Oui : **400 € par passager** |
 | Casablanca vers Bissau (ou retour) | Royal Air Maroc | Non : ni aéroport ni compagnie UE, frais réels via Convention de Montréal |
-| Lisbonne vers Praia | TAP Air Portugal, easyJet, Cabo Verde Airlines | Oui : **400 € par passager** |
-| Praia vers Lisbonne | TAP Air Portugal, easyJet | Oui : **400 € par passager** |
+| Lisbonne vers Praia | TAP Air Portugal, Cabo Verde Airlines | Oui : **400 € par passager** |
+| Praia vers Lisbonne | TAP Air Portugal | Oui : **400 € par passager** |
 | Praia vers Lisbonne | Cabo Verde Airlines | Non : compagnie non-UE au départ d'un pays non-UE |
 
 Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 ## Les compagnies sur ces lignes
 
-- **Compagnies européennes** (couvertes dans les deux sens) : TAP Air Portugal, qui opère Lisbonne-Bissau et Lisbonne-Praia (et depuis juillet 2026 aussi Porto-Praia), EuroAtlantic Airways sur Bissau, et easyJet sur Praia.
+- **Compagnies européennes** (couvertes dans les deux sens) : TAP Air Portugal, qui opère Lisbonne-Bissau et Lisbonne-Praia (et depuis juillet 2026 aussi Porto-Praia), et EuroAtlantic Airways sur Bissau.
 - **Compagnies non européennes** (couvertes uniquement au départ de Lisbonne) : Cabo Verde Airlines, la compagnie nationale cap-verdienne, sur Lisbonne-Praia.
 - **Compagnies non européennes hors périmètre UE** : Royal Air Maroc, qui relie Bissau à l'Europe via son hub de Casablanca. Cette escale ne touchant pas l'UE, le vol Casablanca-Bissau n'entre pas dans le champ du CE 261.
 

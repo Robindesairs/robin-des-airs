@@ -120,7 +120,14 @@ Dans cette attente, nous vous prions d'agréer, Madame, Monsieur, l'expression d
 ## Notes d'usage par compagnie
 - **Air France (AF)** : **pas de médiation MTV** (cf. gate en tête). Seule étape préalable : purger le délai **CGT 12.3/12.5** (28 jours après réclamation du passager). Ce n'est pas une médiation, c'est une purge de recevabilité contractuelle, et la clause elle-même est tenue pour inopposable. Oppose systématiquement les **5 ans** s'ils invoquent 2 ans. Couvre l'axe Afrique vers Europe (départ UE toutes cies, arrivée UE si cie UE).
 - **Brussels Airlines (SN)** : compagnie UE, donc CE 261 direct (BRU vers Afrique inclus). Minimum recevable : confirmation de réservation + preuve du retard. ⚠️ Prescription **1 an** en Belgique, ne pas laisser dormir.
-- **easyJet Switzerland (EZS)** : compagnie suisse, mais un départ de **Bâle-Mulhouse (BSL)** se fait depuis le **territoire français** (Saint-Louis, Haut-Rhin), donc art. 3 §1 a) s'applique de plein droit. L'argument « nous sommes suisses » est inopérant. Compétence : lieu de départ (**CJUE C-204/08, *Rehder***), soit le Tribunal de commerce de Mulhouse, la Suisse étant partie à la Convention de Lugano.
+
+## 🔴 Compagnie exclue du périmètre
+
+Voir `docs/exclusion-conflit-interets.md`. Une compagnie est exclue de tout traitement,
+quel que soit le trajet, le montant ou le sens du vol. Aucune note d'usage, aucun
+argumentaire procédural et aucune mention commerciale la concernant ne doit figurer dans
+ce document ni ailleurs dans le dépôt. Si un dossier la vise, il est refusé et le passager
+est réorienté.
 
 ## Rappels de cohérence
 - Ne jamais écrire « mandat », « mandant » ni « mandataire » dans un courrier sortant. Glossaire : Mandant → **Cédant**, Mandataire → **Cessionnaire**.
