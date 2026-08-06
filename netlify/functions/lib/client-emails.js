@@ -50,7 +50,7 @@ function shell(bodyHtml, ref) {
 <tr><td align="center">
 <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="width:100%;max-width:480px;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 1px 3px rgba(11,31,58,.06),0 12px 40px rgba(11,31,58,.07);">
   <tr><td style="background:#0B1F3A;padding:15px 26px;" valign="middle">
-    <img src="${LOGO}" width="30" height="30" alt="" style="vertical-align:middle;border-radius:7px;">
+    <img src="${LOGO}" width="30" height="30" alt="Robin des Airs" style="vertical-align:middle;border-radius:7px;">
     <span style="vertical-align:middle;font-size:16px;font-weight:800;color:#ffffff;padding-left:9px;">Robin des Airs</span>
   </td></tr>
   ${bodyHtml}

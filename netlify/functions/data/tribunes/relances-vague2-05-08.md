@@ -100,6 +100,7 @@ qui contenait plusieurs approximations. Reprendre l'objet AU MOT PRÈS.
 | m034 | Le Mauricien | lemauricien.redaction@gmail.com | 24 juillet | Proposition de tribune : droits des passagers aériens sur l'axe océan Indien-Europe |
 | m088 | NewsAero | redaction@newsaero.info | 24 juillet | Proposition de tribune : ces 600 € de vol que les passagers d'Afrique centrale ne réclament pas |
 | m022 | Zoom Eco | courriel@zoom-eco.net | 24 juillet | Tribune : l'argent des familles qui reste chez les compagnies aériennes |
+| m027 | Seneweb (Sénégal) | redaction@seneweb.com | 18 juillet | Proposition de contribution : le délai de deux ans que personne n'explique aux passagers |
 
 ❌ **m110 Agence Ecofin : RETIRÉE de la vague le 05/08/2026, décision du fondateur.**
 Motif : média payant déguisé (page `/publier-vos-communiques`, media kit tarifé en PDF,

@@ -291,9 +291,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m023",
@@ -360,7 +360,10 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-18",
-    "note_reponse": "marque ENVOYE 18/07 dans le README tribunes, a reverifier dans les Envoyes"
+    "note_reponse": "marque ENVOYE 18/07 dans le README tribunes, a reverifier dans les Envoyes",
+    "relance_1_statut": "envoyee",
+    "relance_1_note": "Ajoute a la vague le 05/08 : seul media senegalais contacte (18/07) et jamais relance. Dakaractu et PressAfrik l ont ete le 01/08. Objet du fil : Proposition de contribution : le delai de deux ans que personne n explique aux passagers.",
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m028",
@@ -385,17 +388,20 @@
     "url": "",
     "type": "redaction",
     "tier": 3,
-    "note": ""
+    "note": "1er contact 06/08/2026 avec la tribune kerosene (tribune-kerosene-crise.md), sujet d actualite, aucun doublon avec Seneweb/Dakaractu/PressAfrik. ADRESSE NON REVERIFIEE le 06/08 : sudquotidien.sn renvoie 403 et sudonline.sn a un certificat casse. Surveiller un eventuel bounce sur sudquotidien@yahoo.fr.",
+    "statut_envoi": "envoye_2026-08-06"
   },
   {
     "id": "m030",
     "nom": "Xalima",
     "pays": "Sénégal + diaspora",
-    "email": "redaction@xalimasn.com",
+    "email": "presse@xalimasn.com",
     "url": "",
     "type": "redaction",
     "tier": 2,
-    "note": ""
+    "note": "Positionnement explicite diaspora senegalaise et africaine depuis 2005 = fit maximal. 🔴 ADRESSE CORRIGEE le 06/08/2026 : le catalogue portait redaction@xalimasn.com, une adresse DEDUITE et jamais confirmee (leur page contact ne publie aucun e-mail et le formulaire est casse). La bonne adresse, fournie par le fondateur, est presse@xalimasn.com.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact avec tribune-v2-refus-embarquement-elargi.md. 6e angle senegalais distinct : Seneweb=delai 2 ans, Dakaractu=frais art.9, PressAfrik=qui paie Dakar-Paris, Sud Quotidien=kerosene, SeneNews=billet unique vs separes, Xalima=refus d embarquement elargi."
   },
   {
     "id": "m031",
@@ -453,9 +459,9 @@
     "note": "",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m035",
@@ -482,9 +488,9 @@
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m037",
@@ -497,9 +503,9 @@
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m038",
@@ -526,9 +532,9 @@
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m040",
@@ -593,7 +599,7 @@
     "relance_1_date": "2026-08-01",
     "statut_reponse": "positive_interview_en_cours",
     "date_reponse": "2026-08-04",
-    "note_reponse": "Antoine Ganne (antoine.ganne@gmail.com, en cc de contact@afrik.com) a transforme la tribune en INTERVIEW. Reponses envoyees le 03/08. 🔴 LE 04/08 IL DEMANDE UNE PHOTO FORMAT RECTANGLE, sans reponse a ce jour. Utiliser le portrait valide ~/Downloads/saint-yves-kodjo-portrait.jpg (1200x1600), PAS une photo en uniforme ou en cabine."
+    "note_reponse": "Antoine Ganne (antoine.ganne@gmail.com, en cc de contact@afrik.com) a transforme la tribune en INTERVIEW. Reponses envoyees le 03/08. Photo format rectangle demandee le 04/08 et ENVOYEE par le fondateur (confirme le 05/08). Blocage leve, interview en attente de parution. Utiliser le portrait valide ~/Downloads/saint-yves-kodjo-portrait.jpg (1200x1600), PAS une photo en uniforme ou en cabine."
   },
   {
     "id": "m045",
@@ -725,9 +731,9 @@
     "statut_envoi": "envoye_vague_anterieure",
     "statut_reponse": "accuse_auto",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m055",
@@ -787,9 +793,9 @@
     "note": "Indépendant, rubriques Opinion et Letters distinctes, aucun signal payant. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m059",
@@ -802,9 +808,9 @@
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m060",
@@ -859,9 +865,9 @@
     "note": "Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m065",
@@ -1044,9 +1050,9 @@
     "note": "Quotidien de reference. Rubriques Opinion, Features et Editorials distinctes. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m082",
@@ -1079,9 +1085,9 @@
     "note": "Rubrique 'Op-Eds' affichee en navigation = politique de tribunes assumee. Seule vraie porte kenyane. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m085",
@@ -1104,9 +1110,9 @@
     "note": "Adresse letters@ DEDIEE aux contributions de lecteurs. Aucune friction. Tribune EN 'Two passengers, one delay, different rights' : explique LES DEUX regimes. Le pavillon decide, pas le pays. Lagos-Amsterdam KLM = 600 EUR, Lagos-Londres BA = 520 GBP, Lagos-Londres compagnie africaine = ni l'un ni l'autre.",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte anglophone (SANS lien, ancre = Addis Standard)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m087",
@@ -1129,9 +1135,9 @@
     "note": "Seul media aviation francophone d'Afrique subsaharienne. Rubrique « Tribune libre ». Bilingue FR/EN. CIBLE N.1",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m089",
@@ -1235,9 +1241,9 @@
     "note": "Rubrique /-Tribunes- vivante, signataires nommes. Publie deja sur l'aviation africaine. Gratuit",
     "statut_envoi": "envoye_vague_anterieure",
     "date_dedup": "2026-07-27",
-    "relance_1_statut": "A_FAIRE",
+    "relance_1_statut": "envoyee",
     "relance_1_note": "Prevue dans relances-03-08.md mais NON envoyee le 01/08. Texte fige dans ce fichier, reprendre le sujet exact du 1er envoi avec prefixe Re:.",
-    "relance_1_texte": "relances-vague2-05-08.md > texte francophone (AVEC lien robindesairs.eu/espace-presse.html)"
+    "relance_1_date": "2026-08-05"
   },
   {
     "id": "m098",
@@ -1432,5 +1438,135 @@
     "tier": 1,
     "note": "BLOQUE 05/08/2026 : aucune adresse editoriale/tribune verifiee publiquement. Site structure autour de 'Brand Voice' (sponsorise) et 'Africa: Undiscovered' (programme paye) - aucune rubrique tribune gratuite identifiee. Managing Editor = Methil Renuka (nom trouve via recherche, email non confirme, format probable prenom.nom@forbesafrica.com mais NON verifie). Piste : contact LinkedIn direct plutot qu email devine.",
     "statut_envoi": "bloque_email_non_verifie"
+  },
+  {
+    "id": "m115",
+    "nom": "AVT Sénégal (agence de voyage)",
+    "pays": "Sénégal",
+    "email": "agence@avtsenegal.com",
+    "url": "https://avtsenegal.com/",
+    "type": "agence partenaire",
+    "tier": 1,
+    "note": "AGENCE DE VOYAGE, pas un media. Accreditee IATA, Dakar (22 bis rue Amadou Assane Ndoye), tel +221 33 822 01 82, active depuis 2014, filiale du groupe francais AVICO, 150+ compagnies. Orientation voyage d affaires. Coordonnees relevees sur avtsenegal.com le 06/08/2026.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "Proposition de partenariat envoyee le 06/08 : 7,5 % de l indemnite CE 261 REELLEMENT ENCAISSEE par passager, taux unique, assiette = indemnite seule (interets et frais de procedure exclus), paiement 48h ouvrees apres encaissement (Wave/Afrimoney/QMoney), PAS de marque blanche. Lien public cite : robindesairs.eu/paliers-commission-agence-fr.html (verifie HTTP 200).",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m116",
+    "nom": "Premium Voyages (agence de voyage)",
+    "pays": "Sénégal",
+    "email": "premiumvoyages2015@gmail.com",
+    "url": "https://premiumvoyages-sn.com/",
+    "type": "agence partenaire",
+    "tier": 1,
+    "note": "AGENCE DE VOYAGE, pas un media. Dakar, 150 Sacre-Coeur 3 VDN, tel +221 33 822 66 06 / +221 78 384 04 03. Se dit agreee IATA (non verifie par un code). Destinations affichees Paris, Barcelone, Montreal, Casablanca = axe diaspora, meilleur fit niche que AVT. Coordonnees relevees sur premiumvoyages-sn.com le 06/08/2026.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "Proposition de partenariat envoyee le 06/08, memes conditions que AVT (7,5 % de l indemnite CE 261 reellement encaissee, assiette = indemnite seule, paiement 48h ouvrees, pas de marque blanche) mais ANGLE DIASPORA/FAMILLES au lieu de voyage d affaires : cite Paris/Barcelone/Montreal et l exemple famille de 4 = 2 400 EUR.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m117",
+    "nom": "SeneNews",
+    "pays": "Sénégal",
+    "email": "redaction@senenews.com",
+    "url": "https://www.senenews.com/proposez-un-article",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Page dediee 'Proposez-nous votre article' : 'Envoyez nous votre article a : redaction@senenews.com'. Adresse relevee par le fondateur dans son navigateur le 06/08/2026, l e-mail est masque aux robots (Cloudflare) et le domaine est bloque par la politique de navigation de l assistant. Circuit de contribution deja rode.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact avec tribune-v2-billet-unique-separe.md (billet unique vs billets separes, arret Folkerts C-11/11). Angle choisi pour eviter tout doublon senegalais : Seneweb=delai 2 ans, Dakaractu=frais art.9, PressAfrik=qui paie sur Dakar-Paris, Sud Quotidien=kerosene.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m118",
+    "nom": "Leral.net",
+    "pays": "Sénégal",
+    "email": "leral@leral.net",
+    "url": "https://www.leral.net/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Email REDACTION leral@leral.net distinct de pub@leral.net (publicite) = meilleur indicateur de tribune gratuite. Tel redaction +221 78 019 69 69. DP Diafara Fofana, redactrice en chef groupe Mame Fatou Kebe. Verifie sur leral.net le 06/08/2026.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact 06/08 avec tribune-v2-bagages.md (bagages perdus en correspondance, Convention de Montreal). Angle inedit au Senegal.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m119",
+    "nom": "Actusen",
+    "pays": "Sénégal",
+    "email": "actusen24@gmail.com",
+    "url": "https://www.actusen.sn/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Dieuppeul Villa 2201 Dakar, tel +221 33 856 91 68. DP Daouda Thiam, redactrice en chef Seynabou Fall. Adresse Gmail generique mais publiee en pied de site. Verifie le 06/08/2026.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact 06/08 avec tribune-v2-demi-indemnite-3-4h.md. ATTENTION : ce texte avait deja ete envoye a ActuNiger (Niger) le 24/07, restee sans reponse. Reemploi assume, pays different, risque de collision faible mais reel.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m120",
+    "nom": "EnQuête+",
+    "pays": "Sénégal",
+    "email": "info@enqueteplus.com",
+    "url": "https://www.enqueteplus.com/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Quotidien d enquete senegalais, ligne serieuse. Une seule adresse publiee, info@enqueteplus.com, pas de page contact dediee. Verifie le 06/08/2026.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact 06/08 SANS texte joint : proposition d ecrire un format long sur mesure, avec 3 angles au choix (asymetrie de pavillon / cout du transport aerien africain / crise kerosene). Choix deliberé pour un media d enquete, et pour eviter tout doublon senegalais.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m121",
+    "nom": "IGFM (Groupe Futurs Médias)",
+    "pays": "Sénégal",
+    "email": "redactiongfm@gmail.com",
+    "url": "https://www.igfm.sn/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Groupe Futurs Medias, un des poids lourds de la presse senegalaise (L Observateur, RFM, TFM). Site en 403 pour toute requete automatisee, adresse fournie par le fondateur le 06/08/2026.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact avec tribune-declassement-senegal.md, TEXTE ECRIT SPECIALEMENT le 06/08 pour ce marche. Tous les textes v2 etaient deja places au Senegal. Angle article 10 CE 261 (declassement), 0 phrase partagee avec le texte declassement publie par Le Lynx en Guinee le 29/07, verifie par le script anti-doublon.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m122",
+    "nom": "Walf / Groupe Walfadjri",
+    "pays": "Sénégal",
+    "email": "",
+    "url": "https://walf-groupe.com/service-commercial/",
+    "type": "exclu",
+    "tier": 4,
+    "note": "❌ ECARTE le 05/08/2026. Groupe de presse de reference au Senegal (Walf TV, Walf FM, Walf Quotidien) MAIS la seule voie de contact publiee est la page /service-commercial/ : aucun e-mail, un formulaire dont le 1er champ obligatoire est 'Quel type d annonce souhaitez-vous diffuser ?' (Publicite produit / Communique de presse / Offre d emploi). Une tribune envoyee par la arrive a la regie, pas a la redaction, et revient avec une grille tarifaire. Meme cas qu Agence Ecofin. NE PAS UTILISER ce formulaire. Reactivation possible uniquement via un contact NOMME a la redaction de Walf Quotidien.",
+    "statut_envoi": "exclu_regie_commerciale",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m123",
+    "nom": "Le Quotidien",
+    "pays": "Sénégal",
+    "email": "lequotidien@lequotidien.sn",
+    "url": "https://lequotidien.sn/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "Quotidien senegalais avec rubrique 'Opinions & debats' ACTIVE = vrai circuit editorial de tribune (verifie sur le site le 06/08/2026). Le site ne publie aucune adresse generique, celle-ci a ete fournie par le fondateur. Format nominatif observe sur un article : initiale+nom@lequotidien.sn (ex. bgdiop@).",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact avec tribune-circonstances-extraordinaires-senegal.md, TEXTE ECRIT SPECIALEMENT le 06/08. Registre argumentatif adapte a une page d opinion, pas un texte de service. Jurisprudence CJUE : panne technique non extraordinaire, meteo sous double condition, greve du personnel propre non extraordinaire. AUCUNE compagnie nommee, aucune intention pretee. 0 collision au script anti-doublon.",
+    "relance_1_statut": "-"
+  },
+  {
+    "id": "m124",
+    "nom": "SenePlus",
+    "pays": "Sénégal",
+    "email": "article@seneplus.com",
+    "email_secondaire": "seneplus@ltlstrategies.com",
+    "url": "https://www.seneplus.com/",
+    "type": "tribune",
+    "tier": 1,
+    "note": "🔴 EXIGE L EXCLUSIVITE. Politique publiee : 'SenePlus n examine que les articles soumis a titre exclusif', l auteur certifie que le texte n a jamais ete publie et n est pas soumis simultanement ailleurs. Demande aussi le sujet et le nom tel qu il doit apparaitre. Accepte une photo d illustration si l auteur en detient les droits.",
+    "statut_envoi": "envoye_2026-08-06",
+    "note_envoi": "1er contact 06/08 avec tribune-juridiction-senegal-EXCLUSIF-seneplus.md, TEXTE INEDIT ECRIT POUR EUX (juge competent, arret CJUE lieu de depart ou d arrivee, Convention de Montreal, <10 000 EUR sans avocat en France, forclusion 2 ans). 🔴 L EXCLUSIVITE A ETE CERTIFIEE PAR ECRIT : ce texte ne doit JAMAIS etre propose a un autre media tant que SenePlus n a pas decline. Envoye aux deux adresses publiees. Portrait propose, non joint.",
+    "relance_1_statut": "-"
   }
 ]
